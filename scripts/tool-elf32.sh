@@ -1,6 +1,6 @@
 #! /bin/bash
 
-export JOBS=16
+export JOBS=3
 
 export BZ=tar.bz2
 export GZ=tar.gz
