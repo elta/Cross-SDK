@@ -1,0 +1,40 @@
+This is a OpenSurce Cross Platform SDK.
+
+GNU root FS part is come from CLFS, IDE-plugin is writen by Dongxue-Zhang.
+
+===============================================================================
+TODO:
+- Debugger support
+- U-Boot config support
+- Linux config support
+- RTEMS support
+- Bare system support
+
+===============================================================================
+Prerequisites:
+(K)Ubuntu 12.10 AMD64 and (K)Ubuntu 12.04 AMD64 are well tested,
+and you are welcome to test it on other platforms.
+
+Just run this in your terminal:
+sudo apt-get install libncurses5-dev libsdl1.2-dev libqt4-dev g++ flex bison \
+                     cmake automake gawk libtool gettext gperf dejagnu \
+                     gile-2.0 autogen texinfo patch
+
+===============================================================================
+Usage:
+${TOOL}.sh ${SDK_PREFIX}
+${ROOS_FS}.sh ${SDK_PREFIX}
+
+Excample:
+tool-gnu64.sh /home/jia/sdk
+tool-gnu32.sh /home/jia/sdk
+fs-gnu-multilib.sh /home/jia/sdk
+fs-gnu-64.sh /home/jia/sdk
+fs-gnu-32.sh /home/jia/sdk
+
+Notice:
+It will take a huge disk space in your disk, make sure you run them in
+a big partation:)
+
+===============================================================================
+The last thing, Happy Hacking:)
