@@ -22,7 +22,6 @@ unset CXXFLAGS
 export CFLAGS="-w"
 export CROSS_HOST=${MACHTYPE}
 export CROSS_TARGET="mipsel-unknown-linux-gnu"
-export BUILD64="-mabi=32"
 
 export CC="${CROSS_TARGET}-gcc"
 export CXX="${CROSS_TARGET}-g++"
