@@ -1,0 +1,13 @@
+Index: qt-creator-2.5.2-src/src/plugins/projectexplorer/projectexplorer.cpp
+===================================================================
+--- qt-creator-2.5.2-src/src/plugins/projectexplorer/projectexplorer.cpp	(revision 968)
++++ qt-creator-2.5.2-src/src/plugins/projectexplorer/projectexplorer.cpp	(revision 969)
+@@ -950,7 +950,7 @@
+         d->m_projectExplorerSettings.useJom =
+                 s->value(QLatin1String("ProjectExplorer/Settings/UseJom"), true).toBool();
+         d->m_projectExplorerSettings.autorestoreLastSession =
+-                s->value(QLatin1String("ProjectExplorer/Settings/AutoRestoreLastSession"), false).toBool();
++                s->value(QLatin1String("ProjectExplorer/Settings/AutoRestoreLastSession"), true).toBool();
+         d->m_projectExplorerSettings.prompToStopRunControl =
+                 s->value(QLatin1String("ProjectExplorer/Settings/PromptToStopRunControl"), false).toBool();
+         d->m_projectExplorerSettings.maxAppOutputLines =

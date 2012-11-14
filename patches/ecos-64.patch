@@ -1,0 +1,214 @@
+diff -r c8f21fa31800 host/tools/Utils/common/eCosSerial.cpp
+--- a/host/tools/Utils/common/eCosSerial.cpp	Sun May 27 18:34:01 2012 +0000
++++ b/host/tools/Utils/common/eCosSerial.cpp	Sun Jun 03 10:00:21 2012 +0800
+@@ -340,7 +340,7 @@
+ 
+ bool CeCosSerial::Close()
+ {
+-  bool rc=m_pHandle && (-1!=close((int)m_pHandle));
++  bool rc=m_pHandle && (-1!=close((intptr_t)m_pHandle));
+   m_pHandle=0;
+   return rc;
+ }
+@@ -427,7 +427,7 @@
+   TRACE(_T("Changing configuration...\n"));
+   
+   // Get current settings.
+-  if (tcgetattr((int) m_pHandle, &buf)) {
++  if (tcgetattr((intptr_t) m_pHandle, &buf)) {
+     fprintf(stderr, _T("Error: tcgetattr\n"));
+     return false;
+   }
+@@ -494,7 +494,7 @@
+   }
+   
+   // Set the new settings
+-  if (tcsetattr((int) m_pHandle, TCSADRAIN, &buf)) {
++  if (tcsetattr((intptr_t) m_pHandle, TCSADRAIN, &buf)) {
+     fprintf(stderr, _T("Error: tcsetattr\n"));
+     return false;
+   }
+@@ -503,7 +503,7 @@
+   // error if _all_ settings fail. If just a few settings are not
+   // supported, the call returns true while the hardware is set to a
+   // combination of old and new settings.
+-  if (tcgetattr((int) m_pHandle, &buf_verify)) {
++  if (tcgetattr((intptr_t) m_pHandle, &buf_verify)) {
+     fprintf(stderr, _T("Error: tcgetattr\n"));
+     return false;
+   }
+@@ -522,7 +522,7 @@
+ 
+ bool CeCosSerial::Flush (void)
+ {
+-  return 0==tcflush((int) m_pHandle, TCIOFLUSH);
++  return 0==tcflush((intptr_t) m_pHandle, TCIOFLUSH);
+ }
+ 
+ bool CeCosSerial::Read (void *pBuf,unsigned int nSize,unsigned int &nRead)
+@@ -530,7 +530,7 @@
+   
+   if (!m_bBlockingReads) {
+     nRead = 0;
+-    int n = read((int)m_pHandle, pBuf, nSize);
++    int n = read((intptr_t)m_pHandle, pBuf, nSize);
+     if (-1 == n) {
+       if (EAGAIN == errno)
+         return true;
+@@ -558,7 +558,7 @@
+   
+   fd_set rfds;
+   FD_ZERO(&rfds);
+-  FD_SET((int)m_pHandle, &rfds);
++  FD_SET((intptr_t)m_pHandle, &rfds);
+   
+   // Start with total timeout.
+   struct timeval tv;
+@@ -568,10 +568,10 @@
+   unsigned char* pData = (unsigned char*) pBuf;
+   nRead = 0;
+   while (nSize) {
+-    switch(select((int)m_pHandle + 1, &rfds, NULL, NULL, &tv)) {
++    switch(select((intptr_t)m_pHandle + 1, &rfds, NULL, NULL, &tv)) {
+     case 1:
+       {
+-        int n = read((int)m_pHandle, pData, nSize);
++        int n = read((intptr_t)m_pHandle, pData, nSize);
+         if (-1 == n && EAGAIN != errno) {
+           ERROR(_T("Read failed: %d\n"), errno);
+           return false;           // FAILED
+@@ -608,7 +608,7 @@
+ bool CeCosSerial::Write(void *pBuf,unsigned int nSize,unsigned int &nWritten)
+ {
+   bool rc;
+-  int n=write((int)m_pHandle,pBuf,nSize);
++  int n=write((intptr_t)m_pHandle,pBuf,nSize);
+   if(-1==n){
+     nWritten=0;
+     if (errno == EAGAIN)
+diff -r c8f21fa31800 host/tools/Utils/common/eCosSocket.cpp
+--- a/host/tools/Utils/common/eCosSocket.cpp	Sun May 27 18:34:01 2012 +0000
++++ b/host/tools/Utils/common/eCosSocket.cpp	Sun Jun 03 10:00:21 2012 +0800
+@@ -96,7 +96,7 @@
+ m_nSock(-1),
+ m_nClient(0)
+ {
+-  VTRACE(_T("Create socket instance %08x\n"),(unsigned int)this);
++  VTRACE(_T("Create socket instance %08x\n"),(uintptr_t)this);
+ }
+ 
+ CeCosSocket::CeCosSocket (int sock /*result of previous call of Listen*/, bool *pbStop):
+@@ -104,7 +104,7 @@
+ m_nSock(-1),
+ m_nClient(0)
+ {
+-  VTRACE(_T("Create socket instance %08x\n"),(unsigned int)this);
++  VTRACE(_T("Create socket instance %08x\n"),(uintptr_t)this);
+   Accept(sock,pbStop);
+ }
+ 
+@@ -113,7 +113,7 @@
+ m_nSock(-1),
+ m_nClient(0)
+ {
+-  VTRACE(_T("Create socket instance %08x\n"),(unsigned int)this);
++  VTRACE(_T("Create socket instance %08x\n"),(uintptr_t)this);
+   Connect(pszHostPort,dTimeout);
+ }
+ 
+@@ -312,7 +312,7 @@
+ CeCosSocket::~CeCosSocket()
+ {
+   Close();
+-  VTRACE(_T("Delete socket instance %08x\n"),(unsigned int)this);
++  VTRACE(_T("Delete socket instance %08x\n"),(uintptr_t)this);
+ }
+ 
+ bool CeCosSocket::CloseSocket(int &sock)
+diff -r c8f21fa31800 host/tools/Utils/common/eCosTrace.cpp
+--- a/host/tools/Utils/common/eCosTrace.cpp	Sun May 27 18:34:01 2012 +0000
++++ b/host/tools/Utils/common/eCosTrace.cpp	Sun Jun 03 10:00:21 2012 +0800
+@@ -61,7 +61,7 @@
+       fclose(OutInfo.f);
+     }
+     if(nVerbosity>=TRACE_LEVEL_TRACE){
+-      _ftprintf(stderr,_T("Output -> %s (%08x)\n"),pszFilename,(unsigned int)f);
++      _ftprintf(stderr,_T("Output -> %s (%08x)\n"),pszFilename,(uintptr_t)f);
+     }
+     OutInfo.f=f;
+     OutInfo.strFilename=pszFilename;
+diff -r c8f21fa31800 host/tools/configtool/standalone/wxwin/packagesdlg.cpp
+--- a/host/tools/configtool/standalone/wxwin/packagesdlg.cpp	Sun May 27 18:34:01 2012 +0000
++++ b/host/tools/configtool/standalone/wxwin/packagesdlg.cpp	Sun Jun 03 10:00:21 2012 +0800
+@@ -507,7 +507,7 @@
+             int itemIndex = -1;
+             if (toDelete > -1)
+             {
+-                itemIndex = (int) from -> GetClientData(toDelete);
++                itemIndex = (intptr_t) from -> GetClientData(toDelete);
+                 from -> Delete(toDelete);
+             }
+             
+@@ -686,7 +686,7 @@
+         wxString str = versionChoice->GetString(versionChoice->GetSelection());
+         
+         // itemIndex is the index into the list of item names. It gets stored with all the listbox items.
+-        int itemIndex = (int) pListBox->GetClientData((*selected)[nIndex]);
++        intptr_t itemIndex = (intptr_t) pListBox->GetClientData((*selected)[nIndex]);
+         m_currentVersions[(size_t)itemIndex] = str;
+     }
+ }
+@@ -985,7 +985,7 @@
+             
+             // retrieve the dialog item array index for use in
+             // comparing current version strings
+-            const int nVersionIndex = (int) pListBox->GetClientData ((*selections)[nIndex]);
++            const intptr_t nVersionIndex = (intptr_t) pListBox->GetClientData ((*selections)[nIndex]);
+             
+             // retrieve the installed version array
+             
+diff -r c8f21fa31800 host/tools/configtool/standalone/wxwin/propertywin.cpp
+--- a/host/tools/configtool/standalone/wxwin/propertywin.cpp	Sun May 27 18:34:01 2012 +0000
++++ b/host/tools/configtool/standalone/wxwin/propertywin.cpp	Sun Jun 03 10:00:21 2012 +0800
+@@ -271,7 +271,7 @@
+                     void *p;
+                     p = (void*) map.Delete(strName);
+                     
+-                    p=(void *)((int)p+1);
++                    p=(void *)((intptr_t)p+1);
+                     map.Put(strName, (wxObject*) p);
+                     
+                     std::vector<std::string>::const_iterator argv_i;
+@@ -286,7 +286,7 @@
+                         }
+                     }
+                     // the list control appears to display a maximum of 256 characters
+-                    int nIndex=SetItem(strName, strPropertyArgs, GetItemCount(), (int)p);
++                    int nIndex=SetItem(strName, strPropertyArgs, GetItemCount(), (intptr_t)p);
+                     SetItemData(nIndex, (long) prop);
+                     
+                     // display the exclamation icon if the property is in a conflicts list
+diff -r c8f21fa31800 host/tools/ecostest/common/TestResource.cpp
+--- a/host/tools/ecostest/common/TestResource.cpp	Sun May 27 18:34:01 2012 +0000
++++ b/host/tools/ecostest/common/TestResource.cpp	Sun Jun 03 10:00:21 2012 +0800
+@@ -57,7 +57,7 @@
+   m_Target(target)
+ {
+   CeCosSocket::ParseHostPort(pszHostPort,m_strHost,m_nPort);
+-  VTRACE(_T("@@@ Created resource %08x %s\n"),(unsigned int)this,(LPCTSTR)Image());
++  VTRACE(_T("@@@ Created resource %08x %s\n"),(uintptr_t)this,(LPCTSTR)Image());
+   Chain();
+ }
+ 
+diff -r c8f21fa31800 host/tools/ecostest/common/eCosTestDownloadFilter.cpp
+--- a/host/tools/ecostest/common/eCosTestDownloadFilter.cpp	Sun May 27 18:34:01 2012 +0000
++++ b/host/tools/ecostest/common/eCosTestDownloadFilter.cpp	Sun Jun 03 10:00:21 2012 +0800
+@@ -288,7 +288,7 @@
+ 
+         int resend = 1;
+         const unsigned char* write_ptr = (const unsigned char*) buf2.Data();
+-        int write_len = (int)p-(int)buf2.Data();
++        int write_len = (intptr_t)p-(intptr_t)buf2.Data();
+         while (resend)
+         {
+             unsigned int __written;

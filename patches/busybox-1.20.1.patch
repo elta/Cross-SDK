@@ -1,0 +1,10 @@
+--- busybox-1.20.1/include/libbb.h	2012-05-28 08:46:41.000000000 +0800
++++ busybox/busybox-1.20.1/include/libbb.h	2012-08-16 16:13:33.701618990 +0800
+@@ -40,6 +40,7 @@
+ #include <sys/poll.h>
+ #include <sys/ioctl.h>
+ #include <sys/mman.h>
++#include <sys/resource.h>
+ #include <sys/socket.h>
+ #include <sys/stat.h>
+ #include <sys/time.h>
