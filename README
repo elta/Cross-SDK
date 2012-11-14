@@ -1,10 +1,18 @@
 This is a OpenSurce Cross Platform SDK.
 
+Our aim is build a easy to use Cross SDK, you are welcome to use and hack
+this project, let's make it better together.
+
+I'll try my best to fix all the toolchain bugs, and keep the other members
+maintain their part of the SDK.
+
+===============================================================================
 GNU root FS part is come from CLFS, IDE-plugin is writen by Dongxue-Zhang.
 
 ===============================================================================
 TODO:
 - Debugger support
+- Static Analyzer support
 - U-Boot config support
 - Linux config support
 - RTEMS support
@@ -26,11 +34,16 @@ ${TOOL}.sh ${SDK_PREFIX}
 ${ROOS_FS}.sh ${SDK_PREFIX}
 
 Excample:
+run
 tool-gnu64.sh /home/jia/sdk
-tool-gnu32.sh /home/jia/sdk
-fs-gnu-multilib.sh /home/jia/sdk
-fs-gnu-64.sh /home/jia/sdk
-fs-gnu-32.sh /home/jia/sdk
+to get 64bit gnu toolchain.
+
+run
+mips64el-multilib-stage1.sh /home/jia/sdk
+mips64el-multilib-stage2.sh /home/jia/sdk
+mips64el-multilib-stage3.sh /home/jia/sdk
+mips64el-multilib-stage4.sh /home/jia/sdk
+to get 64bit multilib gnu root fs.
 
 Notice:
 It will take a huge disk space in your disk, make sure you run them in
