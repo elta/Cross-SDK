@@ -253,9 +253,11 @@ export ZLIB_URL=http://zlib.net
 export QTC_VERSION=2.5.2-src
 export QTC_SUFFIX=${GZ}
 export QTC_URL=http://releases.qt-project.org/qtcreator/2.5.2/
+
 export QEMU_GITURL=git://git.qemu-project.org/qemu.git
 export OPENOCD_GITURL=git://openocd.git.sourceforge.net/gitroot/openocd/openocd
 export UBOOT_GITURL=git://git.denx.de/u-boot.git
+export CROSSPROJECTMANAGER_GITURL=https://github.com/elta/crossprojectmanager.git
 
 function die() {
   echo "$1"
@@ -805,4 +807,9 @@ pushd ${SRC_LIVE}
 [ -f ${METADATA}/uboot_git ] || \
   git clone ${UBOOT_GITURL} && \
     touch ${METADATA}/uboot_git
+
+#crossprojectmanager
+[ -f ${METADATA}/crossprojectmanager_git ] || \
+  git clone ${CROSSPROJECTMANAGER_GITURL} && \
+    touch ${METADATA}/crossprojectmanager_git
 popd
