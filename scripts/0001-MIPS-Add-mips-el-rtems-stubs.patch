@@ -1,0 +1,86 @@
+From c86d37058765473f65eb34ffc9b393bf2165eb05 Mon Sep 17 00:00:00 2001
+From: Jia Liu <proljc@gmail.com>
+Date: Sun, 28 Oct 2012 13:42:28 +0800
+Subject: [PATCH] [MIPS] Add mips*el-rtems stubs
+Content-Type: text/plain; charset="utf-8"
+
+Hi all,
+
+I'm working on several MIPS64-based processors, RTEMS is a part of my SDK.
+When I build a mips64el toolchain for RTEMS, I found that mips*el support
+has beed removed, so, I try to take it back.
+This patch is tested, and the RTEMS patch will summitted by a friend at ICT.
+
+Regards,
+Jia.
+
+ChangeLog
+2012-10-28  Jia Liu  <proljc@gmail.com>
+
+        bfd/
+        * config.bfd: Add mips*el-*-rtems* support.
+
+        gas/
+        * configure.tgt: Change mips-*-elf* | mips-*-rtems*
+        into mips*-*-elf* | mips*-*-rtems*.
+
+        ld/
+        * configure.tgt: Add mips*el-*-rtems*.
+
+
+Signed-off-by: Jia Liu <proljc@gmail.com>
+---
+ bfd/config.bfd    |    3 +--
+ gas/configure.tgt |    2 +-
+ ld/configure.tgt  |    1 +
+ 3 files changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/bfd/config.bfd b/bfd/config.bfd
+index 7def642..1272693 100644
+--- a/bfd/config.bfd
++++ b/bfd/config.bfd
+@@ -57,7 +57,6 @@ case $targ in
+  hppa*-*-rtems* | \
+  *-go32-rtems* | \
+  i[3-7]86*-*-rtemscoff* | \
+- mips*el-*-rtems* | \
+  powerpcle-*-rtems* | \
+  sparc*-*-rtemsaout* | \
+  null)
+@@ -989,7 +988,7 @@ case "${targ}" in
+     targ_selvecs="bfd_elf32_tradlittlemips_vec bfd_elf32_ntradbigmips_vec bfd_elf32_ntradlittlemips_vec bfd_elf64_tradbigmips_vec bfd_elf64_tradlittlemips_vec"
+     want64=true
+     ;;
+-  mips*el-*-elf* | mips*el-*-vxworks* | mips*-*-chorus*)
++  mips*el-*-elf* | mips*el-*-rtems* | mips*el-*-vxworks* | mips*-*-chorus*)
+     targ_defvec=bfd_elf32_littlemips_vec
+     targ_selvecs="bfd_elf32_bigmips_vec bfd_elf64_bigmips_vec bfd_elf64_littlemips_vec"
+     ;;
+diff --git a/gas/configure.tgt b/gas/configure.tgt
+index ff4cb3f..9bc8bee 100644
+--- a/gas/configure.tgt
++++ b/gas/configure.tgt
+@@ -310,7 +310,7 @@ case ${generic_target} in
+   mips-*-sysv4*MP* | mips-*-gnu*)	fmt=elf em=tmips ;;
+   mips*-sde-elf* | mips*-mti-elf*)	fmt=elf em=tmips ;;
+   mips-*-sysv*)				fmt=ecoff ;;
+-  mips-*-elf* | mips-*-rtems*)		fmt=elf ;;
++  mips*-*-elf* | mips*-*-rtems*)	fmt=elf ;;
+   mips-*-netbsd*)			fmt=elf em=tmips ;;
+   mips-*-openbsd*)			fmt=elf em=tmips ;;
+ 
+diff --git a/ld/configure.tgt b/ld/configure.tgt
+index 8d4c349..bdf3fa0 100644
+--- a/ld/configure.tgt
++++ b/ld/configure.tgt
+@@ -429,6 +429,7 @@ mips*-sde-elf* | mips*-mti-elf*)
+ 			targ_extra_emuls="elf32ltsmip elf32btsmipn32 elf64btsmip elf32ltsmipn32 elf64ltsmip" ;;
+ mips*el-*-elf*)		targ_emul=elf32elmip ;;
+ mips*-*-elf*)		targ_emul=elf32ebmip ;;
++mips*el-*-rtems*)	targ_emul=elf32elmip ;;
+ mips*-*-rtems*)		targ_emul=elf32ebmip ;;
+ mips*el-*-vxworks*)	targ_emul=elf32elmipvxworks
+ 			targ_extra_emuls="elf32ebmipvxworks" ;;
+-- 
+1.7.10.2 (Apple Git-33)
+
