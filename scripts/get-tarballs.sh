@@ -154,9 +154,9 @@ export MAKE_URL=http://ftp.gnu.org/gnu/make
 export MAN_VERSION=1.6g
 export MAN_SUFFIX=${GZ}
 export MAN_URL=http://primates.ximian.com/~flucifredi/man
-export MAN_VERSION=3.41
-export MAN_SUFFIX=${XZ}
-export MAN_URL=http://www.kernel.org/pub//linux/docs/man-pages
+export MANPAGES_VERSION=3.41
+export MANPAGES_SUFFIX=${XZ}
+export MANPAGES_URL=http://www.kernel.org/pub//linux/docs/man-pages
 export MODULE_VERSION=3.15
 export MODULE_SUFFIX=${GZ}
 export MODULE_URL=http://pkgs.fedoraproject.org/repo/pkgs/module-init-tools/module-init-tools-3.15.tar.gz/54ea790aa9dfbcfadb250f4571e50013
@@ -641,8 +641,8 @@ download "man-${MAN_VERSION}.${MAN_SUFFIX}" \
 
 #man-pages-3.41.tar.xz
 [ -f man-pages_download ] || \
-download "man-pages-${MAN_VERSION}.${MAN_SUFFIX}" \
-  "${MAN_URL}/man-pages-${MAN_VERSION}.${MAN_SUFFIX}" || \
+download "man-pages-${MANPAGES_VERSION}.${MANPAGES_SUFFIX}" \
+  "${MANPAGES_URL}/man-pages-${MANPAGES_VERSION}.${MANPAGES_SUFFIX}" || \
   die "download man-pages error" && \
     touch man-pages_download
 
