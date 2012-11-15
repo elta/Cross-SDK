@@ -34,7 +34,7 @@ export NEWLIB_VERSION=1.20.0
 export NEWLIB_SUFFIX=${GZ}
 export GDB_VERSION=7.4
 export GDB_SUFFIX=${BZ}
-export QTC_VERSION=2.5.2
+export QTC_VERSION=2.5.2-src
 export TERMCAP_VERSION=1.3.1
 export TERMCAP_SUFFIX=${GZ}
 

@@ -116,8 +116,8 @@ export IPUTILS_VERSION=s20101006
 export IPUTILS_SUFFIX=${BZ}
 export IPUTILS_URL=http://www.skbuff.net/iputils
 export KBD_VERSION=1.15.3
-export KBD_SUFFIX=${GZ}
-export KBD_URL=ftp://devel.altlinux.org/legion/kbd
+export KBD_SUFFIX=${BZ}
+export KBD_URL=http://fossies.org/linux/misc
 export KMOD_VERSION=8
 export KMOD_SUFFIX=${XZ}
 export KMOD_URL=http://www.kernel.org/pub//linux/utils/kernel/kmod
@@ -186,14 +186,13 @@ export PKG_SUFFIX=${GZ}
 export PKG_URL=http://pkgconfig.freedesktop.org/releases
 export PPL_VERSION=0.11.2
 export PPL_SUFFIX=${BZ}
-export PPL_URL=ftp://ftp.cs.unipr.it/pub/ppl/releases/0.11.2
+export PPL_URL=http://bugseng.com/products/ppl/download/ftp/releases/0.11.2
 export PROCPS_VERSION=3.2.8
 export PROCPS_SUFFIX=${GZ}
-export PROCPS_URL=http://procps.sourceforge.net
+export PROCPS_URL=http://fossies.org/linux/misc
 export PSMISC_VERSION=22.17
 export PSMISC_SUFFIX=${GZ}
 export PSMISC_URL=http://downloads.sourceforge.net/psmisc
-export QEMU_URL=git://git.qemu-project.org/qemu.git
 export READLINE_VERSION=6.2
 export READLINE_SUFFIX=${GZ}
 export READLINE_URL=http://ftp.gnu.org/gnu/readline
@@ -256,6 +255,7 @@ export QTC_SUFFIX=${GZ}
 export QTC_URL=http://releases.qt-project.org/qtcreator/2.5.2/
 export QEMU_GITURL=git://git.qemu-project.org/qemu.git
 export OPENOCD_GITURL=git://openocd.git.sourceforge.net/gitroot/openocd/openocd
+export UBOOT_GITURL=git://git.denx.de/u-boot.git
 
 function die() {
   echo "$1"
@@ -559,6 +559,18 @@ download "llvm-${LLVM_VERSION}.${LLVM_SUFFIX}" \
   "${LLVM_URL}/llvm-${LLVM_VERSION}.${LLVM_SUFFIX}" && \
     touch llvm_download
 
+#clang-3.1.src.tar.gz
+[ -f clang_download ] || \
+download "clang-${CLANG_VERSION}.${CLANG_SUFFIX}" \
+  "${CLANG_URL}/clang-${CLANG_VERSION}.${CLANG_SUFFIX}" && \
+    touch clang_download
+
+#compiler-rt-3.1.src.tar.gz
+[ -f crt_download ] || \
+download "compiler-rt-${CRT_VERSION}.${CRT_SUFFIX}" \
+  "${CRT_URL}/compiler-rt-${CRT_VERSION}.${CRT_SUFFIX}" && \
+    touch crt_download
+
 #m4-1.4.16.tar.bz2
 [ -f m4_download ] || \
 download "m4-${M4_VERSION}.${M4_SUFFIX}" \
@@ -771,11 +783,26 @@ download "zlib-${ZLIB_VERSION}.${ZLIB_SUFFIX}" \
   "${ZLIB_URL}/zlib-${ZLIB_VERSION}.${ZLIB_SUFFIX}" && \
     touch zlib_download
 
+#qt-creator-2.5.2-src.tar.gz
+[ -f qt-creator_download ] || \
+download "qt-creator-${QTC_VERSION}.${QTC_SUFFIX}" \
+  "${QTC_URL}/qt-creator-${QTC_VERSION}.${QTC_SUFFIX}" && \
+    touch qt-creator_download
 popd
 
 pushd ${SRC_LIVE}
 #qemu
 [ -f ${METADATA}/qemu_git ] || \
-  git clone ${QEMU_URL} && \
+  git clone ${QEMU_GITURL} && \
     touch ${METADATA}/qemu_git
+
+#openocd
+[ -f ${METADATA}/openocd_git ] || \
+  git clone ${OPENOCD_GITURL} && \
+    touch ${METADATA}/openocd_git
+
+#uboot
+[ -f ${METADATA}/uboot_git ] || \
+  git clone ${UBOOT_GITURL} && \
+    touch ${METADATA}/uboot_git
 popd

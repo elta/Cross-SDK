@@ -35,7 +35,7 @@ export NEWLIB_SUFFIX=${GZ}
 export GDB_VERSION=7.4
 export GDB_SUFFIX=${BZ}
 export QEMU_VERSION=1.1.1
-export QTC_VERSION=2.5.2
+export QTC_VERSION=2.5.2-src
 export TERMCAP_VERSION=1.3.1
 export TERMCAP_SUFFIX=${GZ}
 
@@ -114,9 +114,14 @@ export PATH=${PATH}:${PREFIX64}/bin:${PREFIX32}/bin:${RTEMSPREFIX64}/bin:${RTEMS
 ### universal extract
 #################################################################
 pushd ${SRCUNIVERSAL}
-[ -f ${METADATAUNIVERSAL}/lvm_extract ] || \
+[ -f ${METADATAUNIVERSAL}/llvm_extract ] || \
 tar xf ${TARBALL}/llvm-${LLVM_VERSION}.${LLVM_SUFFIX} && \
   touch ${METADATAUNIVERSAL}/llvm_extract
+
+[ -f ${METADATAUNIVERSAL}/clang_extract ] || \
+cd llvm-${LLVM_VERSION}/tools && \
+tar xf ${TARBALL}/clang-${CLANG_VERSION}.${CLANG_SUFFIX} && \
+  touch ${METADATAUNIVERSAL}/clang_extract
 popd
 
 unset CFLAGS

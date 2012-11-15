@@ -36,6 +36,7 @@ export GDB_VERSION=7.4
 export GDB_SUFFIX=${BZ}
 export QEMU_VERSION=1.1.1
 export QTC_VERSION=2.5.2-src
+export QTC_SUFFIX=${GZ}
 export TERMCAP_VERSION=1.3.1
 export TERMCAP_SUFFIX=${GZ}
 
@@ -144,7 +145,7 @@ pushd ${BUILDUNIVERSAL}
 cd qt-creator-build
 [ -f "${METADATAUNIVERSAL}/qt-creator_configure" ] || \
   qmake PREFIX=${QTCPREFIX} \
-   ${SRCUNIVERSAL}/qt-creator-${QTC_VERSION}-src || \
+   ${SRCUNIVERSAL}/qt-creator-${QTC_VERSION} || \
     die "***config qt-creator error" &&
       touch ${METADATAUNIVERSAL}/qt-creator_configure
 [ -f "${METADATAUNIVERSAL}/qt-creator_build" ] || \
