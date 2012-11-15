@@ -28,8 +28,8 @@ export BINUTILS_VERSION=2.22
 export BINUTILS_SUFFIX=${BZ}
 export GCC_VERSION=4.6.3
 export GCC_SUFFIX=${BZ}
-export GLIBC_VERSION=2.15
-export GLIBC_SUFFIX=${BZ}
+export EGLIBC_VERSION=2.15
+export EGLIBC_SUFFIX=${BZ}
 export NEWLIB_VERSION=1.20.0
 export NEWLIB_SUFFIX=${GZ}
 export GDB_VERSION=7.4
@@ -48,30 +48,30 @@ export SCRIPT="$(pwd)"
 export TARBALL=${SCRIPT}/../tarballs
 export PATCH=${SCRIPT}/../patches
 
-export METADATAUNIVERSAL=${SCRIPT}/../../metadata/universal
-export METADATA64=${SCRIPT}/../../metadata/gnu64
-export METADATA32=${SCRIPT}/../../metadata/gnu32
-export METADATARTEMS64=${SCRIPT}/../../metadata/rtems64
-export METADATARTEMS32=${SCRIPT}/../../metadata/rtems32
-export METADATABARE64=${SCRIPT}/../../metadata/elf64
-export METADATABARE32=${SCRIPT}/../../metadata/elf32
+export METADATAUNIVERSAL=${SCRIPT}/../metadata/universal
+export METADATA64=${SCRIPT}/../metadata/gnu64
+export METADATA32=${SCRIPT}/../metadata/gnu32
+export METADATARTEMS64=${SCRIPT}/../metadata/rtems64
+export METADATARTEMS32=${SCRIPT}/../metadata/rtems32
+export METADATABARE64=${SCRIPT}/../metadata/elf64
+export METADATABARE32=${SCRIPT}/../metadata/elf32
 
-export SRCS=${SCRIPT}/../srcs
-export SRCUNIVERSAL=${SCRIPT}/../../src/universal
-export SRC64=${SCRIPT}/../../src/mips64-linux-tool
-export SRC32=${SCRIPT}/../../src/mips-linux-tool
-export SRCRTEMS64=${SCRIPT}/../../src/mips64-rtems-tool
-export SRCRTEMS32=${SCRIPT}/../../src/mips-rtems-tool
-export SRCBARE64=${SCRIPT}/../../src/mips64-elf-tool
-export SRCBARE32=${SCRIPT}/../../src/mips-elf-tool
+export SRCS=${SCRIPT}/../src_live
+export SRCUNIVERSAL=${SCRIPT}/../src/universal
+export SRC64=${SCRIPT}/../src/mips64-linux-tool
+export SRC32=${SCRIPT}/../src/mips-linux-tool
+export SRCRTEMS64=${SCRIPT}/../src/mips64-rtems-tool
+export SRCRTEMS32=${SCRIPT}/../src/mips-rtems-tool
+export SRCBARE64=${SCRIPT}/../src/mips64-elf-tool
+export SRCBARE32=${SCRIPT}/../src/mips-elf-tool
 
-export BUILDUNIVERSAL=${SCRIPT}/../../build/universal
-export BUILD64=${SCRIPT}/../../build/mips64-linux-tool
-export BUILD32=${SCRIPT}/../../build/mips-linux-tool
-export BUILDRTEMS64=${SCRIPT}/../../build/mips64-rtems-tool
-export BUILDRTEMS32=${SCRIPT}/../../build/mips-rtems-tool
-export BUILDBARE64=${SCRIPT}/../../build/mips64-elf-tool
-export BUILDBARE32=${SCRIPT}/../../build/mips-elf-tool
+export BUILDUNIVERSAL=${SCRIPT}/../build/universal
+export BUILD64=${SCRIPT}/../build/mips64-linux-tool
+export BUILD32=${SCRIPT}/../build/mips-linux-tool
+export BUILDRTEMS64=${SCRIPT}/../build/mips64-rtems-tool
+export BUILDRTEMS32=${SCRIPT}/../build/mips-rtems-tool
+export BUILDBARE64=${SCRIPT}/../build/mips64-elf-tool
+export BUILDBARE32=${SCRIPT}/../build/mips-elf-tool
 
 [[ $# -eq 1 ]] || die "usage: $0 PREFIX"
 export PREFIX="$1"
@@ -114,6 +114,10 @@ export PATH=${PATH}:${PREFIX64}/bin:${PREFIX32}/bin:${RTEMSPREFIX64}/bin:${RTEMS
 ### 64bit gnu extract
 #################################################################
 pushd ${SRC64}
+[ -f ${METADATA64}/linux_extract ] || \
+tar xf ${TARBALL}/linux-${LINUX_VERSION}.${LINUX_SUFFIX} && \
+  touch ${METADATA64}/linux_extract
+
 [ -f ${METADATA64}/gmp_extract ] || \
 tar xf ${TARBALL}/gmp-${GMP_VERSION}.${GMP_SUFFIX} && \
   touch ${METADATA64}/gmp_extract
@@ -142,9 +146,9 @@ tar xf ${TARBALL}/binutils-${BINUTILS_VERSION}.${BINUTILS_SUFFIX} && \
 tar xf ${TARBALL}/gcc-${GCC_VERSION}.${GCC_SUFFIX} && \
   touch ${METADATA64}/gcc_extract
 
-[ -f ${METADATA64}/glibc_extract ] || \
-tar xf ${TARBALL}/glibc-${GLIBC_VERSION}.${GLIBC_SUFFIX} &&\
-  touch ${METADATA64}/glibc_extract
+[ -f ${METADATA64}/eglibc_extract ] || \
+tar xf ${TARBALL}/eglibc-${EGLIBC_VERSION}.${EGLIBC_SUFFIX} &&\
+  touch ${METADATA64}/eglibc_extract
 
 [ -f ${METADATA64}/gdb_extract ] || \
 tar xf ${TARBALL}/gdb-${GDB_VERSION}.${GDB_SUFFIX} && \
@@ -171,7 +175,7 @@ export QEMU_TARGET="mips64el-softmmu,mipsel-softmmu,mipsel-linux-user"
 #################################################################
 ### 64bit gnu build
 #################################################################
-pushd ${SRCS}
+pushd ${SRC64}
 cd linux-${LINUX_VERSION}
 make distclean
 [ -f ${METADATA64}/linux_headers_install ] || make mrproper
@@ -331,9 +335,15 @@ cd gcc-build-stage1
       touch ${METADATA64}/gcc_stage1_install
 popd
 
+pushd ${SRC64}
+cd eglibc-${EGLIBC_VERSION}
+cp -v Makeconfig{,.orig}
+sed -e 's/-lgcc_eh//g' Makeconfig.orig > Makeconfig
+popd
+
 pushd ${BUILD64}
-[ -d "glibc-build-o32" ] || mkdir glibc-build-o32
-cd glibc-build-o32
+[ -d "eglibc-build-o32" ] || mkdir eglibc-build-o32
+cd eglibc-build-o32
 cat > config.cache << "EOF"
 libc_cv_forced_unwind=yes
 libc_cv_c_cleanup=yes
@@ -343,30 +353,30 @@ EOF
 cat > configparms << EOF
 install_root=${SYSROOT64}
 EOF
-[ -f "${METADATA64}/glibc_configure_32" ] || \
+[ -f "${METADATA64}/eglibc_configure_32" ] || \
   BUILD_CC="gcc" CC="${CROSS_TARGET64}-gcc ${O32}" \
   AR="${CROSS_TARGET64}-ar" RANLIB="${CROSS_TARGET64}-ranlib" \
   CFLAGS_FOR_TARGET="-O2" CFLAGS="-O2" \
-  ${SRC64}/glibc-${GLIBC_VERSION}/configure \
+  ${SRC64}/eglibc-${EGLIBC_VERSION}/configure \
   --prefix=/usr --host=${CROSS_TARGET32} --build=${CROSS_HOST} \
   --disable-profile --enable-add-ons \
   --with-tls --enable-kernel=2.6.0 --with-__thread \
   --with-binutils=${PREFIX64}/bin --with-headers=${SYSROOT64}/usr/include \
   --cache-file=config.cache || \
-    die "***config o32 glibc error" && \
-      touch ${METADATA64}/glibc_configure_32
-[ -f "${METADATA64}/glibc_build_32" ] || \
-  make -j${JOBS} || die "***build o32 glibc error" && \
-    touch ${METADATA64}/glibc_build_32
-[ -f "${METADATA64}/glibc_install_32" ] || \
+    die "***config o32 eglibc error" && \
+      touch ${METADATA64}/eglibc_configure_32
+[ -f "${METADATA64}/eglibc_build_32" ] || \
+  make -j${JOBS} || die "***build o32 eglibc error" && \
+    touch ${METADATA64}/eglibc_build_32
+[ -f "${METADATA64}/eglibc_install_32" ] || \
   make install inst_vardbdir=${SYSROOT64}/var/db || \
-    die "***install o32 glibc error" && \
-      touch ${METADATA64}/glibc_install_32
+    die "***install o32 eglibc error" && \
+      touch ${METADATA64}/eglibc_install_32
 popd
 
 pushd ${BUILD64}
-[ -d "glibc-build-n32" ] || mkdir glibc-build-n32
-cd glibc-build-n32
+[ -d "eglibc-build-n32" ] || mkdir eglibc-build-n32
+cd eglibc-build-n32
 cat > config.cache << "EOF"
 libc_cv_forced_unwind=yes
 libc_cv_c_cleanup=yes
@@ -377,31 +387,31 @@ cat > configparms << EOF
 install_root=${SYSROOT64}
 slibdir=/lib32
 EOF
-[ -f "${METADATA64}/glibc_configure_n32" ] || \
+[ -f "${METADATA64}/eglibc_configure_n32" ] || \
   BUILD_CC="gcc" CC="${CROSS_TARGET64}-gcc ${N32}" \
   AR="${CROSS_TARGET64}-ar" RANLIB="${CROSS_TARGET64}-ranlib" \
   CFLAGS_FOR_TARGET="-O2" CFLAGS="-O2" \
-  ${SRC64}/glibc-${GLIBC_VERSION}/configure \
+  ${SRC64}/eglibc-${EGLIBC_VERSION}/configure \
   --prefix=/usr --host=${CROSS_TARGET64} --build=${CROSS_HOST} \
   --libdir=/usr/lib32 \
   --disable-profile --enable-add-ons \
   --with-tls --enable-kernel=2.6.0 --with-__thread \
   --with-binutils=${PREFIX64}/bin --with-headers=${SYSROOT64}/usr/include \
   --cache-file=config.cache || \
-    die "***config n32 glibc error" && \
-      touch ${METADATA64}/glibc_configure_n32
-[ -f "${METADATA64}/glibc_build_n32" ] || \
-  make -j${JOBS} || die "***build n32 glibc error" && \
-    touch ${METADATA64}/glibc_build_n32
-[ -f "${METADATA64}/glibc_install_n32" ] || \
+    die "***config n32 eglibc error" && \
+      touch ${METADATA64}/eglibc_configure_n32
+[ -f "${METADATA64}/eglibc_build_n32" ] || \
+  make -j${JOBS} || die "***build n32 eglibc error" && \
+    touch ${METADATA64}/eglibc_build_n32
+[ -f "${METADATA64}/eglibc_install_n32" ] || \
   make install inst_vardbdir=${SYSROOT64}/var/db || \
-    die "***install n32 glibc error" && \
-      touch ${METADATA64}/glibc_install_n32
+    die "***install n32 eglibc error" && \
+      touch ${METADATA64}/eglibc_install_n32
 popd
 
 pushd ${BUILD64}
-[ -d "glibc-build-n64" ] || mkdir glibc-build-n64
-cd glibc-build-n64
+[ -d "eglibc-build-n64" ] || mkdir eglibc-build-n64
+cd eglibc-build-n64
 cat > config.cache << "EOF"
 libc_cv_forced_unwind=yes
 libc_cv_c_cleanup=yes
@@ -412,26 +422,26 @@ cat > configparms << EOF
 install_root=${SYSROOT64}
 slibdir=/lib64
 EOF
-[ -f "${METADATA64}/glibc_configure_64" ] || \
+[ -f "${METADATA64}/eglibc_configure_64" ] || \
   BUILD_CC="gcc" CC="${CROSS_TARGET64}-gcc ${N64}" \
   AR="${CROSS_TARGET64}-ar" RANLIB="${CROSS_TARGET64}-ranlib" \
   CFLAGS_FOR_TARGET="-O2" CFLAGS="-O2" \
-  ${SRC64}/glibc-${GLIBC_VERSION}/configure \
+  ${SRC64}/eglibc-${EGLIBC_VERSION}/configure \
   --prefix=/usr --host=${CROSS_TARGET64} --build=${CROSS_HOST} \
   --libdir=/usr/lib64 \
   --disable-profile --enable-add-ons \
   --with-tls --enable-kernel=2.6.0 --with-__thread \
   --with-binutils=${PREFIX64}/bin --with-headers=${SYSROOT64}/usr/include \
   --cache-file=config.cache || \
-    die "***config 64bit glibc error" && \
-      touch ${METADATA64}/glibc_configure_64
-[ -f "${METADATA64}/glibc_build_64" ] || \
-  make -j${JOBS} || die "***build 64bit glibc error" && \
-    touch ${METADATA64}/glibc_build_64
-[ -f "${METADATA64}/glibc_install_64" ] || \
+    die "***config 64bit eglibc error" && \
+      touch ${METADATA64}/eglibc_configure_64
+[ -f "${METADATA64}/eglibc_build_64" ] || \
+  make -j${JOBS} || die "***build 64bit eglibc error" && \
+    touch ${METADATA64}/eglibc_build_64
+[ -f "${METADATA64}/eglibc_install_64" ] || \
   make install inst_vardbdir=${SYSROOT64}/var/db || \
-    die "***install 64bit glibc error" && \
-      touch ${METADATA64}/glibc_install_64
+    die "***install 64bit eglibc error" && \
+      touch ${METADATA64}/eglibc_install_64
 popd
 
 pushd ${BUILD64}

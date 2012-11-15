@@ -28,8 +28,8 @@ export BINUTILS_VERSION=2.22
 export BINUTILS_SUFFIX=${BZ}
 export GCC_VERSION=4.6.3
 export GCC_SUFFIX=${BZ}
-export GLIBC_VERSION=2.15
-export GLIBC_SUFFIX=${BZ}
+export EGLIBC_VERSION=2.15
+export EGLIBC_SUFFIX=${BZ}
 export NEWLIB_VERSION=1.20.0
 export NEWLIB_SUFFIX=${GZ}
 export GDB_VERSION=7.4
@@ -48,30 +48,30 @@ export SCRIPT="$(pwd)"
 export TARBALL=${SCRIPT}/../tarballs
 export PATCH=${SCRIPT}/../patches
 
-export METADATAUNIVERSAL=${SCRIPT}/../../metadata/universal
-export METADATA64=${SCRIPT}/../../metadata/gnu64
-export METADATA32=${SCRIPT}/../../metadata/gnu32
-export METADATARTEMS64=${SCRIPT}/../../metadata/rtems64
-export METADATARTEMS32=${SCRIPT}/../../metadata/rtems32
-export METADATABARE64=${SCRIPT}/../../metadata/elf64
-export METADATABARE32=${SCRIPT}/../../metadata/elf32
+export METADATAUNIVERSAL=${SCRIPT}/../metadata/universal
+export METADATA64=${SCRIPT}/../metadata/gnu64
+export METADATA32=${SCRIPT}/../metadata/gnu32
+export METADATARTEMS64=${SCRIPT}/../metadata/rtems64
+export METADATARTEMS32=${SCRIPT}/../metadata/rtems32
+export METADATABARE64=${SCRIPT}/../metadata/elf64
+export METADATABARE32=${SCRIPT}/../metadata/elf32
 
-export SRCS=${SCRIPT}/../srcs
-export SRCUNIVERSAL=${SCRIPT}/../../src/universal
-export SRC64=${SCRIPT}/../../src/mips64-linux-tool
-export SRC32=${SCRIPT}/../../src/mips-linux-tool
-export SRCRTEMS64=${SCRIPT}/../../src/mips64-rtems-tool
-export SRCRTEMS32=${SCRIPT}/../../src/mips-rtems-tool
-export SRCBARE64=${SCRIPT}/../../src/mips64-elf-tool
-export SRCBARE32=${SCRIPT}/../../src/mips-elf-tool
+export SRCS=${SCRIPT}/../src_live
+export SRCUNIVERSAL=${SCRIPT}/../src/universal
+export SRC64=${SCRIPT}/../src/mips64-linux-tool
+export SRC32=${SCRIPT}/../src/mips-linux-tool
+export SRCRTEMS64=${SCRIPT}/../src/mips64-rtems-tool
+export SRCRTEMS32=${SCRIPT}/../src/mips-rtems-tool
+export SRCBARE64=${SCRIPT}/../src/mips64-elf-tool
+export SRCBARE32=${SCRIPT}/../src/mips-elf-tool
 
-export BUILDUNIVERSAL=${SCRIPT}/../../build/universal
-export BUILD64=${SCRIPT}/../../build/mips64-linux-tool
-export BUILD32=${SCRIPT}/../../build/mips-linux-tool
-export BUILDRTEMS64=${SCRIPT}/../../build/mips64-rtems-tool
-export BUILDRTEMS32=${SCRIPT}/../../build/mips-rtems-tool
-export BUILDBARE64=${SCRIPT}/../../build/mips64-elf-tool
-export BUILDBARE32=${SCRIPT}/../../build/mips-elf-tool
+export BUILDUNIVERSAL=${SCRIPT}/../build/universal
+export BUILD64=${SCRIPT}/../build/mips64-linux-tool
+export BUILD32=${SCRIPT}/../build/mips-linux-tool
+export BUILDRTEMS64=${SCRIPT}/../build/mips64-rtems-tool
+export BUILDRTEMS32=${SCRIPT}/../build/mips-rtems-tool
+export BUILDBARE64=${SCRIPT}/../build/mips64-elf-tool
+export BUILDBARE32=${SCRIPT}/../build/mips-elf-tool
 
 [[ $# -eq 1 ]] || die "usage: $0 PREFIX"
 export PREFIX="$1"
@@ -114,6 +114,10 @@ export PATH=${PATH}:${PREFIX64}/bin:${PREFIX32}/bin:${RTEMSPREFIX64}/bin:${RTEMS
 ### 32bit gnu extract
 #################################################################
 pushd ${SRC32}
+[ -f ${METADATA32}/linux_extract ] || \
+tar xf ${TARBALL}/linux-${LINUX_VERSION}.${LINUX_SUFFIX} && \
+  touch ${METADATA32}/linux_extract
+
 [ -f ${METADATA32}/gmp_extract ] || \
 tar xf ${TARBALL}/gmp-${GMP_VERSION}.${GMP_SUFFIX} && \
   touch ${METADATA32}/gmp_extract
@@ -142,9 +146,9 @@ tar xf ${TARBALL}/binutils-${BINUTILS_VERSION}.${BINUTILS_SUFFIX} && \
 tar xf ${TARBALL}/gcc-${GCC_VERSION}.${GCC_SUFFIX} && \
   touch ${METADATA32}/gcc_extract
 
-[ -f ${METADATA32}/glibc_extract ] || \
-tar xf ${TARBALL}/glibc-${GLIBC_VERSION}.${GLIBC_SUFFIX} &&\
-  touch ${METADATA32}/glibc_extract
+[ -f ${METADATA32}/eglibc_extract ] || \
+tar xf ${TARBALL}/eglibc-${EGLIBC_VERSION}.${EGLIBC_SUFFIX} &&\
+  touch ${METADATA32}/eglibc_extract
 
 [ -f ${METADATA32}/gdb_extract ] || \
 tar xf ${TARBALL}/gdb-${GDB_VERSION}.${GDB_SUFFIX} && \
@@ -171,7 +175,7 @@ export QEMU_TARGET="mips64el-softmmu,mipsel-softmmu,mipsel-linux-user"
 #################################################################
 ### 32bit gnu build
 #################################################################
-pushd ${SRCS}
+pushd ${SRC32}
 cd linux-${LINUX_VERSION}
 make distclean
 [ -f ${METADATA32}/linux_headers_install ] || make mrproper
@@ -331,9 +335,15 @@ cd gcc-build-stage1
       touch ${METADATA32}/gcc_stage1_install
 popd
 
+pushd ${SRC32}
+cd eglibc-${EGLIBC_VERSION}
+cp -v Makeconfig{,.orig}
+sed -e 's/-lgcc_eh//g' Makeconfig.orig > Makeconfig
+popd
+
 pushd ${BUILD32}
-[ -d "glibc-build-o32" ] || mkdir glibc-build-o32
-cd glibc-build-o32
+[ -d "eglibc-build-o32" ] || mkdir eglibc-build-o32
+cd eglibc-build-o32
 cat > config.cache << "EOF"
 libc_cv_forced_unwind=yes
 libc_cv_c_cleanup=yes
@@ -343,25 +353,25 @@ EOF
 cat > configparms << EOF
 install_root=${SYSROOT32}
 EOF
-[ -f "${METADATA32}/glibc_configure_32" ] || \
+[ -f "${METADATA32}/eglibc_configure_32" ] || \
   BUILD_CC="gcc" CC="${CROSS_TARGET32}-gcc" \
   AR="${CROSS_TARGET32}-ar" RANLIB="${CROSS_TARGET32}-ranlib" \
   CFLAGS_FOR_TARGET="-O2" CFLAGS="-O2" \
-  ${SRC32}/glibc-${GLIBC_VERSION}/configure \
+  ${SRC32}/eglibc-${EGLIBC_VERSION}/configure \
   --prefix=/usr --host=${CROSS_TARGET32} --build=${CROSS_HOST} \
   --disable-profile --enable-add-ons \
   --with-tls --enable-kernel=2.6.0 --with-__thread \
   --with-binutils=${PREFIX32}/bin --with-headers=${SYSROOT32}/usr/include \
   --cache-file=config.cache || \
-    die "***config 32bit glibc error" && \
-      touch ${METADATA32}/glibc_configure_32
-[ -f "${METADATA32}/glibc_build_32" ] || \
-  make -j${JOBS} || die "***build 32bit glibc error" && \
-    touch ${METADATA32}/glibc_build_32
-[ -f "${METADATA32}/glibc_install_32" ] || \
+    die "***config 32bit eglibc error" && \
+      touch ${METADATA32}/eglibc_configure_32
+[ -f "${METADATA32}/eglibc_build_32" ] || \
+  make -j${JOBS} || die "***build 32bit eglibc error" && \
+    touch ${METADATA32}/eglibc_build_32
+[ -f "${METADATA32}/eglibc_install_32" ] || \
   make install inst_vardbdir=${SYSROOT32}/var/db || \
-    die "***install 32bit glibc error" && \
-      touch ${METADATA32}/glibc_install_32
+    die "***install 32bit eglibc error" && \
+      touch ${METADATA32}/eglibc_install_32
 popd
 
 pushd ${BUILD32}

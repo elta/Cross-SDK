@@ -35,7 +35,7 @@ export NEWLIB_SUFFIX=${GZ}
 export GDB_VERSION=7.4
 export GDB_SUFFIX=${BZ}
 export QEMU_VERSION=1.1.1
-export QTC_VERSION=2.5.2
+export QTC_VERSION=2.5.2-src
 export TERMCAP_VERSION=1.3.1
 export TERMCAP_SUFFIX=${GZ}
 
@@ -48,30 +48,30 @@ export SCRIPT="$(pwd)"
 export TARBALL=${SCRIPT}/../tarballs
 export PATCH=${SCRIPT}/../patches
 
-export METADATAUNIVERSAL=${SCRIPT}/../../metadata/universal
-export METADATA64=${SCRIPT}/../../metadata/gnu64
-export METADATA32=${SCRIPT}/../../metadata/gnu32
-export METADATARTEMS64=${SCRIPT}/../../metadata/rtems64
-export METADATARTEMS32=${SCRIPT}/../../metadata/rtems32
-export METADATABARE64=${SCRIPT}/../../metadata/elf64
-export METADATABARE32=${SCRIPT}/../../metadata/elf32
+export METADATAUNIVERSAL=${SCRIPT}/../metadata/universal
+export METADATA64=${SCRIPT}/../metadata/gnu64
+export METADATA32=${SCRIPT}/../metadata/gnu32
+export METADATARTEMS64=${SCRIPT}/../metadata/rtems64
+export METADATARTEMS32=${SCRIPT}/../metadata/rtems32
+export METADATABARE64=${SCRIPT}/../metadata/elf64
+export METADATABARE32=${SCRIPT}/../metadata/elf32
 
-export SRCS=${SCRIPT}/../srcs
-export SRCUNIVERSAL=${SCRIPT}/../../src/universal
-export SRC64=${SCRIPT}/../../src/mips64-linux-tool
-export SRC32=${SCRIPT}/../../src/mips-linux-tool
-export SRCRTEMS64=${SCRIPT}/../../src/mips64-rtems-tool
-export SRCRTEMS32=${SCRIPT}/../../src/mips-rtems-tool
-export SRCBARE64=${SCRIPT}/../../src/mips64-elf-tool
-export SRCBARE32=${SCRIPT}/../../src/mips-elf-tool
+export SRCS=${SCRIPT}/../src_live
+export SRCUNIVERSAL=${SCRIPT}/../src/universal
+export SRC64=${SCRIPT}/../src/mips64-linux-tool
+export SRC32=${SCRIPT}/../src/mips-linux-tool
+export SRCRTEMS64=${SCRIPT}/../src/mips64-rtems-tool
+export SRCRTEMS32=${SCRIPT}/../src/mips-rtems-tool
+export SRCBARE64=${SCRIPT}/../src/mips64-elf-tool
+export SRCBARE32=${SCRIPT}/../src/mips-elf-tool
 
-export BUILDUNIVERSAL=${SCRIPT}/../../build/universal
-export BUILD64=${SCRIPT}/../../build/mips64-linux-tool
-export BUILD32=${SCRIPT}/../../build/mips-linux-tool
-export BUILDRTEMS64=${SCRIPT}/../../build/mips64-rtems-tool
-export BUILDRTEMS32=${SCRIPT}/../../build/mips-rtems-tool
-export BUILDBARE64=${SCRIPT}/../../build/mips64-elf-tool
-export BUILDBARE32=${SCRIPT}/../../build/mips-elf-tool
+export BUILDUNIVERSAL=${SCRIPT}/../build/universal
+export BUILD64=${SCRIPT}/../build/mips64-linux-tool
+export BUILD32=${SCRIPT}/../build/mips-linux-tool
+export BUILDRTEMS64=${SCRIPT}/../build/mips64-rtems-tool
+export BUILDRTEMS32=${SCRIPT}/../build/mips-rtems-tool
+export BUILDBARE64=${SCRIPT}/../build/mips64-elf-tool
+export BUILDBARE32=${SCRIPT}/../build/mips-elf-tool
 
 [[ $# -eq 1 ]] || die "usage: $0 PREFIX"
 export PREFIX="$1"
@@ -114,9 +114,9 @@ export PATH=${PATH}:${PREFIX64}/bin:${PREFIX32}/bin:${RTEMSPREFIX64}/bin:${RTEMS
 ### universal extract
 #################################################################
 pushd ${SRCUNIVERSAL}
-[ -f ${METADATAUNIVERSAL}/lvm_extract ] || \
-tar xf ${TARBALL}/llvm-${LLVM_VERSION}.${LLVM_SUFFIX} && \
-  touch ${METADATAUNIVERSAL}/llvm_extract
+[ -f ${METADATAUNIVERSAL}/qtc_extract ] || \
+tar xf ${TARBALL}/qt-creator-${QTC_VERSION}.${QTC_SUFFIX} && \
+  touch ${METADATAUNIVERSAL}/qtc_extract
 popd
 
 unset CFLAGS
@@ -144,7 +144,7 @@ pushd ${BUILDUNIVERSAL}
 cd qt-creator-build
 [ -f "${METADATAUNIVERSAL}/qt-creator_configure" ] || \
   qmake PREFIX=${QTCPREFIX} \
-   ${SRCS}/qt-creator-${QTC_VERSION}-src || \
+   ${SRCUNIVERSAL}/qt-creator-${QTC_VERSION}-src || \
     die "***config qt-creator error" &&
       touch ${METADATAUNIVERSAL}/qt-creator_configure
 [ -f "${METADATAUNIVERSAL}/qt-creator_build" ] || \

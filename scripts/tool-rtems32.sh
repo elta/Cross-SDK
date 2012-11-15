@@ -48,30 +48,30 @@ export SCRIPT="$(pwd)"
 export TARBALL=${SCRIPT}/../tarballs
 export PATCH=${SCRIPT}/../patches
 
-export METADATAUNIVERSAL=${SCRIPT}/../../metadata/universal
-export METADATA64=${SCRIPT}/../../metadata/gnu64
-export METADATA32=${SCRIPT}/../../metadata/gnu32
-export METADATARTEMS64=${SCRIPT}/../../metadata/rtems64
-export METADATARTEMS32=${SCRIPT}/../../metadata/rtems32
-export METADATABARE64=${SCRIPT}/../../metadata/elf64
-export METADATABARE32=${SCRIPT}/../../metadata/elf32
+export METADATAUNIVERSAL=${SCRIPT}/../metadata/universal
+export METADATA64=${SCRIPT}/../metadata/gnu64
+export METADATA32=${SCRIPT}/../metadata/gnu32
+export METADATARTEMS64=${SCRIPT}/../metadata/rtems64
+export METADATARTEMS32=${SCRIPT}/../metadata/rtems32
+export METADATABARE64=${SCRIPT}/../metadata/elf64
+export METADATABARE32=${SCRIPT}/../metadata/elf32
 
-export SRCS=${SCRIPT}/../srcs
-export SRCUNIVERSAL=${SCRIPT}/../../src/universal
-export SRC64=${SCRIPT}/../../src/mips64-linux-tool
-export SRC32=${SCRIPT}/../../src/mips-linux-tool
-export SRCRTEMS64=${SCRIPT}/../../src/mips64-rtems-tool
-export SRCRTEMS32=${SCRIPT}/../../src/mips-rtems-tool
-export SRCBARE64=${SCRIPT}/../../src/mips64-elf-tool
-export SRCBARE32=${SCRIPT}/../../src/mips-elf-tool
+export SRCS=${SCRIPT}/../src_live
+export SRCUNIVERSAL=${SCRIPT}/../src/universal
+export SRC64=${SCRIPT}/../src/mips64-linux-tool
+export SRC32=${SCRIPT}/../src/mips-linux-tool
+export SRCRTEMS64=${SCRIPT}/../src/mips64-rtems-tool
+export SRCRTEMS32=${SCRIPT}/../src/mips-rtems-tool
+export SRCBARE64=${SCRIPT}/../src/mips64-elf-tool
+export SRCBARE32=${SCRIPT}/../src/mips-elf-tool
 
-export BUILDUNIVERSAL=${SCRIPT}/../../build/universal
-export BUILD64=${SCRIPT}/../../build/mips64-linux-tool
-export BUILD32=${SCRIPT}/../../build/mips-linux-tool
-export BUILDRTEMS64=${SCRIPT}/../../build/mips64-rtems-tool
-export BUILDRTEMS32=${SCRIPT}/../../build/mips-rtems-tool
-export BUILDBARE64=${SCRIPT}/../../build/mips64-elf-tool
-export BUILDBARE32=${SCRIPT}/../../build/mips-elf-tool
+export BUILDUNIVERSAL=${SCRIPT}/../build/universal
+export BUILD64=${SCRIPT}/../build/mips64-linux-tool
+export BUILD32=${SCRIPT}/../build/mips-linux-tool
+export BUILDRTEMS64=${SCRIPT}/../build/mips64-rtems-tool
+export BUILDRTEMS32=${SCRIPT}/../build/mips-rtems-tool
+export BUILDBARE64=${SCRIPT}/../build/mips64-elf-tool
+export BUILDBARE32=${SCRIPT}/../build/mips-elf-tool
 
 [[ $# -eq 1 ]] || die "usage: $0 PREFIX"
 export PREFIX="$1"
@@ -159,6 +159,11 @@ pushd ${SRCRTEMS32}/binutils-${BINUTILS_VERSION}
 patch -p1 < ${PATCH}/binutils-2.22-rtems4.11-20120427.diff || \
   die "patch 32bit binutils error" && \
   touch ${METADATARTEMS32}/binutils_patched
+
+[ -f ${METADATARTEMS32}/binutils_patched2 ] || \
+patch -p1 < ${PATCH}/0001-MIPS-Add-mips-el-rtems-stubs.patch || \
+  die "patch 32bit binutils error2" && \
+  touch ${METADATARTEMS32}/binutils_patched2
 popd
 
 pushd ${SRCRTEMS32}/gcc-${GCC_VERSION}
@@ -180,6 +185,11 @@ pushd ${SRCRTEMS32}/gdb-${GDB_VERSION}
 patch -p1 < ${PATCH}/gdb-7.4-rtems4.11-20120125.diff || \
   die "patch 32bit gdb error" && \
   touch ${METADATARTEMS32}/gdb_patched
+
+[ -f ${METADATARTEMS32}/gdb_patched2 ] || \
+patch -p1 < ${PATCH}/0002-MIPS-Add-mips-el-rtems-stubs.patch || \
+  die "patch 32bit gdb error2" && \
+  touch ${METADATARTEMS32}/gdb_patched2
 popd
 
 pushd ${SRCRTEMS32}/gcc-${GCC_VERSION}

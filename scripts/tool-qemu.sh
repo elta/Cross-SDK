@@ -34,7 +34,6 @@ export NEWLIB_VERSION=1.20.0
 export NEWLIB_SUFFIX=${GZ}
 export GDB_VERSION=7.4
 export GDB_SUFFIX=${BZ}
-export QEMU_VERSION=1.1.1
 export QTC_VERSION=2.5.2
 export TERMCAP_VERSION=1.3.1
 export TERMCAP_SUFFIX=${GZ}
@@ -48,30 +47,30 @@ export SCRIPT="$(pwd)"
 export TARBALL=${SCRIPT}/../tarballs
 export PATCH=${SCRIPT}/../patches
 
-export METADATAUNIVERSAL=${SCRIPT}/../../metadata/universal
-export METADATA64=${SCRIPT}/../../metadata/gnu64
-export METADATA32=${SCRIPT}/../../metadata/gnu32
-export METADATARTEMS64=${SCRIPT}/../../metadata/rtems64
-export METADATARTEMS32=${SCRIPT}/../../metadata/rtems32
-export METADATABARE64=${SCRIPT}/../../metadata/elf64
-export METADATABARE32=${SCRIPT}/../../metadata/elf32
+export METADATAUNIVERSAL=${SCRIPT}/../metadata/universal
+export METADATA64=${SCRIPT}/../metadata/gnu64
+export METADATA32=${SCRIPT}/../metadata/gnu32
+export METADATARTEMS64=${SCRIPT}/../metadata/rtems64
+export METADATARTEMS32=${SCRIPT}/../metadata/rtems32
+export METADATABARE64=${SCRIPT}/../metadata/elf64
+export METADATABARE32=${SCRIPT}/../metadata/elf32
 
-export SRCS=${SCRIPT}/../srcs
-export SRCUNIVERSAL=${SCRIPT}/../../src/universal
-export SRC64=${SCRIPT}/../../src/mips64-linux-tool
-export SRC32=${SCRIPT}/../../src/mips-linux-tool
-export SRCRTEMS64=${SCRIPT}/../../src/mips64-rtems-tool
-export SRCRTEMS32=${SCRIPT}/../../src/mips-rtems-tool
-export SRCBARE64=${SCRIPT}/../../src/mips64-elf-tool
-export SRCBARE32=${SCRIPT}/../../src/mips-elf-tool
+export SRCS=${SCRIPT}/../src_live
+export SRCUNIVERSAL=${SCRIPT}/../src/universal
+export SRC64=${SCRIPT}/../src/mips64-linux-tool
+export SRC32=${SCRIPT}/../src/mips-linux-tool
+export SRCRTEMS64=${SCRIPT}/../src/mips64-rtems-tool
+export SRCRTEMS32=${SCRIPT}/../src/mips-rtems-tool
+export SRCBARE64=${SCRIPT}/../src/mips64-elf-tool
+export SRCBARE32=${SCRIPT}/../src/mips-elf-tool
 
-export BUILDUNIVERSAL=${SCRIPT}/../../build/universal
-export BUILD64=${SCRIPT}/../../build/mips64-linux-tool
-export BUILD32=${SCRIPT}/../../build/mips-linux-tool
-export BUILDRTEMS64=${SCRIPT}/../../build/mips64-rtems-tool
-export BUILDRTEMS32=${SCRIPT}/../../build/mips-rtems-tool
-export BUILDBARE64=${SCRIPT}/../../build/mips64-elf-tool
-export BUILDBARE32=${SCRIPT}/../../build/mips-elf-tool
+export BUILDUNIVERSAL=${SCRIPT}/../build/universal
+export BUILD64=${SCRIPT}/../build/mips64-linux-tool
+export BUILD32=${SCRIPT}/../build/mips-linux-tool
+export BUILDRTEMS64=${SCRIPT}/../build/mips64-rtems-tool
+export BUILDRTEMS32=${SCRIPT}/../build/mips-rtems-tool
+export BUILDBARE64=${SCRIPT}/../build/mips64-elf-tool
+export BUILDBARE32=${SCRIPT}/../build/mips-elf-tool
 
 [[ $# -eq 1 ]] || die "usage: $0 PREFIX"
 export PREFIX="$1"
@@ -143,7 +142,7 @@ pushd ${BUILDUNIVERSAL}
 [ -d "qemu-build" ] || mkdir qemu-build
 cd qemu-build
 [ -f "${METADATAUNIVERSAL}/qemu_configure" ] || \
-  ${SRCS}/qemu-${QEMU_VERSION}/configure \
+  ${SRCS}/qemu/configure \
   --prefix=${QEMUPREFIX} --target-list=${QEMU_TARGET} \
   --enable-debug-tcg || \
     die "***config qemu error" &&
