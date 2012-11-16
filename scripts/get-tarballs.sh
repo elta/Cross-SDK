@@ -269,7 +269,7 @@ export SCRIPT="$(pwd)"
 export TARBALL=${SCRIPT}/../tarballs
 export PATCH=${SCRIPT}/../patches
 export SRC_LIVE=${SCRIPT}/../src_live
-export METADATA=${SCRIPT}/../metadata
+export METADATADOWN=${SCRIPT}/../metadata/download
 export SRC=${SCRIPT}/../src
 export BUILD=${SCRIPT}/../build
 
@@ -283,11 +283,10 @@ function download()
 }
 
 [ -d "${TARBALL}" ] || mkdir -p "${TARBALL}"
-[ -d "${PATCH}" ] || mkdir -p "${TARBALL}"
 [ -d "${SRC_LIVE}" ] || mkdir -p "${SRC_LIVE}"
-[ -d "${METADATA}" ] || mkdir -p "${METADATA}"
+[ -d "${METADATADOWN}" ] || mkdir -p "${METADATADOWN}"
 
-pushd ${METADATA}
+pushd ${METADATADOWN}
 
 #arcload-0.5.tar.bz2
 #[ -f arcload_download ] || \
@@ -866,26 +865,26 @@ popd
 
 pushd ${SRC_LIVE}
 #qemu
-[ -f ${METADATA}/qemu_git ] || \
+[ -f ${METADATADOWN}/qemu_git ] || \
   git clone ${QEMU_GITURL} || \
   die "download qemu error" && \
-    touch ${METADATA}/qemu_git
+    touch ${METADATADOWN}/qemu_git
 
 #openocd
-[ -f ${METADATA}/openocd_git ] || \
+[ -f ${METADATADOWN}/openocd_git ] || \
   git clone ${OPENOCD_GITURL} || \
   die "download openocd error" && \
-    touch ${METADATA}/openocd_git
+    touch ${METADATADOWN}/openocd_git
 
 #uboot
-[ -f ${METADATA}/uboot_git ] || \
+[ -f ${METADATADOWN}/uboot_git ] || \
   git clone ${UBOOT_GITURL} || \
   die "download uboot error" && \
-    touch ${METADATA}/uboot_git
+    touch ${METADATADOWN}/uboot_git
 
 #crossprojectmanager
-[ -f ${METADATA}/crossprojectmanager_git ] || \
+[ -f ${METADATADOWN}/crossprojectmanager_git ] || \
   git clone ${CROSSPROJECTMANAGER_GITURL} || \
   die "download IDE plugin error" && \
-    touch ${METADATA}/crossprojectmanager_git
+    touch ${METADATADOWN}/crossprojectmanager_git
 popd
