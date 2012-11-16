@@ -48,30 +48,11 @@ export SCRIPT="$(pwd)"
 export TARBALL=${SCRIPT}/../tarballs
 export PATCH=${SCRIPT}/../patches
 
-export METADATAUNIVERSAL=${SCRIPT}/../metadata/universal
-export METADATA64=${SCRIPT}/../metadata/gnu64
-export METADATA32=${SCRIPT}/../metadata/gnu32
 export METADATARTEMS64=${SCRIPT}/../metadata/rtems64
-export METADATARTEMS32=${SCRIPT}/../metadata/rtems32
-export METADATABARE64=${SCRIPT}/../metadata/elf64
-export METADATABARE32=${SCRIPT}/../metadata/elf32
 
-export SRCS=${SCRIPT}/../src_live
-export SRCUNIVERSAL=${SCRIPT}/../src/universal
-export SRC64=${SCRIPT}/../src/mips64-linux-tool
-export SRC32=${SCRIPT}/../src/mips-linux-tool
 export SRCRTEMS64=${SCRIPT}/../src/mips64-rtems-tool
-export SRCRTEMS32=${SCRIPT}/../src/mips-rtems-tool
-export SRCBARE64=${SCRIPT}/../src/mips64-elf-tool
-export SRCBARE32=${SCRIPT}/../src/mips-elf-tool
 
-export BUILDUNIVERSAL=${SCRIPT}/../build/universal
-export BUILD64=${SCRIPT}/../build/mips64-linux-tool
-export BUILD32=${SCRIPT}/../build/mips-linux-tool
 export BUILDRTEMS64=${SCRIPT}/../build/mips64-rtems-tool
-export BUILDRTEMS32=${SCRIPT}/../build/mips-rtems-tool
-export BUILDBARE64=${SCRIPT}/../build/mips64-elf-tool
-export BUILDBARE32=${SCRIPT}/../build/mips-elf-tool
 
 [[ $# -eq 1 ]] || die "usage: $0 PREFIX"
 export PREFIX="$1"
@@ -86,29 +67,11 @@ export LLVMPREFIX=${PREFIX}/llvm
 export QTCPREFIX=${PREFIX}/qt-creator
 export PATH=${PATH}:${PREFIX64}/bin:${PREFIX32}/bin:${RTEMSPREFIX64}/bin:${RTEMSPREFIX32}/bin:${BAREPREFIX64}/bin:${BAREPREFIX32}/bin
 
-[ -d "${SRCUNIVERSAL}" ] ||  mkdir -p "${SRCUNIVERSAL}"
-[ -d "${SRC64}" ] || mkdir -p "${SRC64}"
-[ -d "${SRC32}" ] || mkdir -p "${SRC32}"
 [ -d "${SRCRTEMS64}" ] || mkdir -p "${SRCRTEMS64}"
-[ -d "${SRCRTEMS32}" ] || mkdir -p "${SRCRTEMS32}"
-[ -d "${SRCBARE64}" ] || mkdir -p "${SRCBARE64}"
-[ -d "${SRCBARE32}" ] || mkdir -p "${SRCBARE32}"
 
-[ -d "${BUILDUNIVERSAL}" ] ||  mkdir -p "${BUILDUNIVERSAL}"
-[ -d "${BUILD64}" ] || mkdir -p "${BUILD64}"
-[ -d "${BUILD32}" ] || mkdir -p "${BUILD32}"
 [ -d "${BUILDRTEMS64}" ] || mkdir -p "${BUILDRTEMS64}"
-[ -d "${BUILDRTEMS32}" ] || mkdir -p "${BUILDRTEMS32}"
-[ -d "${BUILDBARE64}" ] || mkdir -p "${BUILDBARE64}"
-[ -d "${BUILDBARE32}" ] || mkdir -p "${BUILDBARE32}"
 
-[ -d "${METADATAUNIVERSAL}" ] || mkdir -p "${METADATAUNIVERSAL}"
-[ -d "${METADATA64}" ] || mkdir -p "${METADATA64}"
-[ -d "${METADATA32}" ] || mkdir -p "${METADATA32}"
 [ -d "${METADATARTEMS64}" ] || mkdir -p "${METADATARTEMS64}"
-[ -d "${METADATARTEMS32}" ] || mkdir -p "${METADATARTEMS32}"
-[ -d "${METADATABARE64}" ] || mkdir -p "${METADATABARE64}"
-[ -d "${METADATABARE32}" ] || mkdir -p "${METADATABARE32}"
 
 #################################################################
 ### 64bit rtems extract
