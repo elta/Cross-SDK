@@ -78,13 +78,15 @@ export PATH=${PATH}:${PREFIX64}/bin:${PREFIX32}/bin:${RTEMSPREFIX64}/bin:${RTEMS
 #################################################################
 pushd ${SRCUNIVERSAL}
 [ -f ${METADATAUNIVERSAL}/llvm_extract ] || \
-tar xf ${TARBALL}/llvm-${LLVM_VERSION}.${LLVM_SUFFIX} && \
-  touch ${METADATAUNIVERSAL}/llvm_extract
+(tar xf ${TARBALL}/llvm-${LLVM_VERSION}.${LLVM_SUFFIX} || \
+  die "extract llvm error" ) && \
+    touch ${METADATAUNIVERSAL}/llvm_extract
 
 [ -f ${METADATAUNIVERSAL}/clang_extract ] || \
 cd llvm-${LLVM_VERSION}/tools && \
-tar xf ${TARBALL}/clang-${CLANG_VERSION}.${CLANG_SUFFIX} && \
-  touch ${METADATAUNIVERSAL}/clang_extract
+(tar xf ${TARBALL}/clang-${CLANG_VERSION}.${CLANG_SUFFIX} || \
+  die "extract clang error" ) && \
+    touch ${METADATAUNIVERSAL}/clang_extract
 popd
 
 unset CFLAGS

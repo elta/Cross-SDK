@@ -77,9 +77,10 @@ export PATH=${PATH}:${PREFIX64}/bin:${PREFIX32}/bin:${RTEMSPREFIX64}/bin:${RTEMS
 ### universal extract
 #################################################################
 pushd ${SRCUNIVERSAL}
-[ -f ${METADATAUNIVERSAL}/lvm_extract ] || \
-tar xf ${TARBALL}/llvm-${LLVM_VERSION}.${LLVM_SUFFIX} && \
-  touch ${METADATAUNIVERSAL}/llvm_extract
+[ -f ${METADATAUNIVERSAL}/llvm_extract ] || \
+(tar xf ${TARBALL}/llvm-${LLVM_VERSION}.${LLVM_SUFFIX} || \
+  die "extract llvm error" ) && \
+    touch ${METADATAUNIVERSAL}/llvm_extract
 popd
 
 unset CFLAGS

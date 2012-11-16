@@ -78,32 +78,39 @@ export PATH=${PATH}:${PREFIX64}/bin:${PREFIX32}/bin:${RTEMSPREFIX64}/bin:${RTEMS
 #################################################################
 pushd ${SRCBARE32}
 [ -f ${METADATABARE32}/gmp_extract ] || \
-tar xf ${TARBALL}/gmp-${GMP_VERSION}.${GMP_SUFFIX} && \
-  touch ${METADATABARE32}/gmp_extract
+(tar xf ${TARBALL}/gmp-${GMP_VERSION}.${GMP_SUFFIX} || \
+  die "extract gmp error" ) && \
+    touch ${METADATABARE32}/gmp_extract
 
 [ -f ${METADATABARE32}/mpfr_extract ] || \
-tar xf ${TARBALL}/mpfr-${MPFR_VERSION}.${MPFR_SUFFIX} && \
-  touch ${METADATABARE32}/mpfr_extract
+(tar xf ${TARBALL}/mpfr-${MPFR_VERSION}.${MPFR_SUFFIX} || \
+  die "extract mpfr error" ) && \
+    touch ${METADATABARE32}/mpfr_extract
 
 [ -f ${METADATABARE32}/mpc_extract ] || \
-tar xf ${TARBALL}/mpc-${MPC_VERSION}.${MPC_SUFFIX} && \
-  touch ${METADATABARE32}/mpc_extract
+(tar xf ${TARBALL}/mpc-${MPC_VERSION}.${MPC_SUFFIX} || \
+  die "extract mpc error" ) && \
+    touch ${METADATABARE32}/mpc_extract
 
 [ -f ${METADATABARE32}/binutils_extract ] || \
-tar xf ${TARBALL}/binutils-${BINUTILS_VERSION}.${BINUTILS_SUFFIX} && \
-  touch ${METADATABARE32}/binutils_extract
+(tar xf ${TARBALL}/binutils-${BINUTILS_VERSION}.${BINUTILS_SUFFIX} || \
+  die "extract binutils error" ) && \
+    touch ${METADATABARE32}/binutils_extract
 
 [ -f ${METADATABARE32}/gcc_extract ] || \
-tar xf ${TARBALL}/gcc-${GCC_VERSION}.${GCC_SUFFIX} && \
-  touch ${METADATABARE32}/gcc_extract
+(tar xf ${TARBALL}/gcc-${GCC_VERSION}.${GCC_SUFFIX} || \
+  die "extract gcc error" ) && \
+    touch ${METADATABARE32}/gcc_extract
 
 [ -f ${METADATABARE32}/newlib_extract ] || \
-tar xf ${TARBALL}/newlib-${NEWLIB_VERSION}.${NEWLIB_SUFFIX} &&\
-  touch ${METADATABARE32}/newlib_extract
+(tar xf ${TARBALL}/newlib-${NEWLIB_VERSION}.${NEWLIB_SUFFIX} || \
+  die "extract newlib error" ) && \
+    touch ${METADATABARE32}/newlib_extract
 
 [ -f ${METADATABARE32}/gdb_extract ] || \
-tar xf ${TARBALL}/gdb-${GDB_VERSION}.${GDB_SUFFIX} && \
-  touch ${METADATABARE32}/gdb_extract
+(tar xf ${TARBALL}/gdb-${GDB_VERSION}.${GDB_SUFFIX} || \
+  die "extract gdb error" ) && \
+    touch ${METADATABARE32}/gdb_extract
 popd
 
 unset CFLAGS

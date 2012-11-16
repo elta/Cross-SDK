@@ -80,8 +80,9 @@ export PATH=${PATH}:${PREFIX64}/bin:${PREFIX32}/bin:${RTEMSPREFIX64}/bin:${RTEMS
 #################################################################
 pushd ${SRCUNIVERSAL}
 [ -f ${METADATAUNIVERSAL}/qtc_extract ] || \
-tar xf ${TARBALL}/qt-creator-${QTC_VERSION}.${QTC_SUFFIX} && \
-  touch ${METADATAUNIVERSAL}/qtc_extract
+(tar xf ${TARBALL}/qt-creator-${QTC_VERSION}.${QTC_SUFFIX} || \
+  die "extract qtc error" ) && \
+    touch ${METADATAUNIVERSAL}/qtc_extract
 popd
 
 unset CFLAGS

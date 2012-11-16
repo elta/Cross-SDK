@@ -78,44 +78,54 @@ export PATH=${PATH}:${PREFIX64}/bin:${PREFIX32}/bin:${RTEMSPREFIX64}/bin:${RTEMS
 #################################################################
 pushd ${SRC64}
 [ -f ${METADATA64}/linux_extract ] || \
-tar xf ${TARBALL}/linux-${LINUX_VERSION}.${LINUX_SUFFIX} && \
-  touch ${METADATA64}/linux_extract
+(tar xf ${TARBALL}/linux-${LINUX_VERSION}.${LINUX_SUFFIX} || \
+  die "extract linux error" ) && \
+    touch ${METADATA64}/linux_extract
 
 [ -f ${METADATA64}/gmp_extract ] || \
-tar xf ${TARBALL}/gmp-${GMP_VERSION}.${GMP_SUFFIX} && \
-  touch ${METADATA64}/gmp_extract
+(tar xf ${TARBALL}/gmp-${GMP_VERSION}.${GMP_SUFFIX} || \
+  die "extract gmp error" ) && \
+    touch ${METADATA64}/gmp_extract
 
 [ -f ${METADATA64}/mpfr_extract ] || \
-tar xf ${TARBALL}/mpfr-${MPFR_VERSION}.${MPFR_SUFFIX} && \
-  touch ${METADATA64}/mpfr_extract
+(tar xf ${TARBALL}/mpfr-${MPFR_VERSION}.${MPFR_SUFFIX} || \
+  die "extract mpfr error" ) && \
+    touch ${METADATA64}/mpfr_extract
 
 [ -f ${METADATA64}/mpc_extract ] || \
-tar xf ${TARBALL}/mpc-${MPC_VERSION}.${MPC_SUFFIX} && \
-  touch ${METADATA64}/mpc_extract
+(tar xf ${TARBALL}/mpc-${MPC_VERSION}.${MPC_SUFFIX} || \
+  die "extract mpc error" ) && \
+    touch ${METADATA64}/mpc_extract
 
 [ -f ${METADATA64}/ppl_extract ] || \
-tar xf ${TARBALL}/ppl-${PPL_VERSION}.${PPL_SUFFIX} && \
-  touch ${METADATA64}/ppl_extract
+(tar xf ${TARBALL}/ppl-${PPL_VERSION}.${PPL_SUFFIX} || \
+  die "extract ppl error" ) && \
+    touch ${METADATA64}/ppl_extract
 
 [ -f ${METADATA64}/cloog_extract ] || \
-tar xf ${TARBALL}/cloog-${CLOOG_VERSION}.${CLOOG_SUFFIX} && \
-  touch ${METADATA64}/cloog_extract
+(tar xf ${TARBALL}/cloog-${CLOOG_VERSION}.${CLOOG_SUFFIX} || \
+  die "extract cloog error" ) && \
+    touch ${METADATA64}/cloog_extract
 
 [ -f ${METADATA64}/binutils_extract ] || \
-tar xf ${TARBALL}/binutils-${BINUTILS_VERSION}.${BINUTILS_SUFFIX} && \
-  touch ${METADATA64}/binutils_extract
+(tar xf ${TARBALL}/binutils-${BINUTILS_VERSION}.${BINUTILS_SUFFIX} || \
+  die "extract binutils error" ) && \
+    touch ${METADATA64}/binutils_extract
 
 [ -f ${METADATA64}/gcc_extract ] || \
-tar xf ${TARBALL}/gcc-${GCC_VERSION}.${GCC_SUFFIX} && \
-  touch ${METADATA64}/gcc_extract
+(tar xf ${TARBALL}/gcc-${GCC_VERSION}.${GCC_SUFFIX} || \
+  die "extract gcc error" ) && \
+    touch ${METADATA64}/gcc_extract
 
 [ -f ${METADATA64}/eglibc_extract ] || \
-tar xf ${TARBALL}/eglibc-${EGLIBC_VERSION}.${EGLIBC_SUFFIX} &&\
-  touch ${METADATA64}/eglibc_extract
+(tar xf ${TARBALL}/eglibc-${EGLIBC_VERSION}.${EGLIBC_SUFFIX} || \
+  die "extract eglibc error" ) && \
+    touch ${METADATA64}/eglibc_extract
 
 [ -f ${METADATA64}/gdb_extract ] || \
-tar xf ${TARBALL}/gdb-${GDB_VERSION}.${GDB_SUFFIX} && \
-  touch ${METADATA64}/gdb_extract
+(tar xf ${TARBALL}/gdb-${GDB_VERSION}.${GDB_SUFFIX} || \
+  die "extract gdb error" ) && \
+    touch ${METADATA64}/gdb_extract
 popd
 
 unset CFLAGS
