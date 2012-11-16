@@ -36,6 +36,11 @@ compile_commands.json
 #==============================================================================#
 # External projects that are tracked independently.
 projects/*
+src
+build
+metadata
+src_live
+tarballs
 !projects/sample
 !projects/CMakeLists.txt
 !projects/Makefile
