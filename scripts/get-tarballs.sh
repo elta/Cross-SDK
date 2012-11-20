@@ -257,6 +257,7 @@ export QTC_URL=http://releases.qt-project.org/qtcreator/2.5.2/
 export QEMU_GITURL=git://git.qemu-project.org/qemu.git
 export OPENOCD_GITURL=git://openocd.git.sourceforge.net/gitroot/openocd/openocd
 export UBOOT_GITURL=git://git.denx.de/u-boot.git
+export RTEMS_GITURL=git://git.rtems.org/rtems.git
 export CROSSPROJECTMANAGER_GITURL=https://github.com/elta/crossprojectmanager.git
 
 function die() {
@@ -881,6 +882,11 @@ pushd ${SRC_LIVE}
   git clone ${UBOOT_GITURL} || \
   die "download uboot error" && \
     touch ${METADATADOWN}/uboot_git
+
+[ -f ${METADATADOWN}/rtems_git ] || \
+  git clone ${RTEMS_GITURL} || \
+  die "download rtems error" && \
+    touch ${METADATADOWN}/rtems_git
 
 #crossprojectmanager
 [ -f ${METADATADOWN}/crossprojectmanager_git ] || \
