@@ -55,10 +55,10 @@ export DVHTOOL_URL=http://ftp.debian.org/debian/pool/main/d/dvhtool
 export E2FSPROGS_VERSION=1.42.3
 export E2FSPROGS_SUFFIX=${BZ}
 export E2FSPROGS_URL=http://www.kernel.org/pub/linux/kernel/people/tytso/e2fsprogs/v1.42.3
-export EGLIBC_VERSION=2.15-r21467
+export EGLIBC_VERSION=2.15
 export EGLIBC_SUFFIX=${XZ}
 export EGLIBC_URL=http://cross-lfs.org/files
-export EGLIBCPORTS_VERSION=2.15-r21467
+export EGLIBCPORTS_VERSION=2.15
 export EGLIBCPORTS_SUFFIX=${XZ}
 export EGLIBCPORTS_URL=http://cross-lfs.org/files
 export EXPECT_VERSION=5.45
@@ -403,15 +403,15 @@ download "e2fsprogs-${E2FSPROGS_VERSION}.${E2FSPROGS_SUFFIX}" \
 
 #eglibc-2.15.tar.bz2
 [ -f eglibc_download ] || \
-download "eglibc-${EGLIBC_VERSION}.${EGLIBC_SUFFIX}" \
-  "${EGLIBC_URL}/eglibc-${EGLIBC_VERSION}.${EGLIBC_SUFFIX}" || \
+download "eglibc-${EGLIBC_VERSION}-r21467.${EGLIBC_SUFFIX}" \
+  "${EGLIBC_URL}/eglibc-${EGLIBC_VERSION}-r21467.${EGLIBC_SUFFIX}" || \
   die "download eglibc error" && \
     touch eglibc_download
 
 #eglibc-ports-2.15.tar.xz
 [ -f eglibcports_download ] || \
-download "eglibc-ports-${EGLIBCPORTS_VERSION}.${EGLIBCPORTS_SUFFIX}" \
-  "${EGLIBCPORTS_URL}/eglibc-ports-${EGLIBCPORTS_VERSION}.${EGLIBCPORTS_SUFFIX}" || \
+download "eglibc-ports-${EGLIBCPORTS_VERSION}-r21467.${EGLIBCPORTS_SUFFIX}" \
+  "${EGLIBCPORTS_URL}/eglibc-ports-${EGLIBCPORTS_VERSION}-r21467.${EGLIBCPORTS_SUFFIX}" || \
   die "download eglibc-ports error" && \
     touch eglibcports_download
 

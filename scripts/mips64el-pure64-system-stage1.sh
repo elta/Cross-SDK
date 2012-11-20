@@ -238,7 +238,7 @@ popd
 
 pushd ${SRC}
 [ -d "eglibc-${EGLIBC_VERSION}" ] \
-  || tar xf ${TARBALL}/eglibc-${EGLIBC_VERSION}.${EGLIBC_SUFFIX}
+  || tar xf ${TARBALL}/eglibc-${EGLIBC_VERSION}-r21467.${EGLIBC_SUFFIX}
 cd eglibc-${EGLIBC_VERSION}
 cp Makeconfig{,.orig}
 sed -e 's/-lgcc_eh//g' Makeconfig.orig > Makeconfig

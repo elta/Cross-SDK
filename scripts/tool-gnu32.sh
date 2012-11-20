@@ -118,7 +118,7 @@ pushd ${SRC32}
     touch ${METADATA32}/gcc_extract
 
 [ -f ${METADATA32}/eglibc_extract ] || \
-(tar xf ${TARBALL}/eglibc-${EGLIBC_VERSION}.${EGLIBC_SUFFIX} || \
+(tar xf ${TARBALL}/eglibc-${EGLIBC_VERSION}-r21467.${EGLIBC_SUFFIX} || \
   die "extract eglibc error" ) && \
     touch ${METADATA32}/eglibc_extract
 
