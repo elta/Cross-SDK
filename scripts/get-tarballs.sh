@@ -274,10 +274,6 @@ export METADATADOWN=${SCRIPT}/../metadata/download
 export SRC=${SCRIPT}/../src
 export BUILD=${SCRIPT}/../build
 
-[[ $# -eq 1 ]] || die "usage: $0 PREFIX"
-export PREFIX="$1"
-export PATH=$PATH:$PREFIX/gnu/bin
-
 function download()
 {
     [ -e "$TARBALL/$1" ] || wget -O "$TARBALL/$1" "$2"
