@@ -10,9 +10,6 @@ export ARCLOAD_URL=ftp://ftp.linux-mips.org/pub/linux/mips/people/skylark
 export AUTOCONF_VERSION=2.69
 export AUTOCONF_SUFFIX=${XZ}
 export AUTOCONF_URL=http://ftp.gnu.org/gnu/autoconf
-export AUTOMAKE_VERSION=1.12.1
-export AUTOMAKE_SUFFIX=${XZ}
-export AUTOMAKE_URL=http://ftp.gnu.org/gnu/automake
 export AUTOMAKE_VERSION=1.12.3
 export AUTOMAKE_SUFFIX=${XZ}
 export AUTOMAKE_URL=http://ftp.gnu.org/gnu/automake
@@ -299,18 +296,11 @@ download "autoconf-${AUTOCONF_VERSION}.${AUTOCONF_SUFFIX}" \
   die "download autoconf error" && \
     touch autoconf_download
 
-#automake-1.12.1.tar.xz
-[ -f automake_download ] || \
-download "automake-${AUTOMAKE_VERSION}.${AUTOMAKE_SUFFIX}" \
-  "${AUTOMAKE_URL}/automake-${AUTOMAKE_VERSION}.${AUTOMAKE_SUFFIX}" || \
-  die "download automake error" && \
-    touch automake_download
-
 #automake-1.12.3.tar.xz
 [ -f automake_download ] || \
 download "automake-${AUTOMAKE_VERSION}.${AUTOMAKE_SUFFIX}" \
   "${AUTOMAKE_URL}/automake-${AUTOMAKE_VERSION}.${AUTOMAKE_SUFFIX}" || \
-  die "download automake2 error" && \
+  die "download automake error" && \
     touch automake_download
 
 #bash-4.2.tar.gz
