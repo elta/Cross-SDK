@@ -30,6 +30,8 @@ export GCC_VERSION=4.6.3
 export GCC_SUFFIX=${BZ}
 export EGLIBC_VERSION=2.15
 export EGLIBC_SUFFIX=${XZ}
+export EGLIBCPORTS_VERSION=2.15
+export EGLIBCPORTS_SUFFIX=${XZ}
 export NEWLIB_VERSION=1.20.0
 export NEWLIB_SUFFIX=${GZ}
 export GDB_VERSION=7.4
@@ -121,6 +123,13 @@ pushd ${SRC32}
 (tar xf ${TARBALL}/eglibc-${EGLIBC_VERSION}-r21467.${EGLIBC_SUFFIX} || \
   die "extract eglibc error" ) && \
     touch ${METADATA32}/eglibc_extract
+
+pushd ${SRC32}/eglibc-${EGLIBC_VERSION}
+[ -f ${METADATA32}/eglibc_ports_extract ] || \
+(tar xf ${TARBALL}/eglibc-ports-${EGLIBCPORTS_VERSION}-r21467.${EGLIBCPORTS_SUFFIX} || \
+  die "extract eglibc ports error" ) && \
+    touch ${METADATA32}/eglibc_ports_extract
+popd
 
 [ -f ${METADATA32}/gdb_extract ] || \
 (tar xf ${TARBALL}/gdb-${GDB_VERSION}.${GDB_SUFFIX} || \

@@ -122,6 +122,13 @@ pushd ${SRC64}
   die "extract eglibc error" ) && \
     touch ${METADATA64}/eglibc_extract
 
+pushd ${SRC64}/eglibc-${EGLIBC_VERSION}
+[ -f ${METADATA64}/eglibc_ports_extract ] || \
+(tar xf ${TARBALL}/eglibc-ports-${EGLIBCPORTS_VERSION}-r21467.${EGLIBCPORTS_SUFFIX} || \
+  die "extract eglibc ports error" ) && \
+    touch ${METADATA64}/eglibc_ports_extract
+popd
+
 [ -f ${METADATA64}/gdb_extract ] || \
 (tar xf ${TARBALL}/gdb-${GDB_VERSION}.${GDB_SUFFIX} || \
   die "extract gdb error" ) && \

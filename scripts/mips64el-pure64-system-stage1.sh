@@ -30,6 +30,8 @@ export GCC_VERSION=4.6.3
 export GCC_SUFFIX=${BZ}
 export EGLIBC_VERSION=2.15
 export EGLIBC_SUFFIX=${BZ}
+export EGLIBCPORTS_VERSION=2.15
+export EGLIBCPORTS_SUFFIX=${XZ}
 export TERMCAP_VERSION=1.3.1
 export TERMCAP_SUFFIX=${GZ}
 export GDB_VERSION=7.4.1
@@ -240,6 +242,8 @@ pushd ${SRC}
 [ -d "eglibc-${EGLIBC_VERSION}" ] \
   || tar xf ${TARBALL}/eglibc-${EGLIBC_VERSION}-r21467.${EGLIBC_SUFFIX}
 cd eglibc-${EGLIBC_VERSION}
+[ -d "ports" ] \
+  || tar xf ${TARBALL}/eglibc-ports-${EGLIBCPORTS_VERSION}-r21467.${EGLIBCPORTS_SUFFIX}
 cp Makeconfig{,.orig}
 sed -e 's/-lgcc_eh//g' Makeconfig.orig > Makeconfig
 cp config.make.in{,.orig}

@@ -30,6 +30,8 @@ export GCC_VERSION=4.6.3
 export GCC_SUFFIX=${BZ}
 export EGLIBC_VERSION=2.15
 export EGLIBC_SUFFIX=${BZ}
+export EGLIBCPORTS_VERSION=2.15
+export EGLIBCPORTS_SUFFIX=${XZ}
 export TERMCAP_VERSION=1.3.1
 export TERMCAP_SUFFIX=${GZ}
 export GDB_VERSION=7.4.1
@@ -243,14 +245,15 @@ make -j${JOBS} all-gcc all-target-libgcc || die "***build gcc stage1 error"
 make install-gcc install-target-libgcc || die "***install gcc stage1 error"
 popd
 
-
 #eglibc build 32
 pushd ${SRC}
 [ -d "eglibc-${EGLIBC_VERSION}" ] \
   || tar xf ${TARBALL}/eglibc-${EGLIBC_VERSION}-r21467.${EGLIBC_SUFFIX}
 cd eglibc-${EGLIBC_VERSION}
-  cp -v Makeconfig{,.orig}
-  sed -e 's/-lgcc_eh//g' Makeconfig.orig > Makeconfig
+[ -d "ports" ] \
+  || tar xf ${TARBALL}/eglibc-ports-${EGLIBCPORTS_VERSION}-r21467.${EGLIBCPORTS_SUFFIX}
+cp -v Makeconfig{,.orig}
+sed -e 's/-lgcc_eh//g' Makeconfig.orig > Makeconfig
 popd
 
 pushd ${BUILD}
@@ -284,6 +287,8 @@ rm -rf eglibc-${EGLIBC_VERSION}
 [ -d "eglibc-${EGLIBC_VERSION}" ] \
   || tar xf ${TARBALL}/eglibc-${EGLIBC_VERSION}-r21467.${EGLIBC_SUFFIX}
 cd eglibc-${EGLIBC_VERSION}
+[ -d "ports" ] \
+  || tar xf ${TARBALL}/eglibc-ports-${EGLIBCPORTS_VERSION}-r21467.${EGLIBCPORTS_SUFFIX}
 cp -v Makeconfig{,.orig}
 sed -e 's/-lgcc_eh//g' Makeconfig.orig > Makeconfig
 cp -v config.make.in{,.orig}
@@ -323,6 +328,8 @@ rm -rf eglibc-${EGLIBC_VERSION}
 [ -d "eglibc-${EGLIBC_VERSION}" ] \
   || tar xf ${TARBALL}/eglibc-${EGLIBC_VERSION}-r21467.${EGLIBC_SUFFIX}
 cd eglibc-${EGLIBC_VERSION}
+[ -d "ports" ] \
+  || tar xf ${TARBALL}/eglibc-ports-${EGLIBCPORTS_VERSION}-r21467.${EGLIBCPORTS_SUFFIX}
 cp -v Makeconfig{,.orig}
 sed -e 's/-lgcc_eh//g' Makeconfig.orig > Makeconfig
 cp -v config.make.in{,.orig}
