@@ -26,7 +26,7 @@ and you are welcome to test it on other platforms.
 Just run this in your terminal:
 sudo apt-get install libncurses5-dev libsdl1.2-dev libqt4-dev g++ flex bison \
                      cmake automake gawk libtool gettext gperf dejagnu \
-                     gile-2.0 autogen texinfo patch xz-utils
+                     guile-2.0 autogen texinfo patch xz-utils
 
 ===============================================================================
 Usage:
