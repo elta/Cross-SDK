@@ -273,7 +273,7 @@ export BUILD=${SCRIPT}/../build
 
 function download()
 {
-    [ -e "$TARBALL/$1" ] || wget -O "$TARBALL/$1" "$2"
+    wget -c -O "$TARBALL/$1" "$2"
 }
 
 [ -d "${TARBALL}" ] || mkdir -p "${TARBALL}"
