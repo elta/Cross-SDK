@@ -38,6 +38,8 @@ export LLVMPREFIX=${PREFIX}/llvm
 export QTCPREFIX=${PREFIX}/qt-creator
 export PATH=${PATH}:${PREFIX64}/bin:${PREFIX32}/bin:${RTEMSPREFIX64}/bin:${RTEMSPREFIX32}/bin:${BAREPREFIX64}/bin:${BAREPREFIX32}/bin
 
+[ -d "${PREFIXKERNELN32}" ] || mkdir -p "${PREFIXKERNELN32}"
+
 [ -d "${SRCKERNELN32}" ] || mkdir -p "${SRCKERNELN32}"
 
 [ -d "${BUILDKERNELN32}" ] || mkdir -p "${BUILDKERNELN32}"
@@ -53,8 +55,8 @@ pushd ${SRCKERNELN32}
   die "extract linux error" ) && \
     touch ${METADATAKERNELN32}/linux_extract
 cd linux-${LINUX_VERSION}
-[-f ${METADATAKERNELN32}/linux_patch ] || \
-  patch -p1 < ${PATCH}/linux-mipsel-n32-defconfig.patch && \
+[ -f ${METADATAKERNELN32}/linux_patch ] || \
+  patch -p1 < ${PATCH}/linux-mipsel-n32-defconfig.patch || \
     die "patch linux mipsel-n32_defconfig error" && \
       touch ${METADATAKERNELN32}/linux_patch
 popd
@@ -81,8 +83,12 @@ cd linux-${LINUX_VERSION}
   make -j${JOBS} ARCH=mips CROSS_COMPILER=${CROSS_TARGET64}- || \
     die "linux build error" && \
       touch ${METADATAKERNELN32}/linux_build
+[ -f ${METADATAKERNELN32}/linux32_build ] || \
+  make -j${JOBS} ARCH=mips CROSS_COMPILER=${CROSS_TARGET64}- vmlinux.32 || \
+    die "linux build error" && \
+      touch ${METADATAKERNELN32}/linux32_build
 [ -f ${METADATAKERNELN32}/linux_move ] || \
   mv vmlinux.32 ${PREFIXKERNELN32}/kernel-n32 || \
     die "linux move error" && \
-      touch ${METADATAKERNELO32}/linux_move
+      touch ${METADATAKERNELN32}/linux_move
 popd

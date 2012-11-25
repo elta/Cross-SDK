@@ -38,6 +38,8 @@ export LLVMPREFIX=${PREFIX}/llvm
 export QTCPREFIX=${PREFIX}/qt-creator
 export PATH=${PATH}:${PREFIX64}/bin:${PREFIX32}/bin:${RTEMSPREFIX64}/bin:${RTEMSPREFIX32}/bin:${BAREPREFIX64}/bin:${BAREPREFIX32}/bin
 
+[ -d "${PREFIXKERNEL64}" ] || mkdir -p "${PREFIXKERNEL64}"
+
 [ -d "${SRCKERNEL64}" ] || mkdir -p "${SRCKERNEL64}"
 
 [ -d "${BUILDKERNEL64}" ] || mkdir -p "${BUILDKERNEL64}"
@@ -53,8 +55,8 @@ pushd ${SRCKERNEL64}
   die "extract linux error" ) && \
     touch ${METADATAKERNEL64}/linux_extract
 cd linux-${LINUX_VERSION}
-[-f ${METADATAKERNEL64}/linux_patch ] || \
-  patch -p1 < ${PATCH}/linux-mips64el-defconfig.patch && \
+[ -f ${METADATAKERNEL64}/linux_patch ] || \
+  patch -p1 < ${PATCH}/linux-mips64el-defconfig.patch || \
     die "patch linux mips64el-defconfig error" && \
       touch ${METADATAKERNEL64}/linux_patch
 popd
@@ -84,5 +86,5 @@ cd linux-${LINUX_VERSION}
 [ -f ${METADATAKERNEL64}/linux_move ] || \
   mv vmlinux ${PREFIXKERNEL64}/kernel-64 || \
     die "linux move error" && \
-      touch ${METADATAKERNELO32}/linux_move
+      touch ${METADATAKERNEL64}/linux_move
 popd

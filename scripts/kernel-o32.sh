@@ -38,6 +38,8 @@ export LLVMPREFIX=${PREFIX}/llvm
 export QTCPREFIX=${PREFIX}/qt-creator
 export PATH=${PATH}:${PREFIX64}/bin:${PREFIX32}/bin:${RTEMSPREFIX64}/bin:${RTEMSPREFIX32}/bin:${BAREPREFIX64}/bin:${BAREPREFIX32}/bin
 
+[ -d "${PREFIXKERNELO32}" ] || mkdir -p "${PREFIXKERNELO32}"
+
 [ -d "${SRCKERNELO32}" ] || mkdir -p "${SRCKERNELO32}"
 
 [ -d "${BUILDKERNELO32}" ] || mkdir -p "${BUILDKERNELO32}"
