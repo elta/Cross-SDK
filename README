@@ -48,6 +48,8 @@ to get 64bit multilib gnu root fs.
 Notice:
 It will take a huge disk space in your disk, make sure you run them in
 a big partation:)
+make sure you have run ./get_tarballs.sh first, if you got failed,
+just run it again.
 
 ===============================================================================
 The last thing, Happy Hacking:)
