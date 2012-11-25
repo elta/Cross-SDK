@@ -76,48 +76,48 @@ export PATH=${PATH}:${PREFIX64}/bin:${PREFIX32}/bin:${RTEMSPREFIX64}/bin:${RTEMS
 #################################################################
 pushd ${SRCRTEMS64}
 [ -f ${METADATARTEMS64}/gmp_extract ] || \
-(tar xf ${TARBALL}/gmp-${GMP_VERSION}.${GMP_SUFFIX} || \
-  die "extract gmp error" ) && \
+tar xf ${TARBALL}/gmp-${GMP_VERSION}.${GMP_SUFFIX} || \
+  die "extract gmp error" && \
     touch ${METADATARTEMS64}/gmp_extract
 
 [ -f ${METADATARTEMS64}/mpfr_extract ] || \
-(tar xf ${TARBALL}/mpfr-${MPFR_VERSION}.${MPFR_SUFFIX} || \
-  die "extract mpfr error" ) && \
+tar xf ${TARBALL}/mpfr-${MPFR_VERSION}.${MPFR_SUFFIX} || \
+  die "extract mpfr error" && \
     touch ${METADATARTEMS64}/mpfr_extract
 
 [ -f ${METADATARTEMS64}/mpc_extract ] || \
-(tar xf ${TARBALL}/mpc-${MPC_VERSION}.${MPC_SUFFIX} || \
-  die "extract mpc error" ) && \
+tar xf ${TARBALL}/mpc-${MPC_VERSION}.${MPC_SUFFIX} || \
+  die "extract mpc error" && \
     touch ${METADATARTEMS64}/mpc_extract
 
 [ -f ${METADATARTEMS64}/autoconf_extract ] || \
-(tar xf ${TARBALL}/autoconf-${AUTOCONF_VERSION}.${AUTOCONF_SUFFIX} || \
-  die "extract autoconf error" ) && \
+tar xf ${TARBALL}/autoconf-${AUTOCONF_VERSION}.${AUTOCONF_SUFFIX} || \
+  die "extract autoconf error" && \
     touch ${METADATARTEMS64}/autoconf_extract
 
 [ -f ${METADATARTEMS64}/automake_extract ] || \
-(tar xf ${TARBALL}/automake-${AUTOMAKE_VERSION}.${AUTOMAKE_SUFFIX} || \
-  die "extract automake error" ) && \
+tar xf ${TARBALL}/automake-${AUTOMAKE_VERSION}.${AUTOMAKE_SUFFIX} || \
+  die "extract automake error" && \
     touch ${METADATARTEMS64}/automake_extract
 
 [ -f ${METADATARTEMS64}/binutils_extract ] || \
-(tar xf ${TARBALL}/binutils-${BINUTILS_VERSION}.${BINUTILS_SUFFIX} || \
-  die "extract binutils error" ) && \
+tar xf ${TARBALL}/binutils-${BINUTILS_VERSION}.${BINUTILS_SUFFIX} || \
+  die "extract binutils error" && \
     touch ${METADATARTEMS64}/binutils_extract
 
 [ -f ${METADATARTEMS64}/gcc_extract ] || \
-(tar xf ${TARBALL}/gcc-${GCC_VERSION}.${GCC_SUFFIX} || \
-  die "extract gcc error" ) && \
+tar xf ${TARBALL}/gcc-${GCC_VERSION}.${GCC_SUFFIX} || \
+  die "extract gcc error" && \
     touch ${METADATARTEMS64}/gcc_extract
 
 [ -f ${METADATARTEMS64}/newlib_extract ] || \
-(tar xf ${TARBALL}/newlib-${NEWLIB_VERSION}.${NEWLIB_SUFFIX}|| \
-  die "extract newlib error" ) && \
+tar xf ${TARBALL}/newlib-${NEWLIB_VERSION}.${NEWLIB_SUFFIX}|| \
+  die "extract newlib error" && \
     touch ${METADATARTEMS64}/newlib_extract
 
 [ -f ${METADATARTEMS64}/gdb_extract ] || \
-(tar xf ${TARBALL}/gdb-${GDB_VERSION}.${GDB_SUFFIX} || \
-  die "extract gdb error" ) && \
+tar xf ${TARBALL}/gdb-${GDB_VERSION}.${GDB_SUFFIX} || \
+  die "extract gdb error" && \
     touch ${METADATARTEMS64}/gdb_extract
 popd
 

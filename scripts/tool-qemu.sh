@@ -76,8 +76,8 @@ export PATH=${PATH}:${PREFIX64}/bin:${PREFIX32}/bin:${RTEMSPREFIX64}/bin:${RTEMS
 #################################################################
 pushd ${SRCUNIVERSAL}
 [ -f ${METADATAUNIVERSAL}/llvm_extract ] || \
-(tar xf ${TARBALL}/llvm-${LLVM_VERSION}.${LLVM_SUFFIX} || \
-  die "extract llvm error" ) && \
+tar xf ${TARBALL}/llvm-${LLVM_VERSION}.${LLVM_SUFFIX} || \
+  die "extract llvm error" && \
     touch ${METADATAUNIVERSAL}/llvm_extract
 popd
 
