@@ -10,8 +10,10 @@ export AUTOCONF_VERSION=2.69
 export AUTOCONF_SUFFIX=${XZ}
 export AUTOMAKE_VERSION=1.12.3
 export AUTOMAKE_SUFFIX=${XZ}
-export LLVM_VERSION=3.1
+export LLVM_VERSION=3.1.src
 export LLVM_SUFFIX=${GZ}
+export CLANG_VERSION=3.1
+export CLANG_SUFFIX=${GZ}
 export LINUX_VERSION=3.3.7
 export LINUX_SUFFIX=${XZ}
 export GMP_VERSION=5.0.5
@@ -76,14 +78,14 @@ export PATH=${PATH}:${PREFIX64}/bin:${PREFIX32}/bin:${RTEMSPREFIX64}/bin:${RTEMS
 #################################################################
 pushd ${SRCUNIVERSAL}
 [ -f ${METADATAUNIVERSAL}/llvm_extract ] || \
-(tar xf ${TARBALL}/llvm-${LLVM_VERSION}.${LLVM_SUFFIX} || \
-  die "extract llvm error" ) && \
+tar xf ${TARBALL}/llvm-${LLVM_VERSION}.${LLVM_SUFFIX} || \
+  die "extract llvm error" && \
     touch ${METADATAUNIVERSAL}/llvm_extract
 
 [ -f ${METADATAUNIVERSAL}/clang_extract ] || \
 cd llvm-${LLVM_VERSION}/tools && \
-(tar xf ${TARBALL}/clang-${CLANG_VERSION}.${CLANG_SUFFIX} || \
-  die "extract clang error" ) && \
+tar xf ${TARBALL}/clang-${CLANG_VERSION}.src.${CLANG_SUFFIX} || \
+  die "extract clang error" && \
     touch ${METADATAUNIVERSAL}/clang_extract
 popd
 
