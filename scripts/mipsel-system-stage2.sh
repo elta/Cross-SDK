@@ -7,7 +7,7 @@ export GZ=tar.gz
 export XZ=tar.xz
 
 export GMP_VERSION=5.0.5
-export GMP_SUFFIX=${BZ}
+export GMP_SUFFIX=${XZ}
 export MPFR_VERSION=3.1.0
 export MPFR_SUFFIX=${BZ}
 export MPC_VERSION=0.9
@@ -47,7 +47,7 @@ export GETTEXT_SUFFIX=${GZ}
 export GREP_VERSION=2.12
 export GREP_SUFFIX=${XZ}
 export GZIP_VERSION=1.4
-export GZIP_SUFFIX=${GZ}
+export GZIP_SUFFIX=${XZ}
 export M4_VERSION=1.4.16
 export M4_SUFFIX=${BZ}
 export MAKE_VERSION=3.82
@@ -64,7 +64,7 @@ export VIM_VERSION=7.3
 export VIM_DIR=vim73
 export VIM_SUFFIX=${BZ}
 export XZ_VERSION=5.0.3
-export XZ_SUFFIX=${BZ}
+export XZ_SUFFIX=${XZ}
 
 function die() {
   echo "$1"
@@ -76,8 +76,8 @@ export SCRIPT="$(pwd)"
 export TARBALL=${SCRIPT}/../tarballs
 export PATCH=${SCRIPT}/../patches
 export SRCS=${SCRIPT}/../srcs
-export SRC=${SCRIPT}/../../src/mipsel-unknown-linux/stage2
-export BUILD=${SCRIPT}/../../build/mipsel-unknown-linux/stage2
+export SRC=${SCRIPT}/../src/mipsel-unknown-linux/stage2
+export BUILD=${SCRIPT}/../build/mipsel-unknown-linux/stage2
 
 [[ $# -eq 1 ]] || die "usage: build.sh PREFIX"
 export CROSS="$1"

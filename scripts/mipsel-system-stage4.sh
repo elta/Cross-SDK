@@ -10,8 +10,8 @@ export SCRIPT="$(pwd)"
 export TARBALL=${SCRIPT}/../tarballs
 export PATCH=${SCRIPT}/../patches
 export SRCS=${SCRIPT}/../srcs
-export SRC=${SCRIPT}/../../src/mipsel-unknown-linux/stage4
-export BUILD=${SCRIPT}/../../build/mipsel-unknown-linux/stage4
+export SRC=${SCRIPT}/../src/mipsel-unknown-linux/stage4
+export BUILD=${SCRIPT}/../build/mipsel-unknown-linux/stage4
 
 [[ $# -eq 1 ]] || die "usage: build.sh PREFIX"
 export CROSS="$1"

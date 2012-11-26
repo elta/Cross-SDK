@@ -17,7 +17,7 @@ export KMOD_SUFFIX=${XZ}
 export UDEV_VERSION=182
 export UDEV_SUFFIX=${XZ}
 export LINUX_VERSION=3.3.7
-export LINUX_SUFFIX=${BZ}
+export LINUX_SUFFIX=${XZ}
 export BOOTSCRIPT_VERSION=2.0
 export BOOTSCRIPT_SUFFIX=${BZ}
 
@@ -32,8 +32,8 @@ export TARBALL=${SCRIPT}/../tarballs
 export PATCH=${SCRIPT}/../patches
 export SRCS=${SCRIPT}/../srcs
 export CONFIG=${SCRIPT}/../configs
-export SRC=${SCRIPT}/../../src/mips64el-pure64-linux/stage3
-export BUILD=${SCRIPT}/../../build/mips64el-pure64-linux/stage3
+export SRC=${SCRIPT}/../src/mips64el-pure64-linux/stage3
+export BUILD=${SCRIPT}/../build/mips64el-pure64-linux/stage3
 
 [[ $# -eq 1 ]] || die "usage: build.sh PREFIX"
 export CROSS="$1"

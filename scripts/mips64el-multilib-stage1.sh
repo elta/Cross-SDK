@@ -7,7 +7,7 @@ export GZ=tar.gz
 export XZ=tar.xz
 
 export LINUX_VERSION=3.3.7
-export LINUX_SUFFIX=${BZ}
+export LINUX_SUFFIX=${XZ}
 export FILE_VERSION=5.11
 export FILE_SUFFIX=${GZ}
 export M4_VERSION=1.4.16
@@ -15,7 +15,7 @@ export M4_SUFFIX=${BZ}
 export NCURSES_VERSION=5.9
 export NCURSES_SUFFIX=${GZ}
 export GMP_VERSION=5.0.5
-export GMP_SUFFIX=${BZ}
+export GMP_SUFFIX=${XZ}
 export MPFR_VERSION=3.1.0
 export MPFR_SUFFIX=${BZ}
 export MPC_VERSION=0.9
@@ -29,7 +29,7 @@ export BINUTILS_SUFFIX=${BZ}
 export GCC_VERSION=4.6.3
 export GCC_SUFFIX=${BZ}
 export EGLIBC_VERSION=2.15
-export EGLIBC_SUFFIX=${BZ}
+export EGLIBC_SUFFIX=${XZ}
 export EGLIBCPORTS_VERSION=2.15
 export EGLIBCPORTS_SUFFIX=${XZ}
 export TERMCAP_VERSION=1.3.1
@@ -50,8 +50,8 @@ export SCRIPT="$(pwd)"
 export TARBALL=${SCRIPT}/../tarballs
 export PATCH=${SCRIPT}/../patches
 export SRCS=${SCRIPT}/../srcs
-export SRC=${SCRIPT}/../../src/mips64el-multilib64-linux/stage1
-export BUILD=${SCRIPT}/../../build/mips64el-multilib64-linux/stage1
+export SRC=${SCRIPT}/../src/mips64el-multilib64-linux/stage1
+export BUILD=${SCRIPT}/../build/mips64el-multilib64-linux/stage1
 
 [[ $# -eq 1 ]] || die "usage: build.sh PREFIX"
 export CROSS="$1"

@@ -23,8 +23,8 @@ export TARBALL=${SCRIPT}/../tarballs
 export PATCH=${SCRIPT}/../patches
 export CONFIG=${SCRIPT}/../configs
 export SRCS=${SCRIPT}/../srcs
-export SRC=${SCRIPT}/../../src/busybox-mul64
-export BUILD=${SCRIPT}/../../build/busybox-mul64
+export SRC=${SCRIPT}/../src/busybox-mul64
+export BUILD=${SCRIPT}/../build/busybox-mul64
 
 [ -d "${SRC}" ] || mkdir -p "${SRC}"
 [ -d "${BUILD}" ] || mkdir -p "${BUILD}"
