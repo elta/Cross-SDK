@@ -25,18 +25,23 @@ export CONFIG=${SCRIPT}/../configs
 export SRCS=${SCRIPT}/../srcs
 export SRC=${SCRIPT}/../src/busybox-mul64
 export BUILD=${SCRIPT}/../build/busybox-mul64
+export METADATAMUL64=${SCRIPT}/../metadata/busybox-mul64
 
 [ -d "${SRC}" ] || mkdir -p "${SRC}"
 [ -d "${BUILD}" ] || mkdir -p "${BUILD}"
+[ -d "${METADATAMUL64}" ] || mkdir -p "${METADATAMUL64}"
 
 unset CFLAGS
 unset CXXFLAGS
 export CROSS_HOST=${MACHTYPE}
 export CROSS_TARGET="mips64el-unknown-linux-gnu"
 
-[[ $# -eq 1 ]] || die "usage: build.sh SYSROOT"
-export SYSROOT="$1"
-#export PATH=$PATH:/cross-tools/bin/
+[[ $# -eq 1 ]] || die "usage: $0 PREFIX"
+export PREFIX="$1"
+export PREFIX64=${PREFIX}/gnu64
+export PREFIXGNULINUX=${PREFIX}/gnu-linux
+export PATH=${PATH}:${PREFIX64}/bin
+export SYSROOT=${PREFIX64}/${CROSS_TARGET}/sys-root/
 
 # Change ABI, Change libdir (LIB).
 export ABI=64
@@ -49,23 +54,46 @@ export CXX=${CROSS_TARGET}-g++
 export CXXFLAGS="-isystem ${SYSROOT}/usr/include ${BUILDFLAG}"
 export LDFLAGS="-Wl,-rpath-link,${SYSROOT}/usr/${LIB}:${SYSROOT}/${LIB} ${BUILDFLAG}"
 
+[ -f ${PREFIX64}/bin/${CC} ] || die "No toolchain found, process error"
+
 #export BUSYBOX_OPTIONS="static dynamic"
 export BUSYBOX_OPTIONS="dynamic"
 
 # Begin for loop, build static/dynamic busybox.
 for option in ${BUSYBOX_OPTIONS}; do
 
-mkdir ${SRC}/busybox-$option
+[ -f ${METADATAMUL64}/busybox-${option}-create ] || \
+  mkdir ${SRC}/busybox-$option || \
+    die "busybox-${option}-create dir create failed" && \
+      touch ${METADATAMUL64}/busybox-${option}-create
+
 pushd ${SRC}/busybox-$option
-[ -d "busybox-${BUSYBOX_VERSION}" ] \
-  || tar xvf ${TARBALL}/busybox-${BUSYBOX_VERSION}.${BUSYBOX_SUFFIX}
+[ -f ${METADATAMUL64}/busybox-${option}-extract ] || \
+  tar xf ${TARBALL}/busybox-${BUSYBOX_VERSION}.${BUSYBOX_SUFFIX} || \
+    die "busybox-${option}-extract error" && \
+      touch ${METADATAMUL64}/busybox-${option}-extract
+
 cd busybox-${BUSYBOX_VERSION}
-patch -Np1 -i ${PATCH}/busybox-${BUSYBOX_VERSION}.patch || die "Path failed"
-make mips64el-${option}_defconfig
-make -j${JOBS} ARCH=mips CROSS_COMPILE=${CROSS_TARGET}- \
-  || die "build busybox error"
-make ARCH=mips CROSS_COMPILE=${CROSS_TARGET}- install \
-  || die "install busybox error"
+[ -f ${METADATAMUL64}/busybox-${option}-patch-busybox-${BUSYBOX_VERSION} ] || \
+  patch -Np1 -i ${PATCH}/busybox-${BUSYBOX_VERSION}.patch \
+    || die "Patch failed" && \
+      touch ${METADATAMUL64}/busybox-${option}-patch-busybox-${BUSYBOX_VERSION}
+[ -f ${METADATAMUL64}/busybox-${option}-patch-busybox-mips64el-${option}_defconfig ] || \
+  patch -Np1 -i ${PATCH}/busybox-mips64el-${option}_defconfig.patch \
+    || die "Patch failed" && \
+      touch ${METADATAMUL64}/busybox-${option}-patch-busybox-mips64el-${option}_defconfig
+[ -f ${METADATAMUL64}/busybox-${option}-config ] || \
+  make mips64el-${option}_defconfig || \
+    die "busybox-${option}-config error" && \
+      touch ${METADATAMUL64}/busybox-${option}-config
+[ -f ${METADATAMUL64}/busybox-${option}-build ] || \
+  make -j${JOBS} ARCH=mips CROSS_COMPILE=${CROSS_TARGET}- || \
+    die "busybox-${option}-build error" && \
+      touch ${METADATAMUL64}/busybox-${option}-build
+[ -f ${METADATAMUL64}/busybox-${option}-install ] || \
+  make ARCH=mips CROSS_COMPILE=${CROSS_TARGET}- install || \
+    die "busybox-${option}-install error" && \
+      touch ${METADATAMUL64}/busybox-${option}-install
 popd
 
 # Make BusyBox Image
@@ -107,6 +135,7 @@ sudo umount ${MOUNT_POINT}
 
 popd
 
+[ -d ${PREFIXGNULINUX} ] || mkdir -p ${PREFIXGNULINUX}
+mv ${SRC}/busybox-$option/${IMAGE} ${PREFIXGNULINUX}
 # End for loop, build static/dynamic busybox.
 done
-

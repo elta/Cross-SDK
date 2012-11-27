@@ -1,5 +1,7 @@
---- busybox-1.20.1/include/libbb.h	2012-05-28 08:46:41.000000000 +0800
-+++ busybox/busybox-1.20.1/include/libbb.h	2012-08-16 16:13:33.701618990 +0800
+diff --git a/include/libbb.h b/include/libbb.h
+
+--- a/include/libbb.h	2012-05-28 08:46:41.000000000 +0800
++++ b/include/libbb.h	2012-08-16 16:13:33.701618990 +0800
 @@ -40,6 +40,7 @@
  #include <sys/poll.h>
  #include <sys/ioctl.h>
