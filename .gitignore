@@ -29,5 +29,6 @@ compile_commands.json
 # External projects that are tracked independently.
 src/
 build/
+metadata/
 src_live/
 tarballs/
