@@ -75,8 +75,8 @@ pushd ${SRC}/busybox-$option
 
 cd busybox-${BUSYBOX_VERSION}
 [ -f ${METADATAMUL64}/busybox-${option}-patch-busybox-${BUSYBOX_VERSION} ] || \
-  patch -Np1 -i ${PATCH}/busybox-${BUSYBOX_VERSION}.patch \
-    || die "Patch failed" && \
+  patch -Np1 -i ${PATCH}/busybox-${BUSYBOX_VERSION}.patch || \
+    die "Patch failed" && \
       touch ${METADATAMUL64}/busybox-${option}-patch-busybox-${BUSYBOX_VERSION}
 [ -f ${METADATAMUL64}/busybox-${option}-patch-busybox-mips64el-${option}_defconfig ] || \
   patch -Np1 -i ${PATCH}/busybox-mips64el-${option}_defconfig.patch \

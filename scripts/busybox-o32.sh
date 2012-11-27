@@ -25,18 +25,23 @@ export CONFIG=${SCRIPT}/../configs
 export SRCS=${SCRIPT}/../srcs
 export SRC=${SCRIPT}/../src/busybox-o32
 export BUILD=${SCRIPT}/../build/busybox-o32
+export METADATAO32=${SCRIPT}/../metadata/busybox-o32
 
 [ -d "${SRC}" ] || mkdir -p "${SRC}"
 [ -d "${BUILD}" ] || mkdir -p "${BUILD}"
+[ -d "${METADATAO32}" ] || mkdir -p "${METADATAO32}"
 
 unset CFLAGS
 unset CXXFLAGS
 export CROSS_HOST=${MACHTYPE}
 export CROSS_TARGET="mipsel-unknown-linux-gnu"
 
-[[ $# -eq 1 ]] || die "usage: build.sh SYSROOT"
-export SYSROOT="$1"
-#export PATH=$PATH:/cross-tools/bin/
+[[ $# -eq 1 ]] || die "usage: $0 PREFIX"
+export PREFIX="$1"
+export PREFIX32=${PREFIX}/gnu32
+export PREFIXGNULINUX=${PREFIX}/gnu-linux
+export PATH=${PATH}:${PREFIX32}/bin
+export SYSROOT=${PREFIX32}/${CROSS_TARGET}/sys-root/
 
 # Change ABI, Change libdir (LIB).
 export ABI=32
@@ -49,23 +54,46 @@ export CXX=${CROSS_TARGET}-g++
 export CXXFLAGS="-isystem ${SYSROOT}/usr/include ${BUILDFLAG}"
 export LDFLAGS="-Wl,-rpath-link,${SYSROOT}/usr/${LIB}:${SYSROOT}/${LIB} ${BUILDFLAG}"
 
+[ -f ${PREFIX32}/bin/${CC} ] || die "No toolchain found, process error"
+
 #export BUSYBOX_OPTIONS="static dynamic"
 export BUSYBOX_OPTIONS="dynamic"
 
 # Begin for loop, build static/dynamic busybox.
 for option in ${BUSYBOX_OPTIONS}; do
 
-mkdir ${SRC}/busybox-$option
+[ -f ${METADATAO32}/busybox-${option}-create ] || \
+  mkdir ${SRC}/busybox-$option || \
+    die "busybox-${option}-create dir create failed" && \
+      touch ${METADATAO32}/busybox-${option}-create
+
 pushd ${SRC}/busybox-$option
-[ -d "busybox-${BUSYBOX_VERSION}" ] \
-  || tar xvf ${TARBALL}/busybox-${BUSYBOX_VERSION}.${BUSYBOX_SUFFIX}
+[ -f ${METADATAO32}/busybox-${option}-extract ] || \
+  tar xvf ${TARBALL}/busybox-${BUSYBOX_VERSION}.${BUSYBOX_SUFFIX} || \
+    die "busybox-${option}-extract error" && \
+      touch ${METADATAO32}/busybox-${option}-extract
+
 cd busybox-${BUSYBOX_VERSION}
-patch -Np1 -i ${PATCH}/busybox-${BUSYBOX_VERSION}.patch || die "Path failed"
-make mipsel-${option}_defconfig
-make -j${JOBS} ARCH=mips CROSS_COMPILE=${CROSS_TARGET}- \
-  || die "build busybox error"
-make ARCH=mips CROSS_COMPILE=${CROSS_TARGET}- install \
-  || die "install busybox error"
+[ -f ${METADATAO32}/busybox-${option}-patch-busybox-${BUSYBOX_VERSION} ] || \
+  patch -Np1 -i ${PATCH}/busybox-${BUSYBOX_VERSION}.patch || \
+    die "Patch failed" && \
+      touch ${METADATAO32}/busybox-${option}-patch-busybox-${BUSYBOX_VERSION}
+[ -f ${METADATAO32}/busybox-${option}-patch-busybox-mipsel-${option}_defconfig ] || \
+  patch -Np1 -i ${PATCH}/busybox-mipsel-${option}_defconfig.patch \
+    || die "Patch failed" && \
+      touch ${METADATAO32}/busybox-${option}-patch-busybox-mipsel-${option}_defconfig
+[ -f ${METADATAO32}/busybox-${option}-config ] || \
+  make mipsel-${option}_defconfig || \
+    die "busybox-${option}-config error" && \
+      touch ${METADATAO32}/busybox-${option}-config
+[ -f ${METADATAO32}/busybox-${option}-build ] || \
+  make -j${JOBS} ARCH=mips CROSS_COMPILE=${CROSS_TARGET}- || \
+    die "busybox-${option}-build error" && \
+      touch ${METADATAO32}/busybox-${option}-build
+[ -f ${METADATAO32}/busybox-${option}-install ] || \
+  make ARCH=mips CROSS_COMPILE=${CROSS_TARGET}- install || \
+    die "busybox-${option}-install error" && \
+      touch ${METADATAO32}/busybox-${option}-install
 popd
 
 # Make BusyBox Image
@@ -99,6 +127,8 @@ sudo umount ${MOUNT_POINT}
 
 popd
 
+[ -d ${PREFIXGNULINUX} ] || mkdir -p ${PREFIXGNULINUX}
+mv ${SRC}/busybox-$option/${IMAGE} ${PREFIXGNULINUX}
 # End for loop, build static/dynamic busybox.
 done
 
