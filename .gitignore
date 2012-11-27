@@ -22,3 +22,12 @@ autoconf/aclocal.m4
 autoconf/autom4te.cache
 compile_commands.json
 .DS_Store
+
+#==============================================================================#
+# Directories to ignore (do not add trailing '/'s, they skip symlinks).
+#==============================================================================#
+# External projects that are tracked independently.
+src/
+build/
+src_live/
+tarballs/
