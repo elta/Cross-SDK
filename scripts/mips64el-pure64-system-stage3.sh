@@ -35,8 +35,8 @@ export CONFIG=${SCRIPT}/../configs
 export SRC=${SCRIPT}/../src/mips64el-pure64-linux/stage3
 export BUILD=${SCRIPT}/../build/mips64el-pure64-linux/stage3
 
-[[ $# -eq 1 ]] || die "usage: build.sh PREFIX"
-export CROSS="$1"
+export CROSS_SDK_TOOLS=${SCRIPT}/../sdk
+export CROSS=${CROSS_SDK_TOOLS}/mips64el-pure64/
 export PATH=$PATH:/cross-tools/bin/
 
 [ -d "${SRC}" ] || mkdir -p "${SRC}"
@@ -57,6 +57,7 @@ export RANLIB="${CROSS_TARGET}-ranlib"
 export LD="${CROSS_TARGET}-ld"
 export STRIP="${CROSS_TARGET}-strip"
 
+[ -d "${CROSS_SDK_TOOLS}" ] || mkdir -p ${CROSS_SDK_TOOLS}
 [ -d "${CROSS}" ] || mkdir -p ${CROSS}
 [ -d "${CROSS}/tools" ] || mkdir -p ${CROSS}/tools
 [ -d "/tools" ] || sudo ln -s ${CROSS}/tools /
@@ -324,4 +325,4 @@ sudo mknod -m 666 ${CROSS}/lib/udev/devices/null c 1 3
 sudo chown -Rv 0:0 ${CROSS}
 sudo chgrp -v 13 ${CROSS}/var/run/utmp ${CROSS}/var/log/lastlog
 
-
+sudo rm -rf /cross-tools /tools

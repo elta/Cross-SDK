@@ -53,8 +53,8 @@ export SRCS=${SCRIPT}/../srcs
 export SRC=${SCRIPT}/../src/mipsel-unknown-linux/stage1
 export BUILD=${SCRIPT}/../build/mipsel-unknown-linux/stage1
 
-[[ $# -eq 1 ]] || die "usage: build.sh PREFIX"
-export CROSS="$1"
+export CROSS_SDK_TOOLS=${SCRIPT}/../sdk
+export CROSS=${CROSS_SDK_TOOLS}/mipsel/
 export PATH=$PATH:/cross-tools/bin/
 
 [ -d "${SRC}" ] || mkdir -p "${SRC}"
@@ -67,11 +67,12 @@ export CROSS_HOST=${MACHTYPE}
 export CROSS_TARGET="mipsel-unknown-linux-gnu"
 export BUILD32="-mabi=32"
 
-mkdir -p ${CROSS}
-mkdir -p ${CROSS}/tools
-sudo ln -s ${CROSS}/tools /
-mkdir -p ${CROSS}/cross-tools
-sudo ln -s ${CROSS}/cross-tools /
+[ -d "${CROSS_SDK_TOOLS}" ] || mkdir -p ${CROSS_SDK_TOOLS}
+[ -d "${CROSS}" ] || mkdir -p ${CROSS}
+[ -d "${CROSS}/tools" ] || mkdir -p ${CROSS}/tools
+[ -d "/tools" ] || sudo ln -s ${CROSS}/tools /
+[ -d "${CROSS}/cross-tools" ] || mkdir -p ${CROSS}/cross-tools
+[ -d "/cross-tools" ] || sudo ln -s ${CROSS}/cross-tools /
 
 pushd ${SRC}
 [ -d "linux-${LINUX_VERSION}" ] \
@@ -293,3 +294,5 @@ make -j${JOBS} \
   || die "***build gcc stage2 error"
 make install || die "***install gcc stage2 error"
 popd
+
+sudo rm -rf /cross-tools /tools

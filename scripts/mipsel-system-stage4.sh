@@ -13,8 +13,9 @@ export SRCS=${SCRIPT}/../srcs
 export SRC=${SCRIPT}/../src/mipsel-unknown-linux/stage4
 export BUILD=${SCRIPT}/../build/mipsel-unknown-linux/stage4
 
-[[ $# -eq 1 ]] || die "usage: build.sh PREFIX"
-export CROSS="$1"
+#[[ $# -eq 1 ]] || die "usage: build.sh PREFIX"
+export CROSS_SDK_TOOLS=${SCRIPT}/../sdk
+export CROSS=${CROSS_SDK_TOOLS}/mipsel/
 export PATH=$PATH:/cross-tools/bin/
 
 unset CFLAGS
@@ -30,6 +31,13 @@ export AS="${CROSS_TARGET}-as"
 export RANLIB="${CROSS_TARGET}-ranlib"
 export LD="${CROSS_TARGET}-ld"
 export STRIP="${CROSS_TARGET}-strip"
+
+[ -d "${CROSS_SDK_TOOLS}" ] || mkdir -p ${CROSS_SDK_TOOLS}
+[ -d "${CROSS}" ] || mkdir -p ${CROSS}
+[ -d "${CROSS}/tools" ] || mkdir -p ${CROSS}/tools
+[ -d "/tools" ] || sudo ln -s ${CROSS}/tools /
+[ -d "${CROSS}/cross-tools" ] || mkdir -p ${CROSS}/cross-tools
+[ -d "/cross-tools" ] || sudo ln -s ${CROSS}/cross-tools /
 
 # BEGIN EGLIBC ++
 sudo touch ${CROSS}/etc/ld.so.conf
@@ -172,6 +180,6 @@ sudo cat >> ${CROSS}/etc/inittab << "EOF"
 # End /etc/inittab
 EOF
 
-
+sudo rm -rf /cross-tools /tools
 
 # END SYSVINIT
