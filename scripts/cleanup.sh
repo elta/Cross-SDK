@@ -13,7 +13,6 @@ export CROSS_TOOLS=/cross-tools
   for dir in `ls ${METADATA}`; do \
     [ "${dir}" != "download" ] && \
     rm -rf ${METADATA}/${dir}; \
-    echo ${dir}; \
   done;
 
 [ -d ${SRC} ] && rm -rf ${SRC}
