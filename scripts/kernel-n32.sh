@@ -1,53 +1,17 @@
 #! /bin/bash
 
-export JOBS=3
+source source.sh
 
-export BZ=tar.bz2
-export GZ=tar.gz
-export XZ=tar.xz
-
-export LINUX_VERSION=3.3.7
-export LINUX_SUFFIX=${XZ}
-
-function die() {
-  echo "$1"
-  exit 1
-}
-
-export SCRIPT="$(pwd)"
-export TARBALL=${SCRIPT}/../tarballs
-export PATCH=${SCRIPT}/../patches
-
-export METADATAKERNELN32=${SCRIPT}/../metadata/kernel-n32
-
-export SRCKERNELN32=${SCRIPT}/../src/kernel-n32
-
-export BUILDKERNELN32=${SCRIPT}/../build/kernel-n32
-
-[[ $# -eq 1 ]] || die "usage: $0 PREFIX"
-export PREFIX="$1"
-export PREFIXKERNELN32=${PREFIX}/gnu-linux
-export PREFIX64=${PREFIX}/gnu64
-export PREFIX32=${PREFIX}/gnu32
-export RTEMSPREFIX64=${PREFIX}/rtems64
-export RTEMSPREFIX32=${PREFIX}/rtems32
-export BAREPREFIX64=${PREFIX}/elf64
-export BAREPREFIX32=${PREFIX}/elf32
-export QEMUPREFIX=${PREFIX}/qemu
-export LLVMPREFIX=${PREFIX}/llvm
-export QTCPREFIX=${PREFIX}/qt-creator
-export PATH=${PATH}:${PREFIX64}/bin:${PREFIX32}/bin:${RTEMSPREFIX64}/bin:${RTEMSPREFIX32}/bin:${BAREPREFIX64}/bin:${BAREPREFIX32}/bin
-
-[ -d "${PREFIXKERNELN32}" ] || mkdir -p "${PREFIXKERNELN32}"
-
+[ -d "${PREFIXGNULINUX}" ] || mkdir -p "${PREFIXGNULINUX}"
 [ -d "${SRCKERNELN32}" ] || mkdir -p "${SRCKERNELN32}"
-
 [ -d "${BUILDKERNELN32}" ] || mkdir -p "${BUILDKERNELN32}"
-
 [ -d "${METADATAKERNELN32}" ] || mkdir -p "${METADATAKERNELN32}"
 
+[ -f ${PREFIXGNU64}/bin/${CROSS_TARGET64}-gcc ] || \
+  die "No toolchain found, process error"
+
 #################################################################
-### 32bit gnu extract
+### 32bit linux extract
 #################################################################
 pushd ${SRCKERNELN32}
 [ -f ${METADATAKERNELN32}/linux_extract ] || \
@@ -61,17 +25,8 @@ cd linux-${LINUX_VERSION}
       touch ${METADATAKERNELN32}/linux_patch
 popd
 
-unset CFLAGS
-unset CXXFLAGS
-export CFLAGS="-w"
-export CROSS_HOST=${MACHTYPE}
-export CROSS_TARGET64="mips64el-unknown-linux-gnu"
-export O32="-mabi=32"
-export N32="-mabi=n32"
-export N64="-mabi=64"
-
 #################################################################
-### 32bit gnu build
+### 32bit linux build
 #################################################################
 pushd ${SRCKERNELN32}
 cd linux-${LINUX_VERSION}
@@ -88,7 +43,7 @@ cd linux-${LINUX_VERSION}
     die "linux build error" && \
       touch ${METADATAKERNELN32}/linux32_build
 [ -f ${METADATAKERNELN32}/linux_move ] || \
-  mv vmlinux.32 ${PREFIXKERNELN32}/kernel-n32 || \
+  mv vmlinux.32 ${PREFIXGNULINUX}/kernel-n32 || \
     die "linux move error" && \
       touch ${METADATAKERNELN32}/linux_move
 popd
