@@ -1,0 +1,71 @@
+From ee7d9650f4e5f578f10e55edaab1096fa25abff7 Mon Sep 17 00:00:00 2001
+From: Feng Gao <gf91597@gmail.com>
+Date: Mon, 3 Dec 2012 15:09:15 +0800
+Subject: [PATCH] mips*el support
+Content-Type: text/plain; charset="utf-8"
+
+
+Signed-off-by: Feng Gao <gf91597@gmail.com>
+---
+ aclocal/canonical-target-name.m4            |    3 +++
+ c/src/aclocal/canonical-target-name.m4      |    2 ++
+ cpukit/aclocal/canonical-target-name.m4     |    2 ++
+ testsuites/aclocal/canonical-target-name.m4 |    2 ++
+ 4 files changed, 9 insertions(+)
+
+diff --git a/aclocal/canonical-target-name.m4 b/aclocal/canonical-target-name.m4
+index 6870bbf..687018e 100644
+--- a/aclocal/canonical-target-name.m4
++++ b/aclocal/canonical-target-name.m4
+@@ -12,6 +12,9 @@ case "${target}" in
+   no_cpu-*rtems*)
+         RTEMS_CPU=no_cpu
+ 	;;
++  mips*-*rtems*)
++        RTEMS_CPU="mips"
++	;;
+   *) 
+ 	RTEMS_CPU=`echo $target | sed 's%^\([[^-]]*\)-\(.*\)$%\1%'`
+ 	;;
+diff --git a/c/src/aclocal/canonical-target-name.m4 b/c/src/aclocal/canonical-target-name.m4
+index a237c7b..ccdca13 100644
+--- a/c/src/aclocal/canonical-target-name.m4
++++ b/c/src/aclocal/canonical-target-name.m4
+@@ -8,6 +8,8 @@ AC_DEFUN([RTEMS_CANONICAL_TARGET_CPU],
+ [AC_REQUIRE([AC_CANONICAL_HOST])
+ AC_MSG_CHECKING(rtems target cpu)
+ case "${host}" in
++mips*-*-rtems*)
++	RTEMS_CPU="mips";;
+ *-*-rtems*)
+ 	RTEMS_CPU="$host_cpu";;
+ *)
+diff --git a/cpukit/aclocal/canonical-target-name.m4 b/cpukit/aclocal/canonical-target-name.m4
+index a237c7b..ccdca13 100644
+--- a/cpukit/aclocal/canonical-target-name.m4
++++ b/cpukit/aclocal/canonical-target-name.m4
+@@ -8,6 +8,8 @@ AC_DEFUN([RTEMS_CANONICAL_TARGET_CPU],
+ [AC_REQUIRE([AC_CANONICAL_HOST])
+ AC_MSG_CHECKING(rtems target cpu)
+ case "${host}" in
++mips*-*-rtems*)
++	RTEMS_CPU="mips";;
+ *-*-rtems*)
+ 	RTEMS_CPU="$host_cpu";;
+ *)
+diff --git a/testsuites/aclocal/canonical-target-name.m4 b/testsuites/aclocal/canonical-target-name.m4
+index a237c7b..ccdca13 100644
+--- a/testsuites/aclocal/canonical-target-name.m4
++++ b/testsuites/aclocal/canonical-target-name.m4
+@@ -8,6 +8,8 @@ AC_DEFUN([RTEMS_CANONICAL_TARGET_CPU],
+ [AC_REQUIRE([AC_CANONICAL_HOST])
+ AC_MSG_CHECKING(rtems target cpu)
+ case "${host}" in
++mips*-*-rtems*)
++	RTEMS_CPU="mips";;
+ *-*-rtems*)
+ 	RTEMS_CPU="$host_cpu";;
+ *)
+-- 
+1.7.10.4
+
