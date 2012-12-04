@@ -1,49 +1,31 @@
 #! /bin/bash
 
-function die() {
-  echo "$1"
-  exit 1
-}
-
-[ -e build.sh ]
-export SCRIPT="$(pwd)"
-export TARBALL=${SCRIPT}/../tarballs
-export PATCH=${SCRIPT}/../patches
-export SRCS=${SCRIPT}/../srcs
-export SRC=${SCRIPT}/../src/mips64el-pure64-linux/stage2
-export BUILD=${SCRIPT}/../build/mips64el-pure64-linux/stage2
-
-export CROSS_SDK_TOOLS=${SCRIPT}/../sdk
-export CROSS=${CROSS_SDK_TOOLS}/mips64el-pure64/
-export PATH=$PATH:/cross-tools/bin/
-
-unset CFLAGS
-unset CXXFLAGS
-export CFLAGS="-w"
-export CROSS_HOST=${MACHTYPE}
-export CROSS_TARGET="mips64el-unknown-linux-gnu"
-export BUILD64="-mabi=64"
-
-export CC="${CROSS_TARGET}-gcc"
-export CXX="${CROSS_TARGET}-g++"
-export AR="${CROSS_TARGET}-ar"
-export AS="${CROSS_TARGET}-as"
-export RANLIB="${CROSS_TARGET}-ranlib"
-export LD="${CROSS_TARGET}-ld"
-export STRIP="${CROSS_TARGET}-strip"
+source source.sh
 
 [ -d "${CROSS_SDK_TOOLS}" ] || mkdir -p ${CROSS_SDK_TOOLS}
-[ -d "${CROSS}" ] || mkdir -p ${CROSS}
-[ -d "${CROSS}/tools" ] || mkdir -p ${CROSS}/tools
-[ -d "/tools" ] || sudo ln -s ${CROSS}/tools /
-[ -d "${CROSS}/cross-tools" ] || mkdir -p ${CROSS}/cross-tools
-[ -d "/cross-tools" ] || sudo ln -s ${CROSS}/cross-tools /
+[ -d "${PREFIXPURE64EL}" ] || mkdir -p ${PREFIXPURE64EL}
+[ -d "${PREFIXPURE64EL}/tools" ] || mkdir -p ${PREFIXPURE64EL}/tools
+[ -d "/tools" ] || sudo ln -s ${PREFIXPURE64EL}/tools /
+[ -d "${PREFIXPURE64EL}/cross-tools" ] || mkdir -p ${PREFIXPURE64EL}/cross-tools
+[ -d "/cross-tools" ] || sudo ln -s ${PREFIXPURE64EL}/cross-tools /
+
+[ -f "/cross-tools/bin/${CROSS_TARGET64}-gcc" ] || die "No tool chain found"
+
+export PATH=${PATH}:/cross-tools/bin/
+
+export CC="${CROSS_TARGET64}-gcc"
+export CXX="${CROSS_TARGET64}-g++"
+export AR="${CROSS_TARGET64}-ar"
+export AS="${CROSS_TARGET64}-as"
+export RANLIB="${CROSS_TARGET64}-ranlib"
+export LD="${CROSS_TARGET64}-ld"
+export STRIP="${CROSS_TARGET64}-strip"
 
 # BEGIN EGLIBC ++
-sudo touch ${CROSS}/etc/ld.so.conf
+sudo touch ${PREFIXPURE64EL}/etc/ld.so.conf
 
 # Configure EGLIBC +++
-sudo cat > ${CROSS}/etc/nsswitch.conf << "EOF"
+sudo cat > ${PREFIXPURE64EL}/etc/nsswitch.conf << "EOF"
 # Begin /etc/nsswitch.conf
 
 passwd: files
@@ -62,7 +44,7 @@ rpc: files
 EOF
 
 # Configure The Dynamic Loader +++
-sudo cat > ${CROSS}/etc/ld.so.conf << "EOF"
+sudo cat > ${PREFIXPURE64EL}/etc/ld.so.conf << "EOF"
 # Begin /etc/ld.so.conf
 
 /usr/local/lib
@@ -73,10 +55,10 @@ EOF
 # END EGLIBC
 
 # BEGIN RSYSLOG +++
-sudo cat > ${CROSS}/etc/rsyslog.conf << "EOF"
+sudo cat > ${PREFIXPURE64EL}/etc/rsyslog.conf << "EOF"
 # Begin /etc/rsyslog.conf
 
-# CROSS configuration of rsyslog. For more info use man rsyslog.conf
+# PREFIXPURE64EL configuration of rsyslog. For more info use man rsyslog.conf
 
 #######################################################################
 # Rsyslog Modules
@@ -140,7 +122,7 @@ EOF
 #END RSYSLOG
 
 # BEGIN SYSVINIT
-sudo cat > ${CROSS}/etc/inittab << "EOF"
+sudo cat > ${PREFIXPURE64EL}/etc/inittab << "EOF"
 # Begin /etc/inittab
 
 id:3:initdefault:
@@ -161,7 +143,7 @@ su:S016:once:/sbin/sulogin
 
 EOF
 
-sudo cat >> ${CROSS}/etc/inittab << "EOF"
+sudo cat >> ${PREFIXPURE64EL}/etc/inittab << "EOF"
 1:2345:respawn:/sbin/agetty -I '\033(K' tty1 9600
 2:2345:respawn:/sbin/agetty -I '\033(K' tty2 9600
 3:2345:respawn:/sbin/agetty -I '\033(K' tty3 9600
@@ -171,12 +153,12 @@ sudo cat >> ${CROSS}/etc/inittab << "EOF"
 
 EOF
 
-sudo cat >> ${CROSS}/etc/inittab << "EOF"
+sudo cat >> ${PREFIXPURE64EL}/etc/inittab << "EOF"
 c0:12345:respawn:/sbin/agetty 115200 ttyS0 vt100
 
 EOF
 
-sudo cat >> ${CROSS}/etc/inittab << "EOF"
+sudo cat >> ${PREFIXPURE64EL}/etc/inittab << "EOF"
 # End /etc/inittab
 EOF
 

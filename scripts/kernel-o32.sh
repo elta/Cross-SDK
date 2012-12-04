@@ -10,6 +10,8 @@ source source.sh
 [ -f ${PREFIXGNU32}/bin/${CROSS_TARGET32}-gcc ] || \
   die "No toolchain found, process error"
 
+export PATH=${PATH}:${PREFIXGNU32}/bin
+
 #################################################################
 ### 32bit linux extract
 #################################################################

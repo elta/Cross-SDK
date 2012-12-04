@@ -1,106 +1,63 @@
 #! /bin/bash
 
-export JOBS=16
+source source.sh
 
-export BZ=tar.bz2
-export GZ=tar.gz
-export XZ=tar.xz
+[ -d "${PREFIX}" ] || mkdir -p ${PREFIX}
+[ -d "${PREFIXMIPSEL}" ] || mkdir -p ${PREFIXMIPSEL}
+[ -d "${PREFIXMIPSEL}/tools" ] || mkdir -p ${PREFIXMIPSEL}/tools
+[ -d "/tools" ] || sudo ln -s ${PREFIXMIPSEL}/tools /
+[ -d "${PREFIXMIPSEL}/cross-tools" ] || mkdir -p ${PREFIXMIPSEL}/cross-tools
+[ -d "/cross-tools" ] || sudo ln -s ${PREFIXMIPSEL}/cross-tools /
 
-export UTILLINUX_VERSION=2.20.1
-export UTILLINUX_SUFFIX=${BZ}
-export SHADOW_VERSION=4.1.5
-export SHADOW_SUFFIX=${BZ}
-export E2FSPROGS_VERSION=1.42.3
-export E2FSPROGS_SUFFIX=${BZ}
-export SYSVINIT_VERSION=2.88
-export SYSVINIT_SUFFIX=${BZ}
-export KMOD_VERSION=8
-export KMOD_SUFFIX=${XZ}
-export UDEV_VERSION=182
-export UDEV_SUFFIX=${XZ}
-export LINUX_VERSION=3.3.7
-export LINUX_SUFFIX=${XZ}
-export BOOTSCRIPT_VERSION=2.0
-export BOOTSCRIPT_SUFFIX=${BZ}
+[ -f "/cross-tools/bin/${CROSS_TARGET32}-gcc" ] || die "No tool chain found"
 
-function die() {
-  echo "*** $1 ***"
-  exit 1
-}
+export PATH=${PATH}:/cross-tools/bin/
 
-[ -e build.sh ]
-export SCRIPT="$(pwd)"
-export TARBALL=${SCRIPT}/../tarballs
-export PATCH=${SCRIPT}/../patches
-export SRCS=${SCRIPT}/../srcs
-export CONFIG=${SCRIPT}/../configs
-export SRC=${SCRIPT}/../src/mipsel-unknown-linux/stage3
-export BUILD=${SCRIPT}/../build/mipsel-unknown-linux/stage3
+[ -d "${SRCMIPSELSTAGE3}" ] || mkdir -p "${SRCMIPSELSTAGE3}"
+[ -d "${BUILDMIPSELSTAGE3}" ] || mkdir -p "${BUILDMIPSELSTAGE3}"
 
-#[[ $# -eq 1 ]] || die "usage: build.sh PREFIX"
-export CROSS_SDK_TOOLS=${SCRIPT}/../sdk
-export CROSS=${CROSS_SDK_TOOLS}/mipsel/
-export PATH=$PATH:/cross-tools/bin/
-
-[ -d "${SRC}" ] || mkdir -p "${SRC}"
-[ -d "${BUILD}" ] || mkdir -p "${BUILD}"
-
-unset CFLAGS
-unset CXXFLAGS
-export CFLAGS="-w"
-export CROSS_HOST=${MACHTYPE}
-export CROSS_TARGET="mipsel-unknown-linux-gnu"
-export BUILD32="-mabi=32"
-
-export CC="${CROSS_TARGET}-gcc"
-export CXX="${CROSS_TARGET}-g++"
-export AR="${CROSS_TARGET}-ar"
-export AS="${CROSS_TARGET}-as"
-export RANLIB="${CROSS_TARGET}-ranlib"
-export LD="${CROSS_TARGET}-ld"
-export STRIP="${CROSS_TARGET}-strip"
-
-[ -d "${CROSS_SDK_TOOLS}" ] || mkdir -p ${CROSS_SDK_TOOLS}
-[ -d "${CROSS}" ] || mkdir -p ${CROSS}
-[ -d "${CROSS}/tools" ] || mkdir -p ${CROSS}/tools
-[ -d "/tools" ] || sudo ln -s ${CROSS}/tools /
-[ -d "${CROSS}/cross-tools" ] || mkdir -p ${CROSS}/cross-tools
-[ -d "/cross-tools" ] || sudo ln -s ${CROSS}/cross-tools /
+export CC="${CROSS_TARGET32}-gcc"
+export CXX="${CROSS_TARGET32}-g++"
+export AR="${CROSS_TARGET32}-ar"
+export AS="${CROSS_TARGET32}-as"
+export RANLIB="${CROSS_TARGET32}-ranlib"
+export LD="${CROSS_TARGET32}-ld"
+export STRIP="${CROSS_TARGET32}-strip"
 
 # Creating Directories
-mkdir -pv ${CROSS}/{bin,boot,dev,{etc/,}opt,home,lib,mnt}
-mkdir -pv ${CROSS}/{proc,media/{floppy,cdrom},run,sbin,srv,sys}
-mkdir -pv ${CROSS}/var/{lock,log,mail,spool}
-mkdir -pv ${CROSS}/var/{opt,cache,lib/{misc,locate},local}
-install -dv -m 0750 ${CROSS}/root
-install -dv -m 1777 ${CROSS}{/var,}/tmp
-mkdir -pv ${CROSS}/usr/{,local/}{bin,include,lib,sbin,src}
-mkdir -pv ${CROSS}/usr/{,local/}share/{doc,info,locale,man}
-mkdir -pv ${CROSS}/usr/{,local/}share/{misc,terminfo,zoneinfo}
-mkdir -pv ${CROSS}/usr/{,local/}share/man/man{1,2,3,4,5,6,7,8}
-for dir in ${CROSS}/usr{,/local}; do
+mkdir -pv ${PREFIXMIPSEL}/{bin,boot,dev,{etc/,}opt,home,lib,mnt}
+mkdir -pv ${PREFIXMIPSEL}/{proc,media/{floppy,cdrom},run,sbin,srv,sys}
+mkdir -pv ${PREFIXMIPSEL}/var/{lock,log,mail,spool}
+mkdir -pv ${PREFIXMIPSEL}/var/{opt,cache,lib/{misc,locate},local}
+install -dv -m 0750 ${PREFIXMIPSEL}/root
+install -dv -m 1777 ${PREFIXMIPSEL}{/var,}/tmp
+mkdir -pv ${PREFIXMIPSEL}/usr/{,local/}{bin,include,lib,sbin,src}
+mkdir -pv ${PREFIXMIPSEL}/usr/{,local/}share/{doc,info,locale,man}
+mkdir -pv ${PREFIXMIPSEL}/usr/{,local/}share/{misc,terminfo,zoneinfo}
+mkdir -pv ${PREFIXMIPSEL}/usr/{,local/}share/man/man{1,2,3,4,5,6,7,8}
+for dir in ${PREFIXMIPSEL}/usr{,/local}; do
     ln -sv share/{man,doc,info} $dir
 done
-cd ${CROSS}/boot
+cd ${PREFIXMIPSEL}/boot
 ln -svf . boot
 
 # Creating Essential Symlinks
-ln -sv /tools/bin/{bash,cat,echo,grep,login,pwd,sleep,stty} ${CROSS}/bin
-ln -sv /tools/bin/file ${CROSS}/usr/bin
-ln -sv /tools/sbin/{agetty,blkid} ${CROSS}/sbin
-ln -sv /tools/lib/libgcc_s.so{,.1} ${CROSS}/usr/lib
-ln -sv /tools/lib/libstd*so* ${CROSS}/usr/lib
-ln -sv bash ${CROSS}/bin/sh
-ln -sv /run ${CROSS}/var/run
+ln -sv /tools/bin/{bash,cat,echo,grep,login,pwd,sleep,stty} ${PREFIXMIPSEL}/bin
+ln -sv /tools/bin/file ${PREFIXMIPSEL}/usr/bin
+ln -sv /tools/sbin/{agetty,blkid} ${PREFIXMIPSEL}/sbin
+ln -sv /tools/lib/libgcc_s.so{,.1} ${PREFIXMIPSEL}/usr/lib
+ln -sv /tools/lib/libstd*so* ${PREFIXMIPSEL}/usr/lib
+ln -sv bash ${PREFIXMIPSEL}/bin/sh
+ln -sv /run ${PREFIXMIPSEL}/var/run
 
-pushd ${SRC}
+pushd ${SRCMIPSELSTAGE3}
 [ -d "util-linux-${UTILLINUX_VERSION}" ] \
   || tar xf ${TARBALL}/util-linux-${UTILLINUX_VERSION}.${UTILLINUX_SUFFIX}
 cd util-linux-${UTILLINUX_VERSION}
 echo "scanf_cv_type_modifier=as" > config.cache
 CC="${CC} ${BUILD32}" PKG_CONFIG=true \
   ./configure --prefix=/tools --exec-prefix=/tools \
-  --build=${CROSS_HOST} --host=${CROSS_TARGET} \
+  --build=${CROSS_HOST} --host=${CROSS_TARGET32} \
   --enable-login-utils --disable-makeinstall-chown \
   --config-cache \
   || die "config util-linux error"
@@ -108,7 +65,7 @@ make -j${JOBS} || die "build util-linux error"
 make install || die "install util-linux error"
 popd
 
-pushd ${SRC}
+pushd ${SRCMIPSELSTAGE3}
 [ -d "shadow-${SHADOW_VERSION}" ] \
   || tar xf ${TARBALL}/shadow-${SHADOW_VERSION}.${SHADOW_SUFFIX}
   cd shadow-${SHADOW_VERSION}
@@ -117,24 +74,24 @@ pushd ${SRC}
   find man -name Makefile.in -exec sed -i 's/groups\.1 / /' {} \;
   echo "ac_cv_func_setpgrp_void=yes" > config.cache
   CC="${CC}" ./configure --prefix=/tools \
-  --build=${CROSS_HOST} --host=${CROSS_TARGET} --sysconfdir=/etc \
+  --build=${CROSS_HOST} --host=${CROSS_TARGET32} --sysconfdir=/etc \
   --cache-file=config.cache || die "config shadow error"
   make -j${JOBS} || die "build shadow error"
-  make DESTDIR=${CROSS} install || die "install shadow error"
+  make DESTDIR=${PREFIXMIPSEL} install || die "install shadow error"
 popd
 
-pushd ${SRC}
+pushd ${SRCMIPSELSTAGE3}
 [ -d "e2fsprogs-${E2FSPROGS_VERSION}" ] \
   || tar xf ${TARBALL}/e2fsprogs-${E2FSPROGS_VERSION}.${E2FSPROGS_SUFFIX}
 popd
 
-pushd ${BUILD}
+pushd ${BUILDMIPSELSTAGE3}
 [ -d "e2fsprogs-build" ] || mkdir e2fsprogs-build
 cd e2fsprogs-build
 CC="${CC} ${BUILD32}" PKG_CONFIG=true \
-  ${SRC}/e2fsprogs-${E2FSPROGS_VERSION}/configure --prefix=/tools \
+  ${SRCMIPSELSTAGE3}/e2fsprogs-${E2FSPROGS_VERSION}/configure --prefix=/tools \
   --enable-elf-shlibs \
-  --build=${CROSS_HOST} --host=${CROSS_TARGET} \
+  --build=${CROSS_HOST} --host=${CROSS_TARGET32} \
   --disable-libblkid --disable-libuuid --disable-fsck \
   --disable-uuidd
   make LIBUUID="-luuid" STATIC_LIBUUID="-luuid" \
@@ -143,10 +100,10 @@ CC="${CC} ${BUILD32}" PKG_CONFIG=true \
 #  LDFLAGS="-Wl,-rpath,/tools/lib32" \
 make install || die "install e2fsprogs error"
 make install-libs || die "install e2fsprogs libs error "
-ln -sv /tools/sbin/{fsck.ext2,fsck.ext3,fsck.ext4,e2fsck} ${CROSS}/sbin
+ln -sv /tools/sbin/{fsck.ext2,fsck.ext3,fsck.ext4,e2fsck} ${PREFIXMIPSEL}/sbin
 popd
 
-pushd ${SRC}
+pushd ${SRCMIPSELSTAGE3}
 [ -d "sysvinit-${SYSVINIT_VERSION}dsf" ] \
   || tar xf ${TARBALL}/sysvinit-${SYSVINIT_VERSION}dsf.${SYSVINIT_SUFFIX}
 cd sysvinit-${SYSVINIT_VERSION}dsf
@@ -155,9 +112,9 @@ sed -e 's,/usr/lib,/tools/lib,g' \
     src/Makefile.orig > src/Makefile
 make -C src clobber || die "build sysvinit clobber error"
 make -C src CC="${CC} ${BUILD32}" || die "build sysvinit error"
-make -C src ROOT=${CROSS} install || die "install sysvinit error"
+make -C src ROOT=${PREFIXMIPSEL} install || die "install sysvinit error"
 
-cat > ${CROSS}/etc/inittab << "EOF"
+cat > ${PREFIXMIPSEL}/etc/inittab << "EOF"
 # Begin /etc/inittab
 
 id:3:initdefault:
@@ -178,7 +135,7 @@ su:S016:once:/sbin/sulogin
 
 EOF
 
-cat >> ${CROSS}/etc/inittab << "EOF"
+cat >> ${PREFIXMIPSEL}/etc/inittab << "EOF"
 1:2345:respawn:/sbin/agetty -I '\033(K' tty1 9600
 2:2345:respawn:/sbin/agetty -I '\033(K' tty2 9600
 3:2345:respawn:/sbin/agetty -I '\033(K' tty3 9600
@@ -188,59 +145,59 @@ cat >> ${CROSS}/etc/inittab << "EOF"
 
 EOF
 
-cat >> ${CROSS}/etc/inittab << "EOF"
+cat >> ${PREFIXMIPSEL}/etc/inittab << "EOF"
 c0:12345:respawn:/sbin/agetty 115200 ttyS0 vt100
 
 EOF
 
-cat >> ${CROSS}/etc/inittab << "EOF"
+cat >> ${PREFIXMIPSEL}/etc/inittab << "EOF"
 # End /etc/inittab
 EOF
 popd
 
-pushd ${SRC}
+pushd ${SRCMIPSELSTAGE3}
 [ -d "kmod-${KMOD_VERSION}" ] \
   || tar xf ${TARBALL}/kmod-${KMOD_VERSION}.${KMOD_SUFFIX}
 cd kmod-${KMOD_VERSION}
 CC="${CC} ${BUILD32}" ./configure --prefix=/tools \
     --bindir=/bin \
-    --build=${CROSS_HOST} --host=${CROSS_TARGET} \
+    --build=${CROSS_HOST} --host=${CROSS_TARGET32} \
     || die "config kmod error"
 make -j${JOBS} || die "build kmod error"
-make DESTDIR=${CROSS} install || die "install kmod error"
-ln -sv kmod ${CROSS}/bin/lsmod
-ln -sv ../bin/kmod ${CROSS}/sbin/depmod
-ln -sv ../bin/kmod ${CROSS}/sbin/insmod
-ln -sv ../bin/kmod ${CROSS}/sbin/modprobe
-ln -sv ../bin/kmod ${CROSS}/sbin/modinfo
-ln -sv ../bin/kmod ${CROSS}/sbin/rmmod
+make DESTDIR=${PREFIXMIPSEL} install || die "install kmod error"
+ln -sv kmod ${PREFIXMIPSEL}/bin/lsmod
+ln -sv ../bin/kmod ${PREFIXMIPSEL}/sbin/depmod
+ln -sv ../bin/kmod ${PREFIXMIPSEL}/sbin/insmod
+ln -sv ../bin/kmod ${PREFIXMIPSEL}/sbin/modprobe
+ln -sv ../bin/kmod ${PREFIXMIPSEL}/sbin/modinfo
+ln -sv ../bin/kmod ${PREFIXMIPSEL}/sbin/rmmod
 popd
 
-pushd ${SRC}
+pushd ${SRCMIPSELSTAGE3}
 [ -d "udev-${UDEV_VERSION}" ] \
   || tar xf ${TARBALL}/udev-${UDEV_VERSION}.${UDEV_SUFFIX}
 cd udev-${UDEV_VERSION}
 CC="${CC} ${BUILD32}" LIBS="-lpthread" \
   BLKID_CFLAGS="-I/tools/include/blkid" BLKID_LIBS="-L/tools/lib -lblkid" \
-  KMOD_CFLAGS="-I/tools/include" KMOD_LIBS="-L${CROSS}/lib -lkmod"  \
+  KMOD_CFLAGS="-I/tools/include" KMOD_LIBS="-L${PREFIXMIPSEL}/lib -lkmod"  \
   ./configure --prefix=/usr \
-  --build=${CROSS_HOST} --host=${CROSS_TARGET} \
-  --with-rootprefix=$CROSS --bindir=/sbin --sysconfdir=/etc --libexecdir=/lib \
+  --build=${CROSS_HOST} --host=${CROSS_TARGET32} \
+  --with-rootprefix=$PREFIXMIPSEL --bindir=/sbin --sysconfdir=/etc --libexecdir=/lib \
   --disable-introspection --with-usb-ids-path=no --with-pci-ids-path=no \
   --disable-gtk-doc-html --disable-gudev --disable-keymap --disable-logging \
   --with-firmware-path=/lib/firmware \
   || die "config udev error"
 make -j${JOBS} || die "build udev error"
-make DESTDIR=${CROSS} install || die "install udev error"
-install -dv ${CROSS}/lib/firmware
+make DESTDIR=${PREFIXMIPSEL} install || die "install udev error"
+install -dv ${PREFIXMIPSEL}/lib/firmware
 popd
 
 # Creating the passwd, group, and log Files
-cat > ${CROSS}/etc/passwd << "EOF"
+cat > ${PREFIXMIPSEL}/etc/passwd << "EOF"
 root::0:0:root:/root:/bin/bash
 EOF
 
-cat > ${CROSS}/etc/group << "EOF"
+cat > ${PREFIXMIPSEL}/etc/group << "EOF"
 root:x:0:
 bin:x:1:
 sys:x:2:
@@ -259,31 +216,31 @@ usb:x:14:
 cdrom:x:15:
 EOF
 
-touch ${CROSS}/run/utmp ${CROSS}/var/log/{btmp,lastlog,wtmp}
-chmod -v 664 ${CROSS}/run/utmp ${CROSS}/var/log/lastlog
-chmod -v 600 ${CROSS}/var/log/btmp
+touch ${PREFIXMIPSEL}/run/utmp ${PREFIXMIPSEL}/var/log/{btmp,lastlog,wtmp}
+chmod -v 664 ${PREFIXMIPSEL}/run/utmp ${PREFIXMIPSEL}/var/log/lastlog
+chmod -v 600 ${PREFIXMIPSEL}/var/log/btmp
 
 
-pushd ${SRC}
+pushd ${SRCMIPSELSTAGE3}
 [ -d "linux-${LINUX_VERSION}" ] \
   || tar xf ${TARBALL}/linux-${LINUX_VERSION}.${LINUX_SUFFIX}
 cd linux-${LINUX_VERSION}
   make mrproper
-  make ARCH=mips CROSS_COMPILE=${CROSS_TARGET}- malta_defconfig
-  make ARCH=mips CROSS_COMPILE=${CROSS_TARGET}- menuconfig
-  make -j${JOBS} ARCH=mips CROSS_COMPILE=${CROSS_TARGET}- \
+  make ARCH=mips CROSS_COMPILE=${CROSS_TARGET32}- malta_defconfig
+  make ARCH=mips CROSS_COMPILE=${CROSS_TARGET32}- menuconfig
+  make -j${JOBS} ARCH=mips CROSS_COMPILE=${CROSS_TARGET32}- \
   || die "make linux error"
-make ARCH=mips CROSS_COMPILE=${CROSS_TARGET}- \
-  INSTALL_MOD_PATH=${CROSS} modules_install \
+make ARCH=mips CROSS_COMPILE=${CROSS_TARGET32}- \
+  INSTALL_MOD_PATH=${PREFIXMIPSEL} modules_install \
   || die "install linux modules error"
-cp -v vmlinux ${CROSS}/boot/vmlinux-${LINUX_VERSION}
-gzip -9 ${CROSS}/boot/vmlinux-${LINUX_VERSION}
-cp -v System.map ${CROSS}/boot/System.map-${LINUX_VERSION}
-cp -v .config ${CROSS}/boot/config-${LINUX_VERSION}
+cp -v vmlinux ${PREFIXMIPSEL}/boot/vmlinux-${LINUX_VERSION}
+gzip -9 ${PREFIXMIPSEL}/boot/vmlinux-${LINUX_VERSION}
+cp -v System.map ${PREFIXMIPSEL}/boot/System.map-${LINUX_VERSION}
+cp -v .config ${PREFIXMIPSEL}/boot/config-${LINUX_VERSION}
 popd
 
 # Build Flags
-cat > ${CROSS}/root/.bash_profile << "EOF"
+cat > ${PREFIXMIPSEL}/root/.bash_profile << "EOF"
 set +h
 PS1='\u:\w\$ '
 LC_ALL=POSIX
@@ -292,7 +249,7 @@ export LC_ALL PATH PS1
 EOF
 
 # Creating the /etc/fstab File
-cat > ${CROSS}/etc/fstab << "EOF"
+cat > ${PREFIXMIPSEL}/etc/fstab << "EOF"
 # Begin /etc/fstab
 
 # file system  mount-point  type   options          dump  fsck
@@ -309,12 +266,12 @@ tmpfs          /run            tmpfs       defaults         0     0
 # End /etc/fstab
 EOF
 
-pushd ${SRC}
+pushd ${SRCMIPSELSTAGE3}
 [ -d "bootscripts-cross-lfs-${BOOTSCRIPT_VERSION}-pre1" ] \
   || tar xf ${TARBALL}/bootscripts-cross-lfs-${BOOTSCRIPT_VERSION}-pre1.${BOOTSCRIPT_SUFFIX}
 cd bootscripts-cross-lfs-${BOOTSCRIPT_VERSION}-pre1
-make DESTDIR=${CROSS} install-minimal || die "build bootscripts error"
-cat > ${CROSS}/etc/sysconfig/clock << "EOF"
+make DESTDIR=${PREFIXMIPSEL} install-minimal || die "build bootscripts error"
+cat > ${PREFIXMIPSEL}/etc/sysconfig/clock << "EOF"
 # Begin /etc/sysconfig/clock
 
 UTC=1
@@ -324,16 +281,16 @@ EOF
 popd
 
 # Populating /dev
-sudo mknod -m 600 ${CROSS}/dev/console c 5 1
-sudo mknod -m 666 ${CROSS}/dev/null c 1 3
-sudo mknod -m 666 ${CROSS}/dev/hda b 3 0
-sudo mknod -m 666 ${CROSS}/dev/rtc0 c 254 0
-sudo ln -sv ${CROSS}/dev/rtc0 ${CROSS}/dev/rtc
-sudo mknod -m 600 ${CROSS}/lib/udev/devices/console c 5 1
-sudo mknod -m 666 ${CROSS}/lib/udev/devices/null c 1 3
+sudo mknod -m 600 ${PREFIXMIPSEL}/dev/console c 5 1
+sudo mknod -m 666 ${PREFIXMIPSEL}/dev/null c 1 3
+sudo mknod -m 666 ${PREFIXMIPSEL}/dev/hda b 3 0
+sudo mknod -m 666 ${PREFIXMIPSEL}/dev/rtc0 c 254 0
+sudo ln -sv ${PREFIXMIPSEL}/dev/rtc0 ${PREFIXMIPSEL}/dev/rtc
+sudo mknod -m 600 ${PREFIXMIPSEL}/lib/udev/devices/console c 5 1
+sudo mknod -m 666 ${PREFIXMIPSEL}/lib/udev/devices/null c 1 3
 
-sudo chown -Rv 0:0 ${CROSS}
-sudo chgrp -v 13 ${CROSS}/var/run/utmp ${CROSS}/var/log/lastlog
+sudo chown -Rv 0:0 ${PREFIXMIPSEL}
+sudo chgrp -v 13 ${PREFIXMIPSEL}/var/run/utmp ${PREFIXMIPSEL}/var/log/lastlog
 
 sudo rm -rf /cross-tools /tools
 

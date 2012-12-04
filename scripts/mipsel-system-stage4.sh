@@ -1,49 +1,33 @@
 #! /bin/bash
 
-function die() {
-  echo "$1"
-  exit 1
-}
+source source.sh
 
-[ -e build.sh ]
-export SCRIPT="$(pwd)"
-export TARBALL=${SCRIPT}/../tarballs
-export PATCH=${SCRIPT}/../patches
-export SRCS=${SCRIPT}/../srcs
-export SRC=${SCRIPT}/../src/mipsel-unknown-linux/stage4
-export BUILD=${SCRIPT}/../build/mipsel-unknown-linux/stage4
+[ -d "${PREFIX}" ] || mkdir -p ${PREFIX}
+[ -d "${PREFIXMIPSEL}" ] || mkdir -p ${PREFIXMIPSEL}
+[ -d "${PREFIXMIPSEL}/tools" ] || mkdir -p ${PREFIXMIPSEL}/tools
+[ -d "/tools" ] || sudo ln -s ${PREFIXMIPSEL}/tools /
+[ -d "${PREFIXMIPSEL}/cross-tools" ] || mkdir -p ${PREFIXMIPSEL}/cross-tools
+[ -d "/cross-tools" ] || sudo ln -s ${PREFIXMIPSEL}/cross-tools /
 
-#[[ $# -eq 1 ]] || die "usage: build.sh PREFIX"
-export CROSS_SDK_TOOLS=${SCRIPT}/../sdk
-export CROSS=${CROSS_SDK_TOOLS}/mipsel/
-export PATH=$PATH:/cross-tools/bin/
+[ -f "/cross-tools/bin/${CROSS_TARGET32}-gcc" ] || die "No tool chain found"
 
-unset CFLAGS
-unset CXXFLAGS
-export CFLAGS="-w"
-export CROSS_HOST=${MACHTYPE}
-export CROSS_TARGET="mipsel-unknown-linux-gnu"
+export PATH=${PATH}:/cross-tools/bin/
 
-export CC="${CROSS_TARGET}-gcc"
-export CXX="${CROSS_TARGET}-g++"
-export AR="${CROSS_TARGET}-ar"
-export AS="${CROSS_TARGET}-as"
-export RANLIB="${CROSS_TARGET}-ranlib"
-export LD="${CROSS_TARGET}-ld"
-export STRIP="${CROSS_TARGET}-strip"
+export CROSS_TARGET32="mipsel-unknown-linux-gnu"
 
-[ -d "${CROSS_SDK_TOOLS}" ] || mkdir -p ${CROSS_SDK_TOOLS}
-[ -d "${CROSS}" ] || mkdir -p ${CROSS}
-[ -d "${CROSS}/tools" ] || mkdir -p ${CROSS}/tools
-[ -d "/tools" ] || sudo ln -s ${CROSS}/tools /
-[ -d "${CROSS}/cross-tools" ] || mkdir -p ${CROSS}/cross-tools
-[ -d "/cross-tools" ] || sudo ln -s ${CROSS}/cross-tools /
+export CC="${CROSS_TARGET32}-gcc"
+export CXX="${CROSS_TARGET32}-g++"
+export AR="${CROSS_TARGET32}-ar"
+export AS="${CROSS_TARGET32}-as"
+export RANLIB="${CROSS_TARGET32}-ranlib"
+export LD="${CROSS_TARGET32}-ld"
+export STRIP="${CROSS_TARGET32}-strip"
 
 # BEGIN EGLIBC ++
-sudo touch ${CROSS}/etc/ld.so.conf
+sudo touch ${PREFIXMIPSEL}/etc/ld.so.conf
 
 # Configure EGLIBC +++
-sudo cat > ${CROSS}/etc/nsswitch.conf << "EOF"
+sudo cat > ${PREFIXMIPSEL}/etc/nsswitch.conf << "EOF"
 # Begin /etc/nsswitch.conf
 
 passwd: files
@@ -62,7 +46,7 @@ rpc: files
 EOF
 
 # Configure The Dynamic Loader +++
-sudo cat > ${CROSS}/etc/ld.so.conf << "EOF"
+sudo cat > ${PREFIXMIPSEL}/etc/ld.so.conf << "EOF"
 # Begin /etc/ld.so.conf
 
 /usr/local/lib
@@ -73,7 +57,7 @@ EOF
 # END EGLIBC
 
 # BEGIN RSYSLOG +++
-sudo cat > ${CROSS}/etc/rsyslog.conf << "EOF"
+sudo cat > ${PREFIXMIPSEL}/etc/rsyslog.conf << "EOF"
 # Begin /etc/rsyslog.conf
 
 # CLFS configuration of rsyslog. For more info use man rsyslog.conf
@@ -140,7 +124,7 @@ EOF
 #END RSYSLOG
 
 # BEGIN SYSVINIT
-sudo cat > ${CROSS}/etc/inittab << "EOF"
+sudo cat > ${PREFIXMIPSEL}/etc/inittab << "EOF"
 # Begin /etc/inittab
 
 id:3:initdefault:
@@ -161,7 +145,7 @@ su:S016:once:/sbin/sulogin
 
 EOF
 
-sudo cat >> ${CROSS}/etc/inittab << "EOF"
+sudo cat >> ${PREFIXMIPSEL}/etc/inittab << "EOF"
 1:2345:respawn:/sbin/agetty -I '\033(K' tty1 9600
 2:2345:respawn:/sbin/agetty -I '\033(K' tty2 9600
 3:2345:respawn:/sbin/agetty -I '\033(K' tty3 9600
@@ -171,12 +155,12 @@ sudo cat >> ${CROSS}/etc/inittab << "EOF"
 
 EOF
 
-sudo cat >> ${CROSS}/etc/inittab << "EOF"
+sudo cat >> ${PREFIXMIPSEL}/etc/inittab << "EOF"
 c0:12345:respawn:/sbin/agetty 115200 ttyS0 vt100
 
 EOF
 
-sudo cat >> ${CROSS}/etc/inittab << "EOF"
+sudo cat >> ${PREFIXMIPSEL}/etc/inittab << "EOF"
 # End /etc/inittab
 EOF
 

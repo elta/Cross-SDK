@@ -1,75 +1,12 @@
 #! /bin/bash
 
-export JOBS=3
-
-export BZ=tar.bz2
-export GZ=tar.gz
-export XZ=tar.xz
-
-export AUTOCONF_VERSION=2.69
-export AUTOCONF_SUFFIX=${XZ}
-export AUTOMAKE_VERSION=1.12.3
-export AUTOMAKE_SUFFIX=${XZ}
-export LLVM_VERSION=3.1
-export LLVM_SUFFIX=${GZ}
-export LINUX_VERSION=3.3.7
-export LINUX_SUFFIX=${XZ}
-export GMP_VERSION=5.0.5
-export GMP_SUFFIX=${XZ}
-export MPFR_VERSION=3.1.0
-export MPFR_SUFFIX=${BZ}
-export MPC_VERSION=0.9
-export MPC_SUFFIX=${GZ}
-export PPL_VERSION=0.11.2
-export PPL_SUFFIX=${BZ}
-export CLOOG_VERSION=0.16.3
-export CLOOG_SUFFIX=${GZ}
-export BINUTILS_VERSION=2.22
-export BINUTILS_SUFFIX=${BZ}
-export GCC_VERSION=4.6.3
-export GCC_SUFFIX=${BZ}
-export NEWLIB_VERSION=1.20.0
-export NEWLIB_SUFFIX=${GZ}
-export GDB_VERSION=7.4
-export GDB_SUFFIX=${BZ}
-export QEMU_VERSION=1.1.1
-export QTC_VERSION=2.5.2-src
-export TERMCAP_VERSION=1.3.1
-export TERMCAP_SUFFIX=${GZ}
-
-function die() {
-  echo "$1"
-  exit 1
-}
-
-export SCRIPT="$(pwd)"
-export TARBALL=${SCRIPT}/../tarballs
-export PATCH=${SCRIPT}/../patches
-
-export METADATARTEMS32=${SCRIPT}/../metadata/rtems32
-
-export SRCRTEMS32=${SCRIPT}/../src/mips-rtems-tool
-
-export BUILDRTEMS32=${SCRIPT}/../build/mips-rtems-tool
-
-[[ $# -eq 1 ]] || die "usage: $0 PREFIX"
-export PREFIX="$1"
-export PREFIX64=${PREFIX}/gnu64
-export PREFIX32=${PREFIX}/gnu32
-export RTEMSPREFIX64=${PREFIX}/rtems64
-export RTEMSPREFIX32=${PREFIX}/rtems32
-export BAREPREFIX64=${PREFIX}/elf64
-export BAREPREFIX32=${PREFIX}/elf32
-export QEMUPREFIX=${PREFIX}/qemu
-export LLVMPREFIX=${PREFIX}/llvm
-export QTCPREFIX=${PREFIX}/qt-creator
-export PATH=${PATH}:${PREFIX64}/bin:${PREFIX32}/bin:${RTEMSPREFIX64}/bin:${RTEMSPREFIX32}/bin:${BAREPREFIX64}/bin:${BAREPREFIX32}/bin
+source source.sh
 
 [ -d "${SRCRTEMS32}" ] || mkdir -p "${SRCRTEMS32}"
-
 [ -d "${BUILDRTEMS32}" ] || mkdir -p "${BUILDRTEMS32}"
-
 [ -d "${METADATARTEMS32}" ] || mkdir -p "${METADATARTEMS32}"
+
+export PATH=${PATH}:${PREFIXRTEMS32}/bin
 
 #################################################################
 ### 32bit rtems extract
@@ -169,23 +106,6 @@ ln -s ../newlib-${NEWLIB_VERSION}/newlib || \
   touch ${METADATARTEMS32}/newlib_linked
 popd
 
-unset CFLAGS
-unset CXXFLAGS
-export CFLAGS="-w"
-export CROSS_HOST=${MACHTYPE}
-export CROSS_TARGET64="mips64el-unknown-linux-gnu"
-export CROSS_TARGET32="$(echo ${CROSS_TARGET64}| sed -e 's/64//g')"
-export CROSS_RTEMSTARGET64="mips64el-rtems4.11"
-export CROSS_RTEMSTARGET32="mipsel-rtems4.11"
-export CROSS_BARETARGET64="mips64el-unknown-elf"
-export CROSS_BARETARGET32="mipsel-unknown-elf"
-export SYSROOT64=${PREFIX64}/${CROSS_TARGET64}/sys-root
-export SYSROOT32=${PREFIX32}/${CROSS_TARGET32}/sys-root
-export O32="-mabi=32"
-export N32="-mabi=n32"
-export N64="-mabi=64"
-export QEMU_TARGET="mips64el-softmmu,mipsel-softmmu,mipsel-linux-user"
-
 #################################################################
 ### 32bit rtems build
 #################################################################
@@ -241,7 +161,7 @@ pushd ${BUILDRTEMS32}
 cd autoconf-build
 [ -f "${METADATARTEMS32}/autoconf_configure" ] || \
   ${SRCRTEMS32}/autoconf-${AUTOCONF_VERSION}/configure \
-  --prefix=${RTEMSPREFIX32} || \
+  --prefix=${PREFIXRTEMS32} || \
     die "***config 32bit rtems autoconf error" && \
       touch ${METADATARTEMS32}/autoconf_configure
 [ -f ${METADATARTEMS32}/autoconf_build ] || \
@@ -257,7 +177,7 @@ pushd ${BUILDRTEMS32}
 cd automake-build
 [ -f "${METADATARTEMS32}/automake_configure" ] || \
   ${SRCRTEMS32}/automake-${AUTOMAKE_VERSION}/configure \
-  --prefix=${RTEMSPREFIX32} || \
+  --prefix=${PREFIXRTEMS32} || \
     die "***config 32bit rtems automake error" && \
       touch ${METADATARTEMS32}/automake_configure
 [ -f ${METADATARTEMS32}/automake_build ] || \
@@ -273,7 +193,7 @@ pushd ${BUILDRTEMS32}
 cd binutils-build
 [ -f "${METADATARTEMS32}/binutils_configure" ] || AS="as" AR="ar" \
   ${SRCRTEMS32}/binutils-${BINUTILS_VERSION}/configure \
-  --prefix=${RTEMSPREFIX32} --target=${CROSS_RTEMSTARGET32} \
+  --prefix=${PREFIXRTEMS32} --target=${CROSS_RTEMSTARGET32} \
   --with-gmp=${BUILDRTEMS32}/gmp --with-mpfr=${BUILDRTEMS32}/mpfr \
   --with-mpc=${BUILDRTEMS32}/mpc || \
     die "***config 32bit rtems binutils error" && \
@@ -292,7 +212,7 @@ cd gcc-build
 [ -f "${METADATARTEMS32}/gcc_configure" ] || \
   AR="ar" AS="as" \
   ${SRCRTEMS32}/gcc-${GCC_VERSION}/configure \
-  --prefix=${RTEMSPREFIX32} --target=${CROSS_RTEMSTARGET32} \
+  --prefix=${PREFIXRTEMS32} --target=${CROSS_RTEMSTARGET32} \
   --with-gnu-as --with-gnu-ld --with-newlib --verbose \
   --enable-threads --enable-languages="c,c++" \
   --with-gmp=${BUILDRTEMS32}/gmp --with-mpfr=${BUILDRTEMS32}/mpfr \
@@ -312,7 +232,7 @@ pushd ${BUILDRTEMS32}
 cd gdb-build
 [ -f "${METADATARTEMS32}/gdb_configure" ] || \
   ${SRCRTEMS32}/gdb-${GDB_VERSION}/configure \
-  --prefix=${RTEMSPREFIX32} --target=${CROSS_RTEMSTARGET32} \
+  --prefix=${PREFIXRTEMS32} --target=${CROSS_RTEMSTARGET32} \
   --with-gmp=${BUILDRTEMS32}/gmp --with-mpfr=${BUILDRTEMS32}/mpfr \
   --with-mpc=${BUILDRTEMS32}/mpc || \
     die "***config 32bit rtems gdb error" && \
