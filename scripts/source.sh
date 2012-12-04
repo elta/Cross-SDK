@@ -287,7 +287,7 @@ export BUILD64="-mabi=64"
 # Prefixes
 ###########################################################
 
-export PREFIX=${HOME}/sdk_install
+export PREFIX=${HOME}/sdk
 export PREFIXGNULINUX=${PREFIX}/gnu-linux
 export PREFIXGNU64=${PREFIX}/gnu64
 export PREFIXGNU32=${PREFIX}/gnu32
