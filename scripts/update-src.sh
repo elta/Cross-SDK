@@ -3,11 +3,6 @@
 source source.sh
 
 pushd ${SRC_LIVE}
-cd qemu
-git pull
-popd
-
-pushd ${SRC_LIVE}
 cd openocd
 git pull
 popd

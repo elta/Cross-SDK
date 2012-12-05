@@ -574,15 +574,16 @@ download "qt-creator-${QTC_VERSION}.${QTC_SUFFIX}" \
   "${QTC_URL}/qt-creator-${QTC_VERSION}.${QTC_SUFFIX}" || \
   die "download qt-creator error" && \
     touch qt-creator_download
+
+#qemu-1.3.0.tar.bz2
+[ -f qemu_download ] || \
+download "qemu-${QEMU_VERSION}.${QEMU_SUFFIX}" \
+  "${QEMU_URL}/qemu-${QEMU_VERSION}.${QEMU_SUFFIX}" || \
+  die "download qemu error" && \
+    touch qemu_download
 popd
 
 pushd ${SRC_LIVE}
-#qemu
-[ -f ${METADATADOWN}/qemu_git ] || \
-  git clone ${QEMU_GITURL} || \
-  die "download qemu error" && \
-    touch ${METADATADOWN}/qemu_git
-
 #openocd
 [ -f ${METADATADOWN}/openocd_git ] || \
   git clone ${OPENOCD_GITURL} || \

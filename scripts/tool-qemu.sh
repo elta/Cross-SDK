@@ -11,9 +11,9 @@ source source.sh
 #################################################################
 pushd ${SRCUNIVERSAL}
 [ -f ${METADATAUNIVERSAL}/llvm_extract ] || \
-tar xf ${TARBALL}/llvm-${LLVM_VERSION}.${LLVM_SUFFIX} || \
-  die "extract llvm error" && \
-    touch ${METADATAUNIVERSAL}/llvm_extract
+tar xf ${TARBALL}/qemu-${QEMU_VERSION}.${QEMU_SUFFIX} || \
+  die "extract qemu error" && \
+    touch ${METADATAUNIVERSAL}/qemu_extract
 popd
 
 #################################################################
@@ -23,7 +23,7 @@ pushd ${BUILDUNIVERSAL}
 [ -d "qemu-build" ] || mkdir qemu-build
 cd qemu-build
 [ -f "${METADATAUNIVERSAL}/qemu_configure" ] || \
-  ${SRC_LIVE}/qemu/configure \
+  ${SRCUNIVERSAL}/qemu/configure \
   --prefix=${PREFIXQEMU} --target-list=${QEMU_TARGET} \
   --enable-debug-tcg || \
     die "***config qemu error" &&
