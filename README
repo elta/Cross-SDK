@@ -35,14 +35,14 @@ ${ROOS_FS}.sh ${SDK_PREFIX}
 
 Excample:
 run
-tool-gnu64.sh /home/jia/sdk
+tool-gnu64.sh
 to get 64bit gnu toolchain.
 
 run
-mips64el-multilib-stage1.sh /home/jia/sdk
-mips64el-multilib-stage2.sh /home/jia/sdk
-mips64el-multilib-stage3.sh /home/jia/sdk
-mips64el-multilib-stage4.sh /home/jia/sdk
+mips64el-multilib-stage1.sh
+mips64el-multilib-stage2.sh
+mips64el-multilib-stage3.sh
+mips64el-multilib-stage4.sh
 to get 64bit multilib gnu root fs.
 
 Notice:
