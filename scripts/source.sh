@@ -286,10 +286,19 @@ export BUILDN32="-mabi=n32"
 export BUILD64="-mabi=64"
 
 ###########################################################
+# Basic directory info
+###########################################################
+
+export SCRIPT="$(pwd)"
+export PATCH=${SCRIPT}/../patches
+export TARBALL=${SCRIPT}/../tarballs
+export SRC_LIVE=${SCRIPT}/../src_live
+
+###########################################################
 # Prefixes
 ###########################################################
 
-export PREFIX=${HOME}/sdk
+export PREFIX=${SCRIPT}/../sdk
 export PREFIXGNULINUX=${PREFIX}/gnu-linux
 export PREFIXGNU64=${PREFIX}/gnu64
 export PREFIXGNU32=${PREFIX}/gnu32
@@ -317,15 +326,6 @@ export BUSYBOXO32_IMAGE=busybox-o32.img
 export BUSYBOXN32_IMAGE=busybox-mipsel-n32.img
 export BUSYBOXMUL64_IMAGE=busybox-mul64.img
 export BUSYBOXPURE64_IMAGE=busybox-pure64.img
-
-###########################################################
-# Basic directory info
-###########################################################
-
-export SCRIPT="$(pwd)"
-export PATCH=${SCRIPT}/../patches
-export TARBALL=${SCRIPT}/../tarballs
-export SRC_LIVE=${SCRIPT}/../src_live
 
 ###########################################################
 # METADATA info
