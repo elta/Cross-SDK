@@ -147,7 +147,7 @@ pushd ${BUILDBARE64}
 cd newlib-build
 [ -f "${METADATABARE64}/newlib_configure" ] || \
   ${SRCBARE64}/newlib-${NEWLIB_VERSION}/configure \
-  --prefiPREFIXx=${BARE64} --target=${CROSS_BARETARGET64} \
+  --prefix=${PREFIXBARE64} --target=${CROSS_BARETARGET64} \
   --enable-interwork --with-gnu-as --with-gnu-ld \
   --disable-nls || \
     die "***config 64bit newlib error" && \

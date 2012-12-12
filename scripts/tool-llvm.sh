@@ -17,7 +17,7 @@ tar xf ${TARBALL}/llvm-${LLVM_VERSION}.${LLVM_SUFFIX} || \
 
 [ -f ${METADATAUNIVERSAL}/clang_extract ] || \
 cd llvm-${LLVM_VERSION}/tools && \
-tar xf ${TARBALL}/clang-${CLANG_VERSION}.src.${CLANG_SUFFIX} || \
+tar xf ${TARBALL}/clang-${CLANG_VERSION}.${CLANG_SUFFIX} || \
   die "extract clang error" && \
     touch ${METADATAUNIVERSAL}/clang_extract
 popd

@@ -387,5 +387,5 @@ cd gdb-build
     touch ${METADATAGNU64}/gdb_build
 [ -f "${METADATAGNU64}/gdb_install" ] || \
   make install || die "***install 64bit gdb error" && \
-    touch ${METADATA64}/gdb_install
+    touch ${METADATAGNU64}/gdb_install
 popd
