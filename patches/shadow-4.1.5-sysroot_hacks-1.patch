@@ -1,0 +1,1300 @@
+From a9ba33329b3e030a83a00ca410b4e18d5ff80554 Mon Sep 17 00:00:00 2001
+From: dongxue-zhang <dongxue-zhang@ubuntu.(none)>
+Date: Fri, 14 Dec 2012 15:26:00 +0800
+Subject: [PATCH] shadow cross build
+
+---
+ Makefile.in           |    4 ++--
+ aclocal.m4            |   35 ++++++++---------------------------
+ configure             |   22 +++-------------------
+ contrib/Makefile.in   |    4 ++--
+ doc/Makefile.in       |    4 ++--
+ etc/Makefile.in       |    6 +++---
+ etc/pam.d/Makefile.in |    4 ++--
+ lib/Makefile.am       |    1 +
+ lib/Makefile.in       |    7 ++++---
+ lib/defines.h         |    8 ++++----
+ lib/getdef.c          |    2 +-
+ lib/gshadow_.h        |    2 +-
+ lib/port.h            |    2 +-
+ libmisc/Makefile.am   |    2 ++
+ libmisc/Makefile.in   |    7 ++++---
+ libmisc/limits.c      |    2 +-
+ man/Makefile.in       |    6 +++---
+ man/cs/Makefile.in    |    4 ++--
+ man/de/Makefile.in    |    4 ++--
+ man/es/Makefile.in    |    4 ++--
+ man/fi/Makefile.in    |    4 ++--
+ man/fr/Makefile.in    |    4 ++--
+ man/hu/Makefile.in    |    4 ++--
+ man/id/Makefile.in    |    4 ++--
+ man/it/Makefile.in    |    4 ++--
+ man/ja/Makefile.in    |    4 ++--
+ man/ko/Makefile.in    |    4 ++--
+ man/pl/Makefile.in    |    4 ++--
+ man/pt_BR/Makefile.in |    4 ++--
+ man/ru/Makefile.in    |    4 ++--
+ man/sv/Makefile.in    |    4 ++--
+ man/tr/Makefile.in    |    4 ++--
+ man/zh_CN/Makefile.in |    4 ++--
+ man/zh_TW/Makefile.in |    4 ++--
+ src/Makefile.am       |   12 ++++++------
+ src/Makefile.in       |   18 +++++++++---------
+ src/chage.c           |    2 +-
+ src/chfn.c            |    2 +-
+ src/chgpasswd.c       |    2 +-
+ src/chpasswd.c        |    2 +-
+ src/chsh.c            |    6 +++---
+ src/gpasswd.c         |    6 ++++--
+ src/groupadd.c        |    2 +-
+ src/groupdel.c        |    2 +-
+ src/groupmod.c        |    2 +-
+ src/grpck.c           |    2 +-
+ src/grpconv.c         |    2 +-
+ src/grpunconv.c       |    2 +-
+ src/login_nopam.c     |    2 +-
+ src/logoutd.c         |    2 +-
+ src/newgrp.c          |    4 ++--
+ src/newusers.c        |    4 ++--
+ src/passwd.c          |    2 +-
+ src/pwck.c            |    2 +-
+ src/pwconv.c          |    2 +-
+ src/pwunconv.c        |    2 +-
+ src/suauth.c          |    2 +-
+ src/useradd.c         |   10 +++++-----
+ src/userdel.c         |    4 ++--
+ src/usermod.c         |    4 ++--
+ src/vipw.c            |    4 ++--
+ 61 files changed, 132 insertions(+), 160 deletions(-)
+
+diff --git a/Makefile.in b/Makefile.in
+index 157360c..861e330 100644
+--- a/Makefile.in
++++ b/Makefile.in
+@@ -323,7 +323,7 @@ clean-libtool:
+ 	-rm -rf .libs _libs
+ 
+ distclean-libtool:
+-	-rm -f libtool config.lt
++	-rm -f libtool
+ 
+ # This directory's subdirectories are mostly independent; you can cd
+ # into them and run `make' without going through this Makefile.
+@@ -400,7 +400,7 @@ ID: $(HEADERS) $(SOURCES) $(LISP) $(TAGS_FILES)
+ 	unique=`for i in $$list; do \
+ 	    if test -f "$$i"; then echo $$i; else echo $(srcdir)/$$i; fi; \
+ 	  done | \
+-	  $(AWK) '{ files[$$0] = 1; nonempty = 1; } \
++	  $(AWK) '{ files[$$0] = 1; nonemtpy = 1; } \
+ 	      END { if (nonempty) { for (i in files) print i; }; }'`; \
+ 	mkid -fID $$unique
+ tags: TAGS
+diff --git a/aclocal.m4 b/aclocal.m4
+index 54abb2b..93c3c86 100644
+--- a/aclocal.m4
++++ b/aclocal.m4
+@@ -4262,18 +4262,6 @@ linux* | k*bsd*-gnu | kopensolaris*-gnu)
+   dynamic_linker='GNU/Linux ld.so'
+   ;;
+ 
+-netbsdelf*-gnu)
+-  version_type=linux
+-  need_lib_prefix=no
+-  need_version=no
+-  library_names_spec='${libname}${release}${shared_ext}$versuffix ${libname}${release}${shared_ext}$major ${libname}${shared_ext}'
+-  soname_spec='${libname}${release}${shared_ext}$major'
+-  shlibpath_var=LD_LIBRARY_PATH
+-  shlibpath_overrides_runpath=no
+-  hardcode_into_libs=yes
+-  dynamic_linker='NetBSD ld.elf_so'
+-  ;;
+-
+ netbsd*)
+   version_type=sunos
+   need_lib_prefix=no
+@@ -4865,7 +4853,7 @@ linux* | k*bsd*-gnu | kopensolaris*-gnu)
+   lt_cv_deplibs_check_method=pass_all
+   ;;
+ 
+-netbsd* | netbsdelf*-gnu)
++netbsd*)
+   if echo __ELF__ | $CC -E - | $GREP __ELF__ > /dev/null; then
+     lt_cv_deplibs_check_method='match_pattern /lib[[^/]]+(\.so\.[[0-9]]+\.[[0-9]]+|_pic\.a)$'
+   else
+@@ -5546,7 +5534,7 @@ m4_if([$1], [CXX], [
+ 	    ;;
+ 	esac
+ 	;;
+-      netbsd* | netbsdelf*-gnu)
++      netbsd*)
+ 	;;
+       *qnx* | *nto*)
+         # QNX uses GNU C++, but need to define -shared option too, otherwise
+@@ -5971,9 +5959,6 @@ m4_if([$1], [CXX], [
+   cygwin* | mingw* | cegcc*)
+     _LT_TAGVAR(export_symbols_cmds, $1)='$NM $libobjs $convenience | $global_symbol_pipe | $SED -e '\''/^[[BCDGRS]][[ ]]/s/.*[[ ]]\([[^ ]]*\)/\1 DATA/;/^.*[[ ]]__nm__/s/^.*[[ ]]__nm__\([[^ ]]*\)[[ ]][[^ ]]*/\1 DATA/;/^I[[ ]]/d;/^[[AITW]][[ ]]/s/.* //'\'' | sort | uniq > $export_symbols'
+   ;;
+-  linux* | k*bsd*-gnu)
+-    _LT_TAGVAR(link_all_deplibs, $1)=no
+-  ;;
+   *)
+     _LT_TAGVAR(export_symbols_cmds, $1)='$NM $libobjs $convenience | $global_symbol_pipe | $SED '\''s/.* //'\'' | sort | uniq > $export_symbols'
+   ;;
+@@ -6038,9 +6023,6 @@ dnl Note also adjust exclude_expsyms for C++ above.
+   openbsd*)
+     with_gnu_ld=no
+     ;;
+-  linux* | k*bsd*-gnu)
+-    _LT_TAGVAR(link_all_deplibs, $1)=no
+-    ;;
+   esac
+ 
+   _LT_TAGVAR(ld_shlibs, $1)=yes
+@@ -6224,7 +6206,7 @@ _LT_EOF
+       fi
+       ;;
+ 
+-    netbsd* | netbsdelf*-gnu)
++    netbsd*)
+       if echo __ELF__ | $CC -E - | $GREP __ELF__ >/dev/null; then
+ 	_LT_TAGVAR(archive_cmds, $1)='$LD -Bshareable $libobjs $deplibs $linker_flags -o $lib'
+ 	wlarc=
+@@ -6399,7 +6381,6 @@ _LT_EOF
+ 	if test "$aix_use_runtimelinking" = yes; then
+ 	  shared_flag="$shared_flag "'${wl}-G'
+ 	fi
+-	_LT_TAGVAR(link_all_deplibs, $1)=no
+       else
+ 	# not using gcc
+ 	if test "$host_cpu" = ia64; then
+@@ -6638,7 +6619,7 @@ _LT_EOF
+       _LT_TAGVAR(link_all_deplibs, $1)=yes
+       ;;
+ 
+-    netbsd* | netbsdelf*-gnu)
++    netbsd*)
+       if echo __ELF__ | $CC -E - | $GREP __ELF__ >/dev/null; then
+ 	_LT_TAGVAR(archive_cmds, $1)='$LD -Bshareable -o $lib $libobjs $deplibs $linker_flags'  # a.out
+       else
+@@ -10323,7 +10304,7 @@ fi
+ AC_SUBST([$1])dnl
+ ])
+ 
+-# Copyright (C) 2002, 2003, 2005, 2006, 2007, 2008  Free Software Foundation, Inc.
++# Copyright (C) 2002, 2003, 2005, 2006, 2007  Free Software Foundation, Inc.
+ #
+ # This file is free software; the Free Software Foundation
+ # gives unlimited permission to copy and/or distribute it,
+@@ -11054,13 +11035,13 @@ esac
+ 
+ # Helper functions for option handling.                     -*- Autoconf -*-
+ 
+-# Copyright (C) 2001, 2002, 2003, 2005, 2008  Free Software Foundation, Inc.
++# Copyright (C) 2001, 2002, 2003, 2005  Free Software Foundation, Inc.
+ #
+ # This file is free software; the Free Software Foundation
+ # gives unlimited permission to copy and/or distribute it,
+ # with or without modifications, as long as this notice is preserved.
+ 
+-# serial 4
++# serial 3
+ 
+ # _AM_MANGLE_OPTION(NAME)
+ # -----------------------
+@@ -11077,7 +11058,7 @@ AC_DEFUN([_AM_SET_OPTION],
+ # ----------------------------------
+ # OPTIONS is a space-separated list of Automake options.
+ AC_DEFUN([_AM_SET_OPTIONS],
+-[m4_foreach_w([_AM_Option], [$1], [_AM_SET_OPTION(_AM_Option)])])
++[AC_FOREACH([_AM_Option], [$1], [_AM_SET_OPTION(_AM_Option)])])
+ 
+ # _AM_IF_OPTION(OPTION, IF-SET, [IF-NOT-SET])
+ # -------------------------------------------
+diff --git a/configure b/configure
+index 17b979d..bd38517 100755
+--- a/configure
++++ b/configure
+@@ -6435,7 +6435,7 @@ linux* | k*bsd*-gnu | kopensolaris*-gnu)
+   lt_cv_deplibs_check_method=pass_all
+   ;;
+ 
+-netbsd* | netbsdelf*-gnu)
++netbsd*)
+   if echo __ELF__ | $CC -E - | $GREP __ELF__ > /dev/null; then
+     lt_cv_deplibs_check_method='match_pattern /lib[^/]+(\.so\.[0-9]+\.[0-9]+|_pic\.a)$'
+   else
+@@ -8986,9 +8986,6 @@ $as_echo_n "checking whether the $compiler linker ($LD) supports shared librarie
+   openbsd*)
+     with_gnu_ld=no
+     ;;
+-  linux* | k*bsd*-gnu)
+-    link_all_deplibs=no
+-    ;;
+   esac
+ 
+   ld_shlibs=yes
+@@ -9172,7 +9169,7 @@ _LT_EOF
+       fi
+       ;;
+ 
+-    netbsd* | netbsdelf*-gnu)
++    netbsd*)
+       if echo __ELF__ | $CC -E - | $GREP __ELF__ >/dev/null; then
+ 	archive_cmds='$LD -Bshareable $libobjs $deplibs $linker_flags -o $lib'
+ 	wlarc=
+@@ -9347,7 +9344,6 @@ _LT_EOF
+ 	if test "$aix_use_runtimelinking" = yes; then
+ 	  shared_flag="$shared_flag "'${wl}-G'
+ 	fi
+-	link_all_deplibs=no
+       else
+ 	# not using gcc
+ 	if test "$host_cpu" = ia64; then
+@@ -9674,7 +9670,7 @@ rm -f core conftest.err conftest.$ac_objext \
+       link_all_deplibs=yes
+       ;;
+ 
+-    netbsd* | netbsdelf*-gnu)
++    netbsd*)
+       if echo __ELF__ | $CC -E - | $GREP __ELF__ >/dev/null; then
+ 	archive_cmds='$LD -Bshareable -o $lib $libobjs $deplibs $linker_flags'  # a.out
+       else
+@@ -10619,18 +10615,6 @@ rm -f core conftest.err conftest.$ac_objext \
+   dynamic_linker='GNU/Linux ld.so'
+   ;;
+ 
+-netbsdelf*-gnu)
+-  version_type=linux
+-  need_lib_prefix=no
+-  need_version=no
+-  library_names_spec='${libname}${release}${shared_ext}$versuffix ${libname}${release}${shared_ext}$major ${libname}${shared_ext}'
+-  soname_spec='${libname}${release}${shared_ext}$major'
+-  shlibpath_var=LD_LIBRARY_PATH
+-  shlibpath_overrides_runpath=no
+-  hardcode_into_libs=yes
+-  dynamic_linker='NetBSD ld.elf_so'
+-  ;;
+-
+ netbsd*)
+   version_type=sunos
+   need_lib_prefix=no
+diff --git a/contrib/Makefile.in b/contrib/Makefile.in
+index 80846ff..f35d478 100644
+--- a/contrib/Makefile.in
++++ b/contrib/Makefile.in
+@@ -208,8 +208,8 @@ $(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ $(srcdir)/Makefile.am  $(am__confi
+ 	@for dep in $?; do \
+ 	  case '$(am__configure_deps)' in \
+ 	    *$$dep*) \
+-	      ( cd $(top_builddir) && $(MAKE) $(AM_MAKEFLAGS) am--refresh ) \
+-	        && { if test -f $@; then exit 0; else break; fi; }; \
++	      cd $(top_builddir) && $(MAKE) $(AM_MAKEFLAGS) am--refresh \
++		&& exit 0; \
+ 	      exit 1;; \
+ 	  esac; \
+ 	done; \
+diff --git a/doc/Makefile.in b/doc/Makefile.in
+index 5754819..f333dc0 100644
+--- a/doc/Makefile.in
++++ b/doc/Makefile.in
+@@ -207,8 +207,8 @@ $(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ $(srcdir)/Makefile.am  $(am__confi
+ 	@for dep in $?; do \
+ 	  case '$(am__configure_deps)' in \
+ 	    *$$dep*) \
+-	      ( cd $(top_builddir) && $(MAKE) $(AM_MAKEFLAGS) am--refresh ) \
+-	        && { if test -f $@; then exit 0; else break; fi; }; \
++	      cd $(top_builddir) && $(MAKE) $(AM_MAKEFLAGS) am--refresh \
++		&& exit 0; \
+ 	      exit 1;; \
+ 	  esac; \
+ 	done; \
+diff --git a/etc/Makefile.in b/etc/Makefile.in
+index 8c8858c..eef3c9c 100644
+--- a/etc/Makefile.in
++++ b/etc/Makefile.in
+@@ -286,8 +286,8 @@ $(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ $(srcdir)/Makefile.am  $(am__confi
+ 	@for dep in $?; do \
+ 	  case '$(am__configure_deps)' in \
+ 	    *$$dep*) \
+-	      ( cd $(top_builddir) && $(MAKE) $(AM_MAKEFLAGS) am--refresh ) \
+-	        && { if test -f $@; then exit 0; else break; fi; }; \
++	      cd $(top_builddir) && $(MAKE) $(AM_MAKEFLAGS) am--refresh \
++		&& exit 0; \
+ 	      exit 1;; \
+ 	  esac; \
+ 	done; \
+@@ -454,7 +454,7 @@ ID: $(HEADERS) $(SOURCES) $(LISP) $(TAGS_FILES)
+ 	unique=`for i in $$list; do \
+ 	    if test -f "$$i"; then echo $$i; else echo $(srcdir)/$$i; fi; \
+ 	  done | \
+-	  $(AWK) '{ files[$$0] = 1; nonempty = 1; } \
++	  $(AWK) '{ files[$$0] = 1; nonemtpy = 1; } \
+ 	      END { if (nonempty) { for (i in files) print i; }; }'`; \
+ 	mkid -fID $$unique
+ tags: TAGS
+diff --git a/etc/pam.d/Makefile.in b/etc/pam.d/Makefile.in
+index b15a1dd..e7234bb 100644
+--- a/etc/pam.d/Makefile.in
++++ b/etc/pam.d/Makefile.in
+@@ -252,8 +252,8 @@ $(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ $(srcdir)/Makefile.am  $(am__confi
+ 	@for dep in $?; do \
+ 	  case '$(am__configure_deps)' in \
+ 	    *$$dep*) \
+-	      ( cd $(top_builddir) && $(MAKE) $(AM_MAKEFLAGS) am--refresh ) \
+-	        && { if test -f $@; then exit 0; else break; fi; }; \
++	      cd $(top_builddir) && $(MAKE) $(AM_MAKEFLAGS) am--refresh \
++		&& exit 0; \
+ 	      exit 1;; \
+ 	  esac; \
+ 	done; \
+diff --git a/lib/Makefile.am b/lib/Makefile.am
+index c448dd3..1a5d554 100644
+--- a/lib/Makefile.am
++++ b/lib/Makefile.am
+@@ -2,6 +2,7 @@
+ AUTOMAKE_OPTIONS = 1.0 foreign
+ 
+ DEFS = 
++AM_CPPFLAGS = -DSYSCONFDIR=\"$(sysconfdir)\"
+ 
+ noinst_LTLIBRARIES = libshadow.la
+ 
+diff --git a/lib/Makefile.in b/lib/Makefile.in
+index 9cbc883..240ecc1 100644
+--- a/lib/Makefile.in
++++ b/lib/Makefile.in
+@@ -235,6 +235,7 @@ top_build_prefix = @top_build_prefix@
+ top_builddir = @top_builddir@
+ top_srcdir = @top_srcdir@
+ AUTOMAKE_OPTIONS = 1.0 foreign
++AM_CPPFLAGS = -DSYSCONFDIR=\"$(sysconfdir)\"
+ noinst_LTLIBRARIES = libshadow.la
+ libshadow_la_LDFLAGS = -version-info 0:0:0
+ libshadow_la_SOURCES = commonio.c commonio.h defines.h encrypt.c \
+@@ -262,8 +263,8 @@ $(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ $(srcdir)/Makefile.am  $(am__confi
+ 	@for dep in $?; do \
+ 	  case '$(am__configure_deps)' in \
+ 	    *$$dep*) \
+-	      ( cd $(top_builddir) && $(MAKE) $(AM_MAKEFLAGS) am--refresh ) \
+-	        && { if test -f $@; then exit 0; else break; fi; }; \
++	      cd $(top_builddir) && $(MAKE) $(AM_MAKEFLAGS) am--refresh \
++		&& exit 0; \
+ 	      exit 1;; \
+ 	  esac; \
+ 	done; \
+@@ -370,7 +371,7 @@ ID: $(HEADERS) $(SOURCES) $(LISP) $(TAGS_FILES)
+ 	unique=`for i in $$list; do \
+ 	    if test -f "$$i"; then echo $$i; else echo $(srcdir)/$$i; fi; \
+ 	  done | \
+-	  $(AWK) '{ files[$$0] = 1; nonempty = 1; } \
++	  $(AWK) '{ files[$$0] = 1; nonemtpy = 1; } \
+ 	      END { if (nonempty) { for (i in files) print i; }; }'`; \
+ 	mkid -fID $$unique
+ tags: TAGS
+diff --git a/lib/defines.h b/lib/defines.h
+index c5d84a8..75c3513 100644
+--- a/lib/defines.h
++++ b/lib/defines.h
+@@ -299,20 +299,20 @@ char *strchr (), *strrchr (), *strtok ();
+ 	(strncpy((A), (B), sizeof(A) - 1), (A)[sizeof(A) - 1] = '\0')
+ 
+ #ifndef PASSWD_FILE
+-#define PASSWD_FILE "/etc/passwd"
++#define PASSWD_FILE SYSCONFDIR"/passwd"
+ #endif
+ 
+ #ifndef GROUP_FILE
+-#define GROUP_FILE "/etc/group"
++#define GROUP_FILE SYSCONFDIR"/group"
+ #endif
+ 
+ #ifndef SHADOW_FILE
+-#define SHADOW_FILE "/etc/shadow"
++#define SHADOW_FILE SYSCONFDIR"/shadow"
+ #endif
+ 
+ #ifdef SHADOWGRP
+ #ifndef SGROUP_FILE
+-#define SGROUP_FILE "/etc/gshadow"
++#define SGROUP_FILE SYSCONFDIR"/gshadow"
+ #endif
+ #endif
+ 
+diff --git a/lib/getdef.c b/lib/getdef.c
+index ac08163..a64ec3e 100644
+--- a/lib/getdef.c
++++ b/lib/getdef.c
+@@ -133,7 +133,7 @@ static struct itemdef def_table[] = {
+ };
+ 
+ #ifndef LOGINDEFS
+-#define LOGINDEFS "/etc/login.defs"
++#define LOGINDEFS SYSCONFDIR"/login.defs"
+ #endif
+ 
+ static char def_fname[] = LOGINDEFS;	/* login config defs file       */
+diff --git a/lib/gshadow_.h b/lib/gshadow_.h
+index 24378ef..cfb9ba2 100644
+--- a/lib/gshadow_.h
++++ b/lib/gshadow_.h
+@@ -71,5 +71,5 @@ void endsgent ();
+ int putsgent ();
+ #endif
+ 
+-#define	GSHADOW	"/etc/gshadow"
++#define	GSHADOW	SYSCONFDIR"/gshadow"
+ #endif				/* ifndef _H_GSHADOW */
+diff --git a/lib/port.h b/lib/port.h
+index 8f07517..8c2a962 100644
+--- a/lib/port.h
++++ b/lib/port.h
+@@ -52,7 +52,7 @@
+  * PORT_DAY - Day of the week to a bit value (0 = Sunday).
+  */
+ 
+-#define	PORTS	"/etc/porttime"
++#define	PORTS	SYSCONFDIR"/porttime"
+ #define	PORT_IDS	64
+ #define	PORT_TTY	64
+ #define	PORT_TIMES	24
+diff --git a/libmisc/Makefile.am b/libmisc/Makefile.am
+index 9da2ec3..7dd96a6 100644
+--- a/libmisc/Makefile.am
++++ b/libmisc/Makefile.am
+@@ -1,6 +1,8 @@
+ 
+ EXTRA_DIST = .indent.pro xgetXXbyYY.c
+ 
++AM_CPPFLAGS = -DSYSCONFDIR=\"$(sysconfdir)\"
++
+ INCLUDES = -I$(top_srcdir)/lib
+ 
+ noinst_LIBRARIES = libmisc.a
+diff --git a/libmisc/Makefile.in b/libmisc/Makefile.in
+index c6c0eb5..8801d28 100644
+--- a/libmisc/Makefile.in
++++ b/libmisc/Makefile.in
+@@ -242,6 +242,7 @@ top_build_prefix = @top_build_prefix@
+ top_builddir = @top_builddir@
+ top_srcdir = @top_srcdir@
+ EXTRA_DIST = .indent.pro xgetXXbyYY.c
++AM_CPPFLAGS = -DSYSCONFDIR=\"$(sysconfdir)\"
+ INCLUDES = -I$(top_srcdir)/lib
+ noinst_LIBRARIES = libmisc.a
+ libmisc_a_SOURCES = \
+@@ -314,8 +315,8 @@ $(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ $(srcdir)/Makefile.am  $(am__confi
+ 	@for dep in $?; do \
+ 	  case '$(am__configure_deps)' in \
+ 	    *$$dep*) \
+-	      ( cd $(top_builddir) && $(MAKE) $(AM_MAKEFLAGS) am--refresh ) \
+-	        && { if test -f $@; then exit 0; else break; fi; }; \
++	      cd $(top_builddir) && $(MAKE) $(AM_MAKEFLAGS) am--refresh \
++		&& exit 0; \
+ 	      exit 1;; \
+ 	  esac; \
+ 	done; \
+@@ -448,7 +449,7 @@ ID: $(HEADERS) $(SOURCES) $(LISP) $(TAGS_FILES)
+ 	unique=`for i in $$list; do \
+ 	    if test -f "$$i"; then echo $$i; else echo $(srcdir)/$$i; fi; \
+ 	  done | \
+-	  $(AWK) '{ files[$$0] = 1; nonempty = 1; } \
++	  $(AWK) '{ files[$$0] = 1; nonemtpy = 1; } \
+ 	      END { if (nonempty) { for (i in files) print i; }; }'`; \
+ 	mkid -fID $$unique
+ tags: TAGS
+diff --git a/libmisc/limits.c b/libmisc/limits.c
+index 110a4a6..61236ef 100644
+--- a/libmisc/limits.c
++++ b/libmisc/limits.c
+@@ -56,7 +56,7 @@
+ #endif
+ #ifdef LIMITS
+ #ifndef LIMITS_FILE
+-#define LIMITS_FILE "/etc/limits"
++#define LIMITS_FILE SYSCONFDIR"/limits"
+ #endif
+ #define LOGIN_ERROR_RLIMIT	1
+ #define LOGIN_ERROR_LOGIN	2
+diff --git a/man/Makefile.in b/man/Makefile.in
+index ebabd02..6fb7582 100644
+--- a/man/Makefile.in
++++ b/man/Makefile.in
+@@ -407,8 +407,8 @@ $(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ $(srcdir)/Makefile.am $(srcdir)/ge
+ 	@for dep in $?; do \
+ 	  case '$(am__configure_deps)' in \
+ 	    *$$dep*) \
+-	      ( cd $(top_builddir) && $(MAKE) $(AM_MAKEFLAGS) am--refresh ) \
+-	        && { if test -f $@; then exit 0; else break; fi; }; \
++	      cd $(top_builddir) && $(MAKE) $(AM_MAKEFLAGS) am--refresh \
++		&& exit 0; \
+ 	      exit 1;; \
+ 	  esac; \
+ 	done; \
+@@ -669,7 +669,7 @@ ID: $(HEADERS) $(SOURCES) $(LISP) $(TAGS_FILES)
+ 	unique=`for i in $$list; do \
+ 	    if test -f "$$i"; then echo $$i; else echo $(srcdir)/$$i; fi; \
+ 	  done | \
+-	  $(AWK) '{ files[$$0] = 1; nonempty = 1; } \
++	  $(AWK) '{ files[$$0] = 1; nonemtpy = 1; } \
+ 	      END { if (nonempty) { for (i in files) print i; }; }'`; \
+ 	mkid -fID $$unique
+ tags: TAGS
+diff --git a/man/cs/Makefile.in b/man/cs/Makefile.in
+index ddf4328..cce004e 100644
+--- a/man/cs/Makefile.in
++++ b/man/cs/Makefile.in
+@@ -252,8 +252,8 @@ $(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ $(srcdir)/Makefile.am  $(am__confi
+ 	@for dep in $?; do \
+ 	  case '$(am__configure_deps)' in \
+ 	    *$$dep*) \
+-	      ( cd $(top_builddir) && $(MAKE) $(AM_MAKEFLAGS) am--refresh ) \
+-	        && { if test -f $@; then exit 0; else break; fi; }; \
++	      cd $(top_builddir) && $(MAKE) $(AM_MAKEFLAGS) am--refresh \
++		&& exit 0; \
+ 	      exit 1;; \
+ 	  esac; \
+ 	done; \
+diff --git a/man/de/Makefile.in b/man/de/Makefile.in
+index edee281..741d95f 100644
+--- a/man/de/Makefile.in
++++ b/man/de/Makefile.in
+@@ -257,8 +257,8 @@ $(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ $(srcdir)/Makefile.am $(srcdir)/..
+ 	@for dep in $?; do \
+ 	  case '$(am__configure_deps)' in \
+ 	    *$$dep*) \
+-	      ( cd $(top_builddir) && $(MAKE) $(AM_MAKEFLAGS) am--refresh ) \
+-	        && { if test -f $@; then exit 0; else break; fi; }; \
++	      cd $(top_builddir) && $(MAKE) $(AM_MAKEFLAGS) am--refresh \
++		&& exit 0; \
+ 	      exit 1;; \
+ 	  esac; \
+ 	done; \
+diff --git a/man/es/Makefile.in b/man/es/Makefile.in
+index c30bd9d..0cfb222 100644
+--- a/man/es/Makefile.in
++++ b/man/es/Makefile.in
+@@ -214,8 +214,8 @@ $(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ $(srcdir)/Makefile.am  $(am__confi
+ 	@for dep in $?; do \
+ 	  case '$(am__configure_deps)' in \
+ 	    *$$dep*) \
+-	      ( cd $(top_builddir) && $(MAKE) $(AM_MAKEFLAGS) am--refresh ) \
+-	        && { if test -f $@; then exit 0; else break; fi; }; \
++	      cd $(top_builddir) && $(MAKE) $(AM_MAKEFLAGS) am--refresh \
++		&& exit 0; \
+ 	      exit 1;; \
+ 	  esac; \
+ 	done; \
+diff --git a/man/fi/Makefile.in b/man/fi/Makefile.in
+index 11a21f9..50b9893 100644
+--- a/man/fi/Makefile.in
++++ b/man/fi/Makefile.in
+@@ -235,8 +235,8 @@ $(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ $(srcdir)/Makefile.am  $(am__confi
+ 	@for dep in $?; do \
+ 	  case '$(am__configure_deps)' in \
+ 	    *$$dep*) \
+-	      ( cd $(top_builddir) && $(MAKE) $(AM_MAKEFLAGS) am--refresh ) \
+-	        && { if test -f $@; then exit 0; else break; fi; }; \
++	      cd $(top_builddir) && $(MAKE) $(AM_MAKEFLAGS) am--refresh \
++		&& exit 0; \
+ 	      exit 1;; \
+ 	  esac; \
+ 	done; \
+diff --git a/man/fr/Makefile.in b/man/fr/Makefile.in
+index 047281b..de223fb 100644
+--- a/man/fr/Makefile.in
++++ b/man/fr/Makefile.in
+@@ -257,8 +257,8 @@ $(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ $(srcdir)/Makefile.am $(srcdir)/..
+ 	@for dep in $?; do \
+ 	  case '$(am__configure_deps)' in \
+ 	    *$$dep*) \
+-	      ( cd $(top_builddir) && $(MAKE) $(AM_MAKEFLAGS) am--refresh ) \
+-	        && { if test -f $@; then exit 0; else break; fi; }; \
++	      cd $(top_builddir) && $(MAKE) $(AM_MAKEFLAGS) am--refresh \
++		&& exit 0; \
+ 	      exit 1;; \
+ 	  esac; \
+ 	done; \
+diff --git a/man/hu/Makefile.in b/man/hu/Makefile.in
+index c8e462f..de1fb62 100644
+--- a/man/hu/Makefile.in
++++ b/man/hu/Makefile.in
+@@ -242,8 +242,8 @@ $(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ $(srcdir)/Makefile.am  $(am__confi
+ 	@for dep in $?; do \
+ 	  case '$(am__configure_deps)' in \
+ 	    *$$dep*) \
+-	      ( cd $(top_builddir) && $(MAKE) $(AM_MAKEFLAGS) am--refresh ) \
+-	        && { if test -f $@; then exit 0; else break; fi; }; \
++	      cd $(top_builddir) && $(MAKE) $(AM_MAKEFLAGS) am--refresh \
++		&& exit 0; \
+ 	      exit 1;; \
+ 	  esac; \
+ 	done; \
+diff --git a/man/id/Makefile.in b/man/id/Makefile.in
+index 393cb11..715d6e3 100644
+--- a/man/id/Makefile.in
++++ b/man/id/Makefile.in
+@@ -233,8 +233,8 @@ $(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ $(srcdir)/Makefile.am  $(am__confi
+ 	@for dep in $?; do \
+ 	  case '$(am__configure_deps)' in \
+ 	    *$$dep*) \
+-	      ( cd $(top_builddir) && $(MAKE) $(AM_MAKEFLAGS) am--refresh ) \
+-	        && { if test -f $@; then exit 0; else break; fi; }; \
++	      cd $(top_builddir) && $(MAKE) $(AM_MAKEFLAGS) am--refresh \
++		&& exit 0; \
+ 	      exit 1;; \
+ 	  esac; \
+ 	done; \
+diff --git a/man/it/Makefile.in b/man/it/Makefile.in
+index 7e7c87e..31dd8bd 100644
+--- a/man/it/Makefile.in
++++ b/man/it/Makefile.in
+@@ -257,8 +257,8 @@ $(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ $(srcdir)/Makefile.am $(srcdir)/..
+ 	@for dep in $?; do \
+ 	  case '$(am__configure_deps)' in \
+ 	    *$$dep*) \
+-	      ( cd $(top_builddir) && $(MAKE) $(AM_MAKEFLAGS) am--refresh ) \
+-	        && { if test -f $@; then exit 0; else break; fi; }; \
++	      cd $(top_builddir) && $(MAKE) $(AM_MAKEFLAGS) am--refresh \
++		&& exit 0; \
+ 	      exit 1;; \
+ 	  esac; \
+ 	done; \
+diff --git a/man/ja/Makefile.in b/man/ja/Makefile.in
+index 43ab368..bc8ed9f 100644
+--- a/man/ja/Makefile.in
++++ b/man/ja/Makefile.in
+@@ -243,8 +243,8 @@ $(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ $(srcdir)/Makefile.am  $(am__confi
+ 	@for dep in $?; do \
+ 	  case '$(am__configure_deps)' in \
+ 	    *$$dep*) \
+-	      ( cd $(top_builddir) && $(MAKE) $(AM_MAKEFLAGS) am--refresh ) \
+-	        && { if test -f $@; then exit 0; else break; fi; }; \
++	      cd $(top_builddir) && $(MAKE) $(AM_MAKEFLAGS) am--refresh \
++		&& exit 0; \
+ 	      exit 1;; \
+ 	  esac; \
+ 	done; \
+diff --git a/man/ko/Makefile.in b/man/ko/Makefile.in
+index 9e5ce31..e85959b 100644
+--- a/man/ko/Makefile.in
++++ b/man/ko/Makefile.in
+@@ -242,8 +242,8 @@ $(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ $(srcdir)/Makefile.am  $(am__confi
+ 	@for dep in $?; do \
+ 	  case '$(am__configure_deps)' in \
+ 	    *$$dep*) \
+-	      ( cd $(top_builddir) && $(MAKE) $(AM_MAKEFLAGS) am--refresh ) \
+-	        && { if test -f $@; then exit 0; else break; fi; }; \
++	      cd $(top_builddir) && $(MAKE) $(AM_MAKEFLAGS) am--refresh \
++		&& exit 0; \
+ 	      exit 1;; \
+ 	  esac; \
+ 	done; \
+diff --git a/man/pl/Makefile.in b/man/pl/Makefile.in
+index a320168..7030ae8 100644
+--- a/man/pl/Makefile.in
++++ b/man/pl/Makefile.in
+@@ -254,8 +254,8 @@ $(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ $(srcdir)/Makefile.am $(srcdir)/..
+ 	@for dep in $?; do \
+ 	  case '$(am__configure_deps)' in \
+ 	    *$$dep*) \
+-	      ( cd $(top_builddir) && $(MAKE) $(AM_MAKEFLAGS) am--refresh ) \
+-	        && { if test -f $@; then exit 0; else break; fi; }; \
++	      cd $(top_builddir) && $(MAKE) $(AM_MAKEFLAGS) am--refresh \
++		&& exit 0; \
+ 	      exit 1;; \
+ 	  esac; \
+ 	done; \
+diff --git a/man/pt_BR/Makefile.in b/man/pt_BR/Makefile.in
+index 0092692..dac320c 100644
+--- a/man/pt_BR/Makefile.in
++++ b/man/pt_BR/Makefile.in
+@@ -238,8 +238,8 @@ $(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ $(srcdir)/Makefile.am  $(am__confi
+ 	@for dep in $?; do \
+ 	  case '$(am__configure_deps)' in \
+ 	    *$$dep*) \
+-	      ( cd $(top_builddir) && $(MAKE) $(AM_MAKEFLAGS) am--refresh ) \
+-	        && { if test -f $@; then exit 0; else break; fi; }; \
++	      cd $(top_builddir) && $(MAKE) $(AM_MAKEFLAGS) am--refresh \
++		&& exit 0; \
+ 	      exit 1;; \
+ 	  esac; \
+ 	done; \
+diff --git a/man/ru/Makefile.in b/man/ru/Makefile.in
+index 34ba14e..73f843b 100644
+--- a/man/ru/Makefile.in
++++ b/man/ru/Makefile.in
+@@ -257,8 +257,8 @@ $(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ $(srcdir)/Makefile.am $(srcdir)/..
+ 	@for dep in $?; do \
+ 	  case '$(am__configure_deps)' in \
+ 	    *$$dep*) \
+-	      ( cd $(top_builddir) && $(MAKE) $(AM_MAKEFLAGS) am--refresh ) \
+-	        && { if test -f $@; then exit 0; else break; fi; }; \
++	      cd $(top_builddir) && $(MAKE) $(AM_MAKEFLAGS) am--refresh \
++		&& exit 0; \
+ 	      exit 1;; \
+ 	  esac; \
+ 	done; \
+diff --git a/man/sv/Makefile.in b/man/sv/Makefile.in
+index 4aba781..14cf629 100644
+--- a/man/sv/Makefile.in
++++ b/man/sv/Makefile.in
+@@ -256,8 +256,8 @@ $(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ $(srcdir)/Makefile.am $(srcdir)/..
+ 	@for dep in $?; do \
+ 	  case '$(am__configure_deps)' in \
+ 	    *$$dep*) \
+-	      ( cd $(top_builddir) && $(MAKE) $(AM_MAKEFLAGS) am--refresh ) \
+-	        && { if test -f $@; then exit 0; else break; fi; }; \
++	      cd $(top_builddir) && $(MAKE) $(AM_MAKEFLAGS) am--refresh \
++		&& exit 0; \
+ 	      exit 1;; \
+ 	  esac; \
+ 	done; \
+diff --git a/man/tr/Makefile.in b/man/tr/Makefile.in
+index 834e2d4..3215fa9 100644
+--- a/man/tr/Makefile.in
++++ b/man/tr/Makefile.in
+@@ -245,8 +245,8 @@ $(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ $(srcdir)/Makefile.am  $(am__confi
+ 	@for dep in $?; do \
+ 	  case '$(am__configure_deps)' in \
+ 	    *$$dep*) \
+-	      ( cd $(top_builddir) && $(MAKE) $(AM_MAKEFLAGS) am--refresh ) \
+-	        && { if test -f $@; then exit 0; else break; fi; }; \
++	      cd $(top_builddir) && $(MAKE) $(AM_MAKEFLAGS) am--refresh \
++		&& exit 0; \
+ 	      exit 1;; \
+ 	  esac; \
+ 	done; \
+diff --git a/man/zh_CN/Makefile.in b/man/zh_CN/Makefile.in
+index d9be625..332908b 100644
+--- a/man/zh_CN/Makefile.in
++++ b/man/zh_CN/Makefile.in
+@@ -257,8 +257,8 @@ $(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ $(srcdir)/Makefile.am $(srcdir)/..
+ 	@for dep in $?; do \
+ 	  case '$(am__configure_deps)' in \
+ 	    *$$dep*) \
+-	      ( cd $(top_builddir) && $(MAKE) $(AM_MAKEFLAGS) am--refresh ) \
+-	        && { if test -f $@; then exit 0; else break; fi; }; \
++	      cd $(top_builddir) && $(MAKE) $(AM_MAKEFLAGS) am--refresh \
++		&& exit 0; \
+ 	      exit 1;; \
+ 	  esac; \
+ 	done; \
+diff --git a/man/zh_TW/Makefile.in b/man/zh_TW/Makefile.in
+index 3d6af10..47cfa6a 100644
+--- a/man/zh_TW/Makefile.in
++++ b/man/zh_TW/Makefile.in
+@@ -246,8 +246,8 @@ $(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ $(srcdir)/Makefile.am  $(am__confi
+ 	@for dep in $?; do \
+ 	  case '$(am__configure_deps)' in \
+ 	    *$$dep*) \
+-	      ( cd $(top_builddir) && $(MAKE) $(AM_MAKEFLAGS) am--refresh ) \
+-	        && { if test -f $@; then exit 0; else break; fi; }; \
++	      cd $(top_builddir) && $(MAKE) $(AM_MAKEFLAGS) am--refresh \
++		&& exit 0; \
+ 	      exit 1;; \
+ 	  esac; \
+ 	done; \
+diff --git a/src/Makefile.am b/src/Makefile.am
+index 88cae99..db17db1 100644
+--- a/src/Makefile.am
++++ b/src/Makefile.am
+@@ -3,7 +3,7 @@ EXTRA_DIST = \
+ 	.indent.pro
+ 
+ ubindir = ${prefix}/bin
+-usbindir = ${prefix}/sbin
++usbindir = ${prefix}/bin
+ suidperms = 4755
+ sgidperms = 2755
+ 
+@@ -63,7 +63,7 @@ LDADD          = $(INTLLIBS) \
+ 		 $(LIBTCB) \
+ 		 $(top_builddir)/libmisc/libmisc.a \
+ 		 $(top_builddir)/lib/libshadow.la
+-AM_CPPFLAGS    = -DLOCALEDIR=\"$(datadir)/locale\"
++AM_CPPFLAGS    = -DSYSCONFDIR=\"$(sysconfdir)\" -DLOCALEDIR=\"$(datadir)/locale\" -DSG=\"`echo sg | sed 's,^.*/,,;$(transform);s/$$/$(EXEEXT)/'`\" -DVIGR=\"`echo vigr | sed 's,^.*/,,;$(transform);s/$$/$(EXEEXT)/'`\"
+ 
+ if ACCT_TOOLS_SETUID
+ LIBPAM_SUID  = $(LIBPAM)
+@@ -113,13 +113,13 @@ vipw_LDADD     = $(LDADD) $(LIBSELINUX)
+ 
+ install-am: all-am
+ 	$(MAKE) $(AM_MAKEFLAGS) install-exec-am install-data-am
+-	ln -sf newgrp	$(DESTDIR)$(ubindir)/sg
+-	ln -sf vipw	$(DESTDIR)$(usbindir)/vigr
++	ln -sf `echo newgrp | sed 's,^.*/,,;$(transform);s/$$/$(EXEEXT)/'` $(DESTDIR)$(ubindir)/`echo sg | sed 's,^.*/,,;$(transform);s/$$/$(EXEEXT)/'`
++	ln -sf `echo vipw | sed 's,^.*/,,;$(transform);s/$$/$(EXEEXT)/'` $(DESTDIR)$(usbindir)/`echo vigr | sed 's,^.*/,,;$(transform);s/$$/$(EXEEXT)/'`
+ 	for i in $(suidbins); do \
+-		chmod -f $(suidperms) $(DESTDIR)$(bindir)/$$i; \
++		chmod -f 4755 $(DESTDIR)$(bindir)/`echo $$i | sed 's,^.*/,,;$(transform);s/$$/$(EXEEXT)/'`; \
+ 	done
+ 	for i in $(suidubins); do \
+-		chmod -f $(suidperms) $(DESTDIR)$(ubindir)/$$i; \
++		chmod -f 4755 $(DESTDIR)$(ubindir)/`echo $$i | sed 's,^.*/,,;$(transform);s/$$/$(EXEEXT)/'`; \
+ 	done
+ if WITH_TCB
+ 	for i in $(shadowsgidubins); do \
+diff --git a/src/Makefile.in b/src/Makefile.in
+index 9ac0af3..ae72e24 100644
+--- a/src/Makefile.in
++++ b/src/Makefile.in
+@@ -392,7 +392,7 @@ EXTRA_DIST = \
+ 	.indent.pro
+ 
+ ubindir = ${prefix}/bin
+-usbindir = ${prefix}/sbin
++usbindir = ${prefix}/bin
+ suidperms = 4755
+ sgidperms = 2755
+ INCLUDES = \
+@@ -407,7 +407,7 @@ LDADD = $(INTLLIBS) \
+ 		 $(top_builddir)/libmisc/libmisc.a \
+ 		 $(top_builddir)/lib/libshadow.la
+ 
+-AM_CPPFLAGS = -DLOCALEDIR=\"$(datadir)/locale\"
++AM_CPPFLAGS = -DSYSCONFDIR=\"$(sysconfdir)\" -DLOCALEDIR=\"$(datadir)/locale\" -DSG=\"`echo sg | sed 's,^.*/,,;$(transform);s/$$/$(EXEEXT)/'`\" -DVIGR=\"`echo vigr | sed 's,^.*/,,;$(transform);s/$$/$(EXEEXT)/'`\"
+ @ACCT_TOOLS_SETUID_FALSE@LIBPAM_SUID = 
+ @ACCT_TOOLS_SETUID_TRUE@LIBPAM_SUID = $(LIBPAM)
+ @USE_PAM_FALSE@LIBCRYPT_NOPAM = $(LIBCRYPT)
+@@ -455,8 +455,8 @@ $(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ $(srcdir)/Makefile.am  $(am__confi
+ 	@for dep in $?; do \
+ 	  case '$(am__configure_deps)' in \
+ 	    *$$dep*) \
+-	      ( cd $(top_builddir) && $(MAKE) $(AM_MAKEFLAGS) am--refresh ) \
+-	        && { if test -f $@; then exit 0; else break; fi; }; \
++	      cd $(top_builddir) && $(MAKE) $(AM_MAKEFLAGS) am--refresh \
++		&& exit 0; \
+ 	      exit 1;; \
+ 	  esac; \
+ 	done; \
+@@ -836,7 +836,7 @@ ID: $(HEADERS) $(SOURCES) $(LISP) $(TAGS_FILES)
+ 	unique=`for i in $$list; do \
+ 	    if test -f "$$i"; then echo $$i; else echo $(srcdir)/$$i; fi; \
+ 	  done | \
+-	  $(AWK) '{ files[$$0] = 1; nonempty = 1; } \
++	  $(AWK) '{ files[$$0] = 1; nonemtpy = 1; } \
+ 	      END { if (nonempty) { for (i in files) print i; }; }'`; \
+ 	mkid -fID $$unique
+ tags: TAGS
+@@ -1041,13 +1041,13 @@ uninstall-am: uninstall-binPROGRAMS uninstall-sbinPROGRAMS \
+ 
+ install-am: all-am
+ 	$(MAKE) $(AM_MAKEFLAGS) install-exec-am install-data-am
+-	ln -sf newgrp	$(DESTDIR)$(ubindir)/sg
+-	ln -sf vipw	$(DESTDIR)$(usbindir)/vigr
++	ln -sf `echo newgrp | sed 's,^.*/,,;$(transform);s/$$/$(EXEEXT)/'` $(DESTDIR)$(ubindir)/`echo sg | sed 's,^.*/,,;$(transform);s/$$/$(EXEEXT)/'`
++	ln -sf `echo vipw | sed 's,^.*/,,;$(transform);s/$$/$(EXEEXT)/'` $(DESTDIR)$(usbindir)/`echo vigr | sed 's,^.*/,,;$(transform);s/$$/$(EXEEXT)/'`
+ 	for i in $(suidbins); do \
+-		chmod -f $(suidperms) $(DESTDIR)$(bindir)/$$i; \
++		chmod -f 4755 $(DESTDIR)$(bindir)/`echo $$i | sed 's,^.*/,,;$(transform);s/$$/$(EXEEXT)/'`; \
+ 	done
+ 	for i in $(suidubins); do \
+-		chmod -f $(suidperms) $(DESTDIR)$(ubindir)/$$i; \
++		chmod -f 4755 $(DESTDIR)$(ubindir)/`echo $$i | sed 's,^.*/,,;$(transform);s/$$/$(EXEEXT)/'`; \
+ 	done
+ @WITH_TCB_TRUE@	for i in $(shadowsgidubins); do \
+ @WITH_TCB_TRUE@		chown root:shadow $(DESTDIR)$(ubindir)/$$i; \
+diff --git a/src/chage.c b/src/chage.c
+index 753bf84..2a1eaae 100644
+--- a/src/chage.c
++++ b/src/chage.c
+@@ -816,7 +816,7 @@ int main (int argc, char **argv)
+ 
+ 	ruid = getuid ();
+ 	rgid = getgid ();
+-	amroot = (ruid == 0);
++	amroot = 1; /* (ruid == 0); */
+ #ifdef WITH_SELINUX
+ 	if (amroot && (is_selinux_enabled () > 0)) {
+ 		amroot = (selinux_check_passwd_access (PASSWD__ROOTOK) == 0);
+diff --git a/src/chfn.c b/src/chfn.c
+index 4bd3ec9..e5fbfd0 100644
+--- a/src/chfn.c
++++ b/src/chfn.c
+@@ -745,7 +745,7 @@ int main (int argc, char **argv)
+ 
+ 	SYSLOG ((LOG_INFO, "changed user '%s' information", user));
+ 
+-	nscd_flush_cache ("passwd");
++//	nscd_flush_cache ("passwd");
+ 
+ 	closelog ();
+ 	exit (E_SUCCESS);
+diff --git a/src/chgpasswd.c b/src/chgpasswd.c
+index bce7a18..692ab0a 100644
+--- a/src/chgpasswd.c
++++ b/src/chgpasswd.c
+@@ -573,7 +573,7 @@ int main (int argc, char **argv)
+ 
+ 	close_files ();
+ 
+-	nscd_flush_cache ("group");
++//	nscd_flush_cache ("group");
+ 
+ 	return (0);
+ }
+diff --git a/src/chpasswd.c b/src/chpasswd.c
+index e533ba8..56b0d54 100644
+--- a/src/chpasswd.c
++++ b/src/chpasswd.c
+@@ -616,7 +616,7 @@ int main (int argc, char **argv)
+ 		close_files ();
+ 	}
+ 
+-	nscd_flush_cache ("passwd");
++//	nscd_flush_cache ("passwd");
+ 
+ 	return (0);
+ }
+diff --git a/src/chsh.c b/src/chsh.c
+index eb0aba2..1087af2 100644
+--- a/src/chsh.c
++++ b/src/chsh.c
+@@ -56,7 +56,7 @@
+ #include "exitcodes.h"
+ 
+ #ifndef SHELLS_FILE
+-#define SHELLS_FILE "/etc/shells"
++#define SHELLS_FILE SYSCONFDIR"/shells"
+ #endif
+ /*
+  * Global variables
+@@ -455,7 +455,7 @@ int main (int argc, char **argv)
+ 	/*
+ 	 * This command behaves different for root and non-root users.
+ 	 */
+-	amroot = (getuid () == 0);
++	amroot = 1; //(getuid () == 0);
+ 
+ 	OPENLOG ("chsh");
+ 
+@@ -556,7 +556,7 @@ int main (int argc, char **argv)
+ 
+ 	SYSLOG ((LOG_INFO, "changed user '%s' shell to '%s'", user, loginsh));
+ 
+-	nscd_flush_cache ("passwd");
++//	nscd_flush_cache ("passwd");
+ 
+ 	closelog ();
+ 	exit (E_SUCCESS);
+diff --git a/src/gpasswd.c b/src/gpasswd.c
+index 9f0cd19..1670076 100644
+--- a/src/gpasswd.c
++++ b/src/gpasswd.c
+@@ -86,7 +86,7 @@ static char *myname = NULL;
+ /* The UID of the caller */
+ static uid_t bywho;
+ /* Indicate if gpasswd was called by root */
+-#define amroot	(0 == bywho)
++#define amroot	1 /* (0 == bywho) */
+ 
+ /* The number of retries for th user to provide and repeat a new password */
+ #ifndef	RETRIES
+@@ -1175,12 +1175,14 @@ int main (int argc, char **argv)
+ 	 * output, etc.
+ 	 */
+       output:
++/*
+ 	if (setuid (0) != 0) {
+ 		fputs (_("Cannot change ID to root.\n"), stderr);
+ 		SYSLOG ((LOG_ERR, "can't setuid(0)"));
+ 		closelog ();
+ 		exit (E_NOPERM);
+ 	}
++*/
+ 	pwd_init ();
+ 
+ 	open_files ();
+@@ -1193,7 +1195,7 @@ int main (int argc, char **argv)
+ 
+ 	close_files ();
+ 
+-	nscd_flush_cache ("group");
++//	nscd_flush_cache ("group");
+ 
+ 	exit (E_SUCCESS);
+ }
+diff --git a/src/groupadd.c b/src/groupadd.c
+index 84ff55e..9ec9c09 100644
+--- a/src/groupadd.c
++++ b/src/groupadd.c
+@@ -617,7 +617,7 @@ int main (int argc, char **argv)
+ 	grp_update ();
+ 	close_files ();
+ 
+-	nscd_flush_cache ("group");
++//	nscd_flush_cache ("group");
+ 
+ 	return E_SUCCESS;
+ }
+diff --git a/src/groupdel.c b/src/groupdel.c
+index bdadf7d..ff3bbbf 100644
+--- a/src/groupdel.c
++++ b/src/groupdel.c
+@@ -477,7 +477,7 @@ int main (int argc, char **argv)
+ 
+ 	close_files ();
+ 
+-	nscd_flush_cache ("group");
++//	nscd_flush_cache ("group");
+ 
+ 	return E_SUCCESS;
+ }
+diff --git a/src/groupmod.c b/src/groupmod.c
+index 079ac87..88a2b0a 100644
+--- a/src/groupmod.c
++++ b/src/groupmod.c
+@@ -864,7 +864,7 @@ int main (int argc, char **argv)
+ 
+ 	close_files ();
+ 
+-	nscd_flush_cache ("group");
++//	nscd_flush_cache ("group");
+ 
+ 	return E_SUCCESS;
+ }
+diff --git a/src/grpck.c b/src/grpck.c
+index 1846c4d..e4cc8c6 100644
+--- a/src/grpck.c
++++ b/src/grpck.c
+@@ -869,7 +869,7 @@ int main (int argc, char **argv)
+ 	/* Commit the change in the database if needed */
+ 	close_files (changed);
+ 
+-	nscd_flush_cache ("group");
++//	nscd_flush_cache ("group");
+ 
+ 	/*
+ 	 * Tell the user what we did and exit.
+diff --git a/src/grpconv.c b/src/grpconv.c
+index bb19ffd..73ea3f6 100644
+--- a/src/grpconv.c
++++ b/src/grpconv.c
+@@ -271,7 +271,7 @@ int main (int argc, char **argv)
+ 		/* continue */
+ 	}
+ 
+-	nscd_flush_cache ("group");
++//	nscd_flush_cache ("group");
+ 
+ 	return 0;
+ }
+diff --git a/src/grpunconv.c b/src/grpunconv.c
+index 829f4c8..a340d55 100644
+--- a/src/grpunconv.c
++++ b/src/grpunconv.c
+@@ -241,7 +241,7 @@ int main (int argc, char **argv)
+ 		/* continue */
+ 	}
+ 
+-	nscd_flush_cache ("group");
++//	nscd_flush_cache ("group");
+ 
+ 	return 0;
+ }
+diff --git a/src/login_nopam.c b/src/login_nopam.c
+index 439a3c5..e3b528a 100644
+--- a/src/login_nopam.c
++++ b/src/login_nopam.c
+@@ -59,7 +59,7 @@
+ 
+  /* Path name of the access control file. */
+ #ifndef	TABLE
+-#define TABLE	"/etc/login.access"
++#define TABLE	SYSCONFDIR"/login.access"
+ #endif
+ 
+ /* Delimiters for fields and for lists of users, ttys or hosts. */
+diff --git a/src/logoutd.c b/src/logoutd.c
+index c836da8..d7abf29 100644
+--- a/src/logoutd.c
++++ b/src/logoutd.c
+@@ -50,7 +50,7 @@ const char *Prog;
+ #endif
+ 
+ #ifndef HUP_MESG_FILE
+-#define HUP_MESG_FILE "/etc/logoutd.mesg"
++#define HUP_MESG_FILE SYSCONFDIR"/logoutd.mesg"
+ #endif
+ 
+ /* local function prototypes */
+diff --git a/src/newgrp.c b/src/newgrp.c
+index 46d6deb..37ead9c 100644
+--- a/src/newgrp.c
++++ b/src/newgrp.c
+@@ -296,7 +296,7 @@ static void syslog_sg (const char *name, const char *group)
+ 		if ((pid_t)-1 == child) {
+ 			/* error in fork() */
+ 			fprintf (stderr, _("%s: failure forking: %s\n"),
+-				 is_newgrp ? "newgrp" : "sg", strerror (errno));
++				 is_newgrp ? "newgrp" : SG, strerror (errno));
+ #ifdef WITH_AUDIT
+ 			if (group) {
+ 				snprintf (audit_buf, sizeof(audit_buf),
+@@ -419,7 +419,7 @@ int main (int argc, char **argv)
+ 	 */
+ 	Prog = Basename (argv[0]);
+ 	is_newgrp = (strcmp (Prog, "newgrp") == 0);
+-	OPENLOG (is_newgrp ? "newgrp" : "sg");
++	OPENLOG (is_newgrp ? "newgrp" : SG);
+ 	gid = getgid ();
+ 	argc--;
+ 	argv++;
+diff --git a/src/newusers.c b/src/newusers.c
+index c25f40e..7e3da5c 100644
+--- a/src/newusers.c
++++ b/src/newusers.c
+@@ -1061,8 +1061,8 @@ int main (int argc, char **argv)
+ 
+ 	close_files ();
+ 
+-	nscd_flush_cache ("passwd");
+-	nscd_flush_cache ("group");
++//	nscd_flush_cache ("passwd");
++//	nscd_flush_cache ("group");
+ 
+ #ifdef USE_PAM
+ 	unsigned int i;
+diff --git a/src/passwd.c b/src/passwd.c
+index 37b898d..676b951 100644
+--- a/src/passwd.c
++++ b/src/passwd.c
+@@ -794,7 +794,7 @@ int main (int argc, char **argv)
+ 	 * The program behaves differently when executed by root than when
+ 	 * executed by a normal user.
+ 	 */
+-	amroot = (getuid () == 0);
++	amroot = 1; //(getuid () == 0);
+ 
+ 	OPENLOG ("passwd");
+ 
+diff --git a/src/pwck.c b/src/pwck.c
+index 045d030..ed775d0 100644
+--- a/src/pwck.c
++++ b/src/pwck.c
+@@ -876,7 +876,7 @@ int main (int argc, char **argv)
+ 
+ 	close_files (changed);
+ 
+-	nscd_flush_cache ("passwd");
++//	nscd_flush_cache ("passwd");
+ 
+ 	/*
+ 	 * Tell the user what we did and exit.
+diff --git a/src/pwconv.c b/src/pwconv.c
+index 0bbca10..699d715 100644
+--- a/src/pwconv.c
++++ b/src/pwconv.c
+@@ -325,7 +325,7 @@ int main (int argc, char **argv)
+ 		/* continue */
+ 	}
+ 
+-	nscd_flush_cache ("passwd");
++//	nscd_flush_cache ("passwd");
+ 
+ 	return E_SUCCESS;
+ }
+diff --git a/src/pwunconv.c b/src/pwunconv.c
+index 3d24c2f..d1b5e09 100644
+--- a/src/pwunconv.c
++++ b/src/pwunconv.c
+@@ -255,7 +255,7 @@ int main (int argc, char **argv)
+ 		/* continue */
+ 	}
+ 
+-	nscd_flush_cache ("passwd");
++//	nscd_flush_cache ("passwd");
+ 
+ 	return 0;
+ }
+diff --git a/src/suauth.c b/src/suauth.c
+index a5bbe4c..4676add 100644
+--- a/src/suauth.c
++++ b/src/suauth.c
+@@ -40,7 +40,7 @@
+ #include "prototypes.h"
+ 
+ #ifndef SUAUTHFILE
+-#define SUAUTHFILE "/etc/suauth"
++#define SUAUTHFILE SYSCONFDIR"/suauth"
+ #endif
+ 
+ #define	NOACTION	0
+diff --git a/src/useradd.c b/src/useradd.c
+index 4fdb29c..61ecc47 100644
+--- a/src/useradd.c
++++ b/src/useradd.c
+@@ -70,11 +70,11 @@
+ #endif
+ 
+ #ifndef SKEL_DIR
+-#define SKEL_DIR "/etc/skel"
++#define SKEL_DIR SYSCONFDIR"/skel"
+ #endif
+ #ifndef USER_DEFAULTS_FILE
+-#define USER_DEFAULTS_FILE "/etc/default/useradd"
+-#define NEW_USER_FILE "/etc/default/nuaddXXXXXX"
++#define USER_DEFAULTS_FILE SYSCONFDIR"/default/useradd"
++#define NEW_USER_FILE SYSCONFDIR"/default/nuaddXXXXXX"
+ #endif
+ /*
+  * Needed for MkLinux DR1/2/2.1 - J.
+@@ -2073,8 +2073,8 @@ int main (int argc, char **argv)
+ 	}
+ #endif				/* WITH_SELINUX */
+ 
+-	nscd_flush_cache ("passwd");
+-	nscd_flush_cache ("group");
++//	nscd_flush_cache ("passwd");
++//	nscd_flush_cache ("group");
+ 
+ 	return E_SUCCESS;
+ }
+diff --git a/src/userdel.c b/src/userdel.c
+index 0eb2289..0fbaa71 100644
+--- a/src/userdel.c
++++ b/src/userdel.c
+@@ -1144,8 +1144,8 @@ int main (int argc, char **argv)
+ 	errors += remove_tcbdir (user_name, user_id);
+ #endif				/* WITH_TCB */
+ 
+-	nscd_flush_cache ("passwd");
+-	nscd_flush_cache ("group");
++//	nscd_flush_cache ("passwd");
++//	nscd_flush_cache ("group");
+ 
+ 	return ((0 != errors) ? E_HOMEDIR : E_SUCCESS);
+ }
+diff --git a/src/usermod.c b/src/usermod.c
+index e411a32..f93b788 100644
+--- a/src/usermod.c
++++ b/src/usermod.c
+@@ -1886,8 +1886,8 @@ int main (int argc, char **argv)
+ 	}
+ #endif
+ 
+-	nscd_flush_cache ("passwd");
+-	nscd_flush_cache ("group");
++//	nscd_flush_cache ("passwd");
++//	nscd_flush_cache ("group");
+ 
+ #ifdef WITH_SELINUX
+ 	if (Zflg) {
+diff --git a/src/vipw.c b/src/vipw.c
+index a1d9d72..a7ac5fd 100644
+--- a/src/vipw.c
++++ b/src/vipw.c
+@@ -531,8 +531,8 @@ int main (int argc, char **argv)
+ #endif				/* SHADOWGRP */
+ 	}
+ 
+-	nscd_flush_cache ("passwd");
+-	nscd_flush_cache ("group");
++//	nscd_flush_cache ("passwd");
++//	nscd_flush_cache ("group");
+ 
+ 	return E_SUCCESS;
+ }
+-- 
+1.7.10.4
+
