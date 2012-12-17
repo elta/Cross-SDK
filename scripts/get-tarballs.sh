@@ -507,8 +507,8 @@ download "termcap-${TERMCAP_VERSION}.${TERMCAP_SUFFIX}" \
 
 #texinfo-4.13a.tar.gz
 [ -f texinfo_download ] || \
-download "texinfo-${TEXINFO_VERSION}.${TEXINFO_SUFFIX}" \
-  "${TEXINFO_URL}/texinfo-${TEXINFO_VERSION}.${TEXINFO_SUFFIX}" || \
+download "texinfo-${TEXINFO_VERSION}a.${TEXINFO_SUFFIX}" \
+  "${TEXINFO_URL}/texinfo-${TEXINFO_VERSION}a.${TEXINFO_SUFFIX}" || \
   die "download texinfo error" && \
     touch texinfo_download
 

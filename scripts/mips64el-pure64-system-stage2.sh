@@ -446,7 +446,7 @@ cd texinfo-${TEXINFO_VERSION}
   ./configure --prefix=/tools \
   --build=${CROSS_HOST} --host=${CROSS_TARGET64} \
   || die "***config texinfo error"
-make -C tools/gnulib/lib || die "***build texinfo lib error" 
+make -C tools/gnulib/lib || die "***build texinfo lib error"
 make -C tools || die "***build texinfo tools error"
 make -j${JOBS} || die "***build texinfo error"
 make install || die "***install texinfo error"
