@@ -92,6 +92,12 @@ download "coreutils-${COREUTILS_VERSION}.${COREUTILS_SUFFIX}" \
   die "download coreutils error" && \
     touch coreutils_download
 
+[ -f dbus_download ] || \
+download "dbus-${DBUS_VERSION}.${DBUS_SUFFIX}" \
+  "${DBUS_URL}/dbus-${DBUS_VERSION}.${DBUS_SUFFIX}" || \
+  die "download dbus error" && \
+    touch dbus_download
+
 #dejagnu-1.5.tar.gz
 [ -f dejagnu_download ] || \
 download "dejagnu-${DEJAGNU_VERSION}.${DEJAGNU_SUFFIX}" \
@@ -140,6 +146,13 @@ download "eglibc-ports-${EGLIBCPORTS_VERSION}-r21467.${EGLIBCPORTS_SUFFIX}" \
   "${EGLIBCPORTS_URL}/eglibc-ports-${EGLIBCPORTS_VERSION}-r21467.${EGLIBCPORTS_SUFFIX}" || \
   die "download eglibc-ports error" && \
     touch eglibcports_download
+
+#expat-2.1.0.tar.gz
+[ -f expat_download ] || \
+download "expat-${EXPAT_VERSION}.${EXPAT_SUFFIX}" \
+  "${EXPAT_URL}/expat-${EXPAT_VERSION}.${EXPAT_SUFFIX}" || \
+  die "download expat error" && \
+    touch expat_download
 
 #expect5.45.tar.gz 
 [ -f expect_download ] || \
