@@ -22,7 +22,7 @@ pushd ${SRCKERNEL64}
     touch ${METADATAKERNEL64}/linux_extract
 cd linux-${LINUX_VERSION}
 [ -f ${METADATAKERNEL64}/linux_patch ] || \
-  patch -p1 < ${PATCH}/linux-mips64el-defconfig.patch || \
+  patch -p1 < ${PATCH}/linux-mips64el-multilib-defconfig.patch || \
     die "patch linux mips64el-defconfig error" && \
       touch ${METADATAKERNEL64}/linux_patch
 popd
@@ -33,7 +33,7 @@ popd
 pushd ${SRCKERNEL64}
 cd linux-${LINUX_VERSION}
 [ -f ${METADATAKERNEL64}/linux_config ] || \
-  make ARCH=mips mips64el_defconfig || \
+  make ARCH=mips mips64el_multilib_defconfig || \
     die "linux config error" && \
       touch ${METADATAKERNEL64}/linux_config
 [ -f ${METADATAKERNEL64}/linux_build ] || \
@@ -44,4 +44,8 @@ cd linux-${LINUX_VERSION}
   mv vmlinux ${PREFIXGNULINUX}/kernel-64 || \
     die "linux move error" && \
       touch ${METADATAKERNEL64}/linux_move
+[ -f ${METADATAKERNEL64}/linux_N32_move ] || \
+  mv vmlinux.32 ${PREFIXGNULINUX}/kernel-N32 || \
+    die "linux N32 move error" && \
+      touch ${METADATAKERNEL64}/linux_N32_move
 popd
