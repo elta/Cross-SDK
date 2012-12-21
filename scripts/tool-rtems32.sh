@@ -66,11 +66,6 @@ pushd ${SRCRTEMS32}/binutils-${BINUTILS_VERSION}
 patch -p1 < ${PATCH}/binutils-2.22-rtems4.11-20120427.diff || \
   die "patch 32bit binutils error" && \
   touch ${METADATARTEMS32}/binutils_patched
-
-[ -f ${METADATARTEMS32}/binutils_patched2 ] || \
-patch -p1 < ${PATCH}/0001-MIPS-Add-mips-el-rtems-stubs.patch || \
-  die "patch 32bit binutils error2" && \
-  touch ${METADATARTEMS32}/binutils_patched2
 popd
 
 pushd ${SRCRTEMS32}/gcc-${GCC_VERSION}
@@ -92,11 +87,6 @@ pushd ${SRCRTEMS32}/gdb-${GDB_VERSION}
 patch -p1 < ${PATCH}/gdb-7.4-rtems4.11-20120125.diff || \
   die "patch 32bit gdb error" && \
   touch ${METADATARTEMS32}/gdb_patched
-
-[ -f ${METADATARTEMS32}/gdb_patched2 ] || \
-patch -p1 < ${PATCH}/0002-MIPS-Add-mips-el-rtems-stubs.patch || \
-  die "patch 32bit gdb error2" && \
-  touch ${METADATARTEMS32}/gdb_patched2
 popd
 
 pushd ${SRCRTEMS32}/gcc-${GCC_VERSION}
