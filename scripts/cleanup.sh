@@ -3,8 +3,8 @@
 export SCRIPT="$(pwd)"
 
 export METADATA=${SCRIPT}/../metadata/
-export SRC=${SCRIPT}/../src/
-export BUILD=${SCRIPT}/../build/
+export SRC=${SCRIPT}/../src
+export BUILD=${SCRIPT}/../build
 
 [ -d ${METADATA} ] && \
   for dir in `ls ${METADATA}`; do \

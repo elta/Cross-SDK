@@ -20,6 +20,7 @@ cd llvm-${LLVM_VERSION}/tools && \
 tar xf ${TARBALL}/clang-${CLANG_VERSION}.${CLANG_SUFFIX} || \
   die "extract clang error" && \
     touch ${METADATAUNIVERSAL}/clang_extract
+mv clang-${CLANG_VERSION} clang
 popd
 
 #################################################################
