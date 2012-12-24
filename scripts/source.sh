@@ -250,6 +250,7 @@ export UTIL_URL=http://www.kernel.org/pub//linux/utils/util-linux/v2.20
 export VIM_VERSION=7.3
 export VIM_SUFFIX=${BZ}
 export VIM_URL=ftp://ftp.vim.org/pub/vim/unix
+export VIM_DIR=vim73
 export WXGTK_VERSION=2.8.8
 export WXGTK_SUFFIX=${BZ}
 export WXGTK_URL=http://biolpc22.york.ac.uk/pub/2.8.8
