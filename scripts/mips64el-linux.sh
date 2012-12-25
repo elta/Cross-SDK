@@ -25,7 +25,7 @@ pushd ${BUILDKERNEL64}
 cd linux-${LINUX_VERSION}
 [ -f ${METADATAKERNEL64}/linux_mrpro ] || \
   make mrproper || \
-    die "***clean cross linux error" && \
+    die "***clean linux error" && \
       touch ${METADATAKERNEL64}/linux_mrpro
 [ -f ${METADATAKERNEL64}/linux_config_patch ] || \
   patch -p1 < ${PATCH}/linux-mips64el-multilib-defconfig.patch || \
@@ -41,11 +41,11 @@ make -j${JOBS} ARCH=mips CROSS_COMPILE=${CROSS_TARGET64}- CFLAGS=${BUILD64}|| \
       touch ${METADATAKERNEL64}/linux_build
 [ -f ${METADATAKERNEL64}/linux_copy_64 ] || \
   cp vmlinux ${PREFIXGNULINUX}/vmlinux-64 || \
-    die "***copy vmlinux error" && \
+    die "***copy 64bit vmlinux error" && \
       touch ${METADATAKERNEL64}/linux_copy_64
 [ -f ${METADATAKERNEL64}/linux_copy_n32 ] || \
   cp vmlinux.32 ${PREFIXGNULINUX}/vmlinux-n32 || \
-    die "***copy vmlinux error" && \
+    die "***copy n32 vmlinux error" && \
       touch ${METADATAKERNEL64}/linux_copy_n32
 popd
 
