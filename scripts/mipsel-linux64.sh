@@ -1,0 +1,47 @@
+#! /bin/bash
+
+source source.sh
+
+[ -d "${BUILDKERNEL64}" ] || mkdir -p "${BUILDKERNEL64}"
+[ -d "${METADATAKERNEL64}" ] || mkdir -p "${METADATAKERNEL64}"
+
+export PATH=${PATH}:${PREFIXGNU64}/bin
+export CC="${CROSS_TARGET64}-gcc"
+export CXX="${CROSS_TARGET64}-g++"
+export AR="${CROSS_TARGET64}-ar"
+export AS="${CROSS_TARGET64}-as"
+export RANLIB="${CROSS_TARGET64}-ranlib"
+export LD="${CROSS_TARGET64}-ld"
+export STRIP="${CROSS_TARGET64}-strip"
+
+
+[ -f ${PREFIXGNU64}/bin/${CC} ] || die "***No toolchain found, process error"
+
+pushd ${BUILDKERNEL64}
+[ -f ${METADATAKERNEL64}/linux_extract ] || \
+  tar xf ${TARBALL}/linux-${LINUX_VERSION}.${LINUX_SUFFIX} || \
+    die "***extract linux error" && \
+      touch ${METADATAKERNEL64}/linux_extract
+cd linux-${LINUX_VERSION}
+[ -f ${METADATAKERNEL64}/linux_mrpro ] || \
+  make mrproper || \
+    die "***clean cross linux error" && \
+      touch ${METADATAKERNEL64}/linux_mrpro
+[ -f ${METADATAKERNEL64}/linux_config_patch ] || \
+  patch -p1 < ${PATCH}/linux-mips64el-multilib-defconfig.patch || \
+    die "***Patch linux config error" && \
+      touch ${METADATAKERNEL64}/linux_config_patch
+[ -f ${METADATAKERNEL64}/linux_mkconfig ] || \
+  make ARCH=mips mips64el_multilib_defconfig || \
+    die "***make linux defconfig error" && \
+      touch ${METADATAKERNEL64}/linux_mkconfig
+[ -f ${METADATAKERNEL64}/linux_build ] || \
+make -j${JOBS} ARCH=mips CROSS_COMPILE=${CROSS_TARGET64}- CFLAGS=${BUILD64}|| \
+  die "***build linux error" && \
+      touch ${METADATAKERNEL64}/linux_build
+[ -f ${METADATAKERNEL64}/linux_copy ] || \
+  cp vmlinux ${PREFIXGNULINUX}/vmlinux-64 || \
+    die "***copy vmlinux error" && \
+      touch ${METADATAKERNEL64}/linux_copy
+popd
+
