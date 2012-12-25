@@ -6,15 +6,17 @@ source source.sh
 [ -d "${BUILDBUSYBOXO32}" ] || mkdir -p "${BUILDBUSYBOXO32}"
 [ -d "${METADATABUSYBOXO32}" ] || mkdir -p "${METADATABUSYBOXO32}"
 
-[ -f ${PREFIXGNU32}/bin/${CC} ] || die "No toolchain found, process error"
+#[ -f ${PREFIXGNU64}/bin/${CC} ] || die "No toolchain found, process error"
 
-export PATH=${PATH}:${PREFIXGNU32}/bin
+export PATH=${PATH}:${PREFIXGNU64}/bin
 
-export CC=${CROSS_TARGET32}-gcc
-export CFLAGS="-isystem ${SYSROOTGNU32}/usr/include ${BUILD32}"
-export CXX=${CROSS_TARGET32}-g++
-export CXXFLAGS="-isystem ${SYSROOTGNU32}/usr/include ${BUILD32}"
-export LDFLAGS="-Wl,-rpath-link,${SYSROOTGNU32}/usr/lib:${SYSROOTGNU32}/lib ${BUILD32}"
+export CC=${CROSS_TARGET64}-gcc
+export CFLAGS="-isystem ${SYSROOTGNU64}/usr/include ${BUILD32}"
+export CXX=${CROSS_TARGET64}-g++
+export CXXFLAGS="-isystem ${SYSROOTGNU64}/usr/include ${BUILD32}"
+export LDFLAGS="-Wl,-rpath-link,${SYSROOTGNU64}/usr/lib:${SYSROOTGNU64}/lib ${BUILD32}"
+
+[ -f ${PREFIXGNU64}/bin/${CC} ] || die "No toolchain found, process error"
 
 #export BUSYBOX_OPTIONS="static dynamic"
 export BUSYBOX_OPTIONS="dynamic"
@@ -26,6 +28,13 @@ for option in ${BUSYBOX_OPTIONS}; do
   mkdir ${SRCBUSYBOXO32}/busybox-$option || \
     die "busybox-${option}-create dir create failed" && \
       touch ${METADATABUSYBOXO32}/busybox-${option}-create
+
+#pushd ${BUILDBUSYBOXO32}
+#[ -f ${METADATABUSYBOXO32}/linux_extract ] || \
+#  tar xf ${TARBALL}/linux-${LINUX_VERSION}.${LINUX_SUFFIX} || \
+#    die "***exract linux error" && \
+#      touch ${METADATABUSYBOXO32}/linux_extract
+#popd
 
 pushd ${SRCBUSYBOXO32}/busybox-$option
 [ -f ${METADATABUSYBOXO32}/busybox-${option}-extract ] || \
@@ -47,14 +56,34 @@ cd busybox-${BUSYBOX_VERSION}
     die "busybox-${option}-config error" && \
       touch ${METADATABUSYBOXO32}/busybox-${option}-config
 [ -f ${METADATABUSYBOXO32}/busybox-${option}-build ] || \
-  make -j${JOBS} ARCH=mips CROSS_COMPILE=${CROSS_TARGET32}- || \
+  make -j${JOBS} ARCH=mips CROSS_COMPILE=${CROSS_TARGET64}- || \
     die "busybox-${option}-build error" && \
       touch ${METADATABUSYBOXO32}/busybox-${option}-build
 [ -f ${METADATABUSYBOXO32}/busybox-${option}-install ] || \
-  make ARCH=mips CROSS_COMPILE=${CROSS_TARGET32}- install || \
+  make ARCH=mips CROSS_COMPILE=${CROSS_TARGET64}- install || \
     die "busybox-${option}-install error" && \
       touch ${METADATABUSYBOXO32}/busybox-${option}-install
 popd
+
+#pushd ${BUILDBUSYBOXO32}
+#cd linux-${LINUX_VERSION}
+#[ -f ${METADATABUSYBOXO32}/linux_mrpro ] || \
+#  make mrproper || \
+#    die "***clean linux error" && \
+#      touch ${METADATABUSYBOXO32}/linux_mrpro
+#[ -f ${METADATABUSYBOXO32}/linux_patch ] || \
+#  patch -p1 < ${PATCH}/linux-mipsel-sysroot-defconfig.patch || \
+#    die "***Patch linux config error" && \
+#      touch ${METADATABUSYBOXO32}/linux_patch
+#[ -f ${METADATABUSYBOXO32}/linux_mkconfig ] || \
+#  make ARCH=mips mipsel_sysroot_defconfig || \
+#    die "***make linux defconfig error" && \
+#      touch ${METADATABUSYBOXO32}/linux_mkconfig
+#[ -f ${METADATABUSYBOXO32}/linux_build ] || \
+#  make -j${JOBS} ARCH=mips PREFIXMIPSELSYSROOT_COMPILE=${CROSS_TARGET64}- || \
+#    die "***build linux error" && \
+#      touch ${METADATABUSYBOXO32}/linux_build
+#popd
 
 # Make BusyBox Image
 pushd ${SRCBUSYBOXO32}/busybox-$option
@@ -77,9 +106,22 @@ sudo cp -a /dev/tty ${MOUNT_POINT}/dev/
 sudo cp -a /dev/tty2 ${MOUNT_POINT}/dev/
 sudo cp -a /dev/ttyS0 ${MOUNT_POINT}/dev/
 
+#[ -f ${METADATABUSYBOXO32}/linux_cpvmlinux ] || \
+#  cp vmlinux ${MOUNT_POINT}/boot/ || \
+#    die "***cp vmlinux error" && \
+#      touch ${METADATABUSYBOXO32}/linux_cpvmlinux
+#[ -f ${METADATABUSYBOXO32}/linux_cpsystemmap ] || \
+#  cp System.map ${MOUNT_POINT}/boot/System.map-3.3.7 || \
+#    die "***cp System.map error" && \
+#      touch ${METADATABUSYBOXO32}/linux_cpsystemmap
+#[ -f ${METADATABUSYBOXO32}/linux_cpconfig ] || \
+#  cp .config ${MOUNT_POINT}/boot/config-3.3.7 || \
+#    die "***cp config file error" && \
+#      touch ${METADATABUSYBOXO32}/linux_cpconfig
+
 # Copy Library to File System
-if [ -d ${SYSROOTGNU32}/lib ]; then
-    cp -ar ${SYSROOTGNU32}/lib ${MOUNT_POINT}/
+if [ -d ${SYSROOTGNU64}/lib ]; then
+    cp -ar ${SYSROOTGNU64}/lib ${MOUNT_POINT}/
 fi
 
 sudo echo "/bin/mount -o remount,rw /" >> ${MOUNT_POINT}/etc/init.d/rcS

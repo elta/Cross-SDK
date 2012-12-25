@@ -320,6 +320,7 @@ export PREFIXMUL64EL=${PREFIX}/mips64el-multilib/
 export PREFIXPURE64EL=${PREFIX}/mips64el-pure64/
 export PREFIXMIPSEL=${PREFIX}/mipsel/
 export PREFIXMIPSELSYSROOT=${PREFIX}/mipsel-sysroot/
+export PREFIXKERNEL=${PREFIX}/kernel
 
 export SYSROOTGNU64=${PREFIXGNU64}/${CROSS_TARGET64}/sys-root/
 export SYSROOTGNU32=${PREFIXGNU32}/${CROSS_TARGET32}/sys-root/
