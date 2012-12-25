@@ -7,7 +7,7 @@ I'll try my best to fix all the toolchain bugs, and keep the other members
 maintain their part of the SDK.
 
 ===============================================================================
-GNU root FS part is come from CLFS, IDE-plugin is writen by Dongxue-Zhang.
+GNU root FS is partly come from CLFS, IDE-plugin is writen by Dongxue-Zhang.
 
 ===============================================================================
 TODO:
@@ -35,15 +35,16 @@ ${ROOS_FS}.sh ${SDK_PREFIX}
 
 Excample:
 run
-tool-gnu64.sh
-to get 64bit gnu toolchain.
+./tool-mips*el-linux.sh
+to get gnu toolchain.
 
 run
-mips64el-multilib-stage1.sh
-mips64el-multilib-stage2.sh
-mips64el-multilib-stage3.sh
-mips64el-multilib-stage4.sh
+./mips64el-rootfs.sh
 to get 64bit multilib gnu root fs.
+
+run
+./mips64el-linux.sh
+to get 64bit & n32 linux kernel.
 
 Notice:
 It will take a huge disk space in your disk, make sure you run them in

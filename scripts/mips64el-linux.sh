@@ -39,9 +39,13 @@ cd linux-${LINUX_VERSION}
 make -j${JOBS} ARCH=mips CROSS_COMPILE=${CROSS_TARGET64}- CFLAGS=${BUILD64}|| \
   die "***build linux error" && \
       touch ${METADATAKERNEL64}/linux_build
-[ -f ${METADATAKERNEL64}/linux_copy ] || \
+[ -f ${METADATAKERNEL64}/linux_copy_64 ] || \
   cp vmlinux ${PREFIXGNULINUX}/vmlinux-64 || \
     die "***copy vmlinux error" && \
-      touch ${METADATAKERNEL64}/linux_copy
+      touch ${METADATAKERNEL64}/linux_copy_64
+[ -f ${METADATAKERNEL64}/linux_copy_n32 ] || \
+  cp vmlinux.32 ${PREFIXGNULINUX}/vmlinux-n32 || \
+    die "***copy vmlinux error" && \
+      touch ${METADATAKERNEL64}/linux_copy_n32
 popd
 
