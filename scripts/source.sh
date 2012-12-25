@@ -319,6 +319,7 @@ export PREFIXQTC=${PREFIX}/qt-creator
 export PREFIXMUL64EL=${PREFIX}/mips64el-multilib/
 export PREFIXPURE64EL=${PREFIX}/mips64el-pure64/
 export PREFIXMIPSEL=${PREFIX}/mipsel/
+export PREFIXMIPSELSYSROOT=${PREFIX}/mipsel-sysroot/
 
 export SYSROOTGNU64=${PREFIXGNU64}/${CROSS_TARGET64}/sys-root/
 export SYSROOTGNU32=${PREFIXGNU32}/${CROSS_TARGET32}/sys-root/
@@ -353,6 +354,7 @@ export METADATAGNU64=${SCRIPT}/../metadata/gnu64
 export METADATAUNIVERSAL=${SCRIPT}/../metadata/universal
 export METADATARTEMS32=${SCRIPT}/../metadata/rtems32
 export METADATARTEMS64=${SCRIPT}/../metadata/rtems64
+export METADATAMIPSELSYSROOT=${SCRIPT}/../metadata/mipsel-sysroot
 
 ###########################################################
 # SRC info
@@ -382,6 +384,7 @@ export SRCGNU64=${SCRIPT}/../src/mips64-linux-tool
 export SRCUNIVERSAL=${SCRIPT}/../src/universal
 export SRCRTEMS32=${SCRIPT}/../src/mips-rtems-tool
 export SRCRTEMS64=${SCRIPT}/../src/mips64-rtems-tool
+export SRCMIPSELSYSROOT=${SCRIPT}/../src/mipsel-sysroot
 
 ###########################################################
 # BUILD info
@@ -411,6 +414,7 @@ export BUILDGNU64=${SCRIPT}/../build/mips64-linux-tool
 export BUILDUNIVERSAL=${SCRIPT}/../build/universal
 export BUILDRTEMS32=${SCRIPT}/../build/mips-rtems-tool
 export BUILDRTEMS64=${SCRIPT}/../build/mips64-rtems-tool
+export BUILDMIPSELSYSROOT=${SCRIPT}/../build/mipsel-sysroot
 
 ###########################################################
 # Functions
