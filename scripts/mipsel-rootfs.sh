@@ -2610,7 +2610,7 @@ EOF` || die "Create inputrc error" && \
 
 [ -f ${METADATAMIPSELSYSROOT}/create_network ] || \
 `cat > ${PREFIXMIPSELSYSROOT}/etc/sysconfig/network << EOF
-HOSTNAME=SYSROOT-PREFIXMIPSELSYSROOT
+HOSTNAME=mipsel-gnu-linux
 EOF` || die "create network error" && \
   touch ${METADATAMIPSELSYSROOT}/create_network
 
@@ -2738,7 +2738,7 @@ pushd ${PREFIXGNULINUX}
       touch ${METADATAMIPSELSYSROOT}/mipsel_sysroot_ddimg
 
 [ -f ${METADATAMIPSELSYSROOT}/mipsel_sysroot_mkfsimg ] || \
-  mkfs.ext3 mipsel-sysroot.img || \
+  echo y | mkfs.ext3 mipsel-sysroot.img || \
     die "***mkfs mipsel sysroot.img error" && \
       touch ${METADATAMIPSELSYSROOT}/mipsel_sysroot_mkfsimg
 
