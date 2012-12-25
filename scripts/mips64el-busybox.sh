@@ -2,18 +2,18 @@
 
 source source.sh
 
-[ -d "${SRCBUSYBOXMUL64}" ] || mkdir -p "${SRCBUSYBOXMUL64}"
-[ -d "${BUILDBUSYBOXMUL64}" ] || mkdir -p "${BUILDBUSYBOXMUL64}"
-[ -d "${METADATABUSYBOXMUL64}" ] || mkdir -p "${METADATABUSYBOXMUL64}"
-
-[ -f ${PREFIXGNU64}/bin/${CC} ] || die "No toolchain found, process error"
-
 export PATH=${PATH}:${PREFIXGNU64}/bin
 export CC=${CROSS_TARGET64}-gcc
 export CFLAGS="-isystem ${SYSROOTGNU64}/usr/include ${BUILD64}"
 export CXX=${CROSS_TARGET64}-g++
 export CXXFLAGS="-isystem ${SYSROOTGNU64}/usr/include ${BUILD64}"
 export LDFLAGS="-Wl,-rpath-link,${SYSROOTGNU64}/usr/lib64:${SYSROOTGNU64}/lib64 ${BUILD64}"
+
+[ -d "${SRCBUSYBOXMUL64}" ] || mkdir -p "${SRCBUSYBOXMUL64}"
+[ -d "${BUILDBUSYBOXMUL64}" ] || mkdir -p "${BUILDBUSYBOXMUL64}"
+[ -d "${METADATABUSYBOXMUL64}" ] || mkdir -p "${METADATABUSYBOXMUL64}"
+
+[ -f ${PREFIXGNU64}/bin/${CC} ] || die "No toolchain found, process error"
 
 export BUSYBOX_OPTIONS="dynamic"
 

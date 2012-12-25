@@ -2,10 +2,6 @@
 
 source source.sh
 
-[ -d "${SRCBUSYBOXO32}" ] || mkdir -p "${SRCBUSYBOXO32}"
-[ -d "${BUILDBUSYBOXO32}" ] || mkdir -p "${BUILDBUSYBOXO32}"
-[ -d "${METADATABUSYBOXO32}" ] || mkdir -p "${METADATABUSYBOXO32}"
-
 #[ -f ${PREFIXGNU64}/bin/${CC} ] || die "No toolchain found, process error"
 
 export PATH=${PATH}:${PREFIXGNU64}/bin
@@ -15,6 +11,10 @@ export CFLAGS="-isystem ${SYSROOTGNU64}/usr/include ${BUILD32}"
 export CXX=${CROSS_TARGET64}-g++
 export CXXFLAGS="-isystem ${SYSROOTGNU64}/usr/include ${BUILD32}"
 export LDFLAGS="-Wl,-rpath-link,${SYSROOTGNU64}/usr/lib:${SYSROOTGNU64}/lib ${BUILD32}"
+
+[ -d "${SRCBUSYBOXO32}" ] || mkdir -p "${SRCBUSYBOXO32}"
+[ -d "${BUILDBUSYBOXO32}" ] || mkdir -p "${BUILDBUSYBOXO32}"
+[ -d "${METADATABUSYBOXO32}" ] || mkdir -p "${METADATABUSYBOXO32}"
 
 [ -f ${PREFIXGNU64}/bin/${CC} ] || die "No toolchain found, process error"
 
@@ -80,7 +80,7 @@ popd
 #    die "***make linux defconfig error" && \
 #      touch ${METADATABUSYBOXO32}/linux_mkconfig
 #[ -f ${METADATABUSYBOXO32}/linux_build ] || \
-#  make -j${JOBS} ARCH=mips PREFIXMIPSELSYSROOT_COMPILE=${CROSS_TARGET64}- || \
+#  make -j${JOBS} ARCH=mips CROSS_COMPILE=${CROSS_TARGET64}- || \
 #    die "***build linux error" && \
 #      touch ${METADATABUSYBOXO32}/linux_build
 #popd
