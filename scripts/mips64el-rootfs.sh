@@ -2,12 +2,12 @@
 
 source source.sh
 
-[[ $# -eq 1 ]] || die "usage: build.sh PREFIX"
 export PATH=$PATH:${PREFIXMIPS64ELSYSROOT}/cross-tools/bin
 
 [ -d "${SRCMIPS64ELSYSROOT}" ] || mkdir -p "${SRCMIPS64ELSYSROOT}"
 [ -d "${BUILDMIPS64ELSYSROOT}" ] || mkdir -p "${BUILDMIPS64ELSYSROOT}"
 [ -d "${METADATAMIPS64ELSYSROOT}" ] || mkdir -p "${METADATAMIPS64ELSYSROOT}"
+[ -d "${PREFIXGNULINUX}" ] || mkdir -p "${PREFIXGNULINUX}"
 
 mkdir -p ${PREFIXMIPS64ELSYSROOT}
 mkdir -p ${PREFIXMIPS64ELSYSROOT}/cross-tools
@@ -111,7 +111,7 @@ pushd ${SRCMIPS64ELSYSROOT}
     die "extract eglibc error" && \
       touch ${METADATAMIPS64ELSYSROOT}/eglibc_extract
 [ -f "${METADATAMIPS64ELSYSROOT}/file11_extract" ] || \
-  tar xf ${TARBALL}/file-${FILE11_VERSION}.${FILE_SUFFIX} || \
+  tar xf ${TARBALL}/file-${FILE11_VERSION}.${FILE11_SUFFIX} || \
     die "extract file error" && \
       touch ${METADATAMIPS64ELSYSROOT}/file11_extract
 [ -f "${METADATAMIPS64ELSYSROOT}/groff_extract" ] || \
@@ -190,10 +190,6 @@ pushd ${SRCMIPS64ELSYSROOT}
   tar xf ${TARBALL}/diffutils-${DIFFUTILS_VERSION}.${DIFFUTILS_SUFFIX} || \
     die "extract diffutils error" && \
       touch ${METADATAMIPS64ELSYSROOT}/diffutils_extract
-[ -f "${METADATAMIPS64ELSYSROOT}/file11_extract" ] || \
-  tar xf ${TARBALL}/file-${FILE11_VERSION}.${FILE11_SUFFIX} || \
-    die "extract file error" && \
-      touch ${METADATAMIPS64ELSYSROOT}/file11_extract
 [ -f "${METADATAMIPS64ELSYSROOT}/findutils_extract" ] || \
   tar xf ${TARBALL}/findutils-${FINDUTILS_VERSION}.${FINDUTILS_SUFFIX} || \
     die "extract findutils error" && \
@@ -298,6 +294,10 @@ pushd ${SRCMIPS64ELSYSROOT}
   tar xf ${TARBALL}/e2fsprogs-${E2FSPROGS_VERSION}.${E2FSPROGS_SUFFIX} || \
     die "extract e2fs error" && \
       touch ${METADATAMIPS64ELSYSROOT}/e2fs_extract
+[ -f "${METADATAMIPS64ELSYSROOT}/gdb_extract" ] || \
+  tar xf ${TARBALL}/gdb-${GDB_VERSION}.${GDB_SUFFIX} || \
+    die "extract gdb error" && \
+      touch ${METADATAMIPS64ELSYSROOT}/gdb_extract
 popd
 
 
@@ -317,6 +317,10 @@ pushd ${BUILDMIPS64ELSYSROOT}
   tar xf ${TARBALL}/man-pages-${MANPAGES_VERSION}.${MANPAGES_SUFFIX} || \
     die "extract man-pages error" && \
       touch ${METADATAMIPS64ELSYSROOT}/man-pages_extract
+[ -f "${METADATAMIPS64ELSYSROOT}/iputils_extract" ] || \
+  tar xf ${TARBALL}/iputils-${IPUTILS_VERSION}.${IPUTILS_SUFFIX} || \
+    die "extract iputils error" && \
+      touch ${METADATAMIPS64ELSYSROOT}/iputils_extract
 popd
 
 ######################## Begin Compiler CrossGcc ##############################
@@ -3025,20 +3029,38 @@ cd gzip-buildusr
       touch ${METADATAMIPS64ELSYSROOT}/bzip_move_install
 popd
 
-## FIXME This use gcc, Not PREFIXMIPS64ELSYSROOT-GCC
-#pushd ${SRCMIPS64ELSYSROOT}
-#[ -d "iputils-${IPUTILS_VERSION}" ] \
-#  || tar xf ${TARBALL}/iputils-${IPUTILS_VERSION}.${IPUTILS_SUFFIX}
-#cd iputils-${IPUTILS_VERSION}
-#make CC="${CC} ${BUILD64}" -j${JOBS} || die "***build iputils error"
-#install -v -m755 ping{,6} ${PREFIXMIPS64ELSYSROOT}/bin
+pushd ${BUILDMIPS64ELSYSROOT}
+cd iputils-${IPUTILS_VERSION}
+[ -f "${METADATA}/iputils_build" ] || \
+  make CC="${CC} ${BUILD64}" -j${JOBS} || \
+    die "***build iputils error" && \
+      touch ${METADATA}/iputils_build
+[ -f "${METADATA}/iputils_install_ping" ] || \
+  install -v -m755 ping ${PREFIXMIPS64ELSYSROOT}/bin || \
+    die "install iputils ping error" && \
+      touch ${METADATA}/iputils_install_ping
 #install -v -m755 arping ${PREFIXMIPS64ELSYSROOT}/usr/bin
-#install -v -m755 clockdiff ${PREFIXMIPS64ELSYSROOT}/usr/bin
-#install -v -m755 rdisc ${PREFIXMIPS64ELSYSROOT}/usr/bin
-#install -v -m755 tracepath ${PREFIXMIPS64ELSYSROOT}/usr/bin
-#install -v -m755 trace{path,route}6 ${PREFIXMIPS64ELSYSROOT}/usr/bin
-#install -v -m644 doc/*.8 ${PREFIXMIPS64ELSYSROOT}/usr/share/man/man8
-#popd
+[ -f "${METADATA}/iputils_install_clockdiff" ] || \
+  install -v -m755 clockdiff ${PREFIXMIPS64ELSYSROOT}/usr/bin || \
+    die "install iputils clockdiff error" && \
+      touch ${METADATA}/iputils_install_clockdiff
+[ -f "${METADATA}/iputils_install_rdisc" ] || \
+  install -v -m755 rdisc ${PREFIXMIPS64ELSYSROOT}/usr/bin || \
+    die "install iputils rdisc error" && \
+      touch ${METADATA}/iputils_install_rdisc
+[ -f "${METADATA}/iputils_install_tracepath" ] || \
+  install -v -m755 tracepath ${PREFIXMIPS64ELSYSROOT}/usr/bin || \
+    die "install iputils tracepath error" && \
+      touch ${METADATA}/iputils_install_tracepath
+[ -f "${METADATA}/iputils_install_trace" ] || \
+  install -v -m755 trace{path,route}6 ${PREFIXMIPS64ELSYSROOT}/usr/bin || \
+    die "iputils install trace error" && \
+      touch ${METADATA}/iputils_install_trace
+[ -f "${METADATA}/iputils_isntall_doc" ] || \
+  install -v -m644 doc/*.8 ${PREFIXMIPS64ELSYSROOT}/usr/share/man/man8 || \
+    die "iputils install doc error" && \
+      touch ${METADATA}/iputils_isntall_doc
+popd
 
 pushd ${SRCMIPS64ELSYSROOT}/kbd-${KBD_VERSION}
 [ -f "${METADATAMIPS64ELSYSROOT}/kbd_patch" ] || \
@@ -3285,6 +3307,28 @@ sed -e's@#MD5_CRYPT_ENAB.no@MD5_CRYPT_ENAB yes@' \
     -e 's@/var/spool/mail@/var/mail@' \
     login.defs.orig > ${PREFIXMIPS64ELSYSROOT}/etc/login.defs
 mv -v ${PREFIXMIPS64ELSYSROOT}/usr/bin/passwd ${PREFIXMIPS64ELSYSROOT}/bin
+popd
+
+pushd ${BUILDMIPS64ELSYSROOT}
+[ -d "gdb-buildusr" ] || mkdir gdb-buildusr
+cd gdb-buildusr
+[ -f "${METADATA}/gdb_configusr" ] || \
+  CC="${CC} ${BUILD64}" CXX="${CXX} ${BUILD64}" \
+  ${SRC}/gdb-${GDB_VERSION}/configure --prefix=${PREFIXMIPS64ELSYSROOT} \
+  --build=${CROSS_HOST} --host=${CROSS_TARGET} --target=${CROSS_TARGET} || \
+  --with-gmp=${PREFIXMIPS64ELSYSROOT}/cross-tools \
+  --with-mpfr=${PREFIXMIPS64ELSYSROOT}/cross-tools \
+  --with-mpc=${PREFIXMIPS64ELSYSROOT}/cross-tools \
+    die "config gdb error" && \
+      touch ${METADATA}/gdb_configusr
+[ -f "${METADATAMIPS64ELSYSROOT}/gdb_build" ] || \
+  make -j${JOBS} || \
+    die "***build gdb error" && \
+      touch ${METADATAMIPS64ELSYSROOT}/gdb_build
+[ -f "${METADATAMIPS64ELSYSROOT}/gdb_install" ] || \
+  make install || \
+    die "***install gdb error" && \
+      touch ${METADATAMIPS64ELSYSROOT}/gdb_install
 popd
 
 # Use make, not make -j${JOBS}
@@ -4213,6 +4257,10 @@ PREFIXMIPS64ELSYSROOT-Sysroot
 EOF` || \
     die "create version number error" && \
       touch ${METADATAMIPS64ELSYSROOT}/create_clfs-release
+
+##################### remove cross-tools ######################################
+rm -rf ${PREFIXMIPS64ELSYSROOT}/cross-tools
+
 ############### Change Own Ship ########################
 sudo chown -Rv 0:0 ${PREFIXMIPS64ELSYSROOT} || die "Change own error"
 sudo touch ${PREFIXMIPS64ELSYSROOT}/{,var/}run/utmp ${PREFIXMIPS64ELSYSROOT}/var/log/{btmp,lastlog,wtmp}
@@ -4241,3 +4289,36 @@ sudo ln -sv /usr/lib/libee.so.0.0.0 libee.so.0
 sudo ln -sv /usr/lib/libkmod.so.2.1.2 libkmod.so.2
 sudo ln -sv /usr/lib/libestr.so.0.0.0 libestr.so.0
 popd
+
+######################## Create Image ##########################################
+pushd ${PREFIXGNULINUX}
+[ -f ${METADATAMIPS64ELSYSROOT}/mips64el_rootfs_ddimg ] || \
+ dd if=/dev/zero of=mips64el-rootfs.img bs=1M count=10K || \
+    die "***dd mips64el rootfs.img error" && \
+      touch ${METADATAMIPS64ELSYSROOT}/mips64el_rootfs_ddimg
+[ -f ${METADATAMIPS64ELSYSROOT}/mips64el_rootfs_mkfsimg ] || \
+  echo y | mkfs.ext3 mips64el-rootfs.img || \
+    die "***mkfs mipsel rootfs.img error" && \
+      touch ${METADATAMIPS64ELSYSROOT}/mips64el_rootfs_mkfsimg
+[ -f ${METADATAMIPS64ELSYSROOT}/mips64el_rootfs_dirmnt ] || \
+  [ -d mnt_tmp ] || mkdir mnt_tmp || \
+    die "***mkdir mnt error" && \
+      touch ${METADATAMIPS64ELSYSROOT}/mips64el_rootfs_dirmnt
+[ -f ${METADATAMIPS64ELSYSROOT}/mips64el_rootfs_mnt ] || \
+  sudo mount -o loop mips64el-rootfs.img ./mnt_tmp || \
+    die "***mount mips64el rootfs.img error" && \
+      touch ${METADATAMIPS64ELSYSROOT}/mips64el_rootfs_mnt
+[ -f ${METADATAMIPS64ELSYSROOT}/mips64el_rootfs_copy ] || \
+  sudo cp -ar ${PREFIXMIPS64ELSYSROOT}/* ./mnt_tmp/ || \
+    die "***copy to mipsel rootfs.img error" && \
+      touch ${METADATAMIPS64ELSYSROOT}/mips64el_rootfs_copy
+[ -f ${METADATAMIPS64ELSYSROOT}/mips64el_rootfs_umnt ] || \
+  sudo umount ./mnt_tmp/ || \
+    die "***copy to mips64el rootfs.img error" && \
+      touch ${METADATAMIPS64ELSYSROOT}/mips64el_rootfs_umnt
+[ -f ${METADATAMIPS64ELSYSROOT}/mips64el_rootfs_rmmnt ] || \
+  rm -rf  mnt_tmp || \
+    die "***remove mnt error" && \
+      touch ${METADATAMIPS64ELSYSROOT}/mips64el_rootfs_rmmnt
+popd
+
