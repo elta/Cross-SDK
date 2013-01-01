@@ -4321,4 +4321,3 @@ pushd ${PREFIXGNULINUX}
     die "***remove mnt error" && \
       touch ${METADATAMIPS64ELSYSROOT}/mips64el_rootfs_rmmnt
 popd
-

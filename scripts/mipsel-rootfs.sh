@@ -1,4 +1,5 @@
 #! /bin/bash
+
 source source.sh
 
 [ -d "${SRCMIPSELSYSROOT}" ] || mkdir -p "${SRCMIPSELSYSROOT}"

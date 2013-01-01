@@ -14,7 +14,6 @@ export RANLIB="${CROSS_TARGET64}-ranlib"
 export LD="${CROSS_TARGET64}-ld"
 export STRIP="${CROSS_TARGET64}-strip"
 
-
 [ -f ${PREFIXGNU64}/bin/${CC} ] || die "***No toolchain found, process error"
 
 pushd ${BUILDKERNELO32}
@@ -44,4 +43,3 @@ make -j${JOBS} ARCH=mips CROSS_COMPILE=${CROSS_TARGET64}- || \
     die "***copy vmlinux error" && \
       touch ${METADATAKERNELO32}/linux_copy
 popd
-
