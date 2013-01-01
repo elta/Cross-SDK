@@ -2,7 +2,7 @@
 
 export SCRIPT="$(pwd)"
 
-export METADATA=${SCRIPT}/../metadata/
+export METADATA=${SCRIPT}/../metadata
 export SRC=${SCRIPT}/../src
 export BUILD=${SCRIPT}/../build
 
