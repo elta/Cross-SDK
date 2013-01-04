@@ -455,6 +455,13 @@ download "psmisc-${PSMISC_VERSION}.${PSMISC_SUFFIX}" \
   die "download psmisc error" && \
     touch psmisc_download
 
+#python-3.3.0.tar.bz
+[ -f python_download ] || \
+download "python-${PYTHON_VERSION}.${PYTHON_SUFFIX}" \
+  "${PYTHON_URL}/Python-${PYTHON_VERSION}.${PYTHON_SUFFIX}" || \
+  die "download python error" && \
+    touch python_download
+
 #readline-6.2.tar.gz
 [ -f readline_download ] || \
 download "readline-${READLINE_VERSION}.${READLINE_SUFFIX}" \
