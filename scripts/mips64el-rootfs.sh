@@ -4244,7 +4244,20 @@ EOF` || \
     die "create fstab error" && \
       touch ${METADATAMIPS64ELROOTFS}/create_fstab
 
+cat > ${PREFIXMIPS64ELROOTFS}/root/.bash_profile << EOF
+set +h
+PS1='\u:\w\$ '
+LC_ALL=POSIX
+PATH=$PATH:/bin:/usr/bin:/sbin:/usr/sbin
+export LC_ALL PATH PS1
+
+source .bashrc
+EOF
+
 cat > ${PREFIXMIPS64ELROOTFS}/root/.bashrc << EOF
+set +h
+umask 022
+
 export PYTHONHOME=/usr
 EOF
 
