@@ -2382,9 +2382,15 @@ pushd ${BUILDMIPS64ELSYSROOT}
 [ -d "python-cross-build" ] || \
   cp -ar ${SRCMIPS64ELSYSROOT}/Python-${PYTHON_VERSION} python-cross-build
 cd python-cross-build
-sed -e 's/\${SYSROOT}/${METADATAMIPS64ELSYSROOT}/g' \
-       ${PATCH}/python-3.3-cross-mips64.patch > tmp.patch
-patch -p1 < tmp.patch
+[ -f "${METADATAMIPS64ELSYSROOT}/python-cross-update-patch" ] || \
+  sed -e 's/\${SYSROOT}/${PREFIXMIPS64ELSYSROOT}/g' \
+         ${PATCH}/python-3.3-cross-mips64.patch > tmp.patch || \
+    die "python update patch error" && \
+      touch ${METADATAMIPS64ELSYSROOT}/python-cross-update-patch
+[ -f "${METADATAMIPS64ELSYSROOT}/python-cross-patch" ] || \
+  patch -p1 < tmp.patch || \
+    die "patch cross python error" && \
+      touch ${METADATAMIPS64ELSYSROOT}/python-cross-patch
 cat > config.cache << EOF
 ac_cv_file__dev_ptmx=no
 ac_cv_file__dev_ptc=no
@@ -2395,7 +2401,7 @@ EOF
   LDFLAGS="-L${PREFIXMIPS64ELSYSROOT}/cross-tools/lib64 ${BUILD64}" \
   ./configure --prefix=/usr \
   --build=${CROSS_HOST} --host=${CROSS_TARGET64} \
-  --libdir=${PREFIXMIPS64ELSYSROOT}/cross-tools/lib64 \
+  --libdir=/lib64 \
   --cache-file=config.cache || \
     die "***config python_cross64 error" && \
       touch ${METADATAMIPS64ELSYSROOT}/python_cross_config
@@ -3190,7 +3196,7 @@ pushd ${BUILDMIPS64ELSYSROOT}
   cp -ar ${SRCMIPS64ELSYSROOT}/man-${MAN_VERSION} man-cross-build
 cd man-cross-build
 
-[ -f "${METADATAMIPS64ELSYSROOT}/update_cross_man_files" ] || \
+[ -f "${METADATAMIPS64ELSYSROOT}/man_cross_update_files" ] || \
   cp configure{,.orig} && \
   sed -e "/PREPATH=/s@=.*@=\"$(eval echo ${PREFIXMIPS64ELSYSROOT}/{,usr/}{sbin,bin})\"@g" \
       -e 's@-is@&R@g' configure.orig > configure && \
@@ -3199,7 +3205,7 @@ cd man-cross-build
       -e 's@MANPATH./usr/local/man@#&@g' \
       src/man.conf.in.orig > src/man.conf.in || \
     die "man update files error" && \
-      touch ${METADATAMIPS64ELSYSROOT}/update_cross_man_files
+      touch ${METADATAMIPS64ELSYSROOT}/man_cross_update_files
 
 [ -f "${METADATAMIPS64ELSYSROOT}/man_cross_config" ] || \
   CC="${CC} ${BUILD64}" ./configure -confdir=/etc || \
@@ -3220,7 +3226,7 @@ cd man-cross-build
     die "***build man error" && \
       touch ${METADATAMIPS64ELSYSROOT}/man_cross_build
 [ -f "${METADATAMIPS64ELSYSROOT}/man_cross_install" ] || \
-  make DESTDIR=${PREFIXMIPS64ELSYSROOT} install || \
+  make DESTDIR=${PREFIXMIPS64ELSYSROOT} PREFIX="" install || \
     die "***install man error" && \
       touch ${METADATAMIPS64ELSYSROOT}/man_cross_install
 popd
@@ -4047,11 +4053,8 @@ cd xz-32
   install || \
     die "***install xz32 error" && \
       touch ${METADATAMIPS64ELSYSROOT}/xz_install32
-[ -f "${METADATAMIPS64ELSYSROOT}/xz_update32_install" ] || \
-  `mv -v ${PREFIXMIPS64ELSYSROOT}/usr/bin/{xz,lzma,lzcat,unlzma,unxz,xzcat} ${PREFIXMIPS64ELSYSROOT}/bin && \
-  mv -v ${PREFIXMIPS64ELSYSROOT}/lib/liblzma.a ${PREFIXMIPS64ELSYSROOT}/usr/lib` || \
-    die "update xz32 install" && \
-      touch ${METADATAMIPS64ELSYSROOT}/xz_update32_install
+#mv -v ${PREFIXMIPS64ELSYSROOT}/usr/bin/{xz,lzma,lzcat,unlzma,unxz,xzcat} ${PREFIXMIPS64ELSYSROOT}/bin
+mv -v ${PREFIXMIPS64ELSYSROOT}/lib/liblzma.a ${PREFIXMIPS64ELSYSROOT}/usr/lib
 popd
 
 pushd ${BUILDMIPS64ELSYSROOT}
@@ -4072,11 +4075,8 @@ cd xz-n32
   make DESTDIR=${PREFIXMIPS64ELSYSROOT} pkgconfigdir=/usr/lib32/pkgconfig install || \
     die "***install xz32 error" && \
       touch ${METADATAMIPS64ELSYSROOT}/xz_installn32
-[ -f "${METADATAMIPS64ELSYSROOT}/xz_updaten32_install" ] || \
-  `mv -v ${PREFIXMIPS64ELSYSROOT}/usr/bin/{xz,lzma,lzcat,unlzma,unxz,xzcat} ${PREFIXMIPS64ELSYSROOT}/bin && \
-  mv -v ${PREFIXMIPS64ELSYSROOT}/lib32/liblzma.a ${PREFIXMIPS64ELSYSROOT}/usr/lib32` || \
-    die "update xzn32 install error" && \
-      touch ${METADATAMIPS64ELSYSROOT}/xz_updaten32_install
+#mv -v ${PREFIXMIPS64ELSYSROOT}/usr/bin/{xz,lzma,lzcat,unlzma,unxz,xzcat} ${PREFIXMIPS64ELSYSROOT}/bin
+mv -v ${PREFIXMIPS64ELSYSROOT}/lib32/liblzma.a ${PREFIXMIPS64ELSYSROOT}/usr/lib32
 popd
 
 pushd ${BUILDMIPS64ELSYSROOT}
@@ -4097,11 +4097,8 @@ cd xz-64
   make DESTDIR=${PREFIXMIPS64ELSYSROOT} pkgconfigdir=/usr/lib64/pkgconfig install || \
     die "***install xz64 error" && \
       touch ${METADATAMIPS64ELSYSROOT}/xz_install64
-[ -f "${METADATAMIPS64ELSYSROOT}/xz_update64_install" ] || \
-  `mv -v ${PREFIXMIPS64ELSYSROOT}/usr/bin/{xz,lzma,lzcat,unlzma,unxz,xzcat} ${PREFIXMIPS64ELSYSROOT}/bin && \
-  mv -v ${PREFIXMIPS64ELSYSROOT}/lib64/liblzma.a ${PREFIXMIPS64ELSYSROOT}/usr/lib64` || \
-    die "update xz64 install error" && \
-      touch ${METADATAMIPS64ELSYSROOT}/xz_update64_install
+mv -v ${PREFIXMIPS64ELSYSROOT}/usr/bin/{xz,lzma,lzcat,unlzma,unxz,xzcat} ${PREFIXMIPS64ELSYSROOT}/bin
+mv -v ${PREFIXMIPS64ELSYSROOT}/lib64/liblzma.a ${PREFIXMIPS64ELSYSROOT}/usr/lib64
 popd
 
 ##pushd ${SRCMIPS64ELSYSROOT}
@@ -4304,33 +4301,100 @@ EOF` || \
 ##################### remove cross-tools ######################################
 #rm -rf ${PREFIXMIPS64ELSYSROOT}/cross-tools
 
-############### Change Own Ship ########################
-sudo chown -Rv 0:0 ${PREFIXMIPS64ELSYSROOT} || die "Change own error"
-sudo touch ${PREFIXMIPS64ELSYSROOT}/{,var/}run/utmp ${PREFIXMIPS64ELSYSROOT}/var/log/{btmp,lastlog,wtmp}
-sudo chmod -v 664 ${PREFIXMIPS64ELSYSROOT}/{,var/}run/utmp ${PREFIXMIPS64ELSYSROOT}/var/log/lastlog || \
-  die "Change utmp/lastlog group error"
-sudo chgrp -v 4 ${PREFIXMIPS64ELSYSROOT}/usr/bin/write || \
-  die "Change write group error"
-sudo chmod g+s ${PREFIXMIPS64ELSYSROOT}/usr/bin/write || die "Change write mode error"
-sudo mknod -m 0666 ${PREFIXMIPS64ELSYSROOT}/dev/null c 1 3 || die "Create null error"
-sudo mknod -m 0600 ${PREFIXMIPS64ELSYSROOT}/dev/console c 5 1 || die "Create console error"
-sudo mknod -m 0666 ${PREFIXMIPS64ELSYSROOT}/dev/rtc0 c 254 0 || die "Create rtc0 error"
-sudo ln -sv ${PREFIXMIPS64ELSYSROOT}/dev/rtc0 ${PREFIXMIPS64ELSYSROOT}/dev/rtc || die "Link rtc error"
+################ Change Own Ship ########################
+[ -f "${METADATAMIPS64ELSYSROOT}/change_all_own" ] || \
+  sudo chown -Rv 0:0 ${PREFIXMIPS64ELSYSROOT} || \
+    die "change_all_own" && \
+      touch ${METADATAMIPS64ELSYSROOT}/change_all_own
+[ -f "${METADATAMIPS64ELSYSROOT}/touch_run_utmp" ] || \
+  sudo touch ${PREFIXMIPS64ELSYSROOT}/{,var/}run/utmp \
+             ${PREFIXMIPS64ELSYSROOT}/var/log/{btmp,lastlog,wtmp} || \
+    die "touch run/utmp error" && \
+      touch ${METADATAMIPS64ELSYSROOT}/touch_run_utmp
+[ -f "${METADATAMIPS64ELSYSROOT}/chmod_run.utmp" ] || \
+  sudo chmod -v 664 ${PREFIXMIPS64ELSYSROOT}/{,var/}run/utmp \
+                    ${PREFIXMIPS64ELSYSROOT}/var/log/lastlog || \
+    die "Change utmp/lastlog group error" && \
+      touch ${METADATAMIPS64ELSYSROOT}/chmod_run.utmp
+[ -f "${METADATAMIPS64ELSYSROOT}/chgrp_write" ] || \
+  sudo chgrp -v 4 ${PREFIXMIPS64ELSYSROOT}/usr/bin/write || \
+    die "Change write group error" && \
+      touch ${METADATAMIPS64ELSYSROOT}/chgrp_write
+[ -f "${METADATAMIPS64ELSYSROOT}/chmod_write" ] || \
+  sudo chmod g+s ${PREFIXMIPS64ELSYSROOT}/usr/bin/write || \
+    die "Change write mode error" && \
+      touch ${METADATAMIPS64ELSYSROOT}/chmod_write
+[ -f "${METADATAMIPS64ELSYSROOT}/mknod_null" ] || \
+  sudo mknod -m 0666 ${PREFIXMIPS64ELSYSROOT}/dev/null c 1 3 || \
+    die "Create null error" && \
+      touch ${METADATAMIPS64ELSYSROOT}/mknod_null
+[ -f "${METADATAMIPS64ELSYSROOT}/mknod_console" ] || \
+  sudo mknod -m 0600 ${PREFIXMIPS64ELSYSROOT}/dev/console c 5 1 || \
+    die "Create console error" && \
+      touch ${METADATAMIPS64ELSYSROOT}/mknod_console
+[ -f "${METADATAMIPS64ELSYSROOT}/mknod_rtc0" ] || \
+  sudo mknod -m 0666 ${PREFIXMIPS64ELSYSROOT}/dev/rtc0 c 254 0 || \
+    die "Create rtc0 error" && \
+      touch ${METADATAMIPS64ELSYSROOT}/mknod_rtc0
+[ -f "${METADATAMIPS64ELSYSROOT}/link_rtc0" ] || \
+  sudo ln -sv ${PREFIXMIPS64ELSYSROOT}/dev/rtc0 \
+              ${PREFIXMIPS64ELSYSROOT}/dev/rtc || \
+    die "Link rtc error" && \
+      touch ${METADATAMIPS64ELSYSROOT}/link_rtc0
 
 pushd ${PREFIXMIPS64ELSYSROOT}/lib64/
-sudo ln -sv /lib/libblkid.so.1.1.0 libblkid.so.1
-sudo ln -sv /lib/libcom_err.so.2.1 libcom_err.so.2
-sudo ln -sv /lib/libe2p.so.2.3 libe2p.so.2
-sudo ln -sv /lib/libext2fs.so.2.4 libext2fs.so.2
-sudo ln -sv /lib/libmount.so.1.1.0 libmount.so.1
-sudo ln -sv /lib/libncursesw.so.5.9 libncursesw.so.5
-sudo ln -sv /lib/libuuid.so.1.3.0 libuuid.so.1
-sudo ln -sv /lib/libz.so.1.2.7 libz.so.1
-sudo ln -sv /lib/libss.so.2.0 libss.so.2
-sudo ln -sv /usr/lib64/libgcc_s.so.1 libgcc_s.so.1
-sudo ln -sv /usr/lib/libee.so.0.0.0 libee.so.0
-sudo ln -sv /usr/lib/libkmod.so.2.1.2 libkmod.so.2
-sudo ln -sv /usr/lib/libestr.so.0.0.0 libestr.so.0
+#[ -f "${METADATAMIPS64ELSYSROOT}/link_libblkid" ] || \
+#  sudo ln -sv /lib/libblkid.so.1.1.0 libblkid.so.1 || \
+#    die "link libblkid error" && \
+#      touch ${METADATAMIPS64ELSYSROOT}/link_libblkid
+#[ -f "${METADATAMIPS64ELSYSROOT}/link_libcom_error" ] || \
+#  sudo ln -sv /lib/libcom_err.so.2.1 libcom_err.so.2 || \
+#    die "link libcom_error error" && \
+#      touch ${METADATAMIPS64ELSYSROOT}/link_libcom_error
+#[ -f "${METADATAMIPS64ELSYSROOT}/link_libe2p" ] || \
+#  sudo ln -sv /lib/libe2p.so.2.3 libe2p.so.2 || \
+#    die "link libe2p error" && \
+#      touch ${METADATAMIPS64ELSYSROOT}/link_libe2p
+#[ -f "${METADATAMIPS64ELSYSROOT}/link_libext2fs" ] || \
+#  sudo ln -sv /lib/libext2fs.so.2.4 libext2fs.so.2 || \
+#    die "link libext2fs error" && \
+#      touch ${METADATAMIPS64ELSYSROOT}/link_libext2fs
+#[ -f "${METADATAMIPS64ELSYSROOT}/link_libmount" ] || \
+#  sudo ln -sv /lib/libmount.so.1.1.0 libmount.so.1 || \
+#    die "link libmount error" && \
+#      touch ${METADATAMIPS64ELSYSROOT}/link_libmount
+#[ -f "${METADATAMIPS64ELSYSROOT}/link_libncursesw" ] || \
+#  sudo ln -sv /lib/libncursesw.so.5.9 libncursesw.so.5 || \
+#    die "link libncursesw error" && \
+#      touch ${METADATAMIPS64ELSYSROOT}/link_libncursesw
+#[ -f "${METADATAMIPS64ELSYSROOT}/link_libuuid" ] || \
+#  sudo ln -sv /lib/libuuid.so.1.3.0 libuuid.so.1 || \
+#    die "link libuuid error" && \
+#      touch ${METADATAMIPS64ELSYSROOT}/link_libuuid
+#[ -f "${METADATAMIPS64ELSYSROOT}/link_libz" ] || \
+#  sudo ln -sv /lib/libz.so.1.2.7 libz.so.1 || \
+#    die "link libz error" && \
+#      touch ${METADATAMIPS64ELSYSROOT}/link_libz
+#[ -f "${METADATAMIPS64ELSYSROOT}/link_libss" ] || \
+#  sudo ln -sv /lib/libss.so.2.0 libss.so.2 || \
+#    die "link libss error" && \
+#      touch ${METADATAMIPS64ELSYSROOT}/link_libss
+[ -f "${METADATAMIPS64ELSYSROOT}/link_libgcc_s" ] || \
+  sudo ln -sv /usr/lib64/libgcc_s.so.1 libgcc_s.so.1 || \
+    die "link libgcc_s error" && \
+      touch ${METADATAMIPS64ELSYSROOT}/link_libgcc_s
+#[ -f "${METADATAMIPS64ELSYSROOT}/link_libee" ] || \
+#  sudo ln -sv /usr/lib/libee.so.0.0.0 libee.so.0 || \
+#    die "link libee error" && \
+#      touch ${METADATAMIPS64ELSYSROOT}/link_libee
+#[ -f "${METADATAMIPS64ELSYSROOT}/link_libkmod" ] || \
+#  sudo ln -sv /usr/lib/libkmod.so.2.1.2 libkmod.so.2 || \
+#    die "link libkmod error" && \
+#      touch ${METADATAMIPS64ELSYSROOT}/link_libkmod
+#[ -f "${METADATAMIPS64ELSYSROOT}/link_libestr" ] || \
+#  sudo ln -sv /usr/lib/libestr.so.0.0.0 libestr.so.0 || \
+#    die "link libestr error" && \
+#      touch ${METADATAMIPS64ELSYSROOT}/link_libestr
 popd
 
 ######################## Create Image ##########################################
