@@ -324,7 +324,7 @@ export PREFIXPURE64EL=${PREFIX}/mips64el-pure64/
 export PREFIXMIPSEL=${PREFIX}/mipsel/
 export PREFIXMIPSELSYSROOT=${PREFIX}/mipsel-sysroot/
 export PREFIXKERNEL=${PREFIX}/kernel
-export PREFIXMIPS64ELSYSROOT=${PREFIX}/mips64el-rootfs/
+export PREFIXMIPS64ELROOTFS=${PREFIX}/mips64el-rootfs/
 
 export SYSROOTGNU64=${PREFIXGNU64}/${CROSS_TARGET64}/sys-root/
 export SYSROOTGNU32=${PREFIXGNU32}/${CROSS_TARGET32}/sys-root/
@@ -360,7 +360,7 @@ export METADATAUNIVERSAL=${SCRIPT}/../metadata/universal
 export METADATARTEMS32=${SCRIPT}/../metadata/rtems32
 export METADATARTEMS64=${SCRIPT}/../metadata/rtems64
 export METADATAMIPSELSYSROOT=${SCRIPT}/../metadata/mipsel-sysroot
-export METADATAMIPS64ELSYSROOT=${SCRIPT}/../metadata/mips64el-rootfs
+export METADATAMIPS64ELROOTFS=${SCRIPT}/../metadata/mips64el-rootfs
 
 ###########################################################
 # SRC info
@@ -391,7 +391,7 @@ export SRCUNIVERSAL=${SCRIPT}/../src/universal
 export SRCRTEMS32=${SCRIPT}/../src/mips-rtems-tool
 export SRCRTEMS64=${SCRIPT}/../src/mips64-rtems-tool
 export SRCMIPSELSYSROOT=${SCRIPT}/../src/mipsel-sysroot
-export SRCMIPS64ELSYSROOT=${SCRIPT}/../src/mips64el-rootfs
+export SRCMIPS64ELROOTFS=${SCRIPT}/../src/mips64el-rootfs
 
 ###########################################################
 # BUILD info
@@ -422,7 +422,7 @@ export BUILDUNIVERSAL=${SCRIPT}/../build/universal
 export BUILDRTEMS32=${SCRIPT}/../build/mips-rtems-tool
 export BUILDRTEMS64=${SCRIPT}/../build/mips64-rtems-tool
 export BUILDMIPSELSYSROOT=${SCRIPT}/../build/mipsel-sysroot
-export BUILDMIPS64ELSYSROOT=${SCRIPT}/../build/mips64el-rootfs
+export BUILDMIPS64ELROOTFS=${SCRIPT}/../build/mips64el-rootfs
 
 ###########################################################
 # Functions
