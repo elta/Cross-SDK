@@ -166,6 +166,10 @@ pushd ${SRCMIPS64ELSYSROOT}
   tar xf ${TARBALL}/iproute2-${IPROUTE2_VERSION}.${IPROUTE2_SUFFIX} || \
     die "extract iproute error" && \
       touch ${METADATAMIPS64ELSYSROOT}/iproute2_extract
+[ -f "${METADATAMIPS64ELSYSROOT}/python_extract" ] || \
+  tar xvf ${TARBALL}/python-${PYTHON_VERSION}.${PYTHON_SUFFIX} || \
+    die "extract python error" && \
+      touch ${METADATAMIPS64ELSYSROOT}/python_extract
 [ -f "${METADATAMIPS64ELSYSROOT}/readline_extract" ] || \
   tar xf ${TARBALL}/readline-${READLINE_VERSION}.${READLINE_SUFFIX} || \
     die "extract readline error" && \
@@ -833,11 +837,9 @@ EOF` || \
   --without-nscd --cache-file=config.cache || \
     die "***config shadow error" && \
       touch ${METADATAMIPS64ELSYSROOT}/shadow_config
-[ -f "${METADATAMIPS64ELSYSROOT}/shadow_update_config.h" ] || \
-  cp config.h{,.orig} && \
-  sed "/PASSWD_PROGRAM/s/passwd/${CROSS_TARGET64}-&/" config.h.orig > config.h || \
-    die "update shadow config.h error" && \
-      touch ${METADATAMIPS64ELSYSROOT}/shadow_update_config.h
+cp config.h{,.orig} && \
+sed "/PASSWD_PROGRAM/s/passwd/${CROSS_TARGET64}-&/" config.h.orig > config.h || \
+  die "update shadow config.h error" && \
 [ -f "${METADATAMIPS64ELSYSROOT}/shadow_build" ] || \
   make -j${JOBS} || \
     die "***build shadow error" && \
@@ -878,6 +880,25 @@ cd ncurses-build
       touch ${METADATAMIPS64ELSYSROOT}/ncurses_install
 popd
 
+pushd ${BUILDMIPS64ELSYSROOT}
+[ -d "python-build" ] || mkdir python-build
+cd python-build
+[ -f "${METADATAMIPS64ELSYSROOT}/python_config" ] || \
+  ${SRCMIPS64ELSYSROOT}/Python-${PYTHON_VERSION}/configure \
+  --prefix=${PREFIXMIPS64ELSYSROOT}/cross-tools || \
+    die "***config python error" && \
+      touch ${METADATAMIPS64ELSYSROOT}/python_config
+[ -f "${METADATAMIPS64ELSYSROOT}/python_build" ] || \
+  make -j${JOBS} || \
+    die "***build python error" && \
+      touch ${METADATAMIPS64ELSYSROOT}/python_build
+[ -f "${METADATAMIPS64ELSYSROOT}/python_install" ] || \
+  make install || \
+    die "***install python error" && \
+      touch ${METADATAMIPS64ELSYSROOT}/python_install
+popd
+
+
 ########################### Begin Cross Compile File System ####################
 export CC="${CROSS_TARGET64}-gcc"
 export CXX="${CROSS_TARGET64}-g++"
@@ -889,10 +910,10 @@ export STRIP="${CROSS_TARGET64}-strip"
 
 pushd ${BUILDMIPS64ELSYSROOT}
 cd man-pages-${MANPAGES_VERSION}
-[ -f "${METADATAMIPS64ELSYSROOT}/man_build" ] || \
+[ -f "${METADATAMIPS64ELSYSROOT}/man_cross_build" ] || \
   make CC="${CC} ${BUILD64}" prefix=${PREFIXMIPS64ELSYSROOT}/usr install || \
     die "***install man pages error" && \
-      touch ${METADATAMIPS64ELSYSROOT}/man_build
+      touch ${METADATAMIPS64ELSYSROOT}/man_cross_build
 popd
 
 pushd ${BUILDMIPS64ELSYSROOT}
@@ -1416,8 +1437,8 @@ popd
 #popd
 #
 pushd ${BUILDMIPS64ELSYSROOT}
-[ -d "binutils-buildusr" ] || mkdir binutils-buildusr
-cd binutils-buildusr
+[ -d "binutils-cross-build" ] || mkdir binutils-cross-build
+cd binutils-cross-build
 [ -f "${METADATAMIPS64ELSYSROOT}/binutils_cross_config" ] || \
   CC="${CC} ${BUILD64}" \
   LDFLAGS="-Wl,-rpath-link,${PREFIXMIPS64ELSYSROOT}/usr/lib64:${PREFIXMIPS64ELSYSROOT}/lib64:${PREFIXMIPS64ELSYSROOT}/usr/lib32:${PREFIXMIPS64ELSYSROOT}/lib32:${PREFIXMIPS64ELSYSROOT}/usr/lib:${PREFIXMIPS64ELSYSROOT}/lib ${BUILD64}" \
@@ -1439,11 +1460,11 @@ cd binutils-buildusr
   make DESTDIR=${PREFIXMIPS64ELSYSROOT} tooldir=/usr install || \
     die "***install binutils error" && \
       touch ${METADATAMIPS64ELSYSROOT}/binutils_cross_install
-[ -f "${METADATAMIPS64ELSYSROOT}/binutils_copy_libiberty" ] || \
+[ -f "${METADATAMIPS64ELSYSROOT}/binutils_cross_copy_libiberty" ] || \
   cp -v ${SRCMIPS64ELSYSROOT}/binutils-${BINUTILS_VERSION}/include/libiberty.h \
         ${PREFIXMIPS64ELSYSROOT}/usr/include || \
     die "copy binutils libiberty error" && \
-      touch ${METADATAMIPS64ELSYSROOT}/binutils_copy_libiberty
+      touch ${METADATAMIPS64ELSYSROOT}/binutils_cross_copy_libiberty
 popd
 
 pushd ${SRCMIPS64ELSYSROOT}/gcc-${GCC_VERSION}
@@ -1460,9 +1481,8 @@ pushd ${SRCMIPS64ELSYSROOT}/gcc-${GCC_VERSION}
 popd
 
 pushd ${BUILDMIPS64ELSYSROOT}
-[ -d "gcc-buildusr" ] \
-  || mkdir gcc-buildusr
-cd gcc-buildusr
+[ -d "gcc-cross-build" ] || mkdir gcc-cross-build
+cd gcc-cross-build
 [ -f "${METADATAMIPS64ELSYSROOT}/gcc_cross_config" ] || \
   CC="${CC} ${BUILD64}" CXX="${CXX} ${BUILD64}" \
   LDFLAGS="-Wl,-rpath-link,${PREFIXMIPS64ELSYSROOT}/usr/lib64:${PREFIXMIPS64ELSYSROOT}/lib64:${PREFIXMIPS64ELSYSROOT}/usr/lib32:${PREFIXMIPS64ELSYSROOT}/lib32:${PREFIXMIPS64ELSYSROOT}/usr/lib:${PREFIXMIPS64ELSYSROOT}/lib" \
@@ -1479,9 +1499,9 @@ cd gcc-buildusr
     die "***configure gcc error" && \
       touch ${METADATAMIPS64ELSYSROOT}/gcc_cross_config
 [ -f "${METADATAMIPS64ELSYSROOT}/gcc_cross_update_Makefile" ] || \
-cp Makefile{,.orig} && \
+  `cp Makefile{,.orig} && \
   sed "/^HOST_\(GMP\|PPL\|CLOOG\)\(LIBS\|INC\)/s:-[IL]/\(lib\|include\)::" \
-      Makefile.orig > Makefile || \
+      Makefile.orig > Makefile` || \
     die "gcc cross update Makefile error" && \
       touch ${METADATAMIPS64ELSYSROOT}/gcc_cross_update_Makefile
 [ -f "${METADATAMIPS64ELSYSROOT}/gcc_cross_build" ] || \
@@ -1499,10 +1519,9 @@ cp Makefile{,.orig} && \
       touch ${METADATAMIPS64ELSYSROOT}/gcc_cross_ln_lib.gcc
 popd
 
-
 pushd ${BUILDMIPS64ELSYSROOT}
-[ -d "sed-buildusr" ] || mkdir "sed-buildusr"
-cd sed-buildusr
+[ -d "sed-cross-build" ] || mkdir "sed-cross-build"
+cd sed-cross-build
 [ -f "${METADATAMIPS64ELSYSROOT}/sed_cross_config" ] || \
   CC="${CC} ${BUILD64}" ${SRCMIPS64ELSYSROOT}/sed-${SED_VERSION}/configure \
   --build=${CROSS_HOST} --host=${CROSS_TARGET64} \
@@ -1877,9 +1896,8 @@ pushd ${SRCMIPS64ELSYSROOT}/coreutils-${COREUTILS_VERSION}
 popd
 
 pushd ${BUILDMIPS64ELSYSROOT}
-[ -d coreutils-build ] || \
-  mkdir coreutils-build
-cd coreutils-build
+[ -d "coreutils-cross-build" ] || mkdir coreutils-cross-build
+cd coreutils-cross-build
 cat > config.cache << EOF
 fu_cv_sys_stat_statfs2_bsize=yes
 gl_cv_func_rename_trailing_slash_bug=no
@@ -1891,7 +1909,7 @@ gl_cv_func_btowc_eof=yes
 gl_cv_func_wcrtomb_retval=yes
 gl_cv_func_wctob_works=yes
 EOF
-[ -f "${METADATAMIPS64ELSYSROOT}/coreutils_config" ] || \
+[ -f "${METADATAMIPS64ELSYSROOT}/coreutils_cross_config" ] || \
   CC="${CC} ${BUILD64}" CXX="${CXX} ${BUILD64}" \
   CPPFLAGS="-I${PREFIXMIPS64ELSYSROOT}/cross-tools/include" \
   ${SRCMIPS64ELSYSROOT}/coreutils-${COREUTILS_VERSION}/configure \
@@ -1900,15 +1918,15 @@ EOF
   --enable-no-install-program=kill,uptime \
   --enable-install-program=hostname || \
     die "***config coreutils error" && \
-      touch ${METADATAMIPS64ELSYSROOT}/coreutils_config
-[ -f "${METADATAMIPS64ELSYSROOT}/coreutils_build" ] || \
+      touch ${METADATAMIPS64ELSYSROOT}/coreutils_cross_config
+[ -f "${METADATAMIPS64ELSYSROOT}/coreutils_cross_build" ] || \
   make -j${JOBS} || \
     die "***build coreutils error" && \
-      touch ${METADATAMIPS64ELSYSROOT}/coreutils_build
-[ -f "${METADATAMIPS64ELSYSROOT}/coreutils_install" ] || \
+      touch ${METADATAMIPS64ELSYSROOT}/coreutils_cross_build
+[ -f "${METADATAMIPS64ELSYSROOT}/coreutils_cross_install" ] || \
   make DESTDIR=${PREFIXMIPS64ELSYSROOT} install || \
     die "***install coreutils error" && \
-      touch ${METADATAMIPS64ELSYSROOT}/coreutils_install
+      touch ${METADATAMIPS64ELSYSROOT}/coreutils_cross_install
 mv -v ${PREFIXMIPS64ELSYSROOT}/usr/bin/{cat,chgrp,chmod,chown,cp,date} ${PREFIXMIPS64ELSYSROOT}/bin
 mv -v ${PREFIXMIPS64ELSYSROOT}/usr/bin/{dd,df,echo,false,hostname,ln,ls,mkdir} ${PREFIXMIPS64ELSYSROOT}/bin
 mv -v ${PREFIXMIPS64ELSYSROOT}/usr/bin/{mv,pwd,rm,rmdir,stty,true,uname} ${PREFIXMIPS64ELSYSROOT}/bin
@@ -1919,23 +1937,22 @@ ln -sfv ../../bin/install ${PREFIXMIPS64ELSYSROOT}/usr/bin
 popd
 
 pushd ${BUILDMIPS64ELSYSROOT}
-[ -d "iana-etc-buildusr" ] || cp -ar ${SRCMIPS64ELSYSROOT}/iana-etc-${IANA_VERSION} iana-etc-buildusr
-cd iana-etc-buildusr
-[ -f "${METADATAMIPS64ELSYSROOT}/iana-etc_build" ] || \
+[ -d "iana-etc-cross-build" ] || cp -ar ${SRCMIPS64ELSYSROOT}/iana-etc-${IANA_VERSION} iana-etc-cross-build
+cd iana-etc-cross-build
+[ -f "${METADATAMIPS64ELSYSROOT}/iana-etc_cross_build" ] || \
   make CC="${CC} ${BUILD64}" CXX="${CXX} ${BUILD64}" -j${JOBS} || \
     die "***build iana-etc error" && \
-      touch ${METADATAMIPS64ELSYSROOT}/iana-etc_build
-[ -f "${METADATAMIPS64ELSYSROOT}/iana-etc_install" ] || \
+      touch ${METADATAMIPS64ELSYSROOT}/iana-etc_cross_build
+[ -f "${METADATAMIPS64ELSYSROOT}/iana-etc_cross_install" ] || \
   make DESTDIR=${PREFIXMIPS64ELSYSROOT} install || \
     die "***install iana-etc error" && \
-      touch ${METADATAMIPS64ELSYSROOT}/iana-etc_install
+      touch ${METADATAMIPS64ELSYSROOT}/iana-etc_cross_install
 popd
 
 pushd ${BUILDMIPS64ELSYSROOT}
-[ -d "m4-buildusr" ] || \
-  mkdir "m4-buildusr"
-cd m4-buildusr
-[ -f "${METADATAMIPS64ELSYSROOT}/m4_create_config.cache" ] || \
+[ -d "m4-cross-build" ] || mkdir "m4-cross-build"
+cd m4-cross-build
+[ -f "${METADATAMIPS64ELSYSROOT}/m4_cross_create_config.cache" ] || \
   `cat > config.cache << EOF
 gl_cv_func_btowc_eof=yes
 gl_cv_func_mbrtowc_incomplete_state=yes
@@ -1947,30 +1964,30 @@ gl_cv_func_wcrtomb_retval=yes
 gl_cv_func_wctob_works=yes
 EOF` || \
     die "create m4 config.cache" && \
-      touch ${METADATAMIPS64ELSYSROOT}/m4_create_config.cache
-[ -f "${METADATAMIPS64ELSYSROOT}/m4_config" ] || \
+      touch ${METADATAMIPS64ELSYSROOT}/m4_cross_create_config.cache
+[ -f "${METADATAMIPS64ELSYSROOT}/m4_cross_config" ] || \
   CC="${CC} ${BUILD64}" ${SRCMIPS64ELSYSROOT}/m4-${M4_VERSION}/configure \
   --build=${CROSS_HOST} --host=${CROSS_TARGET64} --prefix=/usr \
   --cache-file=config.cache || \
     die "***config m4 error" && \
-      touch ${METADATAMIPS64ELSYSROOT}/m4_config
-[ -f "${METADATAMIPS64ELSYSROOT}/m4_build" ] || \
+      touch ${METADATAMIPS64ELSYSROOT}/m4_cross_config
+[ -f "${METADATAMIPS64ELSYSROOT}/m4_cross_build" ] || \
   make -j${JOBS} || \
     die "***build m4 error" && \
-      touch ${METADATAMIPS64ELSYSROOT}/m4_build
-[ -f "${METADATAMIPS64ELSYSROOT}/m4_install" ] || \
+      touch ${METADATAMIPS64ELSYSROOT}/m4_cross_build
+[ -f "${METADATAMIPS64ELSYSROOT}/m4_cross_install" ] || \
   make DESTDIR=${PREFIXMIPS64ELSYSROOT} install || \
     die "***install m4 error" && \
-      touch ${METADATAMIPS64ELSYSROOT}/m4_install
+      touch ${METADATAMIPS64ELSYSROOT}/m4_cross_install
 popd
 
 pushd ${SRCMIPS64ELSYSROOT}/bison-${BISON_VERSION}
-[ -f "${METADATAMIPS64ELSYSROOT}/bison_update_config.h" ] || \
+[ -f "${METADATAMIPS64ELSYSROOT}/bison_cross_update_config.h" ] || \
   `cat >> config.h << "EOF"
 #define YYENABLE_NLS 1
 EOF` || \
     die "update bison config.h" && \
-      touch ${METADATAMIPS64ELSYSROOT}/bison_update_config.h
+      touch ${METADATAMIPS64ELSYSROOT}/bison_cross_update_config.h
 popd
 
 pushd ${BUILDMIPS64ELSYSROOT}
@@ -2186,11 +2203,11 @@ cd libtool-64
 popd
 
 pushd ${SRCMIPS64ELSYSROOT}/flex-${FLEX_VERSION}
-[ -f "${METADATAMIPS64ELSYSROOT}/flex_update_makefile" ] || \
+[ -f "${METADATAMIPS64ELSYSROOT}/flex_cross_update_makefile" ] || \
   cp -v Makefile.in{,.orig} && \
   sed "s/-I@includedir@//g" Makefile.in.orig > Makefile.in || \
     die "update flex Makefile error" && \
-      touch ${METADATAMIPS64ELSYSROOT}/flex_update_makefile
+      touch ${METADATAMIPS64ELSYSROOT}/flex_cross_update_makefile
 popd
 
 pushd ${BUILDMIPS64ELSYSROOT}
@@ -2304,7 +2321,7 @@ EOF` || \
 popd
 
 pushd ${BUILDMIPS64ELSYSROOT}
-[ -f "${METADATAMIPS64ELSYSROOT}/flex_create_script" ] || \
+[ -f "${METADATAMIPS64ELSYSROOT}/flex_cross_create_script" ] || \
   `cat > ${PREFIXMIPS64ELSYSROOT}/usr/bin/lex << "EOF"
 #!/bin/sh
 # Begin /usr/bin/lex
@@ -2315,33 +2332,31 @@ exec /usr/bin/flex -l "$@"
 EOF` && \
   chmod -v 755 ${PREFIXMIPS64ELSYSROOT}/usr/bin/lex || \
     die "create flex script error" && \
-      touch ${METADATAMIPS64ELSYSROOT}/flex_create_script
+      touch ${METADATAMIPS64ELSYSROOT}/flex_cross_create_script
 popd
 
 pushd ${BUILDMIPS64ELSYSROOT}
-[ -d iproute2-buildusr ] || cp -ar ${SRCMIPS64ELSYSROOT}/iproute2-${IPROUTE2_VERSION} iproute2-buildusr
-cd iproute2-buildusr
-[ -f "${METADATAMIPS64ELSYSROOT}/iproute2_update_files" ] || \
-  for dir in ip misc tc; do \
-    cp ${dir}/Makefile{,.orig}; \
-    sed 's/0755 -s/0755/' ${dir}/Makefile.orig > ${dir}/Makefile; \
-  done; \
-  cp misc/Makefile{,.orig} && \
-  sed '/^TARGETS/s@arpd@@g' misc/Makefile.orig > misc/Makefile || \
-    die "update iproute2 files error" && \
-      touch ${METADATAMIPS64ELSYSROOT}/iproute2_update_files
-[ -f "${METADATAMIPS64ELSYSROOT}/iproute2_build" ] || \
+[ -d "iproute2-cross-build" ] || \
+  cp -ar ${SRCMIPS64ELSYSROOT}/iproute2-${IPROUTE2_VERSION} iproute2-cross-build
+cd iproute2-cross-build
+for dir in ip misc tc; do
+  cp ${dir}/Makefile{,.orig};
+  sed 's/0755 -s/0755/' ${dir}/Makefile.orig > ${dir}/Makefile;
+done;
+cp misc/Makefile{,.orig}
+sed '/^TARGETS/s@arpd@@g' misc/Makefile.orig > misc/Makefile
+[ -f "${METADATAMIPS64ELSYSROOT}/iproute2_cross_build" ] || \
   make DESTDIR=${PREFIXMIPS64ELSYSROOT} CC="${CC} ${BUILD64}" \
   DOCDIR=/usr/share/doc/iproute2 \
   MANDIR=/usr/share/man LIBDIR=/usr/lib64 || \
     die "***build iproute2 error" && \
-      touch ${METADATAMIPS64ELSYSROOT}/iproute2_build
-[ -f "${METADATAMIPS64ELSYSROOT}/iproute2_install" ] || \
+      touch ${METADATAMIPS64ELSYSROOT}/iproute2_cross_build
+[ -f "${METADATAMIPS64ELSYSROOT}/iproute2_cross_install" ] || \
   make DESTDIR=${PREFIXMIPS64ELSYSROOT} CC="${CC} ${BUILD64}" \
   DOCDIR=/usr/share/doc/iproute2 \
   MANDIR=/usr/share/man  LIBDIR=/usr/lib64 install || \
     die "***install iproute2 error" && \
-      touch ${METADATAMIPS64ELSYSROOT}/iproute2_install
+      touch ${METADATAMIPS64ELSYSROOT}/iproute2_cross_install
 popd
 
 ## FIXME
@@ -2362,6 +2377,37 @@ popd
 #make ARCH=alpha CROSS_COMPILE=${CROSS_TARGET64}-  || die "***build perl error"
 #make DESTDIR=${PREFIXMIPS64ELSYSROOT} install || die "***install perl error"
 #popd
+
+pushd ${BUILDMIPS64ELSYSROOT}
+[ -d "python-cross-build" ] || \
+  cp -ar ${SRCMIPS64ELSYSROOT}/Python-${PYTHON_VERSION} python-cross-build
+cd python-cross-build
+sed -e 's/\${SYSROOT}/${METADATAMIPS64ELSYSROOT}/g' \
+       ${PATCH}/python-3.3-cross-mips64.patch > tmp.patch
+patch -p1 < tmp.patch
+cat > config.cache << EOF
+ac_cv_file__dev_ptmx=no
+ac_cv_file__dev_ptc=no
+EOF
+[ -f "${METADATAMIPS64ELSYSROOT}/python_cross_config" ] || \
+  CC="${CC} ${BUILD64}" \
+  CXX="${CXX} ${BUILD64}" \
+  LDFLAGS="-L${PREFIXMIPS64ELSYSROOT}/cross-tools/lib64 ${BUILD64}" \
+  ./configure --prefix=/usr \
+  --build=${CROSS_HOST} --host=${CROSS_TARGET64} \
+  --libdir=${PREFIXMIPS64ELSYSROOT}/cross-tools/lib64 \
+  --cache-file=config.cache || \
+    die "***config python_cross64 error" && \
+      touch ${METADATAMIPS64ELSYSROOT}/python_cross_config
+[ -f "${METADATAMIPS64ELSYSROOT}/python_cross_build" ] || \
+  make CC="${CC} ${BUILD64}" -j${JOBS} || \
+    die "***build cross python error" && \
+      touch ${METADATAMIPS64ELSYSROOT}/python_cross_build
+[ -f "${METADATAMIPS64ELSYSROOT}/python_cross_install" ] || \
+  make DESTDIR=${PREFIXMIPS64ELSYSROOT} install || \
+    die "***install python_cross error" && \
+      touch ${METADATAMIPS64ELSYSROOT}/python_cross_install
+popd
 
 pushd ${BUILDMIPS64ELSYSROOT}
 [ -d "readline-32" ] || \
@@ -2495,41 +2541,40 @@ cd readline-64
 popd
 
 pushd ${BUILDMIPS64ELSYSROOT}
-[ -d "autoconf-buildusr" ] || mkdir autoconf-buildusr
-cd autoconf-buildusr
-[ -f "${METADATAMIPS64ELSYSROOT}/autoconf_config" ] || \
+[ -d "autoconf-cross-build" ] || mkdir autoconf-cross-build
+cd autoconf-cross-build
+[ -f "${METADATAMIPS64ELSYSROOT}/autoconf_cross_config" ] || \
   CC="${CC} ${BUILD64}" ${SRCMIPS64ELSYSROOT}/autoconf-${AUTOCONF_VERSION}/configure \
   --build=${CROSS_HOST} --host=${CROSS_TARGET64} --prefix=/usr || \
     die "***config autoconf error" && \
-      touch ${METADATAMIPS64ELSYSROOT}/autoconf_config
-[ -f "${METADATAMIPS64ELSYSROOT}/autoconf_build" ] || \
+      touch ${METADATAMIPS64ELSYSROOT}/autoconf_cross_config
+[ -f "${METADATAMIPS64ELSYSROOT}/autoconf_cross_build" ] || \
   make -j${JOBS} || \
     die "***build autoconf error" && \
-      touch ${METADATAMIPS64ELSYSROOT}/autoconf_build
-[ -f "${METADATAMIPS64ELSYSROOT}/autoconf_install" ] || \
+      touch ${METADATAMIPS64ELSYSROOT}/autoconf_cross_build
+[ -f "${METADATAMIPS64ELSYSROOT}/autoconf_cross_install" ] || \
   make DESTDIR=${PREFIXMIPS64ELSYSROOT} install || \
     die "***install autoconf error" && \
-      touch ${METADATAMIPS64ELSYSROOT}/autoconf_install
+      touch ${METADATAMIPS64ELSYSROOT}/autoconf_cross_install
 popd
 
 pushd ${BUILDMIPS64ELSYSROOT}
-[ -d automake-buildusr ] || mkdir automake-buildusr
-cd automake-buildusr
-[ -f "${METADATAMIPS64ELSYSROOT}/automake_config" ] || \
+[ -d "automake-cross-build" ] || mkdir automake-cross-build
+cd automake-cross-build
+[ -f "${METADATAMIPS64ELSYSROOT}/automake_cross_config" ] || \
   CC="${CC} ${BUILD64}" ${SRCMIPS64ELSYSROOT}/automake-${AUTOMAKE_VERSION}/configure \
   --build=${CROSS_HOST} --host=${CROSS_TARGET64} --prefix=/usr || \
     die "***config automake error" && \
-      touch ${METADATAMIPS64ELSYSROOT}/automake_config
-[ -f "${METADATAMIPS64ELSYSROOT}/automake_build" ] || \
+      touch ${METADATAMIPS64ELSYSROOT}/automake_cross_config
+[ -f "${METADATAMIPS64ELSYSROOT}/automake_cross_build" ] || \
   make -j${JOBS} || \
     die "***build automake error" && \
-      touch ${METADATAMIPS64ELSYSROOT}/automake_build
-[ -f "${METADATAMIPS64ELSYSROOT}/automake_install" ] || \
+      touch ${METADATAMIPS64ELSYSROOT}/automake_cross_build
+[ -f "${METADATAMIPS64ELSYSROOT}/automake_cross_install" ] || \
   make DESTDIR=${PREFIXMIPS64ELSYSROOT} install || \
     die "***install automake error" && \
-      touch ${METADATAMIPS64ELSYSROOT}/automake_install
+      touch ${METADATAMIPS64ELSYSROOT}/automake_cross_install
 popd
-
 
 pushd ${SRCMIPS64ELSYSROOT}/bash-${BASH_VERSION}
 [ -f "${METADATAMIPS64ELSYSROOT}/bash_patch" ] || \
@@ -2539,9 +2584,9 @@ pushd ${SRCMIPS64ELSYSROOT}/bash-${BASH_VERSION}
 popd
 
 pushd ${BUILDMIPS64ELSYSROOT}
-[ -d "bash-buildusr" ] || mkdir bash-buildusr
-cd bash-buildusr
-[ -f "${METADATAMIPS64ELSYSROOT}/bash_create_config.cache" ] || \
+[ -d "bash-cross-build" ] || mkdir bash-cross-build
+cd bash-cross-build
+[ -f "${METADATAMIPS64ELSYSROOT}/bash_cross_create_config.cache" ] || \
   `cat > config.cache << "EOF"
 ac_cv_func_mmap_fixed_mapped=yes
 ac_cv_func_strcoll_works=yes
@@ -2557,39 +2602,36 @@ bash_cv_unusable_rtsigs=no
 gt_cv_int_divbyzero_sigfpe=yes
 EOF` || \
     die "create bash config.cache error" && \
-      touch ${METADATAMIPS64ELSYSROOT}/bash_create_config.cache
-[ -f "${METADATAMIPS64ELSYSROOT}/bash_config" ] || \
+      touch ${METADATAMIPS64ELSYSROOT}/bash_cross_create_config.cache
+[ -f "${METADATAMIPS64ELSYSROOT}/bash_cross_config" ] || \
   CC="${CC} ${BUILD64}" CXX="${CXX} ${BUILD64}" \
   ${SRCMIPS64ELSYSROOT}/bash-${BASH_VERSION}/configure \
   --build=${CROSS_HOST} --host=${CROSS_TARGET64} \
   --prefix=/usr --bindir=/bin --cache-file=config.cache \
   --without-bash-malloc --with-installed-readline || \
     die "***config bash error" && \
-      touch ${METADATAMIPS64ELSYSROOT}/bash_config
-[ -f "${METADATAMIPS64ELSYSROOT}/bash_build" ] || \
+      touch ${METADATAMIPS64ELSYSROOT}/bash_cross_config
+[ -f "${METADATAMIPS64ELSYSROOT}/bash_cross_build" ] || \
   make -j${JOBS} || \
     die "***build bash error" && \
-      touch ${METADATAMIPS64ELSYSROOT}/bash_build
-[ -f "${METADATAMIPS64ELSYSROOT}/bash_install" ] || \
+      touch ${METADATAMIPS64ELSYSROOT}/bash_cross_build
+[ -f "${METADATAMIPS64ELSYSROOT}/bash_cross_install" ] || \
   make DESTDIR=${PREFIXMIPS64ELSYSROOT} htmldir=/usr/share/doc/bash-4.2 install || \
     die "***install bash error" && \
-      touch ${METADATAMIPS64ELSYSROOT}/bash_install
-[ -f "${METADATAMIPS64ELSYSROOT}/bash_link_install" ] || \
+      touch ${METADATAMIPS64ELSYSROOT}/bash_cross_install
+[ -f "${METADATAMIPS64ELSYSROOT}/bash_cross_link_install" ] || \
   ln -svf bash ${PREFIXMIPS64ELSYSROOT}/bin/sh || \
     die "***link bash error" && \
-      touch ${METADATAMIPS64ELSYSROOT}/bash_link_install
+      touch ${METADATAMIPS64ELSYSROOT}/bash_cross_link_install
 popd
 
 pushd ${BUILDMIPS64ELSYSROOT}
 [ -d "bzip2-32" ] || \
   cp -ar ${SRCMIPS64ELSYSROOT}/bzip2-${BZIP2_VERSION} bzip2-32
 cd bzip2-32
-[ -f "${METADATAMIPS64ELSYSROOT}/bzip_update32_files" ] || \
-  cp Makefile{,.orig} && \
-  sed -e "/^all:/s/ test//" Makefile.orig > Makefile && \
-  sed -i -e 's:ln -s -f $(PREFIX)/bin/:ln -s :' Makefile || \
-    die "update bzip32 files" && \
-      touch ${METADATAMIPS64ELSYSROOT}/bzip_update32_files
+cp Makefile{,.orig}
+sed -e "/^all:/s/ test//" Makefile.orig > Makefile
+sed -i -e 's:ln -s -f $(PREFIX)/bin/:ln -s :' Makefile
 [ -f "${METADATAMIPS64ELSYSROOT}/bzip_build32_libz2_so" ] || \
   make -f Makefile-libbz2_so CC="${CC} ${BUILD32}" CXX="${CXX} ${BUILD32}" \
   AR="${AR}" RANLIB="${RANLIB}" || \
@@ -2606,12 +2648,9 @@ cd bzip2-32
       touch ${METADATAMIPS64ELSYSROOT}/bzip_build32
 #make PREFIX=${PREFIXMIPS64ELSYSROOT}/usr install || die "install bzip2 error"
 #cp -v bzip2-shared ${PREFIXMIPS64ELSYSROOT}/bin/bzip2
-[ -f "${METADATAMIPS64ELSYSROOT}/bzip_update32_libs" ] || \
-  cp -v libbz2.a ${PREFIXMIPS64ELSYSROOT}/usr/lib && \
-  cp -av libbz2.so* ${PREFIXMIPS64ELSYSROOT}/lib && \
-  ln -sfv ../../lib/libbz2.so.1.0 ${PREFIXMIPS64ELSYSROOT}/usr/lib/libbz2.so || \
-    die "update bzip32 libs" && \
-      touch ${METADATAMIPS64ELSYSROOT}/bzip_update32_libs
+cp -v libbz2.a ${PREFIXMIPS64ELSYSROOT}/usr/lib
+cp -av libbz2.so* ${PREFIXMIPS64ELSYSROOT}/lib
+ln -sfv ../../lib/libbz2.so.1.0 ${PREFIXMIPS64ELSYSROOT}/usr/lib/libbz2.so
 #rm -v ${PREFIXMIPS64ELSYSROOT}/usr/bin/{bunzip2,bzcat,bzip2}
 #ln -sfv bzip2 ${PREFIXMIPS64ELSYSROOT}/bin/bunzip2
 #ln -sfv bzip2 ${PREFIXMIPS64ELSYSROOT}/bin/bzcat
@@ -2621,13 +2660,10 @@ pushd ${BUILDMIPS64ELSYSROOT}
 [ -d "bzip2-n32" ] || \
   cp -ar ${SRCMIPS64ELSYSROOT}/bzip2-${BZIP2_VERSION} bzip2-n32
 cd bzip2-n32
-[ -f "${METADATAMIPS64ELSYSROOT}/bzip_updaten32_files" ] || \
-  cp Makefile{,.orig} && \
-  sed -e "/^all:/s/ test//" Makefile.orig > Makefile && \
-  sed -i -e 's:ln -s -f $(PREFIX)/bin/:ln -s :' Makefile && \
-  sed -i 's@/lib\(/\| \|$\)@/lib32\1@g' Makefile || \
-    die "update bzipn32 files" && \
-      touch ${METADATAMIPS64ELSYSROOT}/bzip_updaten32_files
+cp Makefile{,.orig} && \
+sed -e "/^all:/s/ test//" Makefile.orig > Makefile
+sed -i -e 's:ln -s -f $(PREFIX)/bin/:ln -s :' Makefile
+sed -i 's@/lib\(/\| \|$\)@/lib32\1@g' Makefile
 [ -f "${METADATAMIPS64ELSYSROOT}/bzip_buildn32_libz2_so" ] || \
   make -f Makefile-libbz2_so CC="${CC} ${BUILDN32}" CXX="${CXX} ${BUILDN32}" \
   AR="${AR}" RANLIB="${RANLIB}" || \
@@ -2644,12 +2680,9 @@ cd bzip2-n32
       touch ${METADATAMIPS64ELSYSROOT}/bzip_buildn32
 #make PREFIX=${PREFIXMIPS64ELSYSROOT}/usr install || die "install bzip2 error"
 #cp -v bzip2-shared ${PREFIXMIPS64ELSYSROOT}/bin/bzip2
-[ -f "${METADATAMIPS64ELSYSROOT}/bzip_updaten32_libs" ] || \
-  cp -v libbz2.a ${PREFIXMIPS64ELSYSROOT}/usr/lib32 && \
-  cp -av libbz2.so* ${PREFIXMIPS64ELSYSROOT}/lib32 && \
-  ln -sfv ../../lib32/libbz2.so.1.0 ${PREFIXMIPS64ELSYSROOT}/usr/lib32/libbz2.so || \
-    die "update bzipn32 libs" && \
-      touch ${METADATAMIPS64ELSYSROOT}/bzip_updaten32_libs
+cp -v libbz2.a ${PREFIXMIPS64ELSYSROOT}/usr/lib32
+cp -av libbz2.so* ${PREFIXMIPS64ELSYSROOT}/lib32
+ln -sfv ../../lib32/libbz2.so.1.0 ${PREFIXMIPS64ELSYSROOT}/usr/lib32/libbz2.so
 #rm -v ${PREFIXMIPS64ELSYSROOT}/usr/bin/{bunzip2,bzcat,bzip2}
 #ln -sfv bzip2 ${PREFIXMIPS64ELSYSROOT}/bin/bunzip2
 #ln -sfv bzip2 ${PREFIXMIPS64ELSYSROOT}/bin/bzcat
@@ -2659,13 +2692,10 @@ pushd ${BUILDMIPS64ELSYSROOT}
 [ -d "bzip2-64" ] || \
   cp -ar ${SRCMIPS64ELSYSROOT}/bzip2-${BZIP2_VERSION} bzip2-64
 cd bzip2-64
-[ -f "${METADATAMIPS64ELSYSROOT}/bzip_update64_files" ] || \
-  cp Makefile{,.orig} && \
-  sed -e "/^all:/s/ test//" Makefile.orig > Makefile && \
-  sed -i -e 's:ln -s -f $(PREFIX)/bin/:ln -s :' Makefile && \
-  sed -i 's@/lib\(/\| \|$\)@/lib64\1@g' Makefile || \
-    die "update bzip64 files" && \
-      touch ${METADATAMIPS64ELSYSROOT}/bzip_update64_files
+cp Makefile{,.orig} && \
+sed -e "/^all:/s/ test//" Makefile.orig > Makefile
+sed -i -e 's:ln -s -f $(PREFIX)/bin/:ln -s :' Makefile
+sed -i 's@/lib\(/\| \|$\)@/lib64\1@g' Makefile
 [ -f "${METADATAMIPS64ELSYSROOT}/bzip_build64_libz2_so" ] || \
   make -f Makefile-libbz2_so CC="${CC} ${BUILD64}" CXX="${CXX} ${BUILD64}" \
   AR="${AR}" RANLIB="${RANLIB}" || \
@@ -2693,28 +2723,28 @@ ln -sfv bzip2 ${PREFIXMIPS64ELSYSROOT}/bin/bzcat
 popd
 
 pushd ${BUILDMIPS64ELSYSROOT}
-[ -d diffutils-buildusr ] || \
-  cp -ar ${SRCMIPS64ELSYSROOT}/diffutils-${DIFFUTILS_VERSION} diffutils-buildusr
-cd diffutils-buildusr
-[ -f "${METADATAMIPS64ELSYSROOT}/diffutils_config" ] || \
+[ -d diffutils-cross-build ] || \
+  cp -ar ${SRCMIPS64ELSYSROOT}/diffutils-${DIFFUTILS_VERSION} diffutils-cross-build
+cd diffutils-cross-build
+[ -f "${METADATAMIPS64ELSYSROOT}/diffutils_cross_config" ] || \
   CC="${CC} ${BUILD64}" \
   ${SRCMIPS64ELSYSROOT}/diffutils-${DIFFUTILS_VERSION}/configure --prefix=/usr \
   --build=${CROSS_HOST} --host=${CROSS_TARGET64} || \
     die "***config diffutils error" && \
-      touch ${METADATAMIPS64ELSYSROOT}/diffutils_config
-[ -f "${METADATAMIPS64ELSYSROOT}/diffutils_update_files" ] || \
+      touch ${METADATAMIPS64ELSYSROOT}/diffutils_cross_config
+[ -f "${METADATAMIPS64ELSYSROOT}/diffutils_cross_update_files" ] || \
   sed -i 's@\(^#define DEFAULT_EDITOR_PROGRAM \).*@\1"vi"@' lib/config.h || \
     die "update diffutils error" && \
-      touch ${METADATAMIPS64ELSYSROOT}/diffutils_update_files
+      touch ${METADATAMIPS64ELSYSROOT}/diffutils_cross_update_files
 touch man/*.1
-[ -f "${METADATAMIPS64ELSYSROOT}/diffutils_build" ] || \
+[ -f "${METADATAMIPS64ELSYSROOT}/diffutils_cross_build" ] || \
   make -j${JOBS} || \
     die "***build diffutils error" && \
-      touch ${METADATAMIPS64ELSYSROOT}/diffutils_build
-[ -f "${METADATAMIPS64ELSYSROOT}/diffutils_install" ] || \
+      touch ${METADATAMIPS64ELSYSROOT}/diffutils_cross_build
+[ -f "${METADATAMIPS64ELSYSROOT}/diffutils_cross_install" ] || \
   make DESTDIR=${PREFIXMIPS64ELSYSROOT} install || \
     die "***install diffutils error" && \
-      touch ${METADATAMIPS64ELSYSROOT}/diffutils_install
+      touch ${METADATAMIPS64ELSYSROOT}/diffutils_cross_install
 popd
 
 pushd ${BUILDMIPS64ELSYSROOT}
@@ -2777,18 +2807,18 @@ cd file-64
 popd
 
 pushd ${BUILDMIPS64ELSYSROOT}
-[ -d "findutils-buildusr" ] || mkdir findutils-buildusr
-cd findutils-buildusr
-[ -f "${METADATAMIPS64ELSYSROOT}/findutils_create_config.cache" ] || \
+[ -d "findutils-cross-build" ] || mkdir findutils-cross-build
+cd findutils-cross-build
+[ -f "${METADATAMIPS64ELSYSROOT}/findutils_cross_create_config.cache" ] || \
   `cat > config.cache << EOF
 gl_cv_func_wcwidth_works=yes
 gl_cv_header_working_fcntl_h=yes
 ac_cv_func_fnmatch_gnu=yes
 EOF` || \
     die "create diffutils config.cache error" && \
-      touch ${METADATAMIPS64ELSYSROOT}/findutils_create_config.cache
+      touch ${METADATAMIPS64ELSYSROOT}/findutils_cross_create_config.cache
 
-[ -f "${METADATAMIPS64ELSYSROOT}/findutils_buildusr" ] || \
+[ -f "${METADATAMIPS64ELSYSROOT}/findutils_cross_config" ] || \
   CC="${CC} ${BUILD64}" \
   ${SRCMIPS64ELSYSROOT}/findutils-${FINDUTILS_VERSION}/configure \
   --build=${CROSS_HOST} --host=${CROSS_TARGET64} \
@@ -2796,29 +2826,26 @@ EOF` || \
   --libexecdir=/usr/lib64/locate \
   --localstatedir=/var/lib64/locate || \
     die "***config findutils error" && \
-      touch ${METADATAMIPS64ELSYSROOT}/findutils_buildusr
-[ -f "${METADATAMIPS64ELSYSROOT}/findutils_buildusr" ] || \
+      touch ${METADATAMIPS64ELSYSROOT}/findutils_cross_config
+[ -f "${METADATAMIPS64ELSYSROOT}/findutils_cross_buildusr" ] || \
   make -j${JOBS} || \
     die "***build findutils error" && \
-      touch ${METADATAMIPS64ELSYSROOT}/findutils_buildusr
-[ -f "${METADATAMIPS64ELSYSROOT}/findutils_installusr" ] || \
+      touch ${METADATAMIPS64ELSYSROOT}/findutils_cross_buildusr
+[ -f "${METADATAMIPS64ELSYSROOT}/findutils_cross_installusr" ] || \
   make DESTDIR=${PREFIXMIPS64ELSYSROOT} install || \
     die "***install findutils error" && \
-      touch ${METADATAMIPS64ELSYSROOT}/findutils_installusr
-[ -f "${METADATAMIPS64ELSYSROOT}/findutils_update_install" ] || \
-  mv -v ${PREFIXMIPS64ELSYSROOT}/usr/bin/find ${PREFIXMIPS64ELSYSROOT}/bin && \
-  cp ${PREFIXMIPS64ELSYSROOT}/usr/bin/updatedb{,.orig} && \
-  sed 's@find:=${BINDIR}@find:=/bin@' ${PREFIXMIPS64ELSYSROOT}/usr/bin/updatedb.orig > \
-      ${PREFIXMIPS64ELSYSROOT}/usr/bin/updatedb && \
-  rm ${PREFIXMIPS64ELSYSROOT}/usr/bin/updatedb.orig || \
-    die "diffutils update installs error" && \
-      touch ${METADATAMIPS64ELSYSROOT}/findutils_update_install
+      touch ${METADATAMIPS64ELSYSROOT}/findutils_cross_installusr
+mv -v ${PREFIXMIPS64ELSYSROOT}/usr/bin/find ${PREFIXMIPS64ELSYSROOT}/bin
+cp ${PREFIXMIPS64ELSYSROOT}/usr/bin/updatedb{,.orig}
+sed 's@find:=${BINDIR}@find:=/bin@' ${PREFIXMIPS64ELSYSROOT}/usr/bin/updatedb.orig > \
+    ${PREFIXMIPS64ELSYSROOT}/usr/bin/updatedb
+rm ${PREFIXMIPS64ELSYSROOT}/usr/bin/updatedb.orig
 popd
 
 pushd ${BUILDMIPS64ELSYSROOT}
-[ -d "gawk-buildusr" ] || mkdir gawk-buildusr
-cd gawk-buildusr
-[ -f "${METADATAMIPS64ELSYSROOT}/gawk_configusr" ] || \
+[ -d "gawk-cross-build" ] || mkdir gawk-cross-build
+cd gawk-cross-build
+[ -f "${METADATAMIPS64ELSYSROOT}/gawk_cross_configusr" ] || \
 [ -f "config.log" ] || \
   CC="${CC} ${BUILD64}" \
   ${SRCMIPS64ELSYSROOT}/gawk-${GAWK_VERSION}/configure \
@@ -2826,15 +2853,15 @@ cd gawk-buildusr
   --prefix=/usr --libexecdir=/usr/lib64 \
   --disable-libsigsegv || \
     die "***config gawk error" && \
-      touch ${METADATAMIPS64ELSYSROOT}/gawk_configusr
-[ -f "${METADATAMIPS64ELSYSROOT}/gawk_buildusr" ] || \
+      touch ${METADATAMIPS64ELSYSROOT}/gawk_cross_configusr
+[ -f "${METADATAMIPS64ELSYSROOT}/gawk_cross_buildusr" ] || \
   make -j${JOBS} || \
     die "***build gawk error" && \
-      touch ${METADATAMIPS64ELSYSROOT}/gawk_buildusr
-[ -f "${METADATAMIPS64ELSYSROOT}/gawk_installusr" ] || \
+      touch ${METADATAMIPS64ELSYSROOT}/gawk_cross_buildusr
+[ -f "${METADATAMIPS64ELSYSROOT}/gawk_cross_installusr" ] || \
   make DESTDIR=${PREFIXMIPS64ELSYSROOT} install || \
     die "***install gawk error" && \
-      touch ${METADATAMIPS64ELSYSROOT}/gawk_installusr
+      touch ${METADATAMIPS64ELSYSROOT}/gawk_cross_installusr
 popd
 
 pushd ${BUILDMIPS64ELSYSROOT}
@@ -2944,23 +2971,23 @@ EOF` || \
 popd
 
 pushd ${BUILDMIPS64ELSYSROOT}
-[ -d grep-buildusr ] || mkdir grep-buildusr
-cd grep-buildusr
-[ -f "${METADATAMIPS64ELSYSROOT}/grep_config" ] || \
+[ -d "grep-cross-build" ] || mkdir grep-cross-build
+cd grep-cross-build
+[ -f "${METADATAMIPS64ELSYSROOT}/grep_cross_config" ] || \
   CC="${CC} ${BUILD64}" \
   ${SRCMIPS64ELSYSROOT}/grep-${GREP_VERSION}/configure \
   --build=${CROSS_HOST} --host=${CROSS_TARGET64} \
   --prefix=/usr --bindir=/bin --disable-perl-regexp || \
     die "***config grep error" && \
-      touch ${METADATAMIPS64ELSYSROOT}/grep_config
-[ -f "${METADATAMIPS64ELSYSROOT}/grep_build" ] || \
+      touch ${METADATAMIPS64ELSYSROOT}/grep_cross_config
+[ -f "${METADATAMIPS64ELSYSROOT}/grep_cross_build" ] || \
   make -j${JOBS} || \
     die "***build grep error" && \
-      touch ${METADATAMIPS64ELSYSROOT}/grep_build
-[ -f "${METADATAMIPS64ELSYSROOT}/grep_install" ] || \
+      touch ${METADATAMIPS64ELSYSROOT}/grep_cross_build
+[ -f "${METADATAMIPS64ELSYSROOT}/grep_cross_install" ] || \
   make DESTDIR=${PREFIXMIPS64ELSYSROOT} install || \
     die "***install grep error" && \
-      touch ${METADATAMIPS64ELSYSROOT}/grep_install
+      touch ${METADATAMIPS64ELSYSROOT}/grep_cross_install
 popd
 
 pushd ${SRCMIPS64ELSYSROOT}/groff-${GROFF_VERSION}
@@ -2987,12 +3014,12 @@ pushd ${SRCMIPS64ELSYSROOT}/groff-${GROFF_VERSION}
   make DESTDIR=${PREFIXMIPS64ELSYSROOT} install || \
     die "***install groffusr error" && \
       touch ${METADATAMIPS64ELSYSROOT}/groff_cross_install
-[ -f "${METADATAMIPS64ELSYSROOT}/groff_link_files" ] || \
+[ -f "${METADATAMIPS64ELSYSROOT}/groff_cross_link_files" ] || \
   ln -sfv soelim ${PREFIXMIPS64ELSYSROOT}/usr/bin/zsoelim && \
   ln -sfv eqn ${PREFIXMIPS64ELSYSROOT}/usr/bin/geqn && \
   ln -sfv tbl ${PREFIXMIPS64ELSYSROOT}/usr/bin/gtbl || \
     die "link groff files error" && \
-      touch ${METADATAMIPS64ELSYSROOT}/groff_link_files
+      touch ${METADATAMIPS64ELSYSROOT}/groff_cross_link_files
 popd
 
 pushd ${SRCMIPS64ELSYSROOT}/gzip-${GZIP_VERSION}
@@ -3005,61 +3032,71 @@ pushd ${SRCMIPS64ELSYSROOT}/gzip-${GZIP_VERSION}
 popd
 
 pushd ${BUILDMIPS64ELSYSROOT}
-[ -d "gzip-buildusr" ] || \
-  mkdir gzip-buildusr
-cd gzip-buildusr
-[ -f "${METADATAMIPS64ELSYSROOT}/gzip_configusr" ] || \
+[ -d "gzip-cross-build" ] || mkdir gzip-cross-build
+cd gzip-cross-build
+[ -f "${METADATAMIPS64ELSYSROOT}/gzip_cross_configusr" ] || \
   CC="${CC} ${BUILD64}" ${SRCMIPS64ELSYSROOT}/gzip-${GZIP_VERSION}/configure \
   --build=${CROSS_HOST} --host=${CROSS_TARGET64} \
   --prefix=/usr --bindir=/bin || \
     die "***config gzip error" && \
-      touch ${METADATAMIPS64ELSYSROOT}/gzip_configusr
-[ -f "${METADATAMIPS64ELSYSROOT}/gzip_buildusr" ] || \
+      touch ${METADATAMIPS64ELSYSROOT}/gzip_cross_configusr
+[ -f "${METADATAMIPS64ELSYSROOT}/gzip_cross_buildusr" ] || \
   make -j${JOBS} || \
     die "***build gzip error" && \
-      touch ${METADATAMIPS64ELSYSROOT}/gzip_buildusr
-[ -f "${METADATAMIPS64ELSYSROOT}/gzip_installusr" ] || \
+      touch ${METADATAMIPS64ELSYSROOT}/gzip_cross_buildusr
+[ -f "${METADATAMIPS64ELSYSROOT}/gzip_cross_installusr" ] || \
   make DESTDIR=${PREFIXMIPS64ELSYSROOT} install || \
     die "***install gzip error" && \
-      touch ${METADATAMIPS64ELSYSROOT}/gzip_installusr
-[ -f "${METADATAMIPS64ELSYSROOT}/bzip_move_install" ] || \
+      touch ${METADATAMIPS64ELSYSROOT}/gzip_cross_installusr
+[ -f "${METADATAMIPS64ELSYSROOT}/bzip_cross_move_install" ] || \
   mv ${PREFIXMIPS64ELSYSROOT}/bin/z{egrep,cmp,diff,fgrep,force,grep,less,more,new} \
      ${PREFIXMIPS64ELSYSROOT}/usr/bin || \
     die "move bzip install files" && \
-      touch ${METADATAMIPS64ELSYSROOT}/bzip_move_install
+      touch ${METADATAMIPS64ELSYSROOT}/bzip_cross_move_install
 popd
 
 pushd ${BUILDMIPS64ELSYSROOT}
 cd iputils-${IPUTILS_VERSION}
-[ -f "${METADATA}/iputils_build" ] || \
-  make CC="${CC} ${BUILD64}" -j${JOBS} || \
+[ -f ${METADATAMIPS64ELSYSROOT}/iputils_patchfix ] || \
+  patch -Np1 -i ${PATCH}/iputils-s20101006-fixes-1.patch || \
+    die "***patch fix iputils error" && \
+      touch ${METADATAMIPS64ELSYSROOT}/iputils_patchfix
+[ -f ${METADATAMIPS64ELSYSROOT}/iputils_patchdoc ] || \
+  patch -Np1 -i ${PATCH}/iputils-s20101006-doc-1.patch || \
+    die "***patch doc iputils error" && \
+      touch ${METADATAMIPS64ELSYSROOT}/iputils_patchdoc
+
+[ -f "${METADATAMIPS64ELSYSROOT}/iputils_cross_build" ] || \
+  make CC="${CC} ${BUILD64}" \
+  IPV4_TARGETS="tracepath ping clockdiff rdisc" \
+  IPV6_TARGETS="tracepath6 traceroute6" -j${JOBS} || \
     die "***build iputils error" && \
-      touch ${METADATA}/iputils_build
-[ -f "${METADATA}/iputils_install_ping" ] || \
+      touch ${METADATAMIPS64ELSYSROOT}/iputils_cross_build
+[ -f "${METADATAMIPS64ELSYSROOT}/iputils_cross_install_ping" ] || \
   install -v -m755 ping ${PREFIXMIPS64ELSYSROOT}/bin || \
     die "install iputils ping error" && \
-      touch ${METADATA}/iputils_install_ping
+      touch ${METADATAMIPS64ELSYSROOT}/iputils_cross_install_ping
 #install -v -m755 arping ${PREFIXMIPS64ELSYSROOT}/usr/bin
-[ -f "${METADATA}/iputils_install_clockdiff" ] || \
+[ -f "${METADATAMIPS64ELSYSROOT}/iputils_cross_install_clockdiff" ] || \
   install -v -m755 clockdiff ${PREFIXMIPS64ELSYSROOT}/usr/bin || \
     die "install iputils clockdiff error" && \
-      touch ${METADATA}/iputils_install_clockdiff
-[ -f "${METADATA}/iputils_install_rdisc" ] || \
+      touch ${METADATAMIPS64ELSYSROOT}/iputils_cross_install_clockdiff
+[ -f "${METADATAMIPS64ELSYSROOT}/iputils_cross_install_rdisc" ] || \
   install -v -m755 rdisc ${PREFIXMIPS64ELSYSROOT}/usr/bin || \
     die "install iputils rdisc error" && \
-      touch ${METADATA}/iputils_install_rdisc
-[ -f "${METADATA}/iputils_install_tracepath" ] || \
+      touch ${METADATAMIPS64ELSYSROOT}/iputils_cross_install_rdisc
+[ -f "${METADATAMIPS64ELSYSROOT}/iputils_cross_install_tracepath" ] || \
   install -v -m755 tracepath ${PREFIXMIPS64ELSYSROOT}/usr/bin || \
     die "install iputils tracepath error" && \
-      touch ${METADATA}/iputils_install_tracepath
-[ -f "${METADATA}/iputils_install_trace" ] || \
+      touch ${METADATAMIPS64ELSYSROOT}/iputils_cross_install_tracepath
+[ -f "${METADATAMIPS64ELSYSROOT}/iputils_cross_install_trace" ] || \
   install -v -m755 trace{path,route}6 ${PREFIXMIPS64ELSYSROOT}/usr/bin || \
     die "iputils install trace error" && \
-      touch ${METADATA}/iputils_install_trace
-[ -f "${METADATA}/iputils_isntall_doc" ] || \
+      touch ${METADATAMIPS64ELSYSROOT}/iputils_cross_install_trace
+[ -f "${METADATAMIPS64ELSYSROOT}/iputils_cross_isntall_doc" ] || \
   install -v -m644 doc/*.8 ${PREFIXMIPS64ELSYSROOT}/usr/share/man/man8 || \
     die "iputils install doc error" && \
-      touch ${METADATA}/iputils_isntall_doc
+      touch ${METADATAMIPS64ELSYSROOT}/iputils_cross_isntall_doc
 popd
 
 pushd ${SRCMIPS64ELSYSROOT}/kbd-${KBD_VERSION}
@@ -3070,88 +3107,90 @@ pushd ${SRCMIPS64ELSYSROOT}/kbd-${KBD_VERSION}
 popd
 
 pushd ${BUILDMIPS64ELSYSROOT}
-[ -d "kbd-buildusr" ] || mkdir kbd-buildusr
-cd kbd-buildusr
-[ -f "${METADATAMIPS64ELSYSROOT}/kbd_create_config.cache" ] || \
+[ -d "kbd-cross-build" ] || mkdir kbd-cross-build
+cd kbd-cross-build
+[ -f "${METADATAMIPS64ELSYSROOT}/kbd_cross_create_config.cache" ] || \
   `cat > config.cache << EOF
 ac_cv_func_setpgrp_void=yes
 ac_cv_func_malloc_0_nonnull=yes
 ac_cv_func_realloc_0_nonnull=yes
 EOF` || \
     die "create bkd config.cache" && \
-      touch ${METADATAMIPS64ELSYSROOT}/kbd_create_config.cache
-[ -f "${METADATAMIPS64ELSYSROOT}/bkd_config" ] || \
+      touch ${METADATAMIPS64ELSYSROOT}/kbd_cross_create_config.cache
+[ -f "${METADATAMIPS64ELSYSROOT}/bkd_cross_config" ] || \
 [ -f "config.log" ] || \
   CC="${CC} ${BUILD64}" \
   ${SRCMIPS64ELSYSROOT}/kbd-${KBD_VERSION}/configure \
   --build=${CROSS_HOST} --host=${CROSS_TARGET64} \
   --prefix=/usr --cache-file=config.cache || \
     die "***config kbd error" && \
-      touch ${METADATAMIPS64ELSYSROOT}/bkd_config
-[ -f "${METADATAMIPS64ELSYSROOT}/kbd_build" ] || \
+      touch ${METADATAMIPS64ELSYSROOT}/bkd_cross_config
+[ -f "${METADATAMIPS64ELSYSROOT}/kbd_cross_build" ] || \
   make CC="${CC} ${BUILD64}" -j${JOBS} || \
     die "***build kbd error" && \
-      touch ${METADATAMIPS64ELSYSROOT}/kbd_build
-[ -f "${METADATAMIPS64ELSYSROOT}/kbd_install" ] || \
+      touch ${METADATAMIPS64ELSYSROOT}/kbd_cross_build
+[ -f "${METADATAMIPS64ELSYSROOT}/kbd_cross_install" ] || \
   make DESTDIR=${PREFIXMIPS64ELSYSROOT} install || \
     die "***install kbd error" && \
-      touch ${METADATAMIPS64ELSYSROOT}/kbd_install
-[ -f "${METADATAMIPS64ELSYSROOT}/kbd_move_install" ] || \
+      touch ${METADATAMIPS64ELSYSROOT}/kbd_cross_install
+[ -f "${METADATAMIPS64ELSYSROOT}/kbd_cross_move_install" ] || \
   mv -v ${PREFIXMIPS64ELSYSROOT}/usr/bin/{kbd_mode,dumpkeys,loadkeys,openvt,setfont} \
         ${PREFIXMIPS64ELSYSROOT}/bin || \
     die "move kbd install files" && \
-      touch ${METADATAMIPS64ELSYSROOT}/kbd_move_install
+      touch ${METADATAMIPS64ELSYSROOT}/kbd_cross_move_install
 popd
 
 pushd ${BUILDMIPS64ELSYSROOT}
-[ -d less-buildusr ] || cp -ar ${SRCMIPS64ELSYSROOT}/less-${LESS_VERSION} less-buildusr
-cd less-buildusr
-[ -f "${METADATAMIPS64ELSYSROOT}/less_configusr" ] || \
+[ -d "less-cross-buildusr" ] || \
+  cp -ar ${SRCMIPS64ELSYSROOT}/less-${LESS_VERSION} less-cross-buildusr
+cd less-cross-buildusr
+[ -f "${METADATAMIPS64ELSYSROOT}/less_cross_configusr" ] || \
   CC="${CC} ${BUILD64}" \
   CXX="${CXX} ${BUILD64}" \
   ${SRCMIPS64ELSYSROOT}/less-${LESS_VERSION}/configure \
   --build=${CROSS_HOST} --host=${CROSS_TARGET64} \
   --prefix=/usr --sysconfdir=/etc || \
     die "***config less error" && \
-      touch ${METADATAMIPS64ELSYSROOT}/less_configusr
-[ -f "${METADATAMIPS64ELSYSROOT}/less_buildusr" ] || \
+      touch ${METADATAMIPS64ELSYSROOT}/less_cross_configusr
+[ -f "${METADATAMIPS64ELSYSROOT}/less_cross_buildusr" ] || \
   make -j${JOBS} || \
     die "***build less error" && \
-      touch ${METADATAMIPS64ELSYSROOT}/less_buildusr
-[ -f "${METADATAMIPS64ELSYSROOT}/less_installusr" ] || \
+      touch ${METADATAMIPS64ELSYSROOT}/less_cross_buildusr
+[ -f "${METADATAMIPS64ELSYSROOT}/less_cross_installusr" ] || \
   make prefix=${PREFIXMIPS64ELSYSROOT}/usr install || \
     die "***install less error" && \
-      touch ${METADATAMIPS64ELSYSROOT}/less_installusr
-[ -f "${METADATAMIPS64ELSYSROOT}/less_move_install" ] || \
+      touch ${METADATAMIPS64ELSYSROOT}/less_cross_installusr
+[ -f "${METADATAMIPS64ELSYSROOT}/less_cross_move_install" ] || \
   mv -v ${PREFIXMIPS64ELSYSROOT}/usr/bin/less ${PREFIXMIPS64ELSYSROOT}/bin || \
     die "move less install" && \
-      touch ${METADATAMIPS64ELSYSROOT}/less_move_install
+      touch ${METADATAMIPS64ELSYSROOT}/less_cross_move_install
 popd
 
 pushd ${BUILDMIPS64ELSYSROOT}
-[ -d make-buildusr ] || mkdir make-buildusr
-cd make-buildusr
-[ -f "${METADATAMIPS64ELSYSROOT}/make_config" ] || \
+[ -d "make-cross-buildusr" ] || mkdir make-cross-buildusr
+cd make-cross-buildusr
+[ -f "${METADATAMIPS64ELSYSROOT}/make_cross_config" ] || \
   CC="${CC} ${BUILD64}" \
   ${SRCMIPS64ELSYSROOT}/make-${MAKE_VERSION}/configure --prefix=/usr \
   --build=${CROSS_HOST} --host=${CROSS_TARGET64} || \
     die "***config make error" && \
-      touch ${METADATAMIPS64ELSYSROOT}/make_config
-[ -f "${METADATAMIPS64ELSYSROOT}/make_build" ] || \
+      touch ${METADATAMIPS64ELSYSROOT}/make_cross_config
+[ -f "${METADATAMIPS64ELSYSROOT}/make_cross_build" ] || \
   make -j${JOBS} || \
     die "***build make error" && \
-      touch ${METADATAMIPS64ELSYSROOT}/make_build
-[ -f "${METADATAMIPS64ELSYSROOT}/make_install" ] || \
+      touch ${METADATAMIPS64ELSYSROOT}/make_cross_build
+[ -f "${METADATAMIPS64ELSYSROOT}/make_cross_install" ] || \
   make DESTDIR=${PREFIXMIPS64ELSYSROOT} install || \
     die "***install make error" && \
-      touch ${METADATAMIPS64ELSYSROOT}/make_install
+      touch ${METADATAMIPS64ELSYSROOT}/make_cross_install
 popd
 
 pushd ${BUILDMIPS64ELSYSROOT}
-[ -d man-buildusr ] || cp -ar ${SRCMIPS64ELSYSROOT}/man-${MAN_VERSION} man-buildusr
-cd man-buildusr
+[ -d "man-cross-build" ] || \
+  cp -ar ${SRCMIPS64ELSYSROOT}/man-${MAN_VERSION} man-cross-build
+cd man-cross-build
 
-[ -f "${METADATAMIPS64ELSYSROOT}/update_man_files" ] || \
+[ -f "${METADATAMIPS64ELSYSROOT}/update_cross_man_files" ] || \
   cp configure{,.orig} && \
   sed -e "/PREPATH=/s@=.*@=\"$(eval echo ${PREFIXMIPS64ELSYSROOT}/{,usr/}{sbin,bin})\"@g" \
       -e 's@-is@&R@g' configure.orig > configure && \
@@ -3160,123 +3199,123 @@ cd man-buildusr
       -e 's@MANPATH./usr/local/man@#&@g' \
       src/man.conf.in.orig > src/man.conf.in || \
     die "man update files error" && \
-      touch ${METADATAMIPS64ELSYSROOT}/update_man_files
+      touch ${METADATAMIPS64ELSYSROOT}/update_cross_man_files
 
-[ -f "${METADATAMIPS64ELSYSROOT}/man_config" ] || \
+[ -f "${METADATAMIPS64ELSYSROOT}/man_cross_config" ] || \
   CC="${CC} ${BUILD64}" ./configure -confdir=/etc || \
     die "***config man error" && \
-      touch ${METADATAMIPS64ELSYSROOT}/man_config
+      touch ${METADATAMIPS64ELSYSROOT}/man_cross_config
 
-[ -f "${METADATAMIPS64ELSYSROOT}/man_update_conf_script" ] || \
+[ -f "${METADATAMIPS64ELSYSROOT}/man_cross_update_conf_script" ] || \
   cp conf_script{,.orig} && \
   sed "s@${PREFIXMIPS64ELSYSROOT}@@" conf_script.orig > conf_script || \
     die "update man conf_script error" && \
-      touch ${METADATAMIPS64ELSYSROOT}/man_update_conf_script
-[ -f "${METADATAMIPS64ELSYSROOT}/man_compile_makemes" ] || \
+      touch ${METADATAMIPS64ELSYSROOT}/man_cross_update_conf_script
+[ -f "${METADATAMIPS64ELSYSROOT}/man_cross_compile_makemes" ] || \
   gcc src/makemsg.c -o src/makemsg || \
     die "build makemsg error" && \
-      touch ${METADATAMIPS64ELSYSROOT}/man_compile_makemes
-[ -f "${METADATAMIPS64ELSYSROOT}/man_build" ] || \
+      touch ${METADATAMIPS64ELSYSROOT}/man_cross_compile_makemes
+[ -f "${METADATAMIPS64ELSYSROOT}/man_cross_build" ] || \
   make -j${JOBS} || \
     die "***build man error" && \
-      touch ${METADATAMIPS64ELSYSROOT}/man_build
-[ -f "${METADATAMIPS64ELSYSROOT}/man_install" ] || \
+      touch ${METADATAMIPS64ELSYSROOT}/man_cross_build
+[ -f "${METADATAMIPS64ELSYSROOT}/man_cross_install" ] || \
   make DESTDIR=${PREFIXMIPS64ELSYSROOT} install || \
     die "***install man error" && \
-      touch ${METADATAMIPS64ELSYSROOT}/man_install
+      touch ${METADATAMIPS64ELSYSROOT}/man_cross_install
 popd
 
 pushd ${BUILDMIPS64ELSYSROOT}
-[ -d module-init-buildusr ] || \
-  mkdir module-init-buildusr
-cd module-init-buildusr
-[ -f "${METADATAMIPS64ELSYSROOT}/module-init-tools_config" ] || \
+[ -d "module-init-cross-buildusr" ] || mkdir module-init-cross-buildusr
+cd module-init-cross-buildusr
+[ -f "${METADATAMIPS64ELSYSROOT}/module-init-tools_cross_config" ] || \
   CC="${CC} ${BUILD64}" CXX="${CXX} ${BUILD64}" \
   ${SRCMIPS64ELSYSROOT}/module-init-tools-${MODULE_VERSION}/configure \
   --build=${CROSS_HOST} --host=${CROSS_TARGET64} \
   --prefix=/usr --bindir=/bin --libdir=/usr/lib64 \
   --sbindir=/sbin --libexecdir=/usr/lib64 --enable-zlib-dynamic || \
     die "***config module-init-tools error" && \
-      touch ${METADATAMIPS64ELSYSROOT}/module-init-tools_config
-[ -f "${METADATAMIPS64ELSYSROOT}/module-init-tools_build" ] || \
+      touch ${METADATAMIPS64ELSYSROOT}/module-init-tools_cross_config
+[ -f "${METADATAMIPS64ELSYSROOT}/module-init-tools_cross_build" ] || \
   make DOCBOOKTOMAN= || \
     die "***build module-init-tools error" && \
-      touch ${METADATAMIPS64ELSYSROOT}/module-init-tools_build
-[ -f "${METADATAMIPS64ELSYSROOT}/module-init-tools_install" ] || \
+      touch ${METADATAMIPS64ELSYSROOT}/module-init-tools_cross_build
+[ -f "${METADATAMIPS64ELSYSROOT}/module-init-tools_cross_install" ] || \
   make DESTDIR=${PREFIXMIPS64ELSYSROOT} INSTALL=install install || \
     die "***install module-init-tools error" && \
-      touch ${METADATAMIPS64ELSYSROOT}/module-init-tools_install
+      touch ${METADATAMIPS64ELSYSROOT}/module-init-tools_cross_install
 popd
 
 pushd ${BUILDMIPS64ELSYSROOT}
-[ -d patch-buildusr ] || mkdir patch-buildusr
-cd patch-buildusr
-[ -f "${METADATAMIPS64ELSYSROOT}/patch_create_config.cache" ] || \
+[ -d "patch-cross-buildusr" ] || mkdir patch-cross-buildusr
+cd patch-cross-buildusr
+[ -f "${METADATAMIPS64ELSYSROOT}/patch_cross_create_config.cache" ] || \
   `cat > config.cache << EOF
 ac_cv_path_ed_PROGRAM=ed
 ac_cv_func_strnlen_working=yes
 EOF` || \
     die "create patch config.cache error" && \
-      touch ${METADATAMIPS64ELSYSROOT}/patch_create_config.cache
-[ -f "${METADATAMIPS64ELSYSROOT}/patch_config" ] || \
+      touch ${METADATAMIPS64ELSYSROOT}/patch_cross_create_config.cache
+[ -f "${METADATAMIPS64ELSYSROOT}/patch_cross_config" ] || \
   CC="${CC} ${BUILD64}" \
   ${SRCMIPS64ELSYSROOT}/patch-${PATCH_VERSION}/configure \
   --build=${CROSS_HOST} --host=${CROSS_TARGET64} \
   --prefix=/usr --cache-file=config.cache || \
     die "***config patch error" && \
-      touch ${METADATAMIPS64ELSYSROOT}/patch_config
-[ -f "${METADATAMIPS64ELSYSROOT}/patch_build" ] || \
+      touch ${METADATAMIPS64ELSYSROOT}/patch_cross_config
+[ -f "${METADATAMIPS64ELSYSROOT}/patch_cross_build" ] || \
   make -j${JOBS} || \
     die "***build patch error" && \
-      touch ${METADATAMIPS64ELSYSROOT}/patch_build
-[ -f "${METADATAMIPS64ELSYSROOT}/patch_install" ] || \
+      touch ${METADATAMIPS64ELSYSROOT}/patch_cross_build
+[ -f "${METADATAMIPS64ELSYSROOT}/patch_cross_install" ] || \
   make prefix=${PREFIXMIPS64ELSYSROOT}/usr install || \
     die "***install patch error" && \
-      touch ${METADATAMIPS64ELSYSROOT}/patch_install
+      touch ${METADATAMIPS64ELSYSROOT}/patch_cross_install
 popd
 
 pushd ${BUILDMIPS64ELSYSROOT}
-[ -d psmisc-buildusr ] || mkdir psmisc-buildusr
-cd psmisc-${PSMISC_VERSION}
-[ -f "${METADATAMIPS64ELSYSROOT}/psmisc_create_config.cache" ] || \
+[ -d "psmisc-cross-buildusr" ] || mkdir psmisc-cross-buildusr
+cd psmisc-cross-buildusr
+[ -f "${METADATAMIPS64ELSYSROOT}/psmisc_cross_create_config.cache" ] || \
   `cat > config.cache << EOF
 ac_cv_func_malloc_0_nonnull=yes
 ac_cv_func_realloc_0_nonnull=yes
 EOF` || \
     die "create psmisc config.cache" && \
-      touch ${METADATAMIPS64ELSYSROOT}/psmisc_create_config.cache
-[ -f "${METADATAMIPS64ELSYSROOT}/psmisc_config" ] || \
+      touch ${METADATAMIPS64ELSYSROOT}/psmisc_cross_create_config.cache
+[ -f "${METADATAMIPS64ELSYSROOT}/psmisc_cross_config" ] || \
 [ -f "config.log" ] || CC="${CC} ${BUILD64}" \
   ${SRCMIPS64ELSYSROOT}/psmisc-${PSMISC_VERSION}/configure \
   --build=${CROSS_HOST} --host=${CROSS_TARGET64} \
   --prefix=/usr --exec-prefix="" --cache-file=config.cache || \
     die "***config psmisc error" && \
-      touch ${METADATAMIPS64ELSYSROOT}/psmisc_config
-[ -f "${METADATAMIPS64ELSYSROOT}/psmisc_build" ] || \
+      touch ${METADATAMIPS64ELSYSROOT}/psmisc_cross_config
+[ -f "${METADATAMIPS64ELSYSROOT}/psmisc_cross_build" ] || \
   make -j${JOBS} || \
     die "***build psmisc error" && \
-      touch ${METADATAMIPS64ELSYSROOT}/psmisc_build
-[ -f "${METADATAMIPS64ELSYSROOT}/psmisc_install" ] || \
+      touch ${METADATAMIPS64ELSYSROOT}/psmisc_cross_build
+[ -f "${METADATAMIPS64ELSYSROOT}/psmisc_cross_install" ] || \
   make DESTDIR=${PREFIXMIPS64ELSYSROOT} install || \
     die "***install psmisc error" && \
-      touch ${METADATAMIPS64ELSYSROOT}/psmisc_install
-[ -f "${METADATAMIPS64ELSYSROOT}/psmisc_update_install" ] || \
+      touch ${METADATAMIPS64ELSYSROOT}/psmisc_cross_install
+[ -f "${METADATAMIPS64ELSYSROOT}/psmisc_cross_update_install" ] || \
   mv -v ${PREFIXMIPS64ELSYSROOT}/bin/pstree* ${PREFIXMIPS64ELSYSROOT}/usr/bin && \
   ln -sfv killall ${PREFIXMIPS64ELSYSROOT}/bin/pidof || \
     die "update psmisc install files error" && \
-      touch ${METADATAMIPS64ELSYSROOT}/psmisc_update_install
+      touch ${METADATAMIPS64ELSYSROOT}/psmisc_cross_update_install
 popd
 
 pushd ${BUILDMIPS64ELSYSROOT}
-[ -d shadow-buildusr ] || cp -ar ${SRCMIPS64ELSYSROOT}/shadow-${SHADOW_VERSION} shadow-buildusr
-cd shadow-buildusr
-[ -f "${METADATAMIPS64ELSYSROOT}/shadow_create_config.cache" ] || \
+[ -d "shadow-cross-buildusr" ] || \
+  cp -ar ${SRCMIPS64ELSYSROOT}/shadow-${SHADOW_VERSION} shadow-cross-buildusr
+cd shadow-cross-buildusr
+[ -f "${METADATAMIPS64ELSYSROOT}/shadow_cross_create_config.cache" ] || \
   `cat > config.cache << EOF
 ac_cv_func_setpgrp_void=yes
 EOF` || \
     die "create shadow config.cache" && \
-      touch ${METADATAMIPS64ELSYSROOT}/shadow_create_config.cache
-[ -f "${METADATAMIPS64ELSYSROOT}/shadow_configusr" ] || \
+      touch ${METADATAMIPS64ELSYSROOT}/shadow_cross_create_config.cache
+[ -f "${METADATAMIPS64ELSYSROOT}/shadow_cross_configusr" ] || \
   CC="${CC} ${BUILD64}" \
   ./configure \
   --build=${CROSS_HOST} --host=${CROSS_TARGET64} \
@@ -3284,8 +3323,7 @@ EOF` || \
   --without-audit --without-selinux \
   --cache-file=config.cache || \
     die "***config shadow error" && \
-      touch ${METADATAMIPS64ELSYSROOT}/shadow_configusr
-
+      touch ${METADATAMIPS64ELSYSROOT}/shadow_cross_configusr
 cp src/Makefile{,.orig}
 sed 's/groups$(EXEEXT) //' src/Makefile.orig > src/Makefile
 for mkf in $(find man -name Makefile); do
@@ -3293,14 +3331,14 @@ for mkf in $(find man -name Makefile); do
   sed -e '/groups.1.xml/d' -e 's/groups.1 //' ${mkf}.orig > ${mkf};
 done;
 
-[ -f "${METADATAMIPS64ELSYSROOT}/shadow_buildusr" ] || \
+[ -f "${METADATAMIPS64ELSYSROOT}/shadow_cross_buildusr" ] || \
   make -j${JOBS} || \
     die "***build shadow error" && \
-      touch ${METADATAMIPS64ELSYSROOT}/shadow_buildusr
-[ -f "${METADATAMIPS64ELSYSROOT}/shadow_installusr" ] || \
+      touch ${METADATAMIPS64ELSYSROOT}/shadow_cross_buildusr
+[ -f "${METADATAMIPS64ELSYSROOT}/shadow_cross_installusr" ] || \
   make DESTDIR=${PREFIXMIPS64ELSYSROOT} install || \
     die "***install shadow error" && \
-      touch ${METADATAMIPS64ELSYSROOT}/shadow_installusr
+      touch ${METADATAMIPS64ELSYSROOT}/shadow_cross_installusr
 
 cp ${PREFIXMIPS64ELSYSROOT}/etc/login.defs login.defs.orig
 sed -e's@#MD5_CRYPT_ENAB.no@MD5_CRYPT_ENAB yes@' \
@@ -3310,25 +3348,26 @@ mv -v ${PREFIXMIPS64ELSYSROOT}/usr/bin/passwd ${PREFIXMIPS64ELSYSROOT}/bin
 popd
 
 pushd ${BUILDMIPS64ELSYSROOT}
-[ -d "gdb-buildusr" ] || mkdir gdb-buildusr
-cd gdb-buildusr
-[ -f "${METADATA}/gdb_configusr" ] || \
+[ -d "gdb-cross-buildusr" ] || mkdir gdb-cross-buildusr
+cd gdb-cross-buildusr
+[ -f "${METADATAMIPS64ELSYSROOT}/gdb_cross_configusr" ] || \
   CC="${CC} ${BUILD64}" CXX="${CXX} ${BUILD64}" \
-  ${SRC}/gdb-${GDB_VERSION}/configure --prefix=${PREFIXMIPS64ELSYSROOT} \
-  --build=${CROSS_HOST} --host=${CROSS_TARGET} --target=${CROSS_TARGET} || \
+  ${SRCMIPS64ELSYSROOT}/gdb-${GDB_VERSION}/configure \
+  --prefix=${PREFIXMIPS64ELSYSROOT} \
+  --build=${CROSS_HOST} --host=${CROSS_TARGET64} --target=${CROSS_TARGET64} \
   --with-gmp=${PREFIXMIPS64ELSYSROOT}/cross-tools \
   --with-mpfr=${PREFIXMIPS64ELSYSROOT}/cross-tools \
-  --with-mpc=${PREFIXMIPS64ELSYSROOT}/cross-tools \
+  --with-mpc=${PREFIXMIPS64ELSYSROOT}/cross-tools || \
     die "config gdb error" && \
-      touch ${METADATA}/gdb_configusr
-[ -f "${METADATAMIPS64ELSYSROOT}/gdb_build" ] || \
+      touch ${METADATAMIPS64ELSYSROOT}/gdb_cross_configusr
+[ -f "${METADATAMIPS64ELSYSROOT}/gdb_cross_build" ] || \
   make -j${JOBS} || \
     die "***build gdb error" && \
-      touch ${METADATAMIPS64ELSYSROOT}/gdb_build
-[ -f "${METADATAMIPS64ELSYSROOT}/gdb_install" ] || \
+      touch ${METADATAMIPS64ELSYSROOT}/gdb_cross_build
+[ -f "${METADATAMIPS64ELSYSROOT}/gdb_cross_install" ] || \
   make install || \
     die "***install gdb error" && \
-      touch ${METADATAMIPS64ELSYSROOT}/gdb_install
+      touch ${METADATAMIPS64ELSYSROOT}/gdb_cross_install
 popd
 
 # Use make, not make -j${JOBS}
@@ -3453,7 +3492,7 @@ EOF` || \
     die "***config libee32 error" && \
       touch ${METADATAMIPS64ELSYSROOT}/libee_config32
 [ -f "${METADATAMIPS64ELSYSROOT}/libee_build32" ] || \
-  make -j${JOBS} || \
+  make || \
     die "***build libee32 error" && \
       touch ${METADATAMIPS64ELSYSROOT}/libee_build32
 [ -f "${METADATAMIPS64ELSYSROOT}/libee_install32" ] || \
@@ -3488,7 +3527,7 @@ EOF` || \
     die "***config libeen32 error" && \
       touch ${METADATAMIPS64ELSYSROOT}/libee_confign32
 [ -f "${METADATAMIPS64ELSYSROOT}/libee_buildn32" ] || \
-  make -j${JOBS} || \
+  make || \
     die "***build libeen32 error" && \
       touch ${METADATAMIPS64ELSYSROOT}/libee_buildn32
 [ -f "${METADATAMIPS64ELSYSROOT}/libee_installn32" ] || \
@@ -3523,7 +3562,7 @@ EOF` || \
     die "***config libee64 error" && \
       touch ${METADATAMIPS64ELSYSROOT}/libee_config64
 [ -f "${METADATAMIPS64ELSYSROOT}/libee_build64" ] || \
-make -j${JOBS} || \
+make || \
   die "***build libee64 error" && \
     touch ${METADATAMIPS64ELSYSROOT}/libee_build64
 [ -f "${METADATAMIPS64ELSYSROOT}/libee_install64" ] || \
@@ -3538,16 +3577,16 @@ popd
 
 # FIXME rebuild later, need build libestr
 pushd ${BUILDMIPS64ELSYSROOT}
-[ -d rsyslog-buildusr ] || mkdir rsyslog-buildusr
-cd rsyslog-buildusr
-[ -f "${METADATAMIPS64ELSYSROOT}/rsyslog_create_config.cache" ] || \
+[ -d "rsyslog-cross-buildusr" ] || mkdir rsyslog-cross-buildusr
+cd rsyslog-cross-buildusr
+[ -f "${METADATAMIPS64ELSYSROOT}/rsyslog_cross_create_config.cache" ] || \
   `cat > config.cache << EOF
 ac_cv_func_malloc_0_nonnull=yes
 ac_cv_func_realloc_0_nonnull=yes
 EOF` || \
     die "create rsyslog config.cache error" && \
-      touch ${METADATAMIPS64ELSYSROOT}/rsyslog_create_config.cache
-[ -f "${METADATAMIPS64ELSYSROOT}/rsyslog_config" ] || \
+      touch ${METADATAMIPS64ELSYSROOT}/rsyslog_cross_create_config.cache
+[ -f "${METADATAMIPS64ELSYSROOT}/rsyslog_cross_config" ] || \
   CC="${CC} ${BUILD64}" \
   PKG_CONFIG_LIBDIR=${PREFIXMIPS64ELSYSROOT}/usr/lib64/ \
   PKG_CONFIG_PATH=${PREFIXMIPS64ELSYSROOT}/usr/lib64/pkgconfig \
@@ -3556,19 +3595,19 @@ EOF` || \
   --build=${CROSS_HOST} --host=${CROSS_TARGET64} \
   --prefix=/usr --sbindir=/sbin --cache-file=config.cache || \
     die "***config rsyslog error" && \
-      touch ${METADATAMIPS64ELSYSROOT}/rsyslog_config
-[ -f "${METADATAMIPS64ELSYSROOT}/rsyslog_build" ] || \
+      touch ${METADATAMIPS64ELSYSROOT}/rsyslog_cross_config
+[ -f "${METADATAMIPS64ELSYSROOT}/rsyslog_cross_build" ] || \
   make -j${JOBS} || \
     die "***build rsyslog error" && \
-      touch ${METADATAMIPS64ELSYSROOT}/rsyslog_build
-[ -f "${METADATAMIPS64ELSYSROOT}/rsyslog_install" ] || \
+      touch ${METADATAMIPS64ELSYSROOT}/rsyslog_cross_build
+[ -f "${METADATAMIPS64ELSYSROOT}/rsyslog_cross_install" ] || \
   make DESTDIR=${PREFIXMIPS64ELSYSROOT} install || \
     die "***install rsyslog error" && \
-      touch ${METADATAMIPS64ELSYSROOT}/rsyslog_install
-[ -f "${METADATAMIPS64ELSYSROOT}/rsylog_install_rsyslog.d" ] || \
+      touch ${METADATAMIPS64ELSYSROOT}/rsyslog_cross_install
+[ -f "${METADATAMIPS64ELSYSROOT}/rsylog_cross_install_rsyslog.d" ] || \
   install -dv ${PREFIXMIPS64ELSYSROOT}/etc/rsyslog.d || \
     die "install rsyslog.d error" && \
-      touch ${METADATAMIPS64ELSYSROOT}/rsylog_install_rsyslog.d
+      touch ${METADATAMIPS64ELSYSROOT}/rsylog_cross_install_rsyslog.d
 popd
 
 [ -f "${METADATAMIPS64ELSYSROOT}/create_rsyslog.conf" ] || \
@@ -3639,10 +3678,10 @@ EOF` || \
     touch ${METADATAMIPS64ELSYSROOT}/create_rsyslog.conf
 
 pushd ${BUILDMIPS64ELSYSROOT}
-[ -d sysvinit-buildusr ] || \
-  cp -ar ${SRCMIPS64ELSYSROOT}/sysvinit-${SYSVINIT_VERSION} sysvinit-buildusr
-cd sysvinit-buildusr
-[ -f "${METADATAMIPS64ELSYSROOT}/sysvinit_update_files" ] || \
+[ -d "sysvinit-cross-buildusr" ] || \
+  cp -ar ${SRCMIPS64ELSYSROOT}/sysvinit-${SYSVINIT_VERSION} sysvinit-cross-buildusr
+cd sysvinit-cross-buildusr
+[ -f "${METADATAMIPS64ELSYSROOT}/sysvinit_cross_update_files" ] || \
   cp -v src/Makefile src/Makefile.orig && \
   sed -e 's@/dev/initctl@$(ROOT)&@g' \
       -e 's@\(mknod \)-m \([0-9]* \)\(.* \)p@\1\3p; chmod \2\3@g' \
@@ -3650,19 +3689,19 @@ cd sysvinit-buildusr
       -e 's@/usr/lib@$(ROOT)&@' \
       src/Makefile.orig > src/Makefile || \
     die "update sysvinit files" && \
-      touch ${METADATAMIPS64ELSYSROOT}/sysvinit_update_files
-[ -f "${METADATAMIPS64ELSYSROOT}/sysvinit_build_clobber" ] || \
+      touch ${METADATAMIPS64ELSYSROOT}/sysvinit_cross_update_files
+[ -f "${METADATAMIPS64ELSYSROOT}/sysvinit_cross_build_clobber" ] || \
   make -C src clobber  || \
     die "***build sysvinit clobber error***" && \
-      touch ${METADATAMIPS64ELSYSROOT}/sysvinit_build_clobber
-[ -f "${METADATAMIPS64ELSYSROOT}/sysvinit_build" ] || \
+      touch ${METADATAMIPS64ELSYSROOT}/sysvinit_cross_build_clobber
+[ -f "${METADATAMIPS64ELSYSROOT}/sysvinit_cross_build" ] || \
   make -C src ROOT=${PREFIXMIPS64ELSYSROOT} CC="${CC} ${BUILD64}" || \
     die "***build sysvinit error***" && \
-      touch ${METADATAMIPS64ELSYSROOT}/sysvinit_build
-[ -f "${METADATAMIPS64ELSYSROOT}/sysvinit_install" ] || \
+      touch ${METADATAMIPS64ELSYSROOT}/sysvinit_cross_build
+[ -f "${METADATAMIPS64ELSYSROOT}/sysvinit_cross_install" ] || \
   make -C src ROOT=${PREFIXMIPS64ELSYSROOT} INSTALL="install" install || \
     die "***install sysvinit error" && \
-      touch ${METADATAMIPS64ELSYSROOT}/sysvinit_install
+      touch ${METADATAMIPS64ELSYSROOT}/sysvinit_cross_install
 popd
 
 [ -f "${METADATAMIPS64ELSYSROOT}/create_inittab" ] || \
@@ -3701,9 +3740,9 @@ EOF` || \
     touch ${METADATAMIPS64ELSYSROOT}/create_inittab
 
 pushd ${BUILDMIPS64ELSYSROOT}
-[ -d tar-buildusr ] || mkdir tar-buildusr
-cd tar-buildusr
-[ -f "${METADATAMIPS64ELSYSROOT}/tar_create_config.cache" ] || \
+[ -d "tar-cross-buildusr" ] || mkdir tar-cross-buildusr
+cd tar-cross-buildusr
+[ -f "${METADATAMIPS64ELSYSROOT}/tar_cross_create_config.cache" ] || \
   `cat > config.cache << EOF
 gl_cv_func_wcwidth_works=yes
 gl_cv_func_btowc_eof=yes
@@ -3716,49 +3755,49 @@ gl_cv_func_mbrtowc_retval=yes
 gl_cv_func_wcrtomb_retval=yes
 EOF` || \
     die "create tar config.cache error" && \
-      touch ${METADATAMIPS64ELSYSROOT}/tar_create_config.cache
-[ -f "${METADATAMIPS64ELSYSROOT}/tar_config" ] || \
+      touch ${METADATAMIPS64ELSYSROOT}/tar_cross_create_config.cache
+[ -f "${METADATAMIPS64ELSYSROOT}/tar_cross_config" ] || \
   CC="${CC} ${BUILD64}" ${SRCMIPS64ELSYSROOT}/tar-${TAR_VERSION}/configure \
   --build=${CROSS_HOST} --host=${CROSS_TARGET64} \
   --prefix=/usr --bindir=/bin --libexecdir=/usr/sbin \
   --cache-file=config.cache || \
     die "***config tar error" && \
-      touch ${METADATAMIPS64ELSYSROOT}/tar_config
-[ -f "${METADATAMIPS64ELSYSROOT}/tar_build" ] || \
+      touch ${METADATAMIPS64ELSYSROOT}/tar_cross_config
+[ -f "${METADATAMIPS64ELSYSROOT}/tar_cross_build" ] || \
   make -j${JOBS} || \
     die "***build tar error" && \
-      touch ${METADATAMIPS64ELSYSROOT}/tar_build
-[ -f "${METADATAMIPS64ELSYSROOT}/tar_install" ] || \
+      touch ${METADATAMIPS64ELSYSROOT}/tar_cross_build
+[ -f "${METADATAMIPS64ELSYSROOT}/tar_cross_install" ] || \
   make DESTDIR=${PREFIXMIPS64ELSYSROOT} install || \
     die "***install tar error" && \
-      touch ${METADATAMIPS64ELSYSROOT}/tar_install
+      touch ${METADATAMIPS64ELSYSROOT}/tar_cross_install
 popd
 
 pushd ${BUILDMIPS64ELSYSROOT}
-[ -d texinfo-buildusr ] || mkdir texinfo-buildusr
-cd texinfo-buildusr
-[ -f "${METADATAMIPS64ELSYSROOT}/texinfo_config" ] || \
+[ -d "texinfo-cross-buildusr" ] || mkdir texinfo-cross-buildusr
+cd texinfo-cross-buildusr
+[ -f "${METADATAMIPS64ELSYSROOT}/texinfo_cross_config" ] || \
   CC="${CC} ${BUILD64}" \
   ${SRCMIPS64ELSYSROOT}/texinfo-${TEXINFO_VERSION}/configure --prefix=/usr \
   --build=${CROSS_HOST} --host=${CROSS_TARGET64} || \
     die "***config texinfo error" && \
-      touch ${METADATAMIPS64ELSYSROOT}/texinfo_config
-[ -f "${METADATAMIPS64ELSYSROOT}/texinfo_build_lib" ] || \
+      touch ${METADATAMIPS64ELSYSROOT}/texinfo_cross_config
+[ -f "${METADATAMIPS64ELSYSROOT}/texinfo_cross_build_lib" ] || \
   make -C tools/gnulib/lib || \
     die "***build texinfo lib error" && \
-      touch ${METADATAMIPS64ELSYSROOT}/texinfo_build_lib
-[ -f "${METADATAMIPS64ELSYSROOT}/texinfo_build_tools" ] || \
+      touch ${METADATAMIPS64ELSYSROOT}/texinfo_cross_build_lib
+[ -f "${METADATAMIPS64ELSYSROOT}/texinfo_cross_build_tools" ] || \
   make -C tools || \
     die "***build texinfo tools error" && \
-      touch ${METADATAMIPS64ELSYSROOT}/texinfo_build_tools
-[ -f "${METADATAMIPS64ELSYSROOT}/texinfo_build" ] || \
+      touch ${METADATAMIPS64ELSYSROOT}/texinfo_cross_build_tools
+[ -f "${METADATAMIPS64ELSYSROOT}/texinfo_cross_build" ] || \
   make -j${JOBS} || \
     die "***build texinfo error" && \
-      touch ${METADATAMIPS64ELSYSROOT}/texinfo_build
-[ -f "${METADATAMIPS64ELSYSROOT}/texinfo_install" ] || \
+      touch ${METADATAMIPS64ELSYSROOT}/texinfo_cross_build
+[ -f "${METADATAMIPS64ELSYSROOT}/texinfo_cross_install" ] || \
   make DESTDIR=${PREFIXMIPS64ELSYSROOT} install || \
     die "***install texinfo error" && \
-      touch ${METADATAMIPS64ELSYSROOT}/texinfo_install
+      touch ${METADATAMIPS64ELSYSROOT}/texinfo_cross_install
 cd ${PREFIXMIPS64ELSYSROOT}/usr/share/info
 rm dir
 for f in *; do
@@ -3931,16 +3970,16 @@ pushd ${SRCMIPS64ELSYSROOT}/${VIM_DIR}
     die "*** patch vim error" && \
       touch ${METADATAMIPS64ELSYSROOT}/vim_patch
 
-[ -f "${METADATAMIPS64ELSYSROOT}/vim_update_feature" ] || \
+[ -f "${METADATAMIPS64ELSYSROOT}/vim_cross_update_feature" ] || \
   `cat >> src/feature.h << "EOF"
 #define SYS_VIMRC_FILE "/etc/vimrc"
 EOF` || \
     die "update vim feature" && \
-      touch ${METADATAMIPS64ELSYSROOT}/vim_update_feature
+      touch ${METADATAMIPS64ELSYSROOT}/vim_cross_update_feature
 popd
 
 pushd ${BUILDMIPS64ELSYSROOT}
-[ -d vim-buildusr ] || cp -ar ${SRCMIPS64ELSYSROOT}/${VIM_DIR} vim-buildusr
+[ -d "vim-buildusr" ] || cp -ar ${SRCMIPS64ELSYSROOT}/${VIM_DIR} vim-buildusr
 cd vim-buildusr
 [ -f "${METADATAMIPS64ELSYSROOT}/vim_create_config.cache" ] || \
   `cat > src/auto/config.cache << "EOF"
@@ -3995,22 +4034,22 @@ pushd ${BUILDMIPS64ELSYSROOT}
 cd xz-32
 [ -f "${METADATAMIPS64ELSYSROOT}/xz_config32" ] || \
   CC="${CC} ${BUILD32}" \
-  ${SRCMIPS64ELSYSROOT}/xz-${XZ_VERSION}/configure --build=${CROSS_HOST} \
-  --host=${CROSS_TARGET32} --libdir=/lib \
-  --prefix=/usr || \
+  ${SRCMIPS64ELSYSROOT}/xz-${XZ_VERSION}/configure --prefix=/usr \
+  --build=${CROSS_HOST} --host=${CROSS_TARGET32} --libdir=/lib || \
     die "***config xz32 error" && \
       touch ${METADATAMIPS64ELSYSROOT}/xz_config32
 [ -f "${METADATAMIPS64ELSYSROOT}/xz_build32" ] || \
   make -j${JOBS} || \
     die "***build xz32 error" && \
       touch ${METADATAMIPS64ELSYSROOT}/xz_build32
-[ -f "${METADATAMIPS64ELSYSROOT}/xz_install" ] || \
-  make DESTDIR=${PREFIXMIPS64ELSYSROOT} pkgconfigdir=/usr/lib/pkgconfig install || \
+[ -f "${METADATAMIPS64ELSYSROOT}/xz_install32" ] || \
+  make DESTDIR=${PREFIXMIPS64ELSYSROOT} pkgconfigdir=/usr/lib/pkgconfig \
+  install || \
     die "***install xz32 error" && \
-      touch ${METADATAMIPS64ELSYSROOT}/xz_install
+      touch ${METADATAMIPS64ELSYSROOT}/xz_install32
 [ -f "${METADATAMIPS64ELSYSROOT}/xz_update32_install" ] || \
-  mv -v ${PREFIXMIPS64ELSYSROOT}/usr/bin/{xz,lzma,lzcat,unlzma,unxz,xzcat} ${PREFIXMIPS64ELSYSROOT}/bin && \
-  mv -v ${PREFIXMIPS64ELSYSROOT}/lib/liblzma.a ${PREFIXMIPS64ELSYSROOT}/usr/lib || \
+  `mv -v ${PREFIXMIPS64ELSYSROOT}/usr/bin/{xz,lzma,lzcat,unlzma,unxz,xzcat} ${PREFIXMIPS64ELSYSROOT}/bin && \
+  mv -v ${PREFIXMIPS64ELSYSROOT}/lib/liblzma.a ${PREFIXMIPS64ELSYSROOT}/usr/lib` || \
     die "update xz32 install" && \
       touch ${METADATAMIPS64ELSYSROOT}/xz_update32_install
 popd
@@ -4025,17 +4064,17 @@ cd xz-n32
   --prefix=/usr || \
     die "***config xz32 error" && \
       touch ${METADATAMIPS64ELSYSROOT}/xz_confign32
-[ -f "${METADATAMIPS64ELSYSROOT}/xz_build32" ] || \
+[ -f "${METADATAMIPS64ELSYSROOT}/xz_buildn32" ] || \
   make -j${JOBS} || \
     die "***build xz32 error" && \
-      touch ${METADATAMIPS64ELSYSROOT}/xz_build32
-[ -f "${METADATAMIPS64ELSYSROOT}/xz_install32" ] || \
+      touch ${METADATAMIPS64ELSYSROOT}/xz_buildn32
+[ -f "${METADATAMIPS64ELSYSROOT}/xz_installn32" ] || \
   make DESTDIR=${PREFIXMIPS64ELSYSROOT} pkgconfigdir=/usr/lib32/pkgconfig install || \
     die "***install xz32 error" && \
-      touch ${METADATAMIPS64ELSYSROOT}/xz_install32
+      touch ${METADATAMIPS64ELSYSROOT}/xz_installn32
 [ -f "${METADATAMIPS64ELSYSROOT}/xz_updaten32_install" ] || \
-  mv -v ${PREFIXMIPS64ELSYSROOT}/usr/bin/{xz,lzma,lzcat,unlzma,unxz,xzcat} ${PREFIXMIPS64ELSYSROOT}/bin && \
-  mv -v ${PREFIXMIPS64ELSYSROOT}/lib32/liblzma.a ${PREFIXMIPS64ELSYSROOT}/usr/lib32 || \
+  `mv -v ${PREFIXMIPS64ELSYSROOT}/usr/bin/{xz,lzma,lzcat,unlzma,unxz,xzcat} ${PREFIXMIPS64ELSYSROOT}/bin && \
+  mv -v ${PREFIXMIPS64ELSYSROOT}/lib32/liblzma.a ${PREFIXMIPS64ELSYSROOT}/usr/lib32` || \
     die "update xzn32 install error" && \
       touch ${METADATAMIPS64ELSYSROOT}/xz_updaten32_install
 popd
@@ -4059,8 +4098,8 @@ cd xz-64
     die "***install xz64 error" && \
       touch ${METADATAMIPS64ELSYSROOT}/xz_install64
 [ -f "${METADATAMIPS64ELSYSROOT}/xz_update64_install" ] || \
-  mv -v ${PREFIXMIPS64ELSYSROOT}/usr/bin/{xz,lzma,lzcat,unlzma,unxz,xzcat} ${PREFIXMIPS64ELSYSROOT}/bin && \
-  mv -v ${PREFIXMIPS64ELSYSROOT}/lib64/liblzma.a ${PREFIXMIPS64ELSYSROOT}/usr/lib64 || \
+  `mv -v ${PREFIXMIPS64ELSYSROOT}/usr/bin/{xz,lzma,lzcat,unlzma,unxz,xzcat} ${PREFIXMIPS64ELSYSROOT}/bin && \
+  mv -v ${PREFIXMIPS64ELSYSROOT}/lib64/liblzma.a ${PREFIXMIPS64ELSYSROOT}/usr/lib64` || \
     die "update xz64 install error" && \
       touch ${METADATAMIPS64ELSYSROOT}/xz_update64_install
 popd
@@ -4208,6 +4247,10 @@ EOF` || \
     die "create fstab error" && \
       touch ${METADATAMIPS64ELSYSROOT}/create_fstab
 
+cat > ${PREFIXMIPS64ELSYSROOT}/root/.bashrc << EOF
+export PYTHONHOME=/usr
+EOF
+
 pushd ${BUILDMIPS64ELSYSROOT}
 [ -d linux-kernel ] || \
   cp -ar ${SRCMIPS64ELSYSROOT}/linux-${LINUX_VERSION} linux-kernel
@@ -4221,8 +4264,8 @@ make mrproper || die "clean linux error"
   make ARCH=mips mips64el_multilib_defconfig || \
     die "config mips64el_multilib_defconfig error" && \
       touch ${METADATAMIPS64ELSYSROOT}/linux_config_mips64el_mul
-make ARCH=mips CROSS_COMPILE=${CROSS_TARGET64}- menuconfig || \
-  die "config linux error"
+#make ARCH=mips CROSS_COMPILE=${CROSS_TARGET64}- menuconfig || \
+#  die "config linux error"
 [ -f "${METADATAMIPS64ELSYSROOT}/linux_build_kernel" ] || \
   make -j${JOBS} ARCH=mips CROSS_COMPILE=${CROSS_TARGET64}- \
   CFLAGS="${BUILD64}" || \
@@ -4259,7 +4302,7 @@ EOF` || \
       touch ${METADATAMIPS64ELSYSROOT}/create_clfs-release
 
 ##################### remove cross-tools ######################################
-rm -rf ${PREFIXMIPS64ELSYSROOT}/cross-tools
+#rm -rf ${PREFIXMIPS64ELSYSROOT}/cross-tools
 
 ############### Change Own Ship ########################
 sudo chown -Rv 0:0 ${PREFIXMIPS64ELSYSROOT} || die "Change own error"
@@ -4321,3 +4364,4 @@ pushd ${PREFIXGNULINUX}
     die "***remove mnt error" && \
       touch ${METADATAMIPS64ELSYSROOT}/mips64el_rootfs_rmmnt
 popd
+
