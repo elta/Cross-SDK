@@ -187,9 +187,12 @@ export OPENSSL_URL=http://www.openssl.org/source
 export PATCH_VERSION=2.6.1
 export PATCH_SUFFIX=${BZ}
 export PATCH_URL=http://ftp.gnu.org/gnu/patch
-export PERL_VERSION=5.14.2
-export PERL_SUFFIX=${BZ}
+export PERL_VERSION=5.16.0
+export PERL_SUFFIX=${GZ}
 export PERL_URL=http://www.cpan.org/src/5.0
+export PERLCROSS_VERSION=5.16.0-cross-0.7.1
+export PERLCROSS_SUFFIX=${GZ}
+export PERLCROSS_URL=http://http://prdownload.berlios.de/perlcross
 export PKG_VERSION=0.26
 export PKG_SUFFIX=${GZ}
 export PKG_URL=http://pkgconfig.freedesktop.org/releases
@@ -322,7 +325,7 @@ export PREFIXQTC=${PREFIX}/qt-creator
 export PREFIXMUL64EL=${PREFIX}/mips64el-multilib/
 export PREFIXPURE64EL=${PREFIX}/mips64el-pure64/
 export PREFIXMIPSEL=${PREFIX}/mipsel/
-export PREFIXMIPSELSYSROOT=${PREFIX}/mipsel-sysroot/
+export PREFIXMIPSELROOTFS=${PREFIX}/mipsel-rootfs/
 export PREFIXKERNEL=${PREFIX}/kernel
 export PREFIXMIPS64ELROOTFS=${PREFIX}/mips64el-rootfs/
 
@@ -359,7 +362,7 @@ export METADATAGNU64=${SCRIPT}/../metadata/gnu64
 export METADATAUNIVERSAL=${SCRIPT}/../metadata/universal
 export METADATARTEMS32=${SCRIPT}/../metadata/rtems32
 export METADATARTEMS64=${SCRIPT}/../metadata/rtems64
-export METADATAMIPSELSYSROOT=${SCRIPT}/../metadata/mipsel-sysroot
+export METADATAMIPSELROOTFS=${SCRIPT}/../metadata/mipsel-rootfs
 export METADATAMIPS64ELROOTFS=${SCRIPT}/../metadata/mips64el-rootfs
 
 ###########################################################
@@ -390,7 +393,7 @@ export SRCGNU64=${SCRIPT}/../src/mips64-linux-tool
 export SRCUNIVERSAL=${SCRIPT}/../src/universal
 export SRCRTEMS32=${SCRIPT}/../src/mips-rtems-tool
 export SRCRTEMS64=${SCRIPT}/../src/mips64-rtems-tool
-export SRCMIPSELSYSROOT=${SCRIPT}/../src/mipsel-sysroot
+export SRCMIPSELROOTFS=${SCRIPT}/../src/mipsel-rootfs
 export SRCMIPS64ELROOTFS=${SCRIPT}/../src/mips64el-rootfs
 
 ###########################################################
@@ -421,7 +424,7 @@ export BUILDGNU64=${SCRIPT}/../build/mips64-linux-tool
 export BUILDUNIVERSAL=${SCRIPT}/../build/universal
 export BUILDRTEMS32=${SCRIPT}/../build/mips-rtems-tool
 export BUILDRTEMS64=${SCRIPT}/../build/mips64-rtems-tool
-export BUILDMIPSELSYSROOT=${SCRIPT}/../build/mipsel-sysroot
+export BUILDMIPSELROOTFS=${SCRIPT}/../build/mipsel-rootfs
 export BUILDMIPS64ELROOTFS=${SCRIPT}/../build/mips64el-rootfs
 
 ###########################################################
