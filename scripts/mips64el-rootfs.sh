@@ -327,6 +327,28 @@ pushd ${BUILDMIPS64ELROOTFS}
       touch ${METADATAMIPS64ELROOTFS}/iputils_extract
 popd
 
+pushd ${SRCMIPS64ELROOTFS}
+[ -f "${METADATAMIPS64ELROOTFS}/perl_cross_extract" ] || \
+  tar xf ${TARBALL}/perl-${PERLCROSS_VERSION}.${PERLCROSS_SUFFIX} || \
+    die "extract perl cross error" && \
+      touch ${METADATAMIPS64ELROOTFS}/perl_cross_extract
+popd
+
+pushd ${BUILDMIPS64ELROOTFS}
+[ -f "${METADATAMIPS64ELROOTFS}/perl_extract" ] || \
+  tar xf ${TARBALL}/perl-${PERL_VERSION}.${PERL_SUFFIX} || \
+    die "extract perl error" && \
+      touch ${METADATAMIPS64ELROOTFS}/perl_extract
+popd
+
+pushd ${BUILDMIPS64ELROOTFS}
+cd perl-${PERL_VERSION}
+[ -f "${METADATAMIPS64ELROOTFS}/perl_cross_merge" ] || \
+  cp -ar ${SRCMIPS64ELROOTFS}/perl-${PERL_VERSION}/* ./ || \
+    die "merge cross perl error" && \
+      touch ${METADATAMIPS64ELROOTFS}/perl_cross_merge
+popd
+
 ######################## Begin Compiler CrossGcc ##############################
 pushd ${BUILDMIPS64ELROOTFS}
 [ -f "${METADATAMIPS64ELROOTFS}/linux_copy" ] || \
@@ -2359,24 +2381,24 @@ sed '/^TARGETS/s@arpd@@g' misc/Makefile.orig > misc/Makefile
       touch ${METADATAMIPS64ELROOTFS}/iproute2_cross_install
 popd
 
-## FIXME
-#pushd ${SRCMIPS64ELROOTFS}
-#[ -d "perl-${PERL_VERSION}" ] \
-#  || tar xf ${TARBALL}/perl-${PERL_VERSION}.${PERL_SUFFIX}
-#cd perl-${PERL_VERSION}
-##patch -p1 < ${PATCH}/perl-${PERL_VERSION}-cross_compile-1.patch \
-##  || die "patch perl error"
-#chmod -v 644 Makefile.SH
-#cp -v Makefile.SH{,.orig}
-#sed -e "s@pldlflags=''@pldlflags=\"\$cccdlflags\"@g" \
-#    -e "s@static_target='static'@static_target='static_pic'@g" Makefile.SH.orig > Makefile.SH
-#sed -i -e '/^BUILD_ZLIB/ s/True/False/' \
-#       -e '/^INCLUDE\|^LIB/ s|\./zlib-src|/usr/include|' \
-#       ext/Compress/Raw/Zlib/config.in
-#cd Cross
-#make ARCH=alpha CROSS_COMPILE=${CROSS_TARGET64}-  || die "***build perl error"
-#make DESTDIR=${PREFIXMIPS64ELROOTFS} install || die "***install perl error"
-#popd
+pushd ${BUILDMIPS64ELROOTFS}
+cd perl-${PERL_VERSION}
+[ -f "${METADATAMIPS64ELROOTFS}/perl_cross_config" ] || \
+  LD=${CC} ./configure --prefix=/usr --target=${CROSS_TARGET64} \
+  -A ccflags=-mabi=64 -A cccdlflags=-mabi=64 -A ccdlflags=-mabi=64 \
+  -A cppflags=-mabi=64 -A lldlflags=-mabi=64 -A ldflags=-mabi=64 \
+  -A lddlflags="-mabi=64 -shared" || \
+    die "config cross perl error" && \
+      touch ${METADATAMIPS64ELROOTFS}/perl_cross_config
+[ -f "${METADATAMIPS64ELROOTFS}/perl_cross_build" ] || \
+  make LD=${CC} || \
+    die "build cross perl error" && \
+      touch ${METADATAMIPS64ELROOTFS}/perl_cross_build
+[ -f "${METADATAMIPS64ELROOTFS}/perl_cross_install" ] || \
+  make DESTDIR=${PREFIXMIPS64ELROOTFS} LD=${CC} install || \
+    die "install cross perl error" && \
+      touch ${METADATAMIPS64ELROOTFS}/perl_cross_install
+popd
 
 pushd ${BUILDMIPS64ELROOTFS}
 [ -d "python-cross-build" ] || \
