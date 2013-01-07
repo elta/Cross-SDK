@@ -68,12 +68,6 @@ download "cloog-${CLOOG_VERSION}.${CLOOG_SUFFIX}" \
   die "download cloog error" && \
     touch cloog_download
 
-[ -f colo_download ] || \
-download "colo-${COLO_VERSION}.${COLO_SUFFIX}" \
-  "${COLO_URL}/colo-${COLO_VERSION}.${COLO_SUFFIX}" || \
-  die "download colo error" && \
-    touch colo_download
-
 [ -f coreutils_download ] || \
 download "coreutils-${COREUTILS_VERSION}.${COREUTILS_SUFFIX}" \
   "${COREUTILS_URL}/coreutils-${COREUTILS_VERSION}.${COREUTILS_SUFFIX}" || \
