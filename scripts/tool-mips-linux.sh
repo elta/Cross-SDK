@@ -52,17 +52,10 @@ tar xf ${TARBALL}/gcc-${GCC_VERSION}.${GCC_SUFFIX} || \
   die "extract gcc error" && \
     touch ${METADATAGNU64}/gcc_extract
 
-[ -f ${METADATAGNU64}/eglibc_extract ] || \
-tar xf ${TARBALL}/eglibc-${EGLIBC_VERSION}-r21467.${EGLIBC_SUFFIX} || \
-  die "extract eglibc error" && \
-    touch ${METADATAGNU64}/eglibc_extract
-
-pushd ${SRCGNU64}/eglibc-${EGLIBC_VERSION}
-[ -f ${METADATAGNU64}/eglibc_ports_extract ] || \
-tar xf ${TARBALL}/eglibc-ports-${EGLIBCPORTS_VERSION}-r21467.${EGLIBCPORTS_SUFFIX} || \
-  die "extract eglibc ports error" && \
-    touch ${METADATAGNU64}/eglibc_ports_extract
-popd
+[ -f ${METADATAGNU64}/glibc_extract ] || \
+tar xf ${TARBALL}/glibc-${GLIBC_VERSION}.${GLIBC_SUFFIX} || \
+  die "extract glibc error" && \
+    touch ${METADATAGNU64}/glibc_extract
 
 [ -f ${METADATAGNU64}/gdb_extract ] || \
 tar xf ${TARBALL}/gdb-${GDB_VERSION}.${GDB_SUFFIX} || \
@@ -234,14 +227,14 @@ cd gcc-build-stage1
 popd
 
 pushd ${SRCGNU64}
-cd eglibc-${EGLIBC_VERSION}
+cd glibc-${GLIBC_VERSION}
 cp -v Makeconfig{,.orig}
 sed -e 's/-lgcc_eh//g' Makeconfig.orig > Makeconfig
 popd
 
 pushd ${BUILDGNU64}
-[ -d "eglibc-build-o32" ] || mkdir eglibc-build-o32
-cd eglibc-build-o32
+[ -d "glibc-build-o32" ] || mkdir glibc-build-o32
+cd glibc-build-o32
 cat > config.cache << "EOF"
 libc_cv_forced_unwind=yes
 libc_cv_c_cleanup=yes
@@ -251,30 +244,30 @@ EOF
 cat > configparms << EOF
 install_root=${SYSROOTGNU64}
 EOF
-[ -f "${METADATAGNU64}/eglibc_configure_32" ] || \
+[ -f "${METADATAGNU64}/glibc_configure_32" ] || \
   BUILD_CC="gcc" CC="${CROSS_TARGET64}-gcc ${BUILD32}" \
   AR="${CROSS_TARGET64}-ar" RANLIB="${CROSS_TARGET64}-ranlib" \
   CFLAGS_FOR_TARGET="-O2" CFLAGS="-O2" \
-  ${SRCGNU64}/eglibc-${EGLIBC_VERSION}/configure \
+  ${SRCGNU64}/glibc-${GLIBC_VERSION}/configure \
   --prefix=/usr --host=${CROSS_TARGET32} --build=${CROSS_HOST} \
   --disable-profile --enable-add-ons \
   --with-tls --enable-kernel=2.6.0 --with-__thread \
   --with-binutils=${PREFIXGNU64}/bin --with-headers=${SYSROOTGNU64}/usr/include \
   --cache-file=config.cache || \
-    die "***config o32 eglibc error" && \
-      touch ${METADATAGNU64}/eglibc_configure_32
-[ -f "${METADATAGNU64}/eglibc_build_32" ] || \
-  make -j${JOBS} || die "***build o32 eglibc error" && \
-    touch ${METADATAGNU64}/eglibc_build_32
-[ -f "${METADATAGNU64}/eglibc_install_32" ] || \
+    die "***config o32 glibc error" && \
+      touch ${METADATAGNU64}/glibc_configure_32
+[ -f "${METADATAGNU64}/glibc_build_32" ] || \
+  make -j${JOBS} || die "***build o32 glibc error" && \
+    touch ${METADATAGNU64}/glibc_build_32
+[ -f "${METADATAGNU64}/glibc_install_32" ] || \
   make install inst_vardbdir=${SYSROOTGNU64}/var/db || \
-    die "***install o32 eglibc error" && \
-      touch ${METADATAGNU64}/eglibc_install_32
+    die "***install o32 glibc error" && \
+      touch ${METADATAGNU64}/glibc_install_32
 popd
 
 pushd ${BUILDGNU64}
-[ -d "eglibc-build-n32" ] || mkdir eglibc-build-n32
-cd eglibc-build-n32
+[ -d "glibc-build-n32" ] || mkdir glibc-build-n32
+cd glibc-build-n32
 cat > config.cache << "EOF"
 libc_cv_forced_unwind=yes
 libc_cv_c_cleanup=yes
@@ -285,31 +278,31 @@ cat > configparms << EOF
 install_root=${SYSROOTGNU64}
 slibdir=/lib32
 EOF
-[ -f "${METADATAGNU64}/eglibc_configure_n32" ] || \
+[ -f "${METADATAGNU64}/glibc_configure_n32" ] || \
   BUILD_CC="gcc" CC="${CROSS_TARGET64}-gcc ${BUILDN32}" \
   AR="${CROSS_TARGET64}-ar" RANLIB="${CROSS_TARGET64}-ranlib" \
   CFLAGS_FOR_TARGET="-O2" CFLAGS="-O2" \
-  ${SRCGNU64}/eglibc-${EGLIBC_VERSION}/configure \
+  ${SRCGNU64}/glibc-${GLIBC_VERSION}/configure \
   --prefix=/usr --host=${CROSS_TARGET64} --build=${CROSS_HOST} \
   --libdir=/usr/lib32 \
   --disable-profile --enable-add-ons \
   --with-tls --enable-kernel=2.6.0 --with-__thread \
   --with-binutils=${PREFIXGNU64}/bin --with-headers=${SYSROOTGNU64}/usr/include \
   --cache-file=config.cache || \
-    die "***config n32 eglibc error" && \
-      touch ${METADATAGNU64}/eglibc_configure_n32
-[ -f "${METADATAGNU64}/eglibc_build_n32" ] || \
-  make -j${JOBS} || die "***build n32 eglibc error" && \
-    touch ${METADATAGNU64}/eglibc_build_n32
-[ -f "${METADATAGNU64}/eglibc_install_n32" ] || \
+    die "***config n32 glibc error" && \
+      touch ${METADATAGNU64}/glibc_configure_n32
+[ -f "${METADATAGNU64}/glibc_build_n32" ] || \
+  make -j${JOBS} || die "***build n32 glibc error" && \
+    touch ${METADATAGNU64}/glibc_build_n32
+[ -f "${METADATAGNU64}/glibc_install_n32" ] || \
   make install inst_vardbdir=${SYSROOTGNU64}/var/db || \
-    die "***install n32 eglibc error" && \
-      touch ${METADATAGNU64}/eglibc_install_n32
+    die "***install n32 glibc error" && \
+      touch ${METADATAGNU64}/glibc_install_n32
 popd
 
 pushd ${BUILDGNU64}
-[ -d "eglibc-build-n64" ] || mkdir eglibc-build-n64
-cd eglibc-build-n64
+[ -d "glibc-build-n64" ] || mkdir glibc-build-n64
+cd glibc-build-n64
 cat > config.cache << "EOF"
 libc_cv_forced_unwind=yes
 libc_cv_c_cleanup=yes
@@ -320,26 +313,26 @@ cat > configparms << EOF
 install_root=${SYSROOTGNU64}
 slibdir=/lib64
 EOF
-[ -f "${METADATAGNU64}/eglibc_configure_64" ] || \
+[ -f "${METADATAGNU64}/glibc_configure_64" ] || \
   BUILD_CC="gcc" CC="${CROSS_TARGET64}-gcc ${BUILD64}" \
   AR="${CROSS_TARGET64}-ar" RANLIB="${CROSS_TARGET64}-ranlib" \
   CFLAGS_FOR_TARGET="-O2" CFLAGS="-O2" \
-  ${SRCGNU64}/eglibc-${EGLIBC_VERSION}/configure \
+  ${SRCGNU64}/glibc-${GLIBC_VERSION}/configure \
   --prefix=/usr --host=${CROSS_TARGET64} --build=${CROSS_HOST} \
   --libdir=/usr/lib64 \
   --disable-profile --enable-add-ons \
   --with-tls --enable-kernel=2.6.0 --with-__thread \
   --with-binutils=${PREFIXGNU64}/bin --with-headers=${SYSROOTGNU64}/usr/include \
   --cache-file=config.cache || \
-    die "***config 64bit eglibc error" && \
-      touch ${METADATAGNU64}/eglibc_configure_64
-[ -f "${METADATAGNU64}/eglibc_build_64" ] || \
-  make -j${JOBS} || die "***build 64bit eglibc error" && \
-    touch ${METADATAGNU64}/eglibc_build_64
-[ -f "${METADATAGNU64}/eglibc_install_64" ] || \
+    die "***config 64bit glibc error" && \
+      touch ${METADATAGNU64}/glibc_configure_64
+[ -f "${METADATAGNU64}/glibc_build_64" ] || \
+  make -j${JOBS} || die "***build 64bit glibc error" && \
+    touch ${METADATAGNU64}/glibc_build_64
+[ -f "${METADATAGNU64}/glibc_install_64" ] || \
   make install inst_vardbdir=${SYSROOTGNU64}/var/db || \
-    die "***install 64bit eglibc error" && \
-      touch ${METADATAGNU64}/eglibc_install_64
+    die "***install 64bit glibc error" && \
+      touch ${METADATAGNU64}/glibc_install_64
 popd
 
 pushd ${BUILDGNU64}
