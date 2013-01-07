@@ -280,7 +280,7 @@ export CROSS_RTEMSTARGET64="mips64-rtems4.11"
 export CROSS_RTEMSTARGET32="mips-rtems4.11"
 export CROSS_BARETARGET64="mips64el-unknown-elf"
 export CROSS_BARETARGET32="mipsel-unknown-elf"
-export QEMU_TARGET="mips64el-softmmu,mipsel-softmmu,mips64-softmmu,mips-softmmu"
+export QEMU_TARGET="mips64el-softmmu,mipsel-softmmu"
 
 export BUILD32="-mabi=32"
 export BUILDN32="-mabi=n32"
