@@ -13,4 +13,6 @@ export BUILD=${SCRIPT}/../build
   done;
 
 [ -d ${SRC} ] && rm -rf ${SRC}
+[ -d ${SRC} ] && rm -rf ${SRC}
+[ -d ${BUILD} ] && rm -rf ${BUILD}
 [ -d ${BUILD} ] && rm -rf ${BUILD}
