@@ -167,7 +167,7 @@ cd eglibc-${EGLIBC_VERSION}
 cd ../
 
 [ -f ${METADATAMIPSELROOTFS}/file_extract ] || \
-  tar xf ${TARBALL}/file-${FILE11_VERSION}.${FILE11_SUFFIX} || \
+  tar xf ${TARBALL}/file-${FILE_VERSION}.${FILE_SUFFIX} || \
     die "***extract file error" && \
       touch ${METADATAMIPSELROOTFS}/file_extract
 
@@ -666,7 +666,7 @@ pushd ${BUILDMIPSELROOTFS}
 [ -d "file_build" ] || mkdir file_build
 cd file_build
 [ -f ${METADATAMIPSELROOTFS}/file_configure ] || \
-  ${SRCMIPSELROOTFS}/file-${FILE11_VERSION}/configure \
+  ${SRCMIPSELROOTFS}/file-${FILE_VERSION}/configure \
   --prefix=${PREFIXMIPSELROOTFS}/cross-tools || \
     die "***config file error" && \
       touch ${METADATAMIPSELROOTFS}/file_configure
@@ -1762,7 +1762,7 @@ pushd ${BUILDMIPSELROOTFS}
 [ -d file_cross_build ] || mkdir file_cross_build
 cd file_cross_build
 [ -f ${METADATAMIPSELROOTFS}/file_cross_configure ] || \
-  ${SRCMIPSELROOTFS}/file-${FILE11_VERSION}/configure \
+  ${SRCMIPSELROOTFS}/file-${FILE_VERSION}/configure \
   --prefix=/usr --build=${CROSS_HOST} \
   --host=${CROSS_TARGET32} || \
     die "***config cross file error" && \

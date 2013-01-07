@@ -110,10 +110,10 @@ pushd ${SRCMIPS64ELROOTFS}
   tar xf ${TARBALL}/eglibc-${EGLIBC_VERSION}-r21467.${EGLIBC_SUFFIX} || \
     die "extract eglibc error" && \
       touch ${METADATAMIPS64ELROOTFS}/eglibc_extract
-[ -f "${METADATAMIPS64ELROOTFS}/file11_extract" ] || \
-  tar xf ${TARBALL}/file-${FILE11_VERSION}.${FILE11_SUFFIX} || \
+[ -f "${METADATAMIPS64ELROOTFS}/file_extract" ] || \
+  tar xf ${TARBALL}/file-${FILE_VERSION}.${FILE_SUFFIX} || \
     die "extract file error" && \
-      touch ${METADATAMIPS64ELROOTFS}/file11_extract
+      touch ${METADATAMIPS64ELROOTFS}/file_extract
 [ -f "${METADATAMIPS64ELROOTFS}/groff_extract" ] || \
   tar xf ${TARBALL}/groff-${GROFF_VERSION}.${GROFF_SUFFIX} || \
     die "extract groff error" && \
@@ -802,7 +802,7 @@ pushd ${BUILDMIPS64ELROOTFS}
 [ -d file-build ] || mkdir file-build
 cd file-build
 [ -f "${METADATAMIPS64ELROOTFS}/file_config" ] || \
-  ${SRCMIPS64ELROOTFS}/file-${FILE11_VERSION}/configure --prefix=${PREFIXMIPS64ELROOTFS}/cross-tools || \
+  ${SRCMIPS64ELROOTFS}/file-${FILE_VERSION}/configure --prefix=${PREFIXMIPS64ELROOTFS}/cross-tools || \
     die "***config file error" && \
       touch ${METADATAMIPS64ELROOTFS}/file_config
 [ -f "${METADATAMIPS64ELROOTFS}/file_build" ] || \
@@ -2780,7 +2780,7 @@ pushd ${BUILDMIPS64ELROOTFS}
 cd file-32
 [ -f "${METADATAMIPS64ELROOTFS}/file_config32" ] || \
   CC="${CC} ${BUILD32}" \
-  ${SRCMIPS64ELROOTFS}/file-${FILE11_VERSION}/configure --prefix=/usr \
+  ${SRCMIPS64ELROOTFS}/file-${FILE_VERSION}/configure --prefix=/usr \
   --build=${CROSS_HOST} --host=${CROSS_TARGET32} || \
     die "***config file32 error" && \
       touch ${METADATAMIPS64ELROOTFS}/file_config32
@@ -2800,7 +2800,7 @@ pushd ${BUILDMIPS64ELROOTFS}
 cd file-n32
 [ -f "${METADATAMIPS64ELROOTFS}/file_confign32" ] || \
   CC="${CC} ${BUILDN32}" \
-  ${SRCMIPS64ELROOTFS}/file-${FILE11_VERSION}/configure --prefix=/usr \
+  ${SRCMIPS64ELROOTFS}/file-${FILE_VERSION}/configure --prefix=/usr \
   --build=${CROSS_HOST} --host=${CROSS_TARGET64} --libdir=/usr/lib32 || \
     die "***config filen32 error" && \
       touch ${METADATAMIPS64ELROOTFS}/file_confign32
@@ -2820,7 +2820,7 @@ pushd ${BUILDMIPS64ELROOTFS}
 cd file-64
 [ -f "${METADATAMIPS64ELROOTFS}/file_config64" ] || \
   CC="${CC} ${BUILD64}" \
-  ${SRCMIPS64ELROOTFS}/file-${FILE11_VERSION}/configure --prefix=/usr \
+  ${SRCMIPS64ELROOTFS}/file-${FILE_VERSION}/configure --prefix=/usr \
   --build=${CROSS_HOST} --host=${CROSS_TARGET64} --libdir=/usr/lib64 || \
     die "***config file64 error" && \
       touch ${METADATAMIPS64ELROOTFS}/file_config64
