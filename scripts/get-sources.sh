@@ -8,13 +8,6 @@ source source.sh
 
 pushd ${METADATADOWN}
 
-#arcload-0.5.tar.bz2
-#[ -f arcload_download ] || \
-#download "arcload-${ARCLOAD_VERSION}.${ARCLOAD_SUFFIX}" \
-#  "${ARCLOAD_URL}/arcload-${ARCLOAD_VERSION}.${ARCLOAD_SUFFIX}" || \
-#  die "download arcload error" && \
-#    touch arcload_download
-
 #autoconf-2.69.tar.xz
 [ -f autoconf_download ] || \
 download "autoconf-${AUTOCONF_VERSION}.${AUTOCONF_SUFFIX}" \
@@ -133,20 +126,6 @@ download "e2fsprogs-${E2FSPROGS_VERSION}.${E2FSPROGS_SUFFIX}" \
   die "download e2fsprogs error" && \
     touch e2fsprogs_download
 
-#eglibc-2.15.tar.bz2
-[ -f eglibc_download ] || \
-download "eglibc-${EGLIBC_VERSION}-r21467.${EGLIBC_SUFFIX}" \
-  "${EGLIBC_URL}/eglibc-${EGLIBC_VERSION}-r21467.${EGLIBC_SUFFIX}" || \
-  die "download eglibc error" && \
-    touch eglibc_download
-
-#eglibc-ports-2.15.tar.xz
-[ -f eglibcports_download ] || \
-download "eglibc-ports-${EGLIBCPORTS_VERSION}-r21467.${EGLIBCPORTS_SUFFIX}" \
-  "${EGLIBCPORTS_URL}/eglibc-ports-${EGLIBCPORTS_VERSION}-r21467.${EGLIBCPORTS_SUFFIX}" || \
-  die "download eglibc-ports error" && \
-    touch eglibcports_download
-
 #expat-2.1.0.tar.gz
 [ -f expat_download ] || \
 download "expat-${EXPAT_VERSION}.${EXPAT_SUFFIX}" \
@@ -161,19 +140,12 @@ download "expect${EXPECT_VERSION}.${EXPECT_SUFFIX}" \
   die "download expect error" && \
     touch expect_download
 
-#file-5.09.tar.gz
-[ -f file-5.09_download ] || \
-download "file-${FILE9_VERSION}.${FILE9_SUFFIX}" \
-  "${FILE9_URL}/file-${FILE9_VERSION}.${FILE9_SUFFIX}" || \
+#file-5.12.tar.gz
+[ -f file_download ] || \
+download "file-${FILE_VERSION}.${FILE_SUFFIX}" \
+  "${FILE_URL}/file-${FILE_VERSION}.${FILE_SUFFIX}" || \
   die "download file error" && \
-    touch file-5.09_download
-
-#file-5.11.tar.gz
-[ -f file-5.11_download ] || \
-download "file-${FILE11_VERSION}.${FILE11_SUFFIX}" \
-  "${FILE11_URL}/file-${FILE11_VERSION}.${FILE11_SUFFIX}" || \
-  die "download file2 error" && \
-    touch file-5.11_download
+    touch file_download
 
 #findutils-4.4.2.tar.gz
 [ -f findutils_download ] || \
@@ -223,6 +195,13 @@ download "glib-${GLIB_VERSION}.${GLIB_SUFFIX}" \
   "${GLIB_URL}/glib-${GLIB_VERSION}.${GLIB_SUFFIX}" || \
   die "download glib error" && \
     touch glib_download
+
+#glibc-2.17.tar.xz
+[ -f glibc_download ] || \
+download "glibc-${GLIBC_VERSION}.${GLIBC_SUFFIX}" \
+  "${GLIBC_URL}/glibc-${GLIBC_VERSION}.${GLIBC_SUFFIX}" || \
+  die "download glibc error" && \
+    touch glibc_download
 
 #gmp-5.0.5.tar.bz2
 [ -f gmp_download ] || \
@@ -566,13 +545,6 @@ download "vim-${VIM_VERSION}.${VIM_SUFFIX}" \
   "${VIM_URL}/vim-${VIM_VERSION}.${VIM_SUFFIX}" || \
   die "download vim error" && \
     touch vim_download
-
-#wxGTK-2.8.8.tar.bz2
-[ -f wxGTK_download ] || \
-download "wxGTK-${WXGTK_VERSION}.${WXGTK_SUFFIX}" \
-  "${WXGTK_URL}/wxGTK-${WXGTK_VERSION}.${WXGTK_SUFFIX}" || \
-  die "download wxGTK error" && \
-    touch wxGTK_download
 
 #xz-5.0.3.tar.bz2
 [ -f xz_download ] || \
