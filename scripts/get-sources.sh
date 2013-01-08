@@ -416,12 +416,6 @@ download "tar-${TAR_VERSION}.${TAR_SUFFIX}" \
   die "download tar error" && \
     touch tar_download
 
-[ -f tcl_download ] || \
-download "tcl${TCL_VERSION}.${TCL_SUFFIX}" \
-  "${TCL_URL}/tcl${TCL_VERSION}.${TCL_SUFFIX}" || \
-  die "download tcl error" && \
-    touch tcl_download
-
 [ -f termcap_download ] || \
 download "termcap-${TERMCAP_VERSION}.${TERMCAP_SUFFIX}" \
   "${TERMCAP_URL}/termcap-${TERMCAP_VERSION}.${TERMCAP_SUFFIX}" || \
@@ -433,18 +427,6 @@ download "texinfo-${TEXINFO_VERSION}a.${TEXINFO_SUFFIX}" \
   "${TEXINFO_URL}/texinfo-${TEXINFO_VERSION}a.${TEXINFO_SUFFIX}" || \
   die "download texinfo error" && \
     touch texinfo_download
-
-[ -f tk_download ] || \
-download "tk${TK_VERSION}.${TK_SUFFIX}" \
-  "${TK_URL}/tk${TK_VERSION}.${TK_SUFFIX}" || \
-  die "download tk error" && \
-    touch tk_download
-
-[ -f uClibc_download ] || \
-download "uClibc-${UCLIBC_VERSION}.${UCLIBC_SUFFIX}" \
-  "${UCLIBC_URL}/uClibc-${UCLIBC_VERSION}.${UCLIBC_SUFFIX}" || \
-  die "download uClibc error" && \
-    touch uClibc_download
 
 [ -f udev_download ] || \
 download "udev-${UDEV_VERSION}.${UDEV_SUFFIX}" \

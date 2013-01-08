@@ -220,24 +220,15 @@ export SYSVINIT_URL=http://download.savannah.gnu.org/releases/sysvinit
 export TAR_VERSION=1.26
 export TAR_SUFFIX=${BZ}
 export TAR_URL=http://ftp.gnu.org/gnu/tar
-export TCL_VERSION=8.6.0-src
-export TCL_SUFFIX=${GZ}
-export TCL_URL=http://downloads.sourceforge.net/tcl
 export TERMCAP_VERSION=1.3.1
 export TERMCAP_SUFFIX=${GZ}
 export TERMCAP_URL=http://fossies.org/unix/misc/old
 export TEXINFO_VERSION=4.13
 export TEXINFO_SUFFIX=${GZ}
 export TEXINFO_URL=http://ftp.gnu.org/gnu/texinfo
-export TK_VERSION=8.5.13-src
-export TK_SUFFIX=${GZ}
-export TK_URL=http://mon1.saske.sk/gentoo/distfiles
 export U_VERSION=2012.10
 export U_SUFFIX=${BZ}
 export U_URL=http://ftp.denx.de/pub/u-boot
-export UCLIBC_VERSION=0.9.33.2
-export UCLIBC_SUFFIX=${XZ}
-export UCLIBC_URL=http://www.uclibc.org/downloads
 export UDEV_VERSION=182
 export UDEV_SUFFIX=${XZ}
 export UDEV_URL=http://www.kernel.org/pub//linux/utils/kernel/hotplug
@@ -280,7 +271,7 @@ export CROSS_RTEMSTARGET64="mips64-rtems4.11"
 export CROSS_RTEMSTARGET32="mips-rtems4.11"
 export CROSS_BARETARGET64="mips64el-unknown-elf"
 export CROSS_BARETARGET32="mipsel-unknown-elf"
-export QEMU_TARGET="mips64el-softmmu,mipsel-softmmu,mipsel-linux-user,mips64-softmmu,mips-softmmu,mips-linux-user"
+export QEMU_TARGET="mips64el-softmmu,mipsel-softmmu"
 
 export BUILD32="-mabi=32"
 export BUILDN32="-mabi=n32"

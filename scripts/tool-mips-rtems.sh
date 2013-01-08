@@ -33,7 +33,7 @@ tar xf ${TARBALL}/autoconf-${AUTOCONF_VERSION}.${AUTOCONF_SUFFIX} || \
     touch ${METADATARTEMS32}/autoconf_extract
 
 [ -f ${METADATARTEMS32}/automake_extract ] || \
-tar xf ${TARBALL}/automake-${AUTOMAKE_VERSION}.${AUTOMAKE_SUFFIX} || \
+tar xf ${TARBALL}/automake-${AUTOMAKE_RTEMS_VERSION}.${AUTOMAKE_RTEMS_SUFFIX} || \
   die "extract automake error" && \
     touch ${METADATARTEMS32}/automake_extract
 
@@ -61,33 +61,31 @@ popd
 #################################################################
 ### 32bit rtems patch
 #################################################################
-pushd ${SRCRTEMS32}/binutils-${BINUTILS_VERSION}
-[ -f ${METADATARTEMS32}/binutils_patched ] || \
-patch -p1 < ${PATCH}/binutils-2.22-rtems4.11-20120427.diff || \
-  die "patch 32bit binutils error" && \
-  touch ${METADATARTEMS32}/binutils_patched
-popd
-
 pushd ${SRCRTEMS32}/gcc-${GCC_VERSION}
 [ -f ${METADATARTEMS32}/gcc_patched ] || \
-patch -p1 < ${PATCH}/gcc-core-4.6.3-rtems4.11-20120303.diff || \
+patch -p1 < ${PATCH}/gcc-4.7.2-rtems4.11-20121026.diff || \
   die "patch 32bit gcc error" && \
   touch ${METADATARTEMS32}/gcc_patched
 popd
 
 pushd ${SRCRTEMS32}/newlib-${NEWLIB_VERSION}
 [ -f ${METADATARTEMS32}/newlib_patched ] || \
-patch -p1 < ${PATCH}/newlib-1.20.0-rtems4.11-20120718.diff || \
+patch -p1 < ${PATCH}/newlib-1.20.0-rtems4.11-20121011.diff || \
   die "patch 32bit newlib error" && \
   touch ${METADATARTEMS32}/newlib_patched
 popd
 
 pushd ${SRCRTEMS32}/gdb-${GDB_VERSION}
 [ -f ${METADATARTEMS32}/gdb_patched ] || \
-patch -p1 < ${PATCH}/gdb-7.4-rtems4.11-20120125.diff || \
+patch -p1 < ${PATCH}/gdb-7.5.1-rtems4.11-20121130.diff || \
   die "patch 32bit gdb error" && \
   touch ${METADATARTEMS32}/gdb_patched
 popd
+
+
+#################################################################
+### 32bit newlib link
+#################################################################
 
 pushd ${SRCRTEMS32}/gcc-${GCC_VERSION}
 [ -f ${METADATARTEMS32}/newlib_linked ] || \
@@ -166,7 +164,7 @@ pushd ${BUILDRTEMS32}
 [ -d "automake-build" ] || mkdir automake-build
 cd automake-build
 [ -f "${METADATARTEMS32}/automake_configure" ] || \
-  ${SRCRTEMS32}/automake-${AUTOMAKE_VERSION}/configure \
+  ${SRCRTEMS32}/automake-${AUTOMAKE_RTEMS_VERSION}/configure \
   --prefix=${PREFIXRTEMS32} || \
     die "***config 32bit rtems automake error" && \
       touch ${METADATARTEMS32}/automake_configure
