@@ -1,0 +1,110 @@
+From 46c2bec6fadb89196a1b42d9ac62d28c5c9c0d20 Mon Sep 17 00:00:00 2001
+From: Dongxue Zhang <elta.era@gmail.com>
+Date: Tue, 8 Jan 2013 09:20:52 +0800
+Subject: [PATCH] iputils-s20121221.patch
+Content-Type: text/plain; charset="utf-8"
+
+---
+ Makefile     |    2 +-
+ arping.c     |    9 +++++++--
+ doc/Makefile |    6 +++++-
+ ping.c       |    2 +-
+ tracepath.c  |    4 ++--
+ 5 files changed, 16 insertions(+), 7 deletions(-)
+
+diff --git a/Makefile b/Makefile
+index c62d9df..771390a 100644
+--- a/Makefile
++++ b/Makefile
+@@ -106,7 +106,7 @@ endif
+ endif
+ 
+ # -------------------------------------
+-IPV4_TARGETS=tracepath ping clockdiff rdisc arping tftpd rarpd
++IPV4_TARGETS=tracepath ping clockdiff arping
+ IPV6_TARGETS=tracepath6 traceroute6 ping6
+ TARGETS=$(IPV4_TARGETS) $(IPV6_TARGETS)
+ 
+diff --git a/arping.c b/arping.c
+index 35408c1..ef70ea0 100644
+--- a/arping.c
++++ b/arping.c
+@@ -348,15 +348,20 @@ void catcher(void)
+ 	tv_o.tv_sec = timeout;
+ 	tv_o.tv_usec = 500 * 1000;
+ 
+-	if (count-- == 0 || (timeout && timercmp(&tv_s, &tv_o, >)))
++	if (timeout && MS_TDIFF(tv,start) > timeout*1000 + 500)
+ 		finish();
+ 
+ 	timersub(&tv, &last, &tv_s);
+ 	tv_o.tv_sec = 0;
+ 
+-	if (last.tv_sec==0 || timercmp(&tv_s, &tv_o, >)) {
++	if ((!timeout) && (count == 0))
++	    finish();
++
++	if ( count!=0  && (last.tv_sec==0 || MS_TDIFF(tv,last) > 500 ) ) {
+ 		send_pack(s, src, dst,
+ 			  (struct sockaddr_ll *)&me, (struct sockaddr_ll *)&he);
++		if (count >= 0)
++			count--;
+ 		if (count == 0 && unsolicited)
+ 			finish();
+ 	}
+diff --git a/doc/Makefile b/doc/Makefile
+index 7ec4f1c..26083bf 100644
+--- a/doc/Makefile
++++ b/doc/Makefile
+@@ -6,7 +6,7 @@ all: html
+ 
+ html: $(HTMLFILES) iputils.html
+ 
+-man: $(MANFILES)
++man: $(MANFILES) fix_sgml2man
+ 
+ # docbook scripts are incredibly dirty in the sense that they leak
+ # lots of some strange temporary junk directories and files.
+@@ -33,6 +33,10 @@ $(MANFILES): index.db
+ 	@set -e; cd tmp.db2man; nsgmls ../$< | sgmlspl ../docbook2man-spec.pl ;	mv $@ ..
+ 	@-rm -rf tmp.db2man
+ 
++fix_sgml2man:
++	@sed -i -e 's!\\fB\\fIdestination\\fB\\fR \[\\fB/\\fIport\\fB\\fR\]!\\fB\\fIdestination\\fB\\fR[\\fB/\\fIport\\fB\\fR]!g' tracepath.8
++
++
+ clean:
+ 	@rm -rf $(MANFILES) $(HTMLFILES) iputils.html tmp.db2html tmp.db2man
+ 
+diff --git a/ping.c b/ping.c
+index c0366cd..4989760 100644
+--- a/ping.c
++++ b/ping.c
+@@ -279,7 +279,7 @@ main(int argc, char **argv)
+ #else
+ 			idn = target;
+ #endif
+-			hp = gethostbyname(idn);
++			hp = gethostbyname2(idn, AF_INET);
+ 			if (!hp) {
+ 				fprintf(stderr, "ping: unknown host %s\n", target);
+ 				exit(2);
+diff --git a/tracepath.c b/tracepath.c
+index 8a08f1d..ff8db07 100644
+--- a/tracepath.c
++++ b/tracepath.c
+@@ -370,9 +370,9 @@ main(int argc, char **argv)
+ 	}
+ #endif
+ 
+-	he = gethostbyname(p);
++	he = gethostbyname2(p, AF_INET);
+ 	if (he == NULL) {
+-		herror("gethostbyname");
++		herror("gethostbyname2");
+ 		exit(1);
+ 	}
+ 
+-- 
+1.7.10.4
+
