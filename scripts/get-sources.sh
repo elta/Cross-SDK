@@ -218,6 +218,12 @@ download "iputils-${IPUTILS_VERSION}.${IPUTILS_SUFFIX}" \
   die "download iputils error" && \
     touch iputils_download
 
+[ -f jsonc_download ] || \
+download "json-c-${JSONC_VERSION}.${JSONC_SUFFIX}" \
+  "${JSONC_URL}/json-c-${JSONC_VERSION}.${JSONC_SUFFIX}" || \
+  die "download json-c error" && \
+    touch jsonc_download
+
 [ -f kbd_download ] || \
 download "kbd-${KBD_VERSION}.${KBD_SUFFIX}" \
   "${KBD_URL}/kbd-${KBD_VERSION}.${KBD_SUFFIX}" || \
