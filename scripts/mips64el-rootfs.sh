@@ -2,7 +2,7 @@
 
 source source.sh
 
-export PATH=$PATH:${PREFIXMIPS64ELROOTFS}/cross-tools/bin
+export PATH=${PREFIXMIPS64ELROOTFS}/cross-tools/bin:$PATH
 
 [ -d "${SRCMIPS64ELROOTFS}" ] || mkdir -p "${SRCMIPS64ELROOTFS}"
 [ -d "${BUILDMIPS64ELROOTFS}" ] || mkdir -p "${BUILDMIPS64ELROOTFS}"
@@ -13,21 +13,62 @@ mkdir -p ${PREFIXMIPS64ELROOTFS}
 mkdir -p ${PREFIXMIPS64ELROOTFS}/cross-tools
 
 #################### Creating Directories ###############
-mkdir -pv ${PREFIXMIPS64ELROOTFS}/{bin,boot,dev,{etc/,}opt,home,lib,mnt,run}
-mkdir -pv ${PREFIXMIPS64ELROOTFS}/{proc,media/{floppy,cdrom},sbin,srv,sys}
-mkdir -pv ${PREFIXMIPS64ELROOTFS}/var/{lock,log,mail,run,spool}
-mkdir -pv ${PREFIXMIPS64ELROOTFS}/var/{opt,cache,lib/{misc,locate,hwclock},local}
-install -dv -m 0750 ${PREFIXMIPS64ELROOTFS}/root
-install -dv -m 1777 ${PREFIXMIPS64ELROOTFS}{/var,}/tmp
-mkdir -pv ${PREFIXMIPS64ELROOTFS}/usr/{,local/}{bin,include,lib,sbin,src}
-mkdir -pv ${PREFIXMIPS64ELROOTFS}/usr/{,local/}share/{doc,info,locale,man}
-mkdir -pv ${PREFIXMIPS64ELROOTFS}/usr/{,local/}share/{misc,terminfo,zoneinfo}
-mkdir -pv ${PREFIXMIPS64ELROOTFS}/usr/{,local/}share/man/man{1,2,3,4,5,6,7,8}
-for dir in ${PREFIXMIPS64ELROOTFS}/usr{,/local}; do
-  ln -sfnv share/{man,doc,info} ${dir};
-done
-touch ${PREFIXMIPS64ELROOTFS}/{,var/}run/utmp ${PREFIXMIPS64ELROOTFS}/var/log/{btmp,lastlog,wtmp}
-mkdir -pv ${PREFIXMIPS64ELROOTFS}/etc/sysconfig
+[ -f "${METADATAMIPS64ELROOTFS}/create_bin_dirs" ] || \
+  mkdir -pv ${PREFIXMIPS64ELROOTFS}/{bin,boot,dev,{etc/,}opt,home,lib,mnt,run} || \
+    die "create {bin,boot,dev,{etc/,}opt,home,lib,mnt,run} dirs error" && \
+      touch ${METADATAMIPS64ELROOTFS}/create_bin_dirs
+[ -f "${METADATAMIPS64ELROOTFS}/create_proc_dirs" ] || \
+  mkdir -pv ${PREFIXMIPS64ELROOTFS}/{proc,media/{floppy,cdrom},sbin,srv,sys} || \
+    die "create {proc,media/{floppy,cdrom},sbin,srv,sys} error" && \
+      touch ${METADATAMIPS64ELROOTFS}/create_proc_dirs
+[ -f "${METADATAMIPS64ELROOTFS}/create_var.lock" ] || \
+  mkdir -pv ${PREFIXMIPS64ELROOTFS}/var/{lock,log,mail,run,spool} || \
+    die "create var/{lock,log,mail,run,spool} error" && \
+      touch ${METADATAMIPS64ELROOTFS}/create_var.lock
+[ -f "${METADATAMIPS64ELROOTFS}/create_var.opt" ] || \
+  mkdir -pv ${PREFIXMIPS64ELROOTFS}/var/{opt,cache,lib/{misc,locate,hwclock},local} || \
+    die "create var/{opt,cache,lib/{misc,locate,hwclock},local} error" && \
+      touch ${METADATAMIPS64ELROOTFS}/create_var.opt
+[ -f "${METADATAMIPS64ELROOTFS}/create_root" ] || \
+  install -dv -m 0750 ${PREFIXMIPS64ELROOTFS}/root || \
+    die "create root error" && \
+      touch ${METADATAMIPS64ELROOTFS}/create_root
+[ -f "${METADATAMIPS64ELROOTFS}/create_var.tmp" ] || \
+    install -dv -m 1777 ${PREFIXMIPS64ELROOTFS}{/var,}/tmp || \
+      die "create {/var,}/tmp error" && \
+        touch ${METADATAMIPS64ELROOTFS}/create_var.tmp
+[ -f "${METADATAMIPS64ELROOTFS}/create_usr_local.bin" ] || \
+    mkdir -pv ${PREFIXMIPS64ELROOTFS}/usr/{,local/}{bin,include,lib,sbin,src} || \
+      die "create usr/{,local/}{bin,include,lib,sbin,src} error" && \
+        touch ${METADATAMIPS64ELROOTFS}/create_usr_local.bin
+[ -f "${METADATAMIPS64ELROOTFS}/create_usr_local.share.doc" ] || \
+  mkdir -pv ${PREFIXMIPS64ELROOTFS}/usr/{,local/}share/{doc,info,locale,man} || \
+    die "create usr/{,local/}share/{doc,info,locale,man} error" && \
+      touch ${METADATAMIPS64ELROOTFS}/create_usr_local.share.doc
+[ -f "${METADATAMIPS64ELROOTFS}/create_usr.local.share.misc" ] || \
+  mkdir -pv ${PREFIXMIPS64ELROOTFS}/usr/{,local/}share/{misc,terminfo,zoneinfo} || \
+    die "create usr/{,local/}share/{misc,terminfo,zoneinfo} error" && \
+      touch ${METADATAMIPS64ELROOTFS}/create_usr.local.share.misc
+[ -f "${METADATAMIPS64ELROOTFS}/create_usr_local.share.man" ] || \
+  mkdir -pv ${PREFIXMIPS64ELROOTFS}/usr/{,local/}share/man/man{1,2,3,4,5,6,7,8} || \
+    die "create usr/{,local/}share/man/man{1,2,3,4,5,6,7,8} error" && \
+      touch ${METADATAMIPS64ELROOTFS}/create_usr_local.share.man
+[ -f "${METADATAMIPS64ELROOTFS}/link_usr_share" ] || \
+  ln -sfnv share/{man,doc,info} ${PREFIXMIPS64ELROOTFS}/usr || \
+    die "link usr.share error" && \
+      touch ${METADATAMIPS64ELROOTFS}/link_usr_share
+[ -f "${METADATAMIPS64ELROOTFS}/link_usr.local_share" ] || \
+  ln -sfnv share/{man,doc,info} ${PREFIXMIPS64ELROOTFS}/usr/local || \
+    die "create link usr.local.share error" && \
+      touch ${METADATAMIPS64ELROOTFS}/link_usr.local_share
+[ -f "${METADATAMIPS64ELROOTFS}/touch_var.run.utmp" ] || \
+  touch ${PREFIXMIPS64ELROOTFS}/{,var/}run/utmp ${PREFIXMIPS64ELROOTFS}/var/log/{btmp,lastlog,wtmp} || \
+    die "touch {,var/}run/utmp ${PREFIXMIPS64ELROOTFS}/var/log/{btmp,lastlog,wtmp} error" && \
+      touch ${METADATAMIPS64ELROOTFS}/touch_var.run.utmp
+[ -f "${METADATAMIPS64ELROOTFS}/create_sysconfig" ] || \
+  mkdir -pv ${PREFIXMIPS64ELROOTFS}/etc/sysconfig || \
+    die "create sysconfig error" && \
+      touch ${METADATAMIPS64ELROOTFS}/create_sysconfig
 
 [ -f "${METADATAMIPS64ELROOTFS}/create_passwd" ] || \
   `cat > ${PREFIXMIPS64ELROOTFS}/etc/passwd << "EOF"
@@ -106,10 +147,10 @@ pushd ${SRCMIPS64ELROOTFS}
   tar xf ${TARBALL}/gcc-${GCC_VERSION}.${GCC_SUFFIX} || \
     die "extract gcc error" && \
       touch ${METADATAMIPS64ELROOTFS}/gcc_extract
-[ -f "${METADATAMIPS64ELROOTFS}/eglibc_extract" ] || \
-  tar xf ${TARBALL}/eglibc-${EGLIBC_VERSION}-r21467.${EGLIBC_SUFFIX} || \
-    die "extract eglibc error" && \
-      touch ${METADATAMIPS64ELROOTFS}/eglibc_extract
+[ -f "${METADATAMIPS64ELROOTFS}/glibc_extract" ] || \
+  tar xf ${TARBALL}/glibc-${GLIBC_VERSION}.${GLIBC_SUFFIX} || \
+    die "extract glibc error" && \
+      touch ${METADATAMIPS64ELROOTFS}/glibc_extract
 [ -f "${METADATAMIPS64ELROOTFS}/file_extract" ] || \
   tar xf ${TARBALL}/file-${FILE_VERSION}.${FILE_SUFFIX} || \
     die "extract file error" && \
@@ -258,6 +299,10 @@ pushd ${SRCMIPS64ELROOTFS}
   tar xf ${TARBALL}/rsyslog-${RSYSLOG_VERSION}.${RSYSLOG_SUFFIX} || \
     die "extract rsyslog error" && \
       touch ${METADATAMIPS64ELROOTFS}/rsyslog_extract
+[ -f "${METADATAMIPS64ELROOTFS}/jsonc_extract" ] || \
+  tar xf ${TARBALL}/json-c-${JSONC_VERSION}.${JSONC_SUFFIX} || \
+    die "extract json-c error" && \
+      touch ${METADATAMIPS64ELROOTFS}/jsonc_extract
 [ -f "${METADATAMIPS64ELROOTFS}/sysvinit_extract" ] || \
   tar xf ${TARBALL}/sysvinit-${SYSVINIT_VERSION}.${SYSVINIT_SUFFIX} || \
     die "extract sysvinit error" && \
@@ -304,14 +349,6 @@ pushd ${SRCMIPS64ELROOTFS}
       touch ${METADATAMIPS64ELROOTFS}/gdb_extract
 popd
 
-
-pushd ${SRCMIPS64ELROOTFS}/eglibc-${EGLIBC_VERSION}
-[ -f "${METADATAMIPS64ELROOTFS}/eglibc-ports_extract" ] || \
-  tar xf ${TARBALL}/eglibc-ports-${EGLIBCPORTS_VERSION}-r21467.${EGLIBCPORTS_SUFFIX} || \
-    die "extract eglibc ports error" && \
-      touch ${METADATAMIPS64ELROOTFS}/eglibc-ports_extract
-popd
-
 pushd ${BUILDMIPS64ELROOTFS}
 [ -f "${METADATAMIPS64ELROOTFS}/groff_extract" ] || \
   tar xf ${TARBALL}/groff-${GROFF_VERSION}.${GROFF_SUFFIX} || \
@@ -325,6 +362,10 @@ pushd ${BUILDMIPS64ELROOTFS}
   tar xf ${TARBALL}/iputils-${IPUTILS_VERSION}.${IPUTILS_SUFFIX} || \
     die "extract iputils error" && \
       touch ${METADATAMIPS64ELROOTFS}/iputils_extract
+[ -f "${METADATAMIPS64ELROOTFS}/dhcpcd_extract" ] || \
+  tar xf ${TARBALL}/dhcpcd-${DHCPCD_VERSION}.${DHCPCD_SUFFIX} || \
+    die "extract dhcpcd error" && \
+      touch ${METADATAMIPS64ELROOTFS}/dhcpcd_extract
 popd
 
 pushd ${SRCMIPS64ELROOTFS}
@@ -439,11 +480,10 @@ pushd ${BUILDMIPS64ELROOTFS}
 cd ppl-build
 [ -f "${METADATAMIPS64ELROOTFS}/ppl_config" ] || \
   LDFLAGS="-Wl,-rpath,${PREFIXMIPS64ELROOTFS}/cross-tools/lib" \
-  ${SRCMIPS64ELROOTFS}/ppl-${PPL_VERSION}/configure --prefix=${PREFIXMIPS64ELROOTFS}/cross-tools \
-  --enable-shared \
-  --enable-interfaces="c,cxx" --disable-optimization \
-  --with-libgmp-prefix=${PREFIXMIPS64ELROOTFS}/cross-tools \
-  --with-libgmpxx-prefix=${PREFIXMIPS64ELROOTFS}/cross-tools || \
+  ${SRCMIPS64ELROOTFS}/ppl-${PPL_VERSION}/configure \
+  --prefix=${PREFIXMIPS64ELROOTFS}/cross-tools \
+  --enable-shared --enable-interfaces="c,cxx" --disable-optimization \
+  --with-gmp=${PREFIXMIPS64ELROOTFS}/cross-tools || \
     die "***config ppl error" && \
       touch ${METADATAMIPS64ELROOTFS}/ppl_config
 [ -f "${METADATAMIPS64ELROOTFS}/ppl_build" ] || \
@@ -531,6 +571,35 @@ EOF` || \
       touch ${METADATAMIPS64ELROOTFS}/libee_install
 popd
 
+pushd ${BUILDMIPS64ELROOTFS}
+[ -d json-c-build ] || mkdir json-c-build
+cd json-c-build
+[ -f "${METADATAMIPS64ELROOTFS}/json-c_create_config.cache" ] || \
+  `cat > config.cache << EOF
+ac_cv_func_malloc_0_nonnull=yes
+ac_cv_func_realloc_0_nonnull=yes
+EOF` || \
+    die "create json-c config.cache error" && \
+      touch ${METADATAMIPS64ELROOTFS}/json-c_create_config.cache
+[ -f "${METADATAMIPS64ELROOTFS}/json-c_config" ] || \
+  PKG_CONFIG_PATH=${PREFIXMIPS64ELROOTFS}/cross-tools/lib/pkgconfig \
+  CPPFLAGS="-I${PREFIXMIPS64ELROOTFS}/cross-tools/include" \
+  LDFLAGS="-L${PREFIXMIPS64ELROOTFS}/cross-tools/lib" \
+   ${SRCMIPS64ELROOTFS}/json-c-${JSONC_VERSION}/configure \
+  --prefix=/cross-tools --sbindir=/sbin \
+  --cache-file=config.cache || \
+    die "***config json-c error" && \
+      touch ${METADATAMIPS64ELROOTFS}/json-c_config
+[ -f "${METADATAMIPS64ELROOTFS}/json-c_build" ] || \
+  make || \
+    die "***build json-c error" && \
+      touch ${METADATAMIPS64ELROOTFS}/json-c_build
+[ -f "${METADATAMIPS64ELROOTFS}/json-c_install" ] || \
+  make DESTDIR=${PREFIXMIPS64ELROOTFS} install || \
+    die "***install json-c error" && \
+      touch ${METADATAMIPS64ELROOTFS}/json-c_install
+popd
+
 # TREATE AS PATCH
 pushd ${SRCMIPS64ELROOTFS}/util-${UTIL_VERSION}
 cp hwclock/hwclock.c{,.orig}
@@ -604,13 +673,15 @@ cd gcc-build-stage1
 [ -f "${METADATAMIPS64ELROOTFS}/gcc_stage1_config" ] || \
   AR=ar LDFLAGS="-Wl,-rpath,${PREFIXMIPS64ELROOTFS}/cross-tools/lib" \
   ${SRCMIPS64ELROOTFS}/gcc-${GCC_VERSION}/configure \
-  --prefix=${PREFIXMIPS64ELROOTFS}/cross-tools --build=${CROSS_HOST} --host=${CROSS_HOST} \
+  --prefix=${PREFIXMIPS64ELROOTFS}/cross-tools --build=${CROSS_HOST} \
+  --host=${CROSS_HOST} --disable-nls \
   --target=${CROSS_TARGET64} --with-sysroot=${PREFIXMIPS64ELROOTFS} \
-  --disable-nls \
   --without-headers --with-newlib --disable-decimal-float \
   --disable-libgomp --disable-libmudflap --disable-libssp \
-  --with-mpfr=${PREFIXMIPS64ELROOTFS}/cross-tools --with-gmp=${PREFIXMIPS64ELROOTFS}/cross-tools \
-  --with-ppl=${PREFIXMIPS64ELROOTFS}/cross-tools --with-cloog=${PREFIXMIPS64ELROOTFS}/cross-tools \
+  --with-mpfr=${PREFIXMIPS64ELROOTFS}/cross-tools \
+  --with-gmp=${PREFIXMIPS64ELROOTFS}/cross-tools \
+  --with-ppl=${PREFIXMIPS64ELROOTFS}/cross-tools \
+  --with-cloog=${PREFIXMIPS64ELROOTFS}/cross-tools \
   --with-mpc=${PREFIXMIPS64ELROOTFS}/cross-tools \
   --disable-shared --disable-threads --enable-languages=c \
   --enable-cloog-backend=isl || \
@@ -626,148 +697,139 @@ cd gcc-build-stage1
       touch ${METADATAMIPS64ELROOTFS}/gcc_stage1_install
 popd
 
-# As a patch to eglibc
-pushd ${SRCMIPS64ELROOTFS}/eglibc-${EGLIBC_VERSION}
-[ -f "${METADATAMIPS64ELROOTFS}/eglibc_update_Makefile" ] || \
-  cp Makeconfig{,.orig} &&
-  sed -e 's/-lgcc_eh//g' Makeconfig.orig > Makeconfig || \
-    die "update eglibc Makefile error" && \
-      touch ${METADATAMIPS64ELROOTFS}/eglibc_update_Makefile
-popd
-
 pushd ${BUILDMIPS64ELROOTFS}
-[ -d "eglibc-build32" ] || mkdir eglibc-build32
-cd eglibc-build32
-[ -f "${METADATAMIPS64ELROOTFS}/eglibc_create32_config.cache" ] || \
+[ -d "glibc-build32" ] || mkdir glibc-build32
+cd glibc-build32
+[ -f "${METADATAMIPS64ELROOTFS}/glibc_create32_config.cache" ] || \
   `cat > config.cache << "EOF"
 libc_cv_forced_unwind=yes
 libc_cv_c_cleanup=yes
 libc_cv_gnu89_inline=yes
 EOF` || \
-    die "create eglibc32 config.cache" && \
-      touch ${METADATAMIPS64ELROOTFS}/eglibc_create32_config.cache
+    die "create glibc32 config.cache" && \
+      touch ${METADATAMIPS64ELROOTFS}/glibc_create32_config.cache
 
-[ -f "${METADATAMIPS64ELROOTFS}/eglibc_update32_configparms" ] || \
+[ -f "${METADATAMIPS64ELROOTFS}/glibc_update32_configparms" ] || \
   `cat > configparms << EOF
 install_root=${PREFIXMIPS64ELROOTFS}
 EOF` || \
-    die "update eglibc32 configparms" && \
-      touch ${METADATAMIPS64ELROOTFS}/eglibc_update32_configparms
+    die "update glibc32 configparms" && \
+      touch ${METADATAMIPS64ELROOTFS}/glibc_update32_configparms
 
-[ -f "${METADATAMIPS64ELROOTFS}/eglibc_config32" ] || \
+[ -f "${METADATAMIPS64ELROOTFS}/glibc_config32" ] || \
   BUILD_CC="gcc" CC="${CROSS_TARGET64}-gcc ${BUILD32}" \
   AR="${CROSS_TARGET64}-ar" RANLIB="${CROSS_TARGET64}-ranlib" \
   CFLAGS_FOR_TARGET="-O2" CFLAGS+="-O2" \
-  ${SRCMIPS64ELROOTFS}/eglibc-${EGLIBC_VERSION}/configure \
-  --prefix=/usr --libexecdir=/usr/lib/eglibc \
+  ${SRCMIPS64ELROOTFS}/glibc-${GLIBC_VERSION}/configure \
+  --prefix=/usr --libexecdir=/usr/lib/glibc \
   --host=${CROSS_TARGET32} --build=${CROSS_HOST} \
   --disable-profile --enable-add-ons --with-tls --enable-kernel=2.6.0 \
   --with-__thread --with-binutils=${PREFIXMIPS64ELROOTFS}/cross-tools/bin \
   --with-headers=${PREFIXMIPS64ELROOTFS}/usr/include --cache-file=config.cache || \
-    die "***config eglibc32 error" && \
-      touch ${METADATAMIPS64ELROOTFS}/eglibc_config32
-[ -f "${METADATAMIPS64ELROOTFS}/eglibc_build32" ] || \
+    die "***config glibc32 error" && \
+      touch ${METADATAMIPS64ELROOTFS}/glibc_config32
+[ -f "${METADATAMIPS64ELROOTFS}/glibc_build32" ] || \
   make -j${JOBS} || \
-    die "***build eglibc32 error" && \
-      touch ${METADATAMIPS64ELROOTFS}/eglibc_build32
-[ -f "${METADATAMIPS64ELROOTFS}/eglibc_install32" ] || \
+    die "***build glibc32 error" && \
+      touch ${METADATAMIPS64ELROOTFS}/glibc_build32
+[ -f "${METADATAMIPS64ELROOTFS}/glibc_install32" ] || \
   make install || \
-    die "***install eglibc32 error" && \
-      touch ${METADATAMIPS64ELROOTFS}/eglibc_install32
+    die "***install glibc32 error" && \
+      touch ${METADATAMIPS64ELROOTFS}/glibc_install32
 popd
 
 pushd ${BUILDMIPS64ELROOTFS}
-[ -d "eglibc-buildn32" ] || mkdir eglibc-buildn32
-cd eglibc-buildn32
-[ -f "${METADATAMIPS64ELROOTFS}/eglibc_createn32_config.cache" ] || \
+[ -d "glibc-buildn32" ] || mkdir glibc-buildn32
+cd glibc-buildn32
+[ -f "${METADATAMIPS64ELROOTFS}/glibc_createn32_config.cache" ] || \
   `cat > config.cache << "EOF"
 libc_cv_forced_unwind=yes
 libc_cv_c_cleanup=yes
 libc_cv_gnu89_inline=yes
 EOF` || \
-    die "create eglibcn32 config.cache" && \
-      touch ${METADATAMIPS64ELROOTFS}/eglibc_createn32_config.cache
+    die "create glibcn32 config.cache" && \
+      touch ${METADATAMIPS64ELROOTFS}/glibc_createn32_config.cache
 
-[ -f "${METADATAMIPS64ELROOTFS}/eglibc_updaten32_configparms" ] || \
+[ -f "${METADATAMIPS64ELROOTFS}/glibc_updaten32_configparms" ] || \
   `cat > configparms << EOF
 install_root=${PREFIXMIPS64ELROOTFS}
 EOF` || \
-    die "update eglibcn32 configparms" && \
-      touch ${METADATAMIPS64ELROOTFS}/eglibc_updaten32_configparms
+    die "update glibcn32 configparms" && \
+      touch ${METADATAMIPS64ELROOTFS}/glibc_updaten32_configparms
 
 
-[ -f "${METADATAMIPS64ELROOTFS}/eglibc_confign32" ] || \
+[ -f "${METADATAMIPS64ELROOTFS}/glibc_confign32" ] || \
   BUILD_CC="gcc" CC="${CROSS_TARGET64}-gcc ${BUILDN32}" \
   AR="${CROSS_TARGET64}-ar" RANLIB="${CROSS_TARGET64}-ranlib" \
   CFLAGS_FOR_TARGET="-O2" CFLAGS+="-O2" \
-  ${SRCMIPS64ELROOTFS}/eglibc-${EGLIBC_VERSION}/configure \
+  ${SRCMIPS64ELROOTFS}/glibc-${GLIBC_VERSION}/configure \
   --prefix=/usr --libdir=/usr/lib32 \
-  --libexecdir=/usr/lib32/eglibc --host=${CROSS_TARGET64} --build=${CROSS_HOST} \
+  --libexecdir=/usr/lib32/glibc --host=${CROSS_TARGET64} --build=${CROSS_HOST} \
   --disable-profile --enable-add-ons --with-tls --enable-kernel=2.6.0 \
   --with-__thread --with-binutils=${PREFIXMIPS64ELROOTFS}/cross-tools/bin \
   --with-headers=${PREFIXMIPS64ELROOTFS}/usr/include --cache-file=config.cache || \
-    die "***config eglibcn32 error" && \
-      touch ${METADATAMIPS64ELROOTFS}/eglibc_confign32
-[ -f "${METADATAMIPS64ELROOTFS}/eglibc_buildn32" ] || \
+    die "***config glibcn32 error" && \
+      touch ${METADATAMIPS64ELROOTFS}/glibc_confign32
+[ -f "${METADATAMIPS64ELROOTFS}/glibc_buildn32" ] || \
   make -j${JOBS} || \
-    die "***build eglibcn32 error" && \
-      touch ${METADATAMIPS64ELROOTFS}/eglibc_buildn32
-[ -f "${METADATAMIPS64ELROOTFS}/eglibc_installn32" ] || \
+    die "***build glibcn32 error" && \
+      touch ${METADATAMIPS64ELROOTFS}/glibc_buildn32
+[ -f "${METADATAMIPS64ELROOTFS}/glibc_installn32" ] || \
   make install || \
-    die "***install eglibcn32 error" && \
-      touch ${METADATAMIPS64ELROOTFS}/eglibc_installn32
+    die "***install glibcn32 error" && \
+      touch ${METADATAMIPS64ELROOTFS}/glibc_installn32
 popd
 
 pushd ${BUILDMIPS64ELROOTFS}
-[ -d "eglibc-build64" ] || mkdir eglibc-build64
-cd eglibc-build64
+[ -d "glibc-build64" ] || mkdir glibc-build64
+cd glibc-build64
 
-[ -f "${METADATAMIPS64ELROOTFS}/eglibc_create64_config.cache" ] || \
+[ -f "${METADATAMIPS64ELROOTFS}/glibc_create64_config.cache" ] || \
   `cat > config.cache << "EOF"
 libc_cv_forced_unwind=yes
 libc_cv_c_cleanup=yes
 libc_cv_gnu89_inline=yes
 EOF` || \
-    die "create eglibc64 config.cache" && \
-      touch ${METADATAMIPS64ELROOTFS}/eglibc_create64_config.cache
+    die "create glibc64 config.cache" && \
+      touch ${METADATAMIPS64ELROOTFS}/glibc_create64_config.cache
 
-[ -f "${METADATAMIPS64ELROOTFS}/eglibc_update64_configparms" ] || \
+[ -f "${METADATAMIPS64ELROOTFS}/glibc_update64_configparms" ] || \
   `cat > configparms << EOF
 install_root=${PREFIXMIPS64ELROOTFS}
 EOF` || \
-    die "update eglibc32 configparms" && \
-      touch ${METADATAMIPS64ELROOTFS}/eglibc_update64_configparms
+    die "update glibc32 configparms" && \
+      touch ${METADATAMIPS64ELROOTFS}/glibc_update64_configparms
 
-[ -f "${METADATAMIPS64ELROOTFS}/eglibc_config64" ] || \
+[ -f "${METADATAMIPS64ELROOTFS}/glibc_config64" ] || \
   BUILD_CC="gcc" CC="${CROSS_TARGET64}-gcc ${BUILD64}" \
   AR="${CROSS_TARGET64}-ar" RANLIB="${CROSS_TARGET64}-ranlib" \
   CFLAGS_FOR_TARGET="-O2" CFLAGS+="-O2" \
-  ${SRCMIPS64ELROOTFS}/eglibc-${EGLIBC_VERSION}/configure \
+  ${SRCMIPS64ELROOTFS}/glibc-${GLIBC_VERSION}/configure \
   --prefix=/usr --libdir=/usr/lib64 \
-  --libexecdir=/usr/lib64/eglibc --host=${CROSS_TARGET64} --build=${CROSS_HOST} \
+  --libexecdir=/usr/lib64/glibc --host=${CROSS_TARGET64} --build=${CROSS_HOST} \
   --disable-profile --enable-add-ons --with-tls --enable-kernel=2.6.0 \
   --with-__thread --with-binutils=${PREFIXMIPS64ELROOTFS}/cross-tools/bin \
   --with-headers=${PREFIXMIPS64ELROOTFS}/usr/include --cache-file=config.cache || \
-    die "***config eglibc64 error" && \
-      touch ${METADATAMIPS64ELROOTFS}/eglibc_config64
-[ -f "${METADATAMIPS64ELROOTFS}/eglibc_build64" ] || \
+    die "***config glibc64 error" && \
+      touch ${METADATAMIPS64ELROOTFS}/glibc_config64
+[ -f "${METADATAMIPS64ELROOTFS}/glibc_build64" ] || \
 make -j${JOBS} || \
-  die "***build eglibc64 error" && \
-    touch ${METADATAMIPS64ELROOTFS}/eglibc_build64
-[ -f "${METADATAMIPS64ELROOTFS}/eglibc_install64" ] || \
+  die "***build glibc64 error" && \
+    touch ${METADATAMIPS64ELROOTFS}/glibc_build64
+[ -f "${METADATAMIPS64ELROOTFS}/glibc_install64" ] || \
 make install || \
-  die "***install eglibc64 error" && \
-    touch ${METADATAMIPS64ELROOTFS}/eglibc_install64
+  die "***install glibc64 error" && \
+    touch ${METADATAMIPS64ELROOTFS}/glibc_install64
 
-[ -f "${METADATAMIPS64ELROOTFS}/eglibc_copy_headers" ] || \
-  cp -v ${SRCMIPS64ELROOTFS}/eglibc-${EGLIBC_VERSION}/sunrpc/rpc/*.h \
+[ -f "${METADATAMIPS64ELROOTFS}/glibc_copy_headers" ] || \
+  cp -v ${SRCMIPS64ELROOTFS}/glibc-${GLIBC_VERSION}/sunrpc/rpc/*.h \
         ${PREFIXMIPS64ELROOTFS}/usr/include/rpc && \
-  cp -v ${SRCMIPS64ELROOTFS}/eglibc-${EGLIBC_VERSION}/sunrpc/rpcsvc/*.h \
+  cp -v ${SRCMIPS64ELROOTFS}/glibc-${GLIBC_VERSION}/sunrpc/rpcsvc/*.h \
         ${PREFIXMIPS64ELROOTFS}/usr/include/rpcsvc && \
-  cp -v ${SRCMIPS64ELROOTFS}/eglibc-${EGLIBC_VERSION}/nis/rpcsvc/*.h \
+  cp -v ${SRCMIPS64ELROOTFS}/glibc-${GLIBC_VERSION}/nis/rpcsvc/*.h \
         ${PREFIXMIPS64ELROOTFS}/usr/include/rpcsvc || \
-    die "copy eglibc headers error" && \
-      touch ${METADATAMIPS64ELROOTFS}/eglibc_copy_headers
+    die "copy glibc headers error" && \
+      touch ${METADATAMIPS64ELROOTFS}/glibc_copy_headers
 popd
 
 pushd ${BUILDMIPS64ELROOTFS}
@@ -860,8 +922,10 @@ EOF` || \
     die "***config shadow error" && \
       touch ${METADATAMIPS64ELROOTFS}/shadow_config
 cp config.h{,.orig} && \
-sed "/PASSWD_PROGRAM/s/passwd/${CROSS_TARGET64}-&/" config.h.orig > config.h || \
-  die "update shadow config.h error" && \
+[ -f "${METADATAMIPS64ELROOTFS}/shadown_update_config.h" ] || \
+  sed "/PASSWD_PROGRAM/s/passwd/${CROSS_TARGET64}-&/" config.h.orig > config.h || \
+    die "update shadow config.h error" && \
+      touch ${METADATAMIPS64ELROOTFS}/shadown_update_config.h
 [ -f "${METADATAMIPS64ELROOTFS}/shadow_build" ] || \
   make -j${JOBS} || \
     die "***build shadow error" && \
@@ -1027,7 +1091,6 @@ cd gmp-64
       touch ${METADATAMIPS64ELROOTFS}/gmp_rename64_header
 popd
 
-# FIXME --with-gmp-include=${PREFIXMIPS64ELROOTFS}/cross-tools/include is unreasonable
 pushd ${BUILDMIPS64ELROOTFS}
 [ -d "mpfr-32" ] || mkdir mpfr-32
 cd mpfr-32
@@ -1054,7 +1117,6 @@ cd mpfr-32
       touch ${METADATAMIPS64ELROOTFS}/mpfr_rm32_la
 popd
 
-# FIXME --with-gmp-include=${PREFIXMIPS64ELROOTFS}/cross-tools/include is unreasonable
 pushd ${BUILDMIPS64ELROOTFS}
 [ -d "mpfr-n32" ] || mkdir mpfr-n32
 cd mpfr-n32
@@ -1081,7 +1143,6 @@ cd mpfr-n32
       touch ${METADATAMIPS64ELROOTFS}/mpfr_rmn32_la
 popd
 
-# FIXME --with-gmp-include=${PREFIXMIPS64ELROOTFS}/cross-tools/include is unreasonable
 pushd ${BUILDMIPS64ELROOTFS}
 [ -d "mpfr-64" ] || mkdir mpfr-64
 cd mpfr-64
@@ -1189,10 +1250,8 @@ cd ppl-32
   LDFLAGS="-Wl,-rpath-link,${PREFIXMIPS64ELROOTFS}/usr/lib:${PREFIXMIPS64ELROOTFS}/lib ${BUILD32}" \
   ${SRCMIPS64ELROOTFS}/ppl-${PPL_VERSION}/configure --prefix=/usr \
   --build=${CROSS_HOST} --host=${CROSS_TARGET32} \
-  --with-libgmp-prefix=${PREFIXMIPS64ELROOTFS}/usr \
-  --with-libgmpxx-prefix=${PREFIXMIPS64ELROOTFS}/usr \
-  --enable-shared --disable-optimization \
-  --enable-check=quick || \
+  --with-gmp=${PREFIXMIPS64ELROOTFS}/usr \
+  --enable-shared --disable-optimization --enable-check=quick || \
     die "***config ppl32 error" && \
       touch ${METADATAMIPS64ELROOTFS}/ppl_config32
 [ -f "${METADATAMIPS64ELROOTFS}/ppl_build32" ] || \
@@ -1203,9 +1262,26 @@ cd ppl-32
   make DESTDIR=${PREFIXMIPS64ELROOTFS} install || \
     die "***install ppl32 error" && \
       touch ${METADATAMIPS64ELROOTFS}/ppl_install32
-rm -v ${PREFIXMIPS64ELROOTFS}/usr/lib/lib{ppl,ppl_c,pwl}.la
-mv -v ${PREFIXMIPS64ELROOTFS}/usr/bin/ppl-config{,-32}
-mv -v ${PREFIXMIPS64ELROOTFS}/usr/include/ppl{,-32}.hh
+[ -f "${METADATAMIPS64ELROOTFS}/ppl_rm32_libppl.la" ] || \
+  rm -v ${PREFIXMIPS64ELROOTFS}/usr/lib/libppl.la || \
+    die "rm ppl32 libppl.la error" && \
+      touch ${METADATAMIPS64ELROOTFS}/ppl_rm32_libppl.la
+[ -f "${METADATAMIPS64ELROOTFS}/ppl_rm32_libppl_c.la" ] || \
+  rm -v ${PREFIXMIPS64ELROOTFS}/usr/lib/libppl_c.la || \
+    die "rm ppl32 libppl_c.la error" && \
+      touch ${METADATAMIPS64ELROOTFS}/ppl_rm32_libppl_c.la
+#[ -f "${METADATAMIPS64ELROOTFS}/ppl_rm32_libpwl.la" ] || \
+#  rm -v ${PREFIXMIPS64ELROOTFS}/usr/lib/libpwl.la || \
+#    die "rm ppl32 libpwl.la error" && \
+#      touch ${METADATAMIPS64ELROOTFS}/ppl_rm32_libpwl.la
+[ -f "${METADATAMIPS64ELROOTFS}/ppl_mv32_ppl-config" ] || \
+  mv -v ${PREFIXMIPS64ELROOTFS}/usr/bin/ppl-config{,-32} || \
+    die "mv ppl32 ppl-config error" && \
+      touch ${METADATAMIPS64ELROOTFS}/ppl_mv32_ppl-config
+[ -f "${METADATAMIPS64ELROOTFS}/ppl_mv32_ppl.hh" ] || \
+  mv -v ${PREFIXMIPS64ELROOTFS}/usr/include/ppl{,-32}.hh || \
+    die "mv ppl32 ppl.hh error" && \
+      touch ${METADATAMIPS64ELROOTFS}/ppl_mv32_ppl.hh
 popd
 
 pushd ${BUILDMIPS64ELROOTFS}
@@ -1217,8 +1293,8 @@ cd ppl-n32
   LDFLAGS="-Wl,-rpath-link,${PREFIXMIPS64ELROOTFS}/usr/lib32:${PREFIXMIPS64ELROOTFS}/lib32 ${BUILDN32}" \
   ${SRCMIPS64ELROOTFS}/ppl-${PPL_VERSION}/configure --prefix=/usr --libdir=/usr/lib32 \
   --build=${CROSS_HOST} --host=${CROSS_TARGET64} \
-  --with-libgmp-prefix=${PREFIXMIPS64ELROOTFS}/usr \
-  --with-libgmpxx-prefix=${PREFIXMIPS64ELROOTFS}/usr \
+  --with-gmp=${PREFIXMIPS64ELROOTFS}/usr \
+  --with-gmp-lib=${PREFIXMIPS64ELROOTFS}/usr/lib32 \
   --enable-shared --disable-optimization \
   --enable-check=quick --libdir=/usr/lib32 || \
     die "***config ppl-n32 error" && \
@@ -1231,9 +1307,26 @@ cd ppl-n32
   make DESTDIR=${PREFIXMIPS64ELROOTFS} install || \
     die "***install ppl-n32 error" && \
       touch ${METADATAMIPS64ELROOTFS}/ppl_installn32
-rm -v ${PREFIXMIPS64ELROOTFS}/usr/lib32/lib{ppl,ppl_c,pwl}.la
-mv -v ${PREFIXMIPS64ELROOTFS}/usr/bin/ppl-config{,-n32}
-mv -v ${PREFIXMIPS64ELROOTFS}/usr/include/ppl{,-n32}.hh
+[ -f "${METADATAMIPS64ELROOTFS}/ppl_rmn32_libppl.la" ] || \
+  rm -v ${PREFIXMIPS64ELROOTFS}/usr/lib32/libppl.la || \
+    die "rm ppln32 libppl.la error" && \
+      touch ${METADATAMIPS64ELROOTFS}/ppl_rmn32_libppl.la
+[ -f "${METADATAMIPS64ELROOTFS}/ppl_rmn32_libppl_c.la" ] || \
+  rm -v ${PREFIXMIPS64ELROOTFS}/usr/lib32/libppl_c.la || \
+    die "rm ppln32 libppl_c.la error" && \
+      touch ${METADATAMIPS64ELROOTFS}/ppl_rmn32_libppl_c.la
+#[ -f "${METADATAMIPS64ELROOTFS}/ppl_rmn32_libpwl.la" ] || \
+#  rm -v ${PREFIXMIPS64ELROOTFS}/usr/lib32/libpwl.la || \
+#    die "rm ppln32 libpwl.la error" && \
+#      touch ${METADATAMIPS64ELROOTFS}/ppl_rmn32_libpwl.la
+[ -f "${METADATAMIPS64ELROOTFS}/ppl_mvn32_ppl-config" ] || \
+  mv -v ${PREFIXMIPS64ELROOTFS}/usr/bin/ppl-config{,-n32} || \
+    die "mv ppln32 ppl-config error" && \
+      touch ${METADATAMIPS64ELROOTFS}/ppl_mvn32_ppl-config
+[ -f "${METADATAMIPS64ELROOTFS}/ppl_mvn32_ppl.hh" ] || \
+  mv -v ${PREFIXMIPS64ELROOTFS}/usr/include/ppl{,-n32}.hh || \
+    die "mv ppl32 ppl.hh error" && \
+      touch ${METADATAMIPS64ELROOTFS}/ppl_mvn32_ppl.hh
 popd
 
 pushd ${BUILDMIPS64ELROOTFS}
@@ -1245,8 +1338,8 @@ cd ppl-64
   LDFLAGS="-Wl,-rpath-link,${PREFIXMIPS64ELROOTFS}/usr/lib64:${PREFIXMIPS64ELROOTFS}/lib64 ${BUILD64}" \
   ${SRCMIPS64ELROOTFS}/ppl-${PPL_VERSION}/configure --prefix=/usr --libdir=/usr/lib64 \
   --build=${CROSS_HOST} --host=${CROSS_TARGET64} \
-  --with-libgmp-prefix=${PREFIXMIPS64ELROOTFS}/usr \
-  --with-libgmpxx-prefix=${PREFIXMIPS64ELROOTFS}/usr \
+  --with-gmp=${PREFIXMIPS64ELROOTFS}/usr \
+  --with-gmp-lib=${PREFIXMIPS64ELROOTFS}/usr/lib64 \
   --enable-shared --disable-optimization \
   --enable-check=quick --libdir=/usr/lib64 || \
     die "***config ppl64 error" && \
@@ -1259,9 +1352,26 @@ cd ppl-64
   make DESTDIR=${PREFIXMIPS64ELROOTFS} install || \
     die "***install ppl64 error" && \
       touch ${METADATAMIPS64ELROOTFS}/ppl_install64
-rm -v ${PREFIXMIPS64ELROOTFS}/usr/lib/lib{ppl,ppl_c,pwl}.la
-mv -v ${PREFIXMIPS64ELROOTFS}/usr/bin/ppl-config{,-n32}
-mv -v ${PREFIXMIPS64ELROOTFS}/usr/include/ppl{,-n32}.hh
+[ -f "${METADATAMIPS64ELROOTFS}/ppl_rm64_libppl.la" ] || \
+  rm -v ${PREFIXMIPS64ELROOTFS}/usr/lib64/libppl.la || \
+    die "rm ppl64 libppl.la error" && \
+      touch ${METADATAMIPS64ELROOTFS}/ppl_rm64_libppl.la
+[ -f "${METADATAMIPS64ELROOTFS}/ppl_rm64_libppl_c.la" ] || \
+  rm -v ${PREFIXMIPS64ELROOTFS}/usr/lib64/libppl_c.la || \
+    die "rm ppl64 libppl_c.la error" && \
+      touch ${METADATAMIPS64ELROOTFS}/ppl_rm64_libppl_c.la
+#[ -f "${METADATAMIPS64ELROOTFS}/ppl_rm64_libpwl.la" ] || \
+#  rm -v ${PREFIXMIPS64ELROOTFS}/usr/lib64/libpwl.la || \
+#    die "rm ppl64 libpwl.la error" && \
+#      touch ${METADATAMIPS64ELROOTFS}/ppl_rm64_libpwl.la
+[ -f "${METADATAMIPS64ELROOTFS}/ppl_mv64_ppl-config" ] || \
+  mv -v ${PREFIXMIPS64ELROOTFS}/usr/bin/ppl-config{,-64} || \
+    die "mv ppl64 ppl-config error" && \
+      touch ${METADATAMIPS64ELROOTFS}/ppl_mv64_ppl-config
+[ -f "${METADATAMIPS64ELROOTFS}/ppl_mv64_ppl.hh" ] || \
+  mv -v ${PREFIXMIPS64ELROOTFS}/usr/include/ppl{,-64}.hh || \
+    die "mv ppl64 ppl.hh error" && \
+      touch ${METADATAMIPS64ELROOTFS}/ppl_mv64_ppl.hh
 popd
 
 pushd ${BUILDMIPS64ELROOTFS}
@@ -1589,25 +1699,73 @@ cd ncurses-32
   make DESTDIR=${PREFIXMIPS64ELROOTFS} install || \
     die "***install ncurses32 error" && \
       touch ${METADATAMIPS64ELROOTFS}/ncurses_install32
-mv -v ${PREFIXMIPS64ELROOTFS}/usr/bin/ncursesw5-config{,-32}
-mv -v ${PREFIXMIPS64ELROOTFS}/lib/lib{panelw,menuw,formw,ncursesw,ncurses++w}.a \
-      ${PREFIXMIPS64ELROOTFS}/usr/lib
-rm -v /lib/lib{ncursesw,menuw,panelw,formw}.so
-ln -svf ../../lib/libncursesw.so.5 ${PREFIXMIPS64ELROOTFS}/usr/lib/libncursesw.so
-ln -svf ../../lib/libmenuw.so.5 ${PREFIXMIPS64ELROOTFS}/usr/lib/libmenuw.so
-ln -svf ../../lib/libpanelw.so.5 ${PREFIXMIPS64ELROOTFS}/usr/lib/libpanelw.so
-ln -svf ../../lib/libformw.so.5 ${PREFIXMIPS64ELROOTFS}/usr/lib/libformw.so
+[ -f "${METADATAMIPS64ELROOTFS}/ncurses_mv32_ncursesw5-config" ] || \
+  mv -v ${PREFIXMIPS64ELROOTFS}/usr/bin/ncursesw5-config{,-32} || \
+    die "mv32 ncursesw5-config error" && \
+      touch ${METADATAMIPS64ELROOTFS}/ncurses_mv32_ncursesw5-config
+[ -f "${METADATAMIPS64ELROOTFS}/ncurses_mv32_ncursesw5.lib" ] || \
+  mv -v ${PREFIXMIPS64ELROOTFS}/lib/lib{panelw,menuw,formw,ncursesw,ncurses++w}.a \
+        ${PREFIXMIPS64ELROOTFS}/usr/lib || \
+    die "mv32 ncursesw lib/lib*.a error" && \
+      touch ${METADATAMIPS64ELROOTFS}/ncurses_mv32_ncursesw5.lib
+#[ -f "${METADATAMIPS64ELROOTFS}/ncurses_rm32_lib.lib.so" ] || \
+#  rm -v /lib/lib{ncursesw,menuw,panelw,formw}.so || \
+#    die "rm32 ncurses lib/lib*.so error" && \
+#      touch ${METADATAMIPS64ELROOTFS}/ncurses_rm32_lib.lib.so
+[ -f "${METADATAMIPS64ELROOTFS}/ncurses_link32_libncursesw.so.5" ] || \
+  ln -svf ../../lib/libncursesw.so.5 ${PREFIXMIPS64ELROOTFS}/usr/lib/libncursesw.so || \
+    die "link ncurses32 libncursesw.so.5 error" && \
+      touch ${METADATAMIPS64ELROOTFS}/ncurses_link32_libncursesw.so.5
+[ -f "${METADATAMIPS64ELROOTFS}/ncurses_link32_libmenuw.so.5" ] || \
+  ln -svf ../../lib/libmenuw.so.5 ${PREFIXMIPS64ELROOTFS}/usr/lib/libmenuw.so || \
+    die "link ncurses32 libmenuw.so.5 error" && \
+      touch ${METADATAMIPS64ELROOTFS}/ncurses_link32_libmenuw.so.5
+[ -f "${METADATAMIPS64ELROOTFS}/ncurses_link32_libpanelw.so.5" ] || \
+  ln -svf ../../lib/libpanelw.so.5 ${PREFIXMIPS64ELROOTFS}/usr/lib/libpanelw.so || \
+    die "link ncurses32 libpanelw.so.5 error" && \
+      touch ${METADATAMIPS64ELROOTFS}/ncurses_link32_libpanelw.so.5
+[ -f "${METADATAMIPS64ELROOTFS}/ncurses_link32_libformw.so.5" ] || \
+  ln -svf ../../lib/libformw.so.5 ${PREFIXMIPS64ELROOTFS}/usr/lib/libformw.so || \
+    die "link ncurses32 libformw.so.5 error" && \
+      touch ${METADATAMIPS64ELROOTFS}/ncurses_link32_libformw.so.5
 for lib in curses ncurses form panel menu ; do
-  echo "INPUT(-l${lib}w)" > ${PREFIXMIPS64ELROOTFS}/usr/lib/lib${lib}.so;
-  ln -sfv lib${lib}w.a ${PREFIXMIPS64ELROOTFS}/usr/lib/lib${lib}.a;
+  `[ -f "${METADATAMIPS64ELROOTFS}/ncurses_echo32_${lib}.so" ] || \
+    echo "INPUT(-l${lib}w)" > ${PREFIXMIPS64ELROOTFS}/usr/lib/lib${lib}.so || \
+      die "echo ncurses32 ${lib}.so error" && \
+        touch ${METADATAMIPS64ELROOTFS}/ncurses_echo32_${lib}.so`;
+  `[ -f "${METADATAMIPS64ELROOTFS}/ncurses_link32_${lib}.a" ] || \
+    ln -sfv lib${lib}w.a ${PREFIXMIPS64ELROOTFS}/usr/lib/lib${lib}.a || \
+      die "link ncurses32 ${lib}.a error" && \
+        touch ${METADATAMIPS64ELROOTFS}/ncurses_link32_${lib}.a`;
 done
-ln -sfv libcurses.so ${PREFIXMIPS64ELROOTFS}/usr/lib/libcursesw.so
-ln -sfv libncurses.so ${PREFIXMIPS64ELROOTFS}/usr/lib/libcurses.so
-ln -sfv libncursesw.a ${PREFIXMIPS64ELROOTFS}/usr/lib/libcursesw.a
-ln -sfv libncurses.a ${PREFIXMIPS64ELROOTFS}/usr/lib/libcurses.a
-ln -sfv libncurses++w.a ${PREFIXMIPS64ELROOTFS}/usr/lib/libncurses++.a
-ln -sfv ncursesw5-config-32 ${PREFIXMIPS64ELROOTFS}/usr/bin/ncurses5-config-32
-ln -sfv ../share/terminfo ${PREFIXMIPS64ELROOTFS}/usr/lib/terminfo
+[ -f "${METADATAMIPS64ELROOTFS}/ncurses_link32_libcurses.so" ] || \
+  ln -sfv libcurses.so ${PREFIXMIPS64ELROOTFS}/usr/lib/libcursesw.so || \
+    die "link ncurses32 libcurses.so error" && \
+      touch ${METADATAMIPS64ELROOTFS}/ncurses_link32_libcurses.so
+[ -f "${METADATAMIPS64ELROOTFS}/ncurses_link32_libncurses.so" ] || \
+  ln -sfv libncurses.so ${PREFIXMIPS64ELROOTFS}/usr/lib/libcurses.so || \
+    die "link ncurses32 libncurses.so error" && \
+      touch ${METADATAMIPS64ELROOTFS}/ncurses_link32_libncurses.so
+[ -f "${METADATAMIPS64ELROOTFS}/ncurses_link32_libncursesw.a" ] || \
+  ln -sfv libncursesw.a ${PREFIXMIPS64ELROOTFS}/usr/lib/libcursesw.a || \
+    die "link ncurses32 libncursesw.a error" && \
+      touch ${METADATAMIPS64ELROOTFS}/ncurses_link32_libncursesw.a
+[ -f "${METADATAMIPS64ELROOTFS}/ncurses_link32_libncurses.a" ] || \
+  ln -sfv libncurses.a ${PREFIXMIPS64ELROOTFS}/usr/lib/libcurses.a || \
+    die "link ncurses32 libncurses.a error" && \
+      touch ${METADATAMIPS64ELROOTFS}/ncurses_link32_libncurses.a
+[ -f "${METADATAMIPS64ELROOTFS}/ncurses_link32_libncurses++w.a" ] || \
+  ln -sfv libncurses++w.a ${PREFIXMIPS64ELROOTFS}/usr/lib/libncurses++.a || \
+    die "link ncurses32 libncurses++w.a error" && \
+      touch ${METADATAMIPS64ELROOTFS}/ncurses_link32_libncurses++w.a
+[ -f "${METADATAMIPS64ELROOTFS}/ncurses_link32_ncursesw5-config-32" ] || \
+  ln -sfv ncursesw5-config-32 ${PREFIXMIPS64ELROOTFS}/usr/bin/ncurses5-config-32 || \
+    die "link ncurses32 ncursesw5-config-32 error" && \
+      touch ${METADATAMIPS64ELROOTFS}/ncurses_link32_ncursesw5-config-32
+[ -f "${METADATAMIPS64ELROOTFS}/ncurses_link32_terminfo" ] || \
+  ln -sfv ../share/terminfo ${PREFIXMIPS64ELROOTFS}/usr/lib/terminfo || \
+    die "link ncurses32 terminfo" && \
+      touch ${METADATAMIPS64ELROOTFS}/ncurses_link32_terminfo
 popd
 
 pushd ${BUILDMIPS64ELROOTFS}
@@ -1624,32 +1782,80 @@ cd ncurses-n32
     die "***config ncursesn32 error" && \
       touch ${METADATAMIPS64ELROOTFS}/ncurses_confign32
 [ -f "${METADATAMIPS64ELROOTFS}/ncurses_buildn32" ] || \
-make -j${JOBS} || \
-  die "***build ncursesn32 error" && \
-    touch ${METADATAMIPS64ELROOTFS}/ncurses_buildn32
+  make -j${JOBS} || \
+    die "***build ncursesn32 error" && \
+      touch ${METADATAMIPS64ELROOTFS}/ncurses_buildn32
 [ -f "${METADATAMIPS64ELROOTFS}/ncurses_installn32" ] || \
-make DESTDIR=${PREFIXMIPS64ELROOTFS} install || \
-  die "***install ncursesn32 error" && \
-    touch ${METADATAMIPS64ELROOTFS}/ncurses_installn32
-mv -v ${PREFIXMIPS64ELROOTFS}/usr/bin/ncursesw5-config{,-n32}
-mv -v ${PREFIXMIPS64ELROOTFS}/lib32/lib{panelw,menuw,formw,ncursesw,ncurses++w}.a \
-  ${PREFIXMIPS64ELROOTFS}/usr/lib32
-rm -v /lib32/lib{ncursesw,menuw,panelw,formw}.so
-ln -svf ../../lib32/libncursesw.so.5 ${PREFIXMIPS64ELROOTFS}/usr/lib32/libncursesw.so
-ln -svf ../../lib32/libmenuw.so.5 ${PREFIXMIPS64ELROOTFS}/usr/lib32/libmenuw.so
-ln -svf ../../lib32/libpanelw.so.5 ${PREFIXMIPS64ELROOTFS}/usr/lib32/libpanelw.so
-ln -svf ../../lib32/libformw.so.5 ${PREFIXMIPS64ELROOTFS}/usr/lib32/libformw.so
+  make DESTDIR=${PREFIXMIPS64ELROOTFS} install || \
+    die "***install ncursesn32 error" && \
+      touch ${METADATAMIPS64ELROOTFS}/ncurses_installn32
+[ -f "${METADATAMIPS64ELROOTFS}/ncurses_mvn32_ncursesw5-config" ] || \
+  mv -v ${PREFIXMIPS64ELROOTFS}/usr/bin/ncursesw5-config{,-n32} || \
+    die "mv ncursesn32 ncursesw5-config error" && \
+      touch ${METADATAMIPS64ELROOTFS}/ncurses_mvn32_ncursesw5-config
+[ -f "${METADATAMIPS64ELROOTFS}/ncurses_mvn32_libs.a" ] || \
+  mv -v ${PREFIXMIPS64ELROOTFS}/lib32/lib{panelw,menuw,formw,ncursesw,ncurses++w}.a \
+        ${PREFIXMIPS64ELROOTFS}/usr/lib32 || \
+    die "mv ncursesn32 lib32/lib{panelw,menuw,formw,ncursesw,ncurses++w}.a error" && \
+      touch ${METADATAMIPS64ELROOTFS}/ncurses_mvn32_libs.a
+#[ -f "${METADATAMIPS64ELROOTFS}/ncurses_rmn32_libs.so" ] || \
+#  rm -v /lib32/lib{ncursesw,menuw,panelw,formw}.so || \
+#    die "rm ncursesn32 libs.so error" && \
+#      touch ${METADATAMIPS64ELROOTFS}/ncurses_rmn32_libs.so
+[ -f "${METADATAMIPS64ELROOTFS}/ncurses_linkn32_libncursesw.so.5" ] || \
+  ln -svf ../../lib32/libncursesw.so.5 ${PREFIXMIPS64ELROOTFS}/usr/lib32/libncursesw.so || \
+    die "ncurses linkn32 libncursesw.so.5 error" && \
+      touch ${METADATAMIPS64ELROOTFS}/ncurses_linkn32_libncursesw.so.5
+[ -f "${METADATAMIPS64ELROOTFS}/ncurses_linkn32_libmenuw.so.5" ] || \
+  ln -svf ../../lib32/libmenuw.so.5 ${PREFIXMIPS64ELROOTFS}/usr/lib32/libmenuw.so || \
+    die "link ncursesn32 libmenuw.so.5 error" && \
+      touch ${METADATAMIPS64ELROOTFS}/ncurses_linkn32_libmenuw.so.5
+[ -f "${METADATAMIPS64ELROOTFS}/ncurses_linkn32_libpanelw.so.5" ] || \
+  ln -svf ../../lib32/libpanelw.so.5 ${PREFIXMIPS64ELROOTFS}/usr/lib32/libpanelw.so || \
+    die "link ncursesn32 libpanelw.so.5 error" && \
+      touch ${METADATAMIPS64ELROOTFS}/ncurses_linkn32_libpanelw.so.5
+[ -f "${METADATAMIPS64ELROOTFS}/ncurses_linkn32_libformw.so.5" ] || \
+  ln -svf ../../lib32/libformw.so.5 ${PREFIXMIPS64ELROOTFS}/usr/lib32/libformw.so || \
+    die "link ncursesn32 libformw.so.5 error" && \
+      touch ${METADATAMIPS64ELROOTFS}/ncurses_linkn32_libformw.so.5
 for lib in curses ncurses form panel menu ; do
-  echo "INPUT(-l${lib}w)" > ${PREFIXMIPS64ELROOTFS}/usr/lib32/lib${lib}.so;
-  ln -sfv lib${lib}w.a ${PREFIXMIPS64ELROOTFS}/usr/lib32/lib${lib}.a;
+  `[ -f "${METADATAMIPS64ELROOTFS}/ncurses_echon32_lib${lib}.so" ] || \
+    echo "INPUT(-l${lib}w)" > ${PREFIXMIPS64ELROOTFS}/usr/lib32/lib${lib}.so || \
+      die "echo ncursesn32 ncurses_echon32_lib${lib}.so" && \
+        touch ${METADATAMIPS64ELROOTFS}/ncurses_echon32_lib${lib}.so`;
+  `[ -f "${METADATAMIPS64ELROOTFS}/ncurses_linkn32_lib${lib}w.a" ] || \
+    ln -sfv lib${lib}w.a ${PREFIXMIPS64ELROOTFS}/usr/lib32/lib${lib}.a || \
+      die "link ncursesn32 lib${lib}w.a error" && \
+        touch ${METADATAMIPS64ELROOTFS}/ncurses_linkn32_lib${lib}w.a`;
 done
-ln -sfv libcurses.so ${PREFIXMIPS64ELROOTFS}/usr/lib32/libcursesw.so
-ln -sfv libncurses.so ${PREFIXMIPS64ELROOTFS}/usr/lib32/libcurses.so
-ln -sfv libncursesw.a ${PREFIXMIPS64ELROOTFS}/usr/lib32/libcursesw.a
-ln -sfv libncurses.a ${PREFIXMIPS64ELROOTFS}/usr/lib32/libcurses.a
-ln -sfv libncurses++w.a ${PREFIXMIPS64ELROOTFS}/usr/lib32/libncurses++.a
-ln -sfv ncursesw5-config-n32 ${PREFIXMIPS64ELROOTFS}/usr/bin/ncurses5-config-n32
-ln -sfv ../share/terminfo ${PREFIXMIPS64ELROOTFS}/usr/lib32/terminfo
+[ -f "${METADATAMIPS64ELROOTFS}/ncurses_linkn32_libcurses.so" ] || \
+  ln -sfv libcurses.so ${PREFIXMIPS64ELROOTFS}/usr/lib32/libcursesw.so || \
+    die "link ncursesn32 libcurses.so error" && \
+      touch ${METADATAMIPS64ELROOTFS}/ncurses_linkn32_libcurses.so
+[ -f "${METADATAMIPS64ELROOTFS}/ncurses_linkn32_libncurses.so" ] || \
+  ln -sfv libncurses.so ${PREFIXMIPS64ELROOTFS}/usr/lib32/libcurses.so || \
+    die "link ncursesn32 libncurses.so error" && \
+      touch ${METADATAMIPS64ELROOTFS}/ncurses_linkn32_libncurses.so
+[ -f "${METADATAMIPS64ELROOTFS}/ncurses_linkn32_libncursesw.a" ] || \
+  ln -sfv libncursesw.a ${PREFIXMIPS64ELROOTFS}/usr/lib32/libcursesw.a || \
+    die "link ncursesn32 libncursesw.a error" && \
+      touch ${METADATAMIPS64ELROOTFS}/ncurses_linkn32_libncursesw.a
+[ -f "${METADATAMIPS64ELROOTFS}/ncurses_linkn32_libncurses.a" ] || \
+  ln -sfv libncurses.a ${PREFIXMIPS64ELROOTFS}/usr/lib32/libcurses.a || \
+    die "link ncursesn32 libncurses.a error" && \
+      touch ${METADATAMIPS64ELROOTFS}/ncurses_linkn32_libncurses.a
+[ -f "${METADATAMIPS64ELROOTFS}/ncurses_linkn32_libncurses++w.a" ] || \
+  ln -sfv libncurses++w.a ${PREFIXMIPS64ELROOTFS}/usr/lib32/libncurses++.a || \
+    die "link ncursesn32 libncurses++w.a error" && \
+      touch ${METADATAMIPS64ELROOTFS}/ncurses_linkn32_libncurses++w.a
+[ -f "${METADATAMIPS64ELROOTFS}/ncurses_linkn32_ncursesw5-config-n32" ] || \
+  ln -sfv ncursesw5-config-n32 ${PREFIXMIPS64ELROOTFS}/usr/bin/ncurses5-config-n32 || \
+    die "link ncursesn32 ncursesw5-config-n32 error" && \
+      touch ${METADATAMIPS64ELROOTFS}/ncurses_linkn32_ncursesw5-config-n32
+[ -f "${METADATAMIPS64ELROOTFS}/ncurses_linkn32_terminfo" ] || \
+  ln -sfv ../share/terminfo ${PREFIXMIPS64ELROOTFS}/usr/lib32/terminfo || \
+    die "link ncursesn32 terminfo error" && \
+      touch ${METADATAMIPS64ELROOTFS}/ncurses_linkn32_terminfo
 popd
 
 pushd ${BUILDMIPS64ELROOTFS}
@@ -1666,34 +1872,88 @@ cd ncurses-64
     die "***config ncurses64 error" && \
       touch ${METADATAMIPS64ELROOTFS}/ncurses_config64
 [ -f "${METADATAMIPS64ELROOTFS}/ncurses_build64" ] || \
-make -j${JOBS} || \
-  die "***build ncurses64 error" && \
-    touch ${METADATAMIPS64ELROOTFS}/ncurses_build64
+  make -j${JOBS} || \
+    die "***build ncurses64 error" && \
+      touch ${METADATAMIPS64ELROOTFS}/ncurses_build64
 [ -f "${METADATAMIPS64ELROOTFS}/ncurses_install64" ] || \
-make DESTDIR=${PREFIXMIPS64ELROOTFS} install || \
-  die "***install ncurses64 error" && \
-    touch ${METADATAMIPS64ELROOTFS}/ncurses_install64
-mv -v ${PREFIXMIPS64ELROOTFS}/usr/bin/ncursesw5-config{,-64}
-ln -svf multiarch_wrapper ${PREFIXMIPS64ELROOTFS}/usr/bin/ncursesw5-config
-mv -v ${PREFIXMIPS64ELROOTFS}/lib64/lib{panelw,menuw,formw,ncursesw,ncurses++w}.a \
-  ${PREFIXMIPS64ELROOTFS}/usr/lib64
-rm -v ${PREFIXMIPS64ELROOTFS}/lib64/lib{ncursesw,menuw,panelw,formw}.so
-ln -svf ../../lib64/libncursesw.so.5 ${PREFIXMIPS64ELROOTFS}/usr/lib64/libncursesw.so
-ln -svf ../../lib64/libmenuw.so.5 ${PREFIXMIPS64ELROOTFS}/usr/lib64/libmenuw.so
-ln -svf ../../lib64/libpanelw.so.5 ${PREFIXMIPS64ELROOTFS}/usr/lib64/libpanelw.so
-ln -svf ../../lib64/libformw.so.5 ${PREFIXMIPS64ELROOTFS}/usr/lib64/libformw.so
+  make DESTDIR=${PREFIXMIPS64ELROOTFS} install || \
+    die "***install ncurses64 error" && \
+      touch ${METADATAMIPS64ELROOTFS}/ncurses_install64
+[ -f "${METADATAMIPS64ELROOTFS}/ncurses_mv64_ncursesw5-config" ] || \
+  mv -v ${PREFIXMIPS64ELROOTFS}/usr/bin/ncursesw5-config{,-64} || \
+    die "mv ncurses64 ncursesw5-config error" && \
+      touch ${METADATAMIPS64ELROOTFS}/ncurses_mv64_ncursesw5-config
+[ -f "${METADATAMIPS64ELROOTFS}/ncurses_link64_multiarch_wrapper" ] || \
+  ln -svf multiarch_wrapper ${PREFIXMIPS64ELROOTFS}/usr/bin/ncursesw5-config || \
+    die "link ncurses64 multiarch_wrapper error" && \
+      touch ${METADATAMIPS64ELROOTFS}/ncurses_link64_multiarch_wrapper
+[ -f "${METADATAMIPS64ELROOTFS}/ncurses_mv64_libs.a" ] || \
+  mv -v ${PREFIXMIPS64ELROOTFS}/lib64/lib{panelw,menuw,formw,ncursesw,ncurses++w}.a \
+        ${PREFIXMIPS64ELROOTFS}/usr/lib64 || \
+    die "mv ncurses64 lib64/lib{panelw,menuw,formw,ncursesw,ncurses++w}.a error" && \
+      touch ${METADATAMIPS64ELROOTFS}/ncurses_mv64_libs.a
+[ -f "${METADATAMIPS64ELROOTFS}/ncurses_rm_libs.so" ] || \
+  rm -v ${PREFIXMIPS64ELROOTFS}/lib64/lib{ncursesw,menuw,panelw,formw}.so || \
+    die "rm ncurses64 libs.so error" && \
+      touch ${METADATAMIPS64ELROOTFS}/ncurses_rm_libs.so
+[ -f "${METADATAMIPS64ELROOTFS}/ncurses_link64_libncursesw.so.5" ] || \
+  ln -svf ../../lib64/libncursesw.so.5 ${PREFIXMIPS64ELROOTFS}/usr/lib64/libncursesw.so || \
+    die "link ncurses64 libncursesw.so.5 error" && \
+      touch ${METADATAMIPS64ELROOTFS}/ncurses_link64_libncursesw.so.5
+[ -f "${METADATAMIPS64ELROOTFS}/ncurses_link64_libmenuw.so.5" ] || \
+  ln -svf ../../lib64/libmenuw.so.5 ${PREFIXMIPS64ELROOTFS}/usr/lib64/libmenuw.so || \
+    die "link ncurses64 libmenuw.so.5 error" && \
+      touch ${METADATAMIPS64ELROOTFS}/ncurses_link64_libmenuw.so.5
+[ -f "${METADATAMIPS64ELROOTFS}/ncurses_link64_libpanelw.so.5" ] || \
+  ln -svf ../../lib64/libpanelw.so.5 ${PREFIXMIPS64ELROOTFS}/usr/lib64/libpanelw.so || \
+    die "link ncurses64 libpanelw.so.5 error" && \
+      touch ${METADATAMIPS64ELROOTFS}/ncurses_link64_libpanelw.so.5
+[ -f "${METADATAMIPS64ELROOTFS}/ncurses_link64_libformw.so.5" ] || \
+  ln -svf ../../lib64/libformw.so.5 ${PREFIXMIPS64ELROOTFS}/usr/lib64/libformw.so || \
+    die "link ncurses64 libformw.so.5 error" && \
+      touch ${METADATAMIPS64ELROOTFS}/ncurses_link64_libformw.so.5
 for lib in curses ncurses form panel menu ; do
-  echo "INPUT(-l${lib}w)" > ${PREFIXMIPS64ELROOTFS}/usr/lib64/lib${lib}.so;
-  ln -sfv lib${lib}w.a ${PREFIXMIPS64ELROOTFS}/usr/lib64/lib${lib}.a;
+  `[ -f "${METADATAMIPS64ELROOTFS}/ncurses_echo64_lib${lib}.so" ] || \
+    echo "INPUT(-l${lib}w)" > ${PREFIXMIPS64ELROOTFS}/usr/lib64/lib${lib}.so || \
+      die "echo ncurses64 lib${lib}.so error" && \
+        touch ${METADATAMIPS64ELROOTFS}/ncurses_echo64_lib${lib}.so`;
+  `[ -f "${METADATAMIPS64ELROOTFS}/ncurses_link64_lib${lib}.a" ] || \
+    ln -sfv lib${lib}w.a ${PREFIXMIPS64ELROOTFS}/usr/lib64/lib${lib}.a || \
+      die "link ncurses64 lib${lib}.a error" && \
+        touch ${METADATAMIPS64ELROOTFS}/ncurses_link64_lib${lib}.a`;
 done
-ln -sfv libcurses.so ${PREFIXMIPS64ELROOTFS}/usr/lib64/libcursesw.so
-ln -sfv libncurses.so ${PREFIXMIPS64ELROOTFS}/usr/lib64/libcurses.so
-ln -sfv libncursesw.a ${PREFIXMIPS64ELROOTFS}/usr/lib64/libcursesw.a
-ln -sfv libncurses.a ${PREFIXMIPS64ELROOTFS}/usr/lib64/libcurses.a
-ln -sfv libncurses++w.a ${PREFIXMIPS64ELROOTFS}/usr/lib64/libncurses++.a
-ln -sfv ncursesw5-config-64 ${PREFIXMIPS64ELROOTFS}/usr/bin/ncurses5-config-64
-ln -sfv ncursesw5-config ${PREFIXMIPS64ELROOTFS}/usr/bin/ncurses5-config
-ln -sfv ../share/terminfo ${PREFIXMIPS64ELROOTFS}/usr/lib64/terminfo
+[ -f "${METADATAMIPS64ELROOTFS}/ncurses_link64_libcurses.so" ] || \
+  ln -sfv libcurses.so ${PREFIXMIPS64ELROOTFS}/usr/lib64/libcursesw.so || \
+    die "link ncurses64 libcurses.so error" && \
+      touch ${METADATAMIPS64ELROOTFS}/ncurses_link64_libcurses.so
+[ -f "${METADATAMIPS64ELROOTFS}/ncurses_link64_libncurses.so" ] || \
+  ln -sfv libncurses.so ${PREFIXMIPS64ELROOTFS}/usr/lib64/libcurses.so || \
+    die "link ncurses64 libncurses.so error" && \
+      touch ${METADATAMIPS64ELROOTFS}/ncurses_link64_libncurses.so
+[ -f "${METADATAMIPS64ELROOTFS}/ncurses_link64_libncursesw.a" ] || \
+  ln -sfv libncursesw.a ${PREFIXMIPS64ELROOTFS}/usr/lib64/libcursesw.a || \
+    die "link ncurses64 libncursesw.a error" && \
+      touch ${METADATAMIPS64ELROOTFS}/ncurses_link64_libncursesw.a
+[ -f "${METADATAMIPS64ELROOTFS}/ncurses_link64_libncurses.a" ] || \
+  ln -sfv libncurses.a ${PREFIXMIPS64ELROOTFS}/usr/lib64/libcurses.a || \
+    die "link ncurses64 libncurses.a error" && \
+      touch ${METADATAMIPS64ELROOTFS}/ncurses_link64_libncurses.a
+[ -f "${METADATAMIPS64ELROOTFS}/ncurses_link64_libncurses++w.a" ] || \
+  ln -sfv libncurses++w.a ${PREFIXMIPS64ELROOTFS}/usr/lib64/libncurses++.a || \
+    die "link ncurses64 libncurses++w.a error" && \
+      touch ${METADATAMIPS64ELROOTFS}/ncurses_link64_libncurses++w.a
+[ -f "${METADATAMIPS64ELROOTFS}/ncurses_link64_ncursesw5-config-64" ] || \
+  ln -sfv ncursesw5-config-64 ${PREFIXMIPS64ELROOTFS}/usr/bin/ncurses5-config-64 || \
+    die "link ncurses64 ncursesw5-config-64 error" && \
+      touch ${METADATAMIPS64ELROOTFS}/ncurses_link64_ncursesw5-config-64
+[ -f "${METADATAMIPS64ELROOTFS}/ncurses_link64_ncursesw5-config" ] || \
+  ln -sfv ncursesw5-config ${PREFIXMIPS64ELROOTFS}/usr/bin/ncurses5-config || \
+    die "link ncurses64 ncursesw5-config error" && \
+      touch ${METADATAMIPS64ELROOTFS}/ncurses_link64_ncursesw5-config
+[ -f "${METADATAMIPS64ELROOTFS}/ncurses_link64_terminfo" ] || \
+  ln -sfv ../share/terminfo ${PREFIXMIPS64ELROOTFS}/usr/lib64/terminfo || \
+    die "link ncurses64 terminfo error" && \
+      touch ${METADATAMIPS64ELROOTFS}/ncurses_link64_terminfo
 popd
 
 pushd ${BUILDMIPS64ELROOTFS}
@@ -1824,11 +2084,26 @@ cd e2fs-32
   make DESTDIR=${PREFIXMIPS64ELROOTFS} install-libs || \
     die "***install e2fsprogs32 libs error" && \
       touch ${METADATAMIPS64ELROOTFS}/e2fs_install32
-rm -v ${PREFIXMIPS64ELROOTFS}/usr/lib/lib{com_err,e2p,ext2fs,ss}.so
-ln -sv ../../lib/libcom_err.so.2 ${PREFIXMIPS64ELROOTFS}/usr/lib/libcom_err.so
-ln -sv ../../lib/libe2p.so.2 ${PREFIXMIPS64ELROOTFS}/usr/lib/libe2p.so
-ln -sv ../../lib/libext2fs.so.2 ${PREFIXMIPS64ELROOTFS}/usr/lib/libext2fs.so
-ln -sv ../../lib/libss.so.2 ${PREFIXMIPS64ELROOTFS}/usr/lib/libss.so
+[ -f "${METADATAMIPS64ELROOTFS}/e2fs_rm32_libs.so" ] || \
+  rm -v ${PREFIXMIPS64ELROOTFS}/usr/lib/lib{com_err,e2p,ext2fs,ss}.so || \
+    die "e2fs rm32 libs.so" && \
+      touch ${METADATAMIPS64ELROOTFS}/e2fs_rm32_libs.so
+[ -f "${METADATAMIPS64ELROOTFS}/e2fs_link32_libcom_err.so.2" ] || \
+  ln -sv ../../lib/libcom_err.so.2 ${PREFIXMIPS64ELROOTFS}/usr/lib/libcom_err.so || \
+    die "e2fs link32 libcom_err.so.2 error" && \
+      touch ${METADATAMIPS64ELROOTFS}/e2fs_link32_libcom_err.so.2
+[ -f "${METADATAMIPS64ELROOTFS}/e2fs_link32_libe2p.so.2" ] || \
+  ln -sv ../../lib/libe2p.so.2 ${PREFIXMIPS64ELROOTFS}/usr/lib/libe2p.so || \
+    die "e2fs link32 libe2p.so.2 error" && \
+      touch ${METADATAMIPS64ELROOTFS}/e2fs_link32_libe2p.so.2
+[ -f "${METADATAMIPS64ELROOTFS}/e2fs_link32_libext2fs.so.2" ] || \
+  ln -sv ../../lib/libext2fs.so.2 ${PREFIXMIPS64ELROOTFS}/usr/lib/libext2fs.so || \
+    die "e2fs link32 libext2fs.so.2 error" && \
+      touch ${METADATAMIPS64ELROOTFS}/e2fs_link32_libext2fs.so.2
+[ -f "${METADATAMIPS64ELROOTFS}/e2fs_link32_libss.so.2" ] || \
+  ln -sv ../../lib/libss.so.2 ${PREFIXMIPS64ELROOTFS}/usr/lib/libss.so || \
+    die "e2fs link32 libss.so.2 error" && \
+      touch ${METADATAMIPS64ELROOTFS}/e2fs_link32_libss.so.2
 popd
 
 pushd ${SRCMIPS64ELROOTFS}
@@ -1844,7 +2119,6 @@ pushd ${BUILDMIPS64ELROOTFS}
 [ -d e2fs-n32 ] || \
   mkdir e2fs-n32
 cd e2fs-n32
-# LDFLAGS="-lblkid -luuid"
 [ -f "${METADATAMIPS64ELROOTFS}/e2fs_confign32" ] || \
   PKG_CONFIG=true LDFLAGS="-lblkid -luuid" \
   CC="${CC} ${BUILDN32}" ${SRCMIPS64ELROOTFS}/e2fsprogs-${E2FSPROGS_VERSION}/configure \
@@ -1865,11 +2139,26 @@ cd e2fs-n32
   make DESTDIR=${PREFIXMIPS64ELROOTFS} install-libs || \
     die "***install e2fsprogsn32 libs error" && \
       touch ${METADATAMIPS64ELROOTFS}/e2fs_installn32
-rm -v ${PREFIXMIPS64ELROOTFS}/usr/lib32/lib{com_err,e2p,ext2fs,ss}.so
-ln -sv ../../lib32/libcom_err.so.2 ${PREFIXMIPS64ELROOTFS}/usr/lib32/libcom_err.so
-ln -sv ../../lib32/libe2p.so.2 ${PREFIXMIPS64ELROOTFS}/usr/lib32/libe2p.so
-ln -sv ../../lib32/libext2fs.so.2 ${PREFIXMIPS64ELROOTFS}/usr/lib32/libext2fs.so
-ln -sv ../../lib32/libss.so.2 ${PREFIXMIPS64ELROOTFS}/usr/lib32/libss.so
+[ -f "${METADATAMIPS64ELROOTFS}/e2fs_rmn32_libs.so" ] || \
+  rm -v ${PREFIXMIPS64ELROOTFS}/usr/lib32/lib{com_err,e2p,ext2fs,ss}.so || \
+    die "e2fs rmn32 libs.so error" && \
+      touch ${METADATAMIPS64ELROOTFS}/e2fs_rmn32_libs.so
+[ -f "${METADATAMIPS64ELROOTFS}/e2fs_linkn32_libcom_err.so.2" ] || \
+  ln -sv ../../lib32/libcom_err.so.2 ${PREFIXMIPS64ELROOTFS}/usr/lib32/libcom_err.so || \
+    die "e2fs linkn32 libcom_err.so.2 error" && \
+      touch ${METADATAMIPS64ELROOTFS}/e2fs_linkn32_libcom_err.so.2
+[ -f "${METADATAMIPS64ELROOTFS}/e2fs_linkn32_libe2p.so.2" ] || \
+  ln -sv ../../lib32/libe2p.so.2 ${PREFIXMIPS64ELROOTFS}/usr/lib32/libe2p.so || \
+    die "e2fs linkn32 libe2p.so.2 error" && \
+      touch ${METADATAMIPS64ELROOTFS}/e2fs_linkn32_libe2p.so.2
+[ -f "${METADATAMIPS64ELROOTFS}/e2fs_linkn32_libext2fs.so.2" ] || \
+  ln -sv ../../lib32/libext2fs.so.2 ${PREFIXMIPS64ELROOTFS}/usr/lib32/libext2fs.so || \
+    die "e2fs linkn32 libext2fs.so.2 error" && \
+      touch ${METADATAMIPS64ELROOTFS}/e2fs_linkn32_libext2fs.so.2
+[ -f "${METADATAMIPS64ELROOTFS}/e2fs_linkn32_libss.so.2" ] || \
+  ln -sv ../../lib32/libss.so.2 ${PREFIXMIPS64ELROOTFS}/usr/lib32/libss.so || \
+    die "e2fs linkn32 libss.so.2 error" && \
+      touch ${METADATAMIPS64ELROOTFS}/e2fs_linkn32_libss.so.2
 popd
 
 pushd ${SRCMIPS64ELROOTFS}
@@ -1885,7 +2174,6 @@ pushd ${BUILDMIPS64ELROOTFS}
 [ -d e2fs-64 ] || \
   mkdir e2fs-64
 cd e2fs-64
-# LDFLAGS="-lblkid -luuid"
 [ -f "${METADATAMIPS64ELROOTFS}/e2fs_config64" ] || \
   PKG_CONFIG=true LDFLAGS="-lblkid -luuid" \
   CC="${CC} ${BUILD64}" ${SRCMIPS64ELROOTFS}/e2fsprogs-${E2FSPROGS_VERSION}/configure \
@@ -1898,19 +2186,38 @@ cd e2fs-64
   make -j${JOBS} || \
     die "***build e2fsprogs error" && \
       touch ${METADATAMIPS64ELROOTFS}/e2fs_build64
+[ -f "${METADATAMIPS64ELROOTFS}/e2fs_install64" ] || \
+  make DESTDIR=${PREFIXMIPS64ELROOTFS} install || \
+    die "***install e2fsprogs error" && \
+      touch ${METADATAMIPS64ELROOTFS}/e2fs_install64
 [ -f "${METADATAMIPS64ELROOTFS}/e2fs_build64_libs" ] || \
   make -j${JOBS} libs || \
     die "***build e2fsprogs error" && \
       touch ${METADATAMIPS64ELROOTFS}/e2fs_build64_libs
-[ -f "${METADATAMIPS64ELROOTFS}/e2fs_install64" ] || \
+[ -f "${METADATAMIPS64ELROOTFS}/e2fs_install64_libs" ] || \
   make DESTDIR=${PREFIXMIPS64ELROOTFS} install-libs || \
     die "***install e2fsprogs libs error" && \
-      touch ${METADATAMIPS64ELROOTFS}/e2fs_install64
-rm -v ${PREFIXMIPS64ELROOTFS}/usr/lib64/lib{com_err,e2p,ext2fs,ss}.so
-ln -sv ../../lib64/libcom_err.so.2 ${PREFIXMIPS64ELROOTFS}/usr/lib64/libcom_err.so
-ln -sv ../../lib64/libe2p.so.2 ${PREFIXMIPS64ELROOTFS}/usr/lib64/libe2p.so
-ln -sv ../../lib64/libext2fs.so.2 ${PREFIXMIPS64ELROOTFS}/usr/lib64/libext2fs.so
-ln -sv ../../lib64/libss.so.2 ${PREFIXMIPS64ELROOTFS}/usr/lib64/libss.so
+      touch ${METADATAMIPS64ELROOTFS}/e2fs_install64_libs
+[ -f "${METADATAMIPS64ELROOTFS}/e2fs_rm64_libs.so" ] || \
+  rm -v ${PREFIXMIPS64ELROOTFS}/usr/lib64/lib{com_err,e2p,ext2fs,ss}.so || \
+    die "rm e2fs64 usr/lib64/lib{com_err,e2p,ext2fs,ss}.so error" && \
+      touch ${METADATAMIPS64ELROOTFS}/e2fs_rm64_libs.so
+[ -f "${METADATAMIPS64ELROOTFS}/e2fs_link64_libcom_err.so.2" ] || \
+  ln -sv ../../lib64/libcom_err.so.2 ${PREFIXMIPS64ELROOTFS}/usr/lib64/libcom_err.so || \
+    die "e2fs link64 libcom_err.so.2 error" && \
+      touch ${METADATAMIPS64ELROOTFS}/e2fs_link64_libcom_err.so.2
+[ -f "${METADATAMIPS64ELROOTFS}/e2fs_link64_libe2p.so.2" ] || \
+  ln -sv ../../lib64/libe2p.so.2 ${PREFIXMIPS64ELROOTFS}/usr/lib64/libe2p.so || \
+    die "e2fs link64 libe2p.so.2 error" && \
+      touch ${METADATAMIPS64ELROOTFS}/e2fs_link64_libe2p.so.2
+[ -f "${METADATAMIPS64ELROOTFS}/e2fs_link64_libext2fs.so.2" ] || \
+  ln -sv ../../lib64/libext2fs.so.2 ${PREFIXMIPS64ELROOTFS}/usr/lib64/libext2fs.so || \
+    die "e2fs link64 libext2fs.so.2 error" && \
+      touch ${METADATAMIPS64ELROOTFS}/e2fs_link64_libext2fs.so.2
+[ -f "${METADATAMIPS64ELROOTFS}/e2fs_link64_libss.so.2" ] || \
+  ln -sv ../../lib64/libss.so.2 ${PREFIXMIPS64ELROOTFS}/usr/lib64/libss.so || \
+    die "e2fs link64 libss.so.2 error" && \
+      touch ${METADATAMIPS64ELROOTFS}/e2fs_link64_libss.so.2
 popd
 
 pushd ${SRCMIPS64ELROOTFS}/coreutils-${COREUTILS_VERSION}
@@ -1932,7 +2239,7 @@ gl_cv_func_wcrtomb_retval=yes
 gl_cv_func_wctob_works=yes
 EOF
 [ -f "${METADATAMIPS64ELROOTFS}/coreutils_cross_config" ] || \
-  CC="${CC} ${BUILD64}" CXX="${CXX} ${BUILD64}" \
+  CC="${CC} ${BUILD64}" CXX="${CXX} ${BUILD64}" EXTRA_MANS='' \
   CPPFLAGS="-I${PREFIXMIPS64ELROOTFS}/cross-tools/include" \
   ${SRCMIPS64ELROOTFS}/coreutils-${COREUTILS_VERSION}/configure \
   --build=${CROSS_HOST} --host=${CROSS_TARGET64} \
@@ -1941,21 +2248,52 @@ EOF
   --enable-install-program=hostname || \
     die "***config coreutils error" && \
       touch ${METADATAMIPS64ELROOTFS}/coreutils_cross_config
+[ -f "${METADATAMIPS64ELROOTFS}/coreutils_make-prime-list" ] || \
+  make CC=gcc src/make-prime-list || \
+    die "make host make-prime-list error"
+      touch ${METADATAMIPS64ELROOTFS}/coreutils_make-prime-list
 [ -f "${METADATAMIPS64ELROOTFS}/coreutils_cross_build" ] || \
-  make -j${JOBS} || \
+  make EXTRA_MANS='' -j${JOBS} || \
     die "***build coreutils error" && \
       touch ${METADATAMIPS64ELROOTFS}/coreutils_cross_build
 [ -f "${METADATAMIPS64ELROOTFS}/coreutils_cross_install" ] || \
-  make DESTDIR=${PREFIXMIPS64ELROOTFS} install || \
+  make DESTDIR=${PREFIXMIPS64ELROOTFS} EXTRA_MANS='' install || \
     die "***install coreutils error" && \
       touch ${METADATAMIPS64ELROOTFS}/coreutils_cross_install
-mv -v ${PREFIXMIPS64ELROOTFS}/usr/bin/{cat,chgrp,chmod,chown,cp,date} ${PREFIXMIPS64ELROOTFS}/bin
-mv -v ${PREFIXMIPS64ELROOTFS}/usr/bin/{dd,df,echo,false,hostname,ln,ls,mkdir} ${PREFIXMIPS64ELROOTFS}/bin
-mv -v ${PREFIXMIPS64ELROOTFS}/usr/bin/{mv,pwd,rm,rmdir,stty,true,uname} ${PREFIXMIPS64ELROOTFS}/bin
-mv -v ${PREFIXMIPS64ELROOTFS}/usr/bin/chroot ${PREFIXMIPS64ELROOTFS}/usr/sbin
-mv -v ${PREFIXMIPS64ELROOTFS}/usr/bin/{'[',basename,head,install,nice} ${PREFIXMIPS64ELROOTFS}/bin
-mv -v ${PREFIXMIPS64ELROOTFS}/usr/bin/{readlink,sleep,sync,test,touch} ${PREFIXMIPS64ELROOTFS}/bin
-ln -sfv ../../bin/install ${PREFIXMIPS64ELROOTFS}/usr/bin
+[ -f "${METADATAMIPS64ELROOTFS}/coreutils_cross_mv_cat" ] || \
+  mv -v ${PREFIXMIPS64ELROOTFS}/usr/bin/{cat,chgrp,chmod,chown,cp,date} \
+        ${PREFIXMIPS64ELROOTFS}/bin || \
+    die "mv coreutils usr/bin/{cat,chgrp,chmod,chown,cp,date} error" && \
+      touch ${METADATAMIPS64ELROOTFS}/coreutils_cross_mv_cat
+[ -f "${METADATAMIPS64ELROOTFS}/coreutils_cross_mv_dd" ] || \
+  mv -v ${PREFIXMIPS64ELROOTFS}/usr/bin/{dd,df,echo,false,hostname,ln,ls,mkdir} \
+        ${PREFIXMIPS64ELROOTFS}/bin || \
+    die "mv coreutils usr/bin/{dd,df,echo,false,hostname,ln,ls,mkdir} error" && \
+      touch ${METADATAMIPS64ELROOTFS}/coreutils_cross_mv_dd
+[ -f "${METADATAMIPS64ELROOTFS}/coreutils_cross_mv_mv" ] || \
+  mv -v ${PREFIXMIPS64ELROOTFS}/usr/bin/{mv,pwd,rm,rmdir,stty,true,uname} \
+        ${PREFIXMIPS64ELROOTFS}/bin || \
+    die "mv coretutils usr/bin/{mv,pwd,rm,rmdir,stty,true,uname} error" && \
+      touch ${METADATAMIPS64ELROOTFS}/coreutils_cross_mv_mv
+[ -f "${METADATAMIPS64ELROOTFS}/coreutils_cross_mv_chroot" ] || \
+  mv -v ${PREFIXMIPS64ELROOTFS}/usr/bin/chroot \
+        ${PREFIXMIPS64ELROOTFS}/usr/sbin || \
+    die "mv coreutils chroot error" && \
+      touch ${METADATAMIPS64ELROOTFS}/coreutils_cross_mv_chroot
+[ -f "${METADATAMIPS64ELROOTFS}/coreutils_cross_mv_bashname" ] || \
+  mv -v ${PREFIXMIPS64ELROOTFS}/usr/bin/{'[',basename,head,install,nice} \
+        ${PREFIXMIPS64ELROOTFS}/bin || \
+    die "mv coreutils usr/bin/{'[',basename,head,install,nice} error" && \
+      touch ${METADATAMIPS64ELROOTFS}/coreutils_cross_mv_bashname
+[ -f "${METADATAMIPS64ELROOTFS}/coreutils_cross_mv_readlink" ] || \
+  mv -v ${PREFIXMIPS64ELROOTFS}/usr/bin/{readlink,sleep,sync,test,touch} \
+        ${PREFIXMIPS64ELROOTFS}/bin || \
+    die "mv coreutils usr/bin/{readlink,sleep,sync,test,touch} error" && \
+      touch ${METADATAMIPS64ELROOTFS}/coreutils_cross_mv_readlink
+[ -f "${METADATAMIPS64ELROOTFS}/coreutils_link_install" ] || \
+  ln -sfv ../../bin/install ${PREFIXMIPS64ELROOTFS}/usr/bin || \
+    die "link coreutils install error" && \
+      touch ${METADATAMIPS64ELROOTFS}/coreutils_link_install
 popd
 
 pushd ${BUILDMIPS64ELROOTFS}
@@ -1969,6 +2307,13 @@ cd iana-etc-cross-build
   make DESTDIR=${PREFIXMIPS64ELROOTFS} install || \
     die "***install iana-etc error" && \
       touch ${METADATAMIPS64ELROOTFS}/iana-etc_cross_install
+popd
+
+pushd ${SRCMIPS64ELROOTFS}/m4-${M4_VERSION}
+[ -f "${METADATAMIPS64ELROOTFS}/m4_patch_stdio.h" ] || \
+  sed -i '/gets is a security hole/d' lib/stdio.in.h || \
+    die "patch m4 stdio.h error" && \
+      touch ${METADATAMIPS64ELROOTFS}/m4_patch_stdio.h
 popd
 
 pushd ${BUILDMIPS64ELROOTFS}
@@ -2674,14 +3019,18 @@ sed -i -e 's:ln -s -f $(PREFIX)/bin/:ln -s :' Makefile
   RANLIB="${RANLIB}" || \
     die "***build bzip32 error" && \
       touch ${METADATAMIPS64ELROOTFS}/bzip_build32
-#make PREFIX=${PREFIXMIPS64ELROOTFS}/usr install || die "install bzip2 error"
-#cp -v bzip2-shared ${PREFIXMIPS64ELROOTFS}/bin/bzip2
-cp -v libbz2.a ${PREFIXMIPS64ELROOTFS}/usr/lib
-cp -av libbz2.so* ${PREFIXMIPS64ELROOTFS}/lib
-ln -sfv ../../lib/libbz2.so.1.0 ${PREFIXMIPS64ELROOTFS}/usr/lib/libbz2.so
-#rm -v ${PREFIXMIPS64ELROOTFS}/usr/bin/{bunzip2,bzcat,bzip2}
-#ln -sfv bzip2 ${PREFIXMIPS64ELROOTFS}/bin/bunzip2
-#ln -sfv bzip2 ${PREFIXMIPS64ELROOTFS}/bin/bzcat
+[ -f "${METADATAMIPS64ELROOTFS}/bzip_cp32_libbz2.a" ] || \
+  cp -v libbz2.a ${PREFIXMIPS64ELROOTFS}/usr/lib || \
+    die "cp bzip32 libbz2.a error" && \
+      touch ${METADATAMIPS64ELROOTFS}/bzip_cp32_libbz2.a
+[ -f "${METADATAMIPS64ELROOTFS}/bzip_cp32_libbz2.so" ] || \
+  cp -av libbz2.so* ${PREFIXMIPS64ELROOTFS}/lib || \
+    die "cp bzip32 libbz2.so error" && \
+      touch ${METADATAMIPS64ELROOTFS}/bzip_cp32_libbz2.so
+[ -f "${METADATAMIPS64ELROOTFS}/bzip_link32_libbz2.so.1.0" ] || \
+  ln -sfv ../../lib/libbz2.so.1.0 ${PREFIXMIPS64ELROOTFS}/usr/lib/libbz2.so || \
+    die "link bzip32 libbz2.so.1.0 error" && \
+      touch ${METADATAMIPS64ELROOTFS}/bzip_link32_libbz2.so.1.0
 popd
 
 pushd ${BUILDMIPS64ELROOTFS}
@@ -2706,14 +3055,18 @@ sed -i 's@/lib\(/\| \|$\)@/lib32\1@g' Makefile
   RANLIB="${RANLIB}" || \
     die "***build bzipn32 error" && \
       touch ${METADATAMIPS64ELROOTFS}/bzip_buildn32
-#make PREFIX=${PREFIXMIPS64ELROOTFS}/usr install || die "install bzip2 error"
-#cp -v bzip2-shared ${PREFIXMIPS64ELROOTFS}/bin/bzip2
-cp -v libbz2.a ${PREFIXMIPS64ELROOTFS}/usr/lib32
-cp -av libbz2.so* ${PREFIXMIPS64ELROOTFS}/lib32
-ln -sfv ../../lib32/libbz2.so.1.0 ${PREFIXMIPS64ELROOTFS}/usr/lib32/libbz2.so
-#rm -v ${PREFIXMIPS64ELROOTFS}/usr/bin/{bunzip2,bzcat,bzip2}
-#ln -sfv bzip2 ${PREFIXMIPS64ELROOTFS}/bin/bunzip2
-#ln -sfv bzip2 ${PREFIXMIPS64ELROOTFS}/bin/bzcat
+[ -f "${METADATAMIPS64ELROOTFS}/bzip_cpn32_libbz2.a" ] || \
+  cp -v libbz2.a ${PREFIXMIPS64ELROOTFS}/usr/lib32 || \
+    die "cp bzipn32 libbz2.a error" && \
+      touch ${METADATAMIPS64ELROOTFS}/bzip_cpn32_libbz2.a
+[ -f "${METADATAMIPS64ELROOTFS}/bzip_cpn32_libbz2.so" ] || \
+  cp -av libbz2.so* ${PREFIXMIPS64ELROOTFS}/lib32 || \
+    die "cp bzipn32 libbz2.so error" && \
+      touch ${METADATAMIPS64ELROOTFS}/bzip_cpn32_libbz2.so
+[ -f "${METADATAMIPS64ELROOTFS}/bzip_linkn32_libbz2.so.1.0" ] || \
+  ln -sfv ../../lib32/libbz2.so.1.0 ${PREFIXMIPS64ELROOTFS}/usr/lib32/libbz2.so || \
+    die "link bzipn32 libbz2.so.1.0 error" && \
+      touch ${METADATAMIPS64ELROOTFS}/bzip_linkn32_libbz2.so.1.0
 popd
 
 pushd ${BUILDMIPS64ELROOTFS}
@@ -2742,21 +3095,42 @@ sed -i 's@/lib\(/\| \|$\)@/lib64\1@g' Makefile
   make PREFIX=${PREFIXMIPS64ELROOTFS}/usr install || \
     die "install bzip2 error" && \
       touch ${METADATAMIPS64ELROOTFS}/bzip64_install
-cp -v bzip2-shared ${PREFIXMIPS64ELROOTFS}/bin/bzip2
-cp -av libbz2.so* ${PREFIXMIPS64ELROOTFS}/lib64
-ln -sfv ../../lib64/libbz2.so.1.0 ${PREFIXMIPS64ELROOTFS}/usr/lib64/libbz2.so
-rm -v ${PREFIXMIPS64ELROOTFS}/usr/bin/{bunzip2,bzcat,bzip2}
-ln -sfv bzip2 ${PREFIXMIPS64ELROOTFS}/bin/bunzip2
-ln -sfv bzip2 ${PREFIXMIPS64ELROOTFS}/bin/bzcat
+[ -f "${METADATAMIPS64ELROOTFS}/bzip_cp64_bzip2-shared" ] || \
+  cp -v bzip2-shared ${PREFIXMIPS64ELROOTFS}/bin/bzip2 || \
+    die "cp bzip64 bzip2-shared error" && \
+      touch ${METADATAMIPS64ELROOTFS}/bzip_cp64_bzip2-shared
+[ -f "${METADATAMIPS64ELROOTFS}/bzip_cp64_libbz2.so" ] || \
+  cp -av libbz2.so* ${PREFIXMIPS64ELROOTFS}/lib64 || \
+    die "cp bzip64 libbz2.so error" && \
+      touch ${METADATAMIPS64ELROOTFS}/bzip_cp64_libbz2.so
+[ -f "${METADATAMIPS64ELROOTFS}/bzip_link64_libbz2.so.1.0" ] || \
+  ln -sfv ../../lib64/libbz2.so.1.0 ${PREFIXMIPS64ELROOTFS}/usr/lib64/libbz2.so || \
+    die "link bzip64 libbz2.so.1.0" && \
+      touch ${METADATAMIPS64ELROOTFS}/bzip_link64_libbz2.so.1.0
+[ -f "${METADATAMIPS64ELROOTFS}/bzip_rm64_bunzip2" ] || \
+  rm -v ${PREFIXMIPS64ELROOTFS}/usr/bin/{bunzip2,bzcat,bzip2} || \
+    die "rm bzip64 usr/bin/{bunzip2,bzcat,bzip2} error" && \
+      touch ${METADATAMIPS64ELROOTFS}/bzip_rm64_bunzip2
+[ -f "${METADATAMIPS64ELROOTFS}/bzip_link64_bzip2_bunzip2" ] || \
+  ln -sfv bzip2 ${PREFIXMIPS64ELROOTFS}/bin/bunzip2 || \
+    die "link bzip64 bzip2 bunzip2 error" && \
+      touch ${METADATAMIPS64ELROOTFS}/bzip_link64_bzip2_bunzip2
+[ -f "${METADATAMIPS64ELROOTFS}/bzip_link64_bzip2_bzcat" ] || \
+  ln -sfv bzip2 ${PREFIXMIPS64ELROOTFS}/bin/bzcat || \
+    die "link bzip64 bzip2 bzcat error" && \
+      touch ${METADATAMIPS64ELROOTFS}/bzip_link64_bzip2_bzcat
 popd
 
 pushd ${BUILDMIPS64ELROOTFS}
 [ -d diffutils-cross-build ] || \
   cp -ar ${SRCMIPS64ELROOTFS}/diffutils-${DIFFUTILS_VERSION} diffutils-cross-build
 cd diffutils-cross-build
+[ -f "${METADATAMIPS64ELROOTFS}/diffutils_update_stdio.h" ] || \
+  sed -i '/gets is a security hole/d' lib/stdio.in.h || \
+    die "update diffutils stdio.h error" && \
+      touch ${METADATAMIPS64ELROOTFS}/diffutils_update_stdio.h
 [ -f "${METADATAMIPS64ELROOTFS}/diffutils_cross_config" ] || \
-  CC="${CC} ${BUILD64}" \
-  ${SRCMIPS64ELROOTFS}/diffutils-${DIFFUTILS_VERSION}/configure --prefix=/usr \
+  CC="${CC} ${BUILD64}" ./configure --prefix=/usr \
   --build=${CROSS_HOST} --host=${CROSS_TARGET64} || \
     die "***config diffutils error" && \
       touch ${METADATAMIPS64ELROOTFS}/diffutils_cross_config
@@ -2863,11 +3237,23 @@ EOF` || \
   make DESTDIR=${PREFIXMIPS64ELROOTFS} install || \
     die "***install findutils error" && \
       touch ${METADATAMIPS64ELROOTFS}/findutils_cross_installusr
-mv -v ${PREFIXMIPS64ELROOTFS}/usr/bin/find ${PREFIXMIPS64ELROOTFS}/bin
-cp ${PREFIXMIPS64ELROOTFS}/usr/bin/updatedb{,.orig}
-sed 's@find:=${BINDIR}@find:=/bin@' ${PREFIXMIPS64ELROOTFS}/usr/bin/updatedb.orig > \
-    ${PREFIXMIPS64ELROOTFS}/usr/bin/updatedb
-rm ${PREFIXMIPS64ELROOTFS}/usr/bin/updatedb.orig
+[ -f "${METADATAMIPS64ELROOTFS}/findutils_mv_find" ] || \
+  mv -v ${PREFIXMIPS64ELROOTFS}/usr/bin/find ${PREFIXMIPS64ELROOTFS}/bin || \
+    die "mv findutils find error" && \
+      touch ${METADATAMIPS64ELROOTFS}/findutils_mv_find
+[ -f "${METADATAMIPS64ELROOTFS}/findutils_cp_updatedb" ] || \
+  cp ${PREFIXMIPS64ELROOTFS}/usr/bin/updatedb{,.orig} || \
+    die "cp findutils updatedb error" && \
+      touch ${METADATAMIPS64ELROOTFS}/findutils_cp_updatedb
+[ -f "${METADATAMIPS64ELROOTFS}/findutils_sed_updatedb" ] || \
+  sed 's@find:=${BINDIR}@find:=/bin@' ${PREFIXMIPS64ELROOTFS}/usr/bin/updatedb.orig > \
+      ${PREFIXMIPS64ELROOTFS}/usr/bin/updatedb || \
+    die "sed findutils updatedb error" && \
+      touch ${METADATAMIPS64ELROOTFS}/findutils_sed_updatedb
+[ -f "${METADATAMIPS64ELROOTFS}/findutils_rm_updatedb.orig" ] || \
+  rm ${PREFIXMIPS64ELROOTFS}/usr/bin/updatedb.orig || \
+    die "rm findutils updatedb.orig error" && \
+      touch ${METADATAMIPS64ELROOTFS}/findutils_rm_updatedb.orig
 popd
 
 pushd ${BUILDMIPS64ELROOTFS}
@@ -3086,16 +3472,16 @@ popd
 pushd ${BUILDMIPS64ELROOTFS}
 cd iputils-${IPUTILS_VERSION}
 [ -f ${METADATAMIPS64ELROOTFS}/iputils_patchfix ] || \
-  patch -Np1 -i ${PATCH}/iputils-s20101006-fixes-1.patch || \
+  patch -Np1 -i ${PATCH}/iputils-s20121221-fixes-1.patch || \
     die "***patch fix iputils error" && \
       touch ${METADATAMIPS64ELROOTFS}/iputils_patchfix
 [ -f ${METADATAMIPS64ELROOTFS}/iputils_patchdoc ] || \
-  patch -Np1 -i ${PATCH}/iputils-s20101006-doc-1.patch || \
+  patch -Np1 -i ${PATCH}/iputils-s20121221-doc-1.patch || \
     die "***patch doc iputils error" && \
       touch ${METADATAMIPS64ELROOTFS}/iputils_patchdoc
 
 [ -f "${METADATAMIPS64ELROOTFS}/iputils_cross_build" ] || \
-  make CC="${CC} ${BUILD64}" \
+  make CC="${CC} ${BUILD64}" USE_CAP=no \
   IPV4_TARGETS="tracepath ping clockdiff rdisc" \
   IPV6_TARGETS="tracepath6 traceroute6" -j${JOBS} || \
     die "***build iputils error" && \
@@ -3145,14 +3531,13 @@ ac_cv_func_realloc_0_nonnull=yes
 EOF` || \
     die "create bkd config.cache" && \
       touch ${METADATAMIPS64ELROOTFS}/kbd_cross_create_config.cache
-[ -f "${METADATAMIPS64ELROOTFS}/bkd_cross_config" ] || \
-[ -f "config.log" ] || \
+[ -f "${METADATAMIPS64ELROOTFS}/kbd_cross_config" ] || \
   CC="${CC} ${BUILD64}" \
   ${SRCMIPS64ELROOTFS}/kbd-${KBD_VERSION}/configure \
   --build=${CROSS_HOST} --host=${CROSS_TARGET64} \
-  --prefix=/usr --cache-file=config.cache || \
+  --prefix=/usr --disable-vlock --cache-file=config.cache || \
     die "***config kbd error" && \
-      touch ${METADATAMIPS64ELROOTFS}/bkd_cross_config
+      touch ${METADATAMIPS64ELROOTFS}/kbd_cross_config
 [ -f "${METADATAMIPS64ELROOTFS}/kbd_cross_build" ] || \
   make CC="${CC} ${BUILD64}" -j${JOBS} || \
     die "***build kbd error" && \
@@ -3493,9 +3878,9 @@ EOF` || \
     die "***install libestr64 error" && \
       touch ${METADATAMIPS64ELROOTFS}/libestr_install64
 [ -f "${METADATAMIPS64ELROOTFS}/libestr_rm64_la_files" ] || \
-rm ${PREFIXMIPS64ELROOTFS}/usr/lib64/libestr.la || \
-  die "rm libestr64 la files error" && \
-    touch ${METADATAMIPS64ELROOTFS}/libestr_rm64_la_files
+  rm ${PREFIXMIPS64ELROOTFS}/usr/lib64/libestr.la || \
+    die "rm libestr64 la files error" && \
+      touch ${METADATAMIPS64ELROOTFS}/libestr_rm64_la_files
 popd
 
 # Use make, not make -j${JOBS}
@@ -3590,20 +3975,120 @@ EOF` || \
     die "***config libee64 error" && \
       touch ${METADATAMIPS64ELROOTFS}/libee_config64
 [ -f "${METADATAMIPS64ELROOTFS}/libee_build64" ] || \
-make || \
-  die "***build libee64 error" && \
-    touch ${METADATAMIPS64ELROOTFS}/libee_build64
+  make || \
+    die "***build libee64 error" && \
+      touch ${METADATAMIPS64ELROOTFS}/libee_build64
 [ -f "${METADATAMIPS64ELROOTFS}/libee_install64" ] || \
-make DESTDIR=${PREFIXMIPS64ELROOTFS} install || \
-  die "***install libee64 error" && \
-    touch ${METADATAMIPS64ELROOTFS}/libee_install64
+  make DESTDIR=${PREFIXMIPS64ELROOTFS} install || \
+    die "***install libee64 error" && \
+      touch ${METADATAMIPS64ELROOTFS}/libee_install64
 [ -f "${METADATAMIPS64ELROOTFS}/libee_rm64_la_files" ] || \
   rm ${PREFIXMIPS64ELROOTFS}/usr/lib64/libee.la || \
     die "rm libee64 la files" && \
       touch ${METADATAMIPS64ELROOTFS}/libee_rm64_la_files
 popd
 
-# FIXME rebuild later, need build libestr
+pushd ${BUILDMIPS64ELROOTFS}
+[ -d json-c-32 ] || mkdir json-c-32
+cd json-c-32
+[ -f "${METADATAMIPS64ELROOTFS}/json-c_create32_config.cache" ] || \
+  `cat > config.cache << EOF
+ac_cv_func_malloc_0_nonnull=yes
+ac_cv_func_realloc_0_nonnull=yes
+EOF` || \
+    die "create json-c32 config.cache" && \
+      touch ${METADATAMIPS64ELROOTFS}/json-c_create32_config.cache
+[ -f "${METADATAMIPS64ELROOTFS}/json-c_config32" ] || \
+  PKG_CONFIG=true CC="${CC} ${BUILD32}" \
+  PKG_CONFIG_LIBDIR=${PREFIXMIPS64ELROOTFS}/usr/lib \
+  PKG_CONFIG_PATH=${PREFIXMIPS64ELROOTFS}/usr/lib/pkgconfig \
+  ${SRCMIPS64ELROOTFS}/json-c-${JSONC_VERSION}/configure --build=${CROSS_HOST} \
+  --host=${CROSS_TARGET32} --prefix=/usr --sbindir=/sbin \
+  --cache-file=config.cache || \
+    die "***config json-c32 error" && \
+      touch ${METADATAMIPS64ELROOTFS}/json-c_config32
+[ -f "${METADATAMIPS64ELROOTFS}/json-c_build32" ] || \
+  make || \
+    die "***build json-c32 error" && \
+      touch ${METADATAMIPS64ELROOTFS}/json-c_build32
+[ -f "${METADATAMIPS64ELROOTFS}/json-c_install32" ] || \
+  make DESTDIR=${PREFIXMIPS64ELROOTFS} install || \
+    die "***install json-c32 error" && \
+      touch ${METADATAMIPS64ELROOTFS}/json-c_install32
+[ -f "${METADATAMIPS64ELROOTFS}/json-c_rm32_la_files" ] || \
+  rm ${PREFIXMIPS64ELROOTFS}/usr/lib/libjson.la || \
+    die "rm json-c32 la files" && \
+      touch ${METADATAMIPS64ELROOTFS}/json-c_rm32_la_files
+popd
+
+pushd ${BUILDMIPS64ELROOTFS}
+[ -d json-c-n32 ] || \
+  mkdir json-c-n32
+cd json-c-n32
+[ -f "${METADATAMIPS64ELROOTFS}/json-c_createn32_config.cache" ] || \
+  `cat > config.cache << EOF
+ac_cv_func_malloc_0_nonnull=yes
+ac_cv_func_realloc_0_nonnull=yes
+EOF` || \
+    die "create json-c32 config.cache" && \
+      touch ${METADATAMIPS64ELROOTFS}/json-c_createn32_config.cache
+[ -f "${METADATAMIPS64ELROOTFS}/json-c_confign32" ] || PKG_CONFIG=true \
+  CC="${CC} ${BUILDN32}" \
+  PKG_CONFIG_LIBDIR=${PREFIXMIPS64ELROOTFS}/usr/lib32 \
+  PKG_CONFIG_PATH=${PREFIXMIPS64ELROOTFS}/usr/lib32/pkgconfig \
+  ${SRCMIPS64ELROOTFS}/json-c-${JSONC_VERSION}/configure --build=${CROSS_HOST} \
+  --host=${CROSS_TARGET64} --prefix=/usr --sbindir=/sbin \
+  --cache-file=config.cache --libdir=/usr/lib32 || \
+    die "***config json-cn32 error" && \
+      touch ${METADATAMIPS64ELROOTFS}/json-c_confign32
+[ -f "${METADATAMIPS64ELROOTFS}/json-c_buildn32" ] || \
+  make || \
+    die "***build json-cn32 error" && \
+      touch ${METADATAMIPS64ELROOTFS}/json-c_buildn32
+[ -f "${METADATAMIPS64ELROOTFS}/json-c_installn32" ] || \
+  make DESTDIR=${PREFIXMIPS64ELROOTFS} install || \
+    die "***install json-cn32 error" && \
+      touch ${METADATAMIPS64ELROOTFS}/json-c_installn32
+[ -f "${METADATAMIPS64ELROOTFS}/json-c_rmn32_la_files" ] || \
+  rm ${PREFIXMIPS64ELROOTFS}/usr/lib32/libjson.la || \
+    die "rm json-cn32 la files" && \
+      touch ${METADATAMIPS64ELROOTFS}/json-c_rmn32_la_files
+popd
+
+pushd ${BUILDMIPS64ELROOTFS}
+[ -d json-c-64 ] || \
+  mkdir json-c-64
+cd json-c-64
+[ -f "${METADATAMIPS64ELROOTFS}/json-c_create64_config.cache" ] || \
+  `cat > config.cache << EOF
+ac_cv_func_malloc_0_nonnull=yes
+ac_cv_func_realloc_0_nonnull=yes
+EOF` || \
+    die "create json-c64 config.cache error" && \
+      touch ${METADATAMIPS64ELROOTFS}/json-c_create64_config.cache
+[ -f "${METADATAMIPS64ELROOTFS}/json-c_config64" ] || PKG_CONFIG=true \
+  CC="${CC} ${BUILD64}" \
+  PKG_CONFIG_LIBDIR=${PREFIXMIPS64ELROOTFS}/usr/lib64 \
+  PKG_CONFIG_PATH=${PREFIXMIPS64ELROOTFS}/usr/lib64/pkgconfig \
+  ${SRCMIPS64ELROOTFS}/json-c-${JSONC_VERSION}/configure --build=${CROSS_HOST} \
+  --host=${CROSS_TARGET64} --prefix=/usr --sbindir=/sbin \
+  --cache-file=config.cache --libdir=/usr/lib64 || \
+    die "***config json-c64 error" && \
+      touch ${METADATAMIPS64ELROOTFS}/json-c_config64
+[ -f "${METADATAMIPS64ELROOTFS}/json-c_build64" ] || \
+  make || \
+    die "***build json-c64 error" && \
+      touch ${METADATAMIPS64ELROOTFS}/json-c_build64
+[ -f "${METADATAMIPS64ELROOTFS}/json-c_install64" ] || \
+  make DESTDIR=${PREFIXMIPS64ELROOTFS} install || \
+    die "***install json-c64 error" && \
+      touch ${METADATAMIPS64ELROOTFS}/json-c_install64
+[ -f "${METADATAMIPS64ELROOTFS}/json-c_rm64_la_files" ] || \
+  rm ${PREFIXMIPS64ELROOTFS}/usr/lib64/libjson.la || \
+    die "rm json-c64 la files" && \
+      touch ${METADATAMIPS64ELROOTFS}/json-c_rm64_la_files
+popd
+
 pushd ${BUILDMIPS64ELROOTFS}
 [ -d "rsyslog-cross-buildusr" ] || mkdir rsyslog-cross-buildusr
 cd rsyslog-cross-buildusr
@@ -3767,6 +4252,13 @@ EOF` || \
   die "create inittab error" && \
     touch ${METADATAMIPS64ELROOTFS}/create_inittab
 
+pushd ${SRCMIPS64ELROOTFS}/tar-${TAR_VERSION}
+[ -f "${METADATAMIPS64ELROOTFS}/tar_update_stdio.h" ] || \
+  sed -i '/gets is a security hole/d' gnu/stdio.in.h || \
+    die "update tar stdio.h error" && \
+      touch ${METADATAMIPS64ELROOTFS}/tar_update_stdio.h
+popd
+
 pushd ${BUILDMIPS64ELROOTFS}
 [ -d "tar-cross-buildusr" ] || mkdir tar-cross-buildusr
 cd tar-cross-buildusr
@@ -3842,7 +4334,8 @@ cd kmod-32
   PKG_CONFIG_PATH=${PREFIXMIPS64ELROOTFS}/usr/lib/pkgconfig \
   ${SRCMIPS64ELROOTFS}/kmod-${KMOD_VERSION}/configure --prefix=/usr \
   --build=${CROSS_HOST} --host=${CROSS_TARGET32} --target=${CROSS_TARGET64} \
-  --with-rootlibdir=/lib --bindir=/bin --sysconfdir=/etc --libdir=/usr/lib || \
+  --with-rootlibdir=/lib --bindir=/bin --sysconfdir=/etc --libdir=/usr/lib \
+  --disable-manpages || \
     die "config kmod32 error" && \
       touch ${METADATAMIPS64ELROOTFS}/kmod_config32
 [ -f "${METADATAMIPS64ELROOTFS}/kmod_build32" ] || \
@@ -3866,7 +4359,7 @@ cd kmod-n32
   ${SRCMIPS64ELROOTFS}/kmod-${KMOD_VERSION}/configure --prefix=/usr \
   --build=${CROSS_HOST} --host=${CROSS_TARGET64} --target=${CROSS_TARGET64} \
   --with-rootlibdir=/lib32 --bindir=/bin --sysconfdir=/etc \
-  --libdir=/usr/lib32 || \
+  --libdir=/usr/lib32 --disable-manpages || \
     die "config kmodn32 error" && \
       touch ${METADATAMIPS64ELROOTFS}/kmod_confign32
 [ -f "${METADATAMIPS64ELROOTFS}/kmod_buildn32" ] || \
@@ -3890,7 +4383,7 @@ cd kmod-64
   ${SRCMIPS64ELROOTFS}/kmod-${KMOD_VERSION}/configure --prefix=/usr \
   --build=${CROSS_HOST} --host=${CROSS_TARGET64} --target=${CROSS_TARGET64} \
   --with-rootlibdir=/lib64 --bindir=/bin --sysconfdir=/etc \
-  --libdir=/usr/lib64 || \
+  --libdir=/usr/lib64 --disable-manpages || \
     die "config kmod64 error" && \
       touch ${METADATAMIPS64ELROOTFS}/kmod_config64
 [ -f "${METADATAMIPS64ELROOTFS}/kmod_build64" ] || \
@@ -3901,13 +4394,30 @@ cd kmod-64
   make DESTDIR=${PREFIXMIPS64ELROOTFS} install || \
     die "install kmod64 error" && \
       touch ${METADATAMIPS64ELROOTFS}/kmod_install64
-
-ln -sv kmod ${PREFIXMIPS64ELROOTFS}/bin/lsmod
-ln -sv ../bin/kmod ${PREFIXMIPS64ELROOTFS}/sbin/depmod
-ln -sv ../bin/kmod ${PREFIXMIPS64ELROOTFS}/sbin/insmod
-ln -sv ../bin/kmod ${PREFIXMIPS64ELROOTFS}/sbin/modprobe
-ln -sv ../bin/kmod ${PREFIXMIPS64ELROOTFS}/sbin/modinfo
-ln -sv ../bin/kmod ${PREFIXMIPS64ELROOTFS}/sbin/rmmod
+#[ -f "${METADATAMIPS64ELROOTFS}/kmod_link64_kmod_lsmod" ] || \
+#  ln -sfv kmod ${PREFIXMIPS64ELROOTFS}/bin/lsmod || \
+#    die "link kmod64 kmod lsmod error" && \
+#      touch ${METADATAMIPS64ELROOTFS}/kmod_link64_kmod_lsmod
+#[ -f "${METADATAMIPS64ELROOTFS}/kmod_link64_kmod_depmod" ] || \
+#  ln -sv ../bin/kmod ${PREFIXMIPS64ELROOTFS}/sbin/depmod || \
+#    die "link kmod64 kmod depmod error" && \
+#      touch ${METADATAMIPS64ELROOTFS}/kmod_link64_kmod_depmod
+#[ -f "${METADATAMIPS64ELROOTFS}/kmod_link64_kmod_insmod" ] || \
+#  ln -sv ../bin/kmod ${PREFIXMIPS64ELROOTFS}/sbin/insmod || \
+#    die "link kmod64 kmod insmod error" && \
+#      touch ${METADATAMIPS64ELROOTFS}/kmod_link64_kmod_insmod
+#[ -f "${METADATAMIPS64ELROOTFS}/kmod_link64_kmod_modprobe" ] || \
+#  ln -sv ../bin/kmod ${PREFIXMIPS64ELROOTFS}/sbin/modprobe || \
+#    die "link kmod64 kmod modprobe error" && \
+#      touch ${METADATAMIPS64ELROOTFS}/kmod_link64_kmod_modprobe
+#[ -f "${METADATAMIPS64ELROOTFS}/kmod_link64_kmod_modinfo" ] || \
+#  ln -sv ../bin/kmod ${PREFIXMIPS64ELROOTFS}/sbin/modinfo || \
+#    die "link kmod64 kmod modinfo error" && \
+#      touch ${METADATAMIPS64ELROOTFS}/kmod_link64_kmod_modinfo
+#[ -f "${METADATAMIPS64ELROOTFS}/kmod_link64_kmod_rmmod" ] || \
+#  ln -sv ../bin/kmod ${PREFIXMIPS64ELROOTFS}/sbin/rmmod || \
+#    die "link kmod64 mod rmmod error" && \
+#      touch ${METADATAMIPS64ELROOTFS}/kmod_link64_kmod_rmmod
 popd
 
 pushd ${PREFIXMIPS64ELROOTFS}/usr/share/misc
@@ -3922,12 +4432,12 @@ pushd ${BUILDMIPS64ELROOTFS}
 cd udev-32
 [ -f "${METADATAMIPS64ELROOTFS}/udev_config32" ] || \
   PKG_CONFIG=true CC="${CC} ${BUILD32}" \
-  LDFLAGS="-lblkid -luuid -lkmod" \
+  LDFLAGS="-lblkid -luuid -lkmod -lrt" \
   ${SRCMIPS64ELROOTFS}/udev-${UDEV_VERSION}/configure \
   --build=${CROSS_HOST} --host=${CROSS_TARGET32} \
-  --exec-prefix="" --sysconfdir=/etc \
-  --libexecdir=/lib --libdir=/usr/lib --disable-gudev \
-  --disable-extras --with-pci-ids-path=${PREFIXMIPS64ELROOTFS}/usr/share/misc || \
+  --exec-prefix="" --sysconfdir=/etc --disable-manpages \
+  --libexecdir=/lib --libdir=/usr/lib --disable-gudev --disable-extras \
+  --with-pci-ids-path=${PREFIXMIPS64ELROOTFS}/usr/share/misc || \
     die "***config udev32 error" && \
       touch ${METADATAMIPS64ELROOTFS}/udev_config32
 [ -f "${METADATAMIPS64ELROOTFS}/udev_build32" ] || \
@@ -3946,10 +4456,10 @@ pushd ${BUILDMIPS64ELROOTFS}
 cd udev-n32
 [ -f "${METADATAMIPS64ELROOTFS}/udev_confign32" ] || \
   PKG_CONFIG=true CC="${CC} ${BUILDN32}" \
-  LDFLAGS="-lblkid -luuid -lkmod" \
+  LDFLAGS="-lblkid -luuid -lkmod -lrt" \
   ${SRCMIPS64ELROOTFS}/udev-${UDEV_VERSION}/configure \
   --build=${CROSS_HOST} --host=${CROSS_TARGET64} \
-  --exec-prefix="" --sysconfdir=/etc \
+  --exec-prefix="" --sysconfdir=/etc --disable-manpages \
   --libexecdir=/lib32 --libdir=/usr/lib32 --disable-gudev \
   --disable-extras --with-pci-ids-path=${PREFIXMIPS64ELROOTFS}/usr/share/misc || \
     die "***config udevn32 error" && \
@@ -3970,10 +4480,10 @@ pushd ${BUILDMIPS64ELROOTFS}
 cd udev-64
 [ -f "${METADATAMIPS64ELROOTFS}/udev_config64" ] || \
   PKG_CONFIG=true CC="${CC} ${BUILD64}" \
-  LDFLAGS="-lblkid -luuid -lkmod" \
+  LDFLAGS="-lblkid -luuid -lkmod -lrt" \
   ${SRCMIPS64ELROOTFS}/udev-${UDEV_VERSION}/configure \
   --build=${CROSS_HOST} --host=${CROSS_TARGET64} \
-  --exec-prefix="" --sysconfdir=/etc \
+  --exec-prefix="" --sysconfdir=/etc --disable-manpages \
   --libexecdir=/lib64 --libdir=/usr/lib64 --disable-gudev \
   --disable-extras --with-pci-ids-path=${PREFIXMIPS64ELROOTFS}/usr/share/misc || \
     die "***config udev64 error" && \
@@ -4076,7 +4586,10 @@ cd xz-32
     die "***install xz32 error" && \
       touch ${METADATAMIPS64ELROOTFS}/xz_install32
 #mv -v ${PREFIXMIPS64ELROOTFS}/usr/bin/{xz,lzma,lzcat,unlzma,unxz,xzcat} ${PREFIXMIPS64ELROOTFS}/bin
-mv -v ${PREFIXMIPS64ELROOTFS}/lib/liblzma.a ${PREFIXMIPS64ELROOTFS}/usr/lib
+[ -f "${METADATAMIPS64ELROOTFS}/xz_mv32_liblzma.a" ] || \
+  mv -v ${PREFIXMIPS64ELROOTFS}/lib/liblzma.a ${PREFIXMIPS64ELROOTFS}/usr/lib || \
+    die "mv xz32 liblzma.a" && \
+      touch ${METADATAMIPS64ELROOTFS}/xz_mv32_liblzma.a
 popd
 
 pushd ${BUILDMIPS64ELROOTFS}
@@ -4098,7 +4611,10 @@ cd xz-n32
     die "***install xz32 error" && \
       touch ${METADATAMIPS64ELROOTFS}/xz_installn32
 #mv -v ${PREFIXMIPS64ELROOTFS}/usr/bin/{xz,lzma,lzcat,unlzma,unxz,xzcat} ${PREFIXMIPS64ELROOTFS}/bin
-mv -v ${PREFIXMIPS64ELROOTFS}/lib32/liblzma.a ${PREFIXMIPS64ELROOTFS}/usr/lib32
+[ -f "${METADATAMIPS64ELROOTFS}/xz_mvn32_liblzma.a" ] || \
+  mv -v ${PREFIXMIPS64ELROOTFS}/lib32/liblzma.a ${PREFIXMIPS64ELROOTFS}/usr/lib32 || \
+    die "mv xzn32 liblzma.a error" && \
+      touch ${METADATAMIPS64ELROOTFS}/xz_mvn32_liblzma.a
 popd
 
 pushd ${BUILDMIPS64ELROOTFS}
@@ -4119,31 +4635,44 @@ cd xz-64
   make DESTDIR=${PREFIXMIPS64ELROOTFS} pkgconfigdir=/usr/lib64/pkgconfig install || \
     die "***install xz64 error" && \
       touch ${METADATAMIPS64ELROOTFS}/xz_install64
-mv -v ${PREFIXMIPS64ELROOTFS}/usr/bin/{xz,lzma,lzcat,unlzma,unxz,xzcat} ${PREFIXMIPS64ELROOTFS}/bin
-mv -v ${PREFIXMIPS64ELROOTFS}/lib64/liblzma.a ${PREFIXMIPS64ELROOTFS}/usr/lib64
+[ -f "${METADATAMIPS64ELROOTFS}/xz_mv64_xz" ] || \
+  mv -v ${PREFIXMIPS64ELROOTFS}/usr/bin/{xz,lzma,lzcat,unlzma,unxz,xzcat} ${PREFIXMIPS64ELROOTFS}/bin || \
+    die "mv usr/bin/{xz,lzma,lzcat,unlzma,unxz,xzcat} error" && \
+      touch ${METADATAMIPS64ELROOTFS}/xz_mv64_xz
+[ -f "${METADATAMIPS64ELROOTFS}/xz_mv64_liblzma.a" ] || \
+  mv -v ${PREFIXMIPS64ELROOTFS}/lib64/liblzma.a ${PREFIXMIPS64ELROOTFS}/usr/lib64 || \
+    die "xz mv64 liblzma.a error" && \
+      touch ${METADATAMIPS64ELROOTFS}/xz_mv64_liblzma.a
 popd
 
-##pushd ${SRCMIPS64ELROOTFS}
-##[ -d dhcpcd-${DHCPCD_VERSION} ] \
-##  || tar xf  ${TARBALL}/dhcpcd-${DHCPCD_VERSION}.${DHCPCD_SUFFIX}
-##cd dhcpcd-${DHCPCD_VERSION}
-##./configure --target=${CROSS_TARGET64}
-##make PREFIX=/usr BINDIR=/sbin SYSCONFDIR=/etc \
-##    DBDIR=/var/lib/dhcpcd LIBEXECDIR=/usr/lib/dhcpcd
-##make PREFIX=/usr BINDIR=/sbin SYSCONFDIR=/etc \
-##    DBDIR=/var/lib/dhcpcd LIBEXECDIR=/usr/lib/dhcpcd \
-##        DESTDIR=${PREFIXMIPS64ELROOTFS} install
-##popd
+pushd ${BUILDMIPS64ELROOTFS}
+cd dhcpcd-${DHCPCD_VERSION}
+[ -f "${METADATAMIPS64ELROOTFS}/dhcpcd_cross_config" ] || \
+  CC="${CC} ${BUILD64}" PREFIX="" ./configure --target=${CROSS_TARGET64} || \
+    die "config dhcpcd error" && \
+      touch ${METADATAMIPS64ELROOTFS}/dhcpcd_cross_config
+[ -f "${METADATAMIPS64ELROOTFS}/dhcpcd_cross_build" ] || \
+  make CC="${CC} ${BUILD64}" PREFIX=/usr BINDIR=/sbin SYSCONFDIR=/etc \
+       DBDIR=/var/lib/dhcpcd LIBEXECDIR=/usr/lib/dhcpcd || \
+    die "build dhcpcd error" && \
+      touch ${METADATAMIPS64ELROOTFS}/dhcpcd_cross_build
+[ -f "${METADATAMIPS64ELROOTFS}/dhcpcd_cross_install" ] || \
+  make CC="${CC} ${BUILD64}" PREFIX=/usr BINDIR=/sbin SYSCONFDIR=/etc \
+       DBDIR=/var/lib/dhcpcd LIBEXECDIR=/usr/lib/dhcpcd \
+       DESTDIR=${PREFIXMIPS64ELROOTFS} install || \
+    die "install dhcpcd error" && \
+      touch ${METADATAMIPS64ELROOTFS}/dhcpcd_cross_install
+popd
 
 pushd ${SRCMIPS64ELROOTFS}/bootscripts-cross-lfs-${BOOTSCRIPTS_VERSION}
 [ -f "${METADATAMIPS64ELROOTFS}/bootscript_install_boot" ] || \
   make CC="${CC} ${BUILD64}" DESTDIR=${PREFIXMIPS64ELROOTFS} install-bootscripts || \
-   die "install bootscripts error" && \
-     touch ${METADATAMIPS64ELROOTFS}/bootscript_install_boot
+    die "install bootscripts error" && \
+      touch ${METADATAMIPS64ELROOTFS}/bootscript_install_boot
 [ -f "${METADATAMIPS64ELROOTFS}/bootscript_install_network" ] || \
   make DESTDIR=${PREFIXMIPS64ELROOTFS} install-network || \
-   die "install network error" && \
-     touch ${METADATAMIPS64ELROOTFS}/bootscript_install_network
+    die "install network error" && \
+      touch ${METADATAMIPS64ELROOTFS}/bootscript_install_network
 popd
 
 #########################################################################
@@ -4334,7 +4863,7 @@ EOF` || \
       touch ${METADATAMIPS64ELROOTFS}/create_clfs-release
 
 ##################### remove cross-tools ######################################
-#rm -rf ${PREFIXMIPS64ELROOTFS}/cross-tools
+rm -rf ${PREFIXMIPS64ELROOTFS}/cross-tools
 
 ################ Change Own Ship ########################
 [ -f "${METADATAMIPS64ELROOTFS}/change_all_own" ] || \
