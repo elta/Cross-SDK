@@ -111,6 +111,12 @@ pushd ${BUILDMIPSELROOTFS}
   tar xf ${TARBALL}/perl-${PERL_VERSION}.${PERL_SUFFIX} || \
     die "***extract perl error" && \
       touch ${METADATAMIPSELROOTFS}/perl_extract
+
+[ -f ${METADATAMIPSELROOTFS}/iputils_extract ] || \
+  tar xf ${TARBALL}/iputils-${IPUTILS_VERSION}.${IPUTILS_SUFFIX} || \
+    die "***extract iputils error" && \
+      touch ${METADATAMIPSELROOTFS}/iputils_extract
+
 popd
 
 pushd ${SRCMIPSELROOTFS}
@@ -154,17 +160,10 @@ pushd ${SRCMIPSELROOTFS}
     die "***extract gcc error" && \
       touch ${METADATAMIPSELROOTFS}/gcc_extract
 
-[ -f ${METADATAMIPSELROOTFS}/eglibc_extract ] || \
-  tar xf ${TARBALL}/eglibc-${EGLIBC_VERSION}-r21467.${EGLIBC_SUFFIX} || \
-    die "***extract eglibc error" && \
-      touch ${METADATAMIPSELROOTFS}/eglibc_extract
-
-cd eglibc-${EGLIBC_VERSION}
-[ -f ${METADATAMIPSELROOTFS}/eglibc_ports_extract ] || \
-  tar xf ${TARBALL}/eglibc-ports-${EGLIBC_VERSION}-r21467.${EGLIBC_SUFFIX} || \
-    die "***extract eglibc ports error" && \
-      touch ${METADATAMIPSELROOTFS}/eglibc_ports_extract
-cd ../
+[ -f ${METADATAMIPSELROOTFS}/glibc_extract ] || \
+  tar xf ${TARBALL}/glibc-${GLIBC_VERSION}.${GLIBC_SUFFIX} || \
+    die "***extract glibc error" && \
+      touch ${METADATAMIPSELROOTFS}/glibc_extract
 
 [ -f ${METADATAMIPSELROOTFS}/file_extract ] || \
   tar xf ${TARBALL}/file-${FILE_VERSION}.${FILE_SUFFIX} || \
@@ -195,22 +194,6 @@ cd ../
   tar xf ${TARBALL}/zlib-${ZLIB_VERSION}.${ZLIB_SUFFIX} || \
     die "***extract zlib error" && \
       touch ${METADATAMIPSELROOTFS}/zlib_extract
-
-## These used by glib
-#[ -f ${METADATAMIPSELROOTFS}/expat_extract ] || \
-#  tar xf ${TARBALL}/expat-${EXPAT_VERSION}.${EXPAT_SUFFIX} || \
-#    die "***extract expat error" && \
-#      touch ${METADATAMIPSELROOTFS}/expat_extract
-#
-#[ -f ${METADATAMIPSELROOTFS}/dbus_extract ] || \
-#  tar xf ${TARBALL}/dbus-${DBUS_VERSION}.${DBUS_SUFFIX} || \
-#    die "***extract dbus error" && \
-#      touch ${METADATAMIPSELROOTFS}/dbus_extract
-#
-#[ -f ${METADATAMIPSELROOTFS}/glib_extract ] || \
-#  tar xf ${TARBALL}/glib-${GLIB_VERSION}.${GLIB_SUFFIX} || \
-#    die "***extract glib error" && \
-#      touch ${METADATAMIPSELROOTFS}/glib_extract
 
 [ -f ${METADATAMIPSELROOTFS}/sed_extract ] || \
   tar xf ${TARBALL}/sed-${SED_VERSION}.${SED_SUFFIX} || \
@@ -312,11 +295,6 @@ cd ../
     die "***extract gzip error" && \
       touch ${METADATAMIPSELROOTFS}/gzip_extract
 
-[ -f ${METADATAMIPSELROOTFS}/iputils_extract ] || \
-  tar xf ${TARBALL}/iputils-${IPUTILS_VERSION}.${IPUTILS_SUFFIX} || \
-    die "***extract iputils error" && \
-      touch ${METADATAMIPSELROOTFS}/iputils_extract
-
 [ -f ${METADATAMIPSELROOTFS}/kbd_extract ] || \
   tar xf ${TARBALL}/kbd-${KBD_VERSION}.${KBD_SUFFIX} || \
     die "***extract kbd error" && \
@@ -356,6 +334,11 @@ cd ../
   tar xf ${TARBALL}/libee-${LIBEE_VERSION}.${LIBEE_SUFFIX} || \
     die "***extract libee error" && \
       touch ${METADATAMIPSELROOTFS}/libee_extract
+
+[ -f ${METADATAMIPSELROOTFS}/jsonc_extract ] || \
+  tar xf ${TARBALL}/json-c-${JSONC_VERSION}.${JSONC_SUFFIX} || \
+    die "***extract jsonc error" && \
+      touch ${METADATAMIPSELROOTFS}/jsonc_extract
 
 [ -f ${METADATAMIPSELROOTFS}/rsyslog_extract ] || \
   tar xf ${TARBALL}/rsyslog-${RSYSLOG_VERSION}.${RSYSLOG_SUFFIX} || \
@@ -488,8 +471,7 @@ cd ppl_build
   ${SRCMIPSELROOTFS}/ppl-${PPL_VERSION}/configure \
   --prefix=${PREFIXMIPSELROOTFS}/cross-tools --enable-shared \
   --enable-interfaces="c,cxx" --disable-optimization \
-  --with-libgmp-prefix=${PREFIXMIPSELROOTFS}/cross-tools \
-  --with-libgmpxx-prefix=${PREFIXMIPSELROOTFS}/cross-tools || \
+  --with-gmp=${PREFIXMIPSELROOTFS}/cross-tools || \
     die "***config ppl error" && \
       touch ${METADATAMIPSELROOTFS}/ppl_configure
 [ -f ${METADATAMIPSELROOTFS}/ppl_build ] || \
@@ -580,54 +562,40 @@ cd gcc-static-build
       touch ${METADATAMIPSELROOTFS}/gcc_static_install
 popd
 
-
-pushd ${SRCMIPSELROOTFS}
-cd eglibc-${EGLIBC_VERSION}
-[ -f ${METADATAMIPSELROOTFS}/eglibc_cp ] || \
-  cp Makeconfig{,.orig} || \
-    die "***eglibc cp makeconfig error" && \
-      touch ${METADATAMIPSELROOTFS}/eglibc_cp
-[ -f ${METADATAMIPSELROOTFS}/eglibc_sed ] || \
-  sed -e 's/-lgcc_eh//g' Makeconfig.orig > Makeconfig || \
-    die "***eglibc sed error" && \
-      touch ${METADATAMIPSELROOTFS}/eglibc_sed
-popd
-
 pushd ${BUILDMIPSELROOTFS}
-[ -d "eglibc-build" ] || mkdir eglibc-build
-cd eglibc-build
-[ -f ${METADATAMIPSELROOTFS}/eglibc_config ] || \
+[ -d "glibc-build" ] || mkdir glibc-build
+cd glibc-build
+[ -f ${METADATAMIPSELROOTFS}/glibc_config ] || \
 cat > config.cache << "EOF"
-libc_cv_forced_unwind=yes
+lic_cv_forced_unwind=yes
 libc_cv_c_cleanup=yes
 libc_cv_gnu89_inline=yes
 EOF
-
-cat > configparms << EOF
-install_root=${PREFIXMIPSELROOTFS}
-EOF
-
-[ -f ${METADATAMIPSELROOTFS}/eglibc_configure ] || \
-  BUILD_CC="gcc" CC="${CROSS_TARGET32}-gcc ${BUILD32}" \
+#cat > configparms << EOF
+#install_root=${PREFIXMIPSELROOTFS}
+#EOF
+[ -f ${METADATAMIPSELROOTFS}/glibc_configure ] || \
+  BUILD_CC="gcc" CC="${CROSS_TARGET32}-gcc" \
   AR="${CROSS_TARGET32}-ar" \
   RANLIB="${CROSS_TARGET32}-ranlib" \
   CFLAGS_FOR_TARGET="-O2" CFLAGS+="-O2" \
-  ${SRCMIPSELROOTFS}/eglibc-${EGLIBC_VERSION}/configure \
+  ${SRCMIPSELROOTFS}/glibc-${GLIBC_VERSION}/configure \
   --prefix=/usr \
-  --libexecdir=/usr/lib/eglibc --host=${CROSS_TARGET32} \
+  --libexecdir=/usr/lib/glibc --host=${CROSS_TARGET32} \
   --build=${CROSS_HOST} \
   --disable-profile --enable-add-ons --with-tls --enable-kernel=2.6.0 \
   --with-__thread --with-binutils=${PREFIXMIPSELROOTFS}/cross-tools/bin \
   --with-headers=${PREFIXMIPSELROOTFS}/usr/include \
   --cache-file=config.cache ||\
-    die "***config eglibc error" && \
-      touch ${METADATAMIPSELROOTFS}/eglibc_configure
-[ -f ${METADATAMIPSELROOTFS}/eglibc_build ] || \
-  make -j${JOBS} || die "***build eglibc error" && \
-    touch ${METADATAMIPSELROOTFS}/eglibc_build
-[ -f ${METADATAMIPSELROOTFS}/eglibc_install ] || \
-  make install || die "***install eglibc error" && \
-    touch ${METADATAMIPSELROOTFS}/eglibc_install
+    die "***config glibc error" && \
+      touch ${METADATAMIPSELROOTFS}/glibc_configure
+[ -f ${METADATAMIPSELROOTFS}/glibc_build ] || \
+  make -j${JOBS} || die "***build glibc error" && \
+    touch ${METADATAMIPSELROOTFS}/glibc_build
+[ -f ${METADATAMIPSELROOTFS}/glibc_install ] || \
+  make DESTDIR=${PREFIXMIPSELROOTFS} install || \
+    die "***install glibc error" && \
+      touch ${METADATAMIPSELROOTFS}/glibc_install
 popd
 
 pushd ${BUILDMIPSELROOTFS}
@@ -819,6 +787,7 @@ cd ncurses_build
       touch ${METADATAMIPSELROOTFS}/ncurses_install
 popd
 
+
 export CC="${CROSS_TARGET32}-gcc"
 export CXX="${CROSS_TARGET32}-g++"
 export AR="${CROSS_TARGET32}-ar"
@@ -916,8 +885,7 @@ cd ppl_cross_build
   CPPFLAGS=-fexceptions \
   ${SRCMIPSELROOTFS}/ppl-${PPL_VERSION}/configure --prefix=/usr \
   --build=${CROSS_HOST} --host=${CROSS_TARGET32} \
-  --with-libgmp-prefix=${PREFIXMIPSELROOTFS}/usr \
-  --with-libgmpxx-prefix=${PREFIXMIPSELROOTFS}/usr \
+  --with-gmp=${PREFIXMIPSELROOTFS}/usr \
   --enable-shared --disable-optimization \
   --enable-check=quick || \
     die "***config cross ppl error" && \
@@ -930,8 +898,9 @@ cd ppl_cross_build
   make DESTDIR=${PREFIXMIPSELROOTFS} install || \
     die "***install cross ppl error" && \
       touch ${METADATAMIPSELROOTFS}/ppl_cross_install
+
 [ -f ${METADATAMIPSELROOTFS}/ppl_cross_rmla ] || \
-  rm -v ${PREFIXMIPSELROOTFS}/usr/lib/lib{ppl,ppl_c,pwl}.la || \
+  rm -v ${PREFIXMIPSELROOTFS}/usr/lib/lib{ppl,ppl_c}.la || \
     die "***remove cross ppl *.la error" && \
       touch ${METADATAMIPSELROOTFS}/ppl_cross_rmla
 popd
@@ -1237,6 +1206,11 @@ mkdir -pv ${PREFIXMIPSELROOTFS}/var/lib/hwclock
   mv -v ${PREFIXMIPSELROOTFS}/usr/bin/logger ${PREFIXMIPSELROOTFS}/bin || \
     die "***move looger util-linux error" && \
       touch ${METADATAMIPSELROOTFS}/util_linux_mv
+
+[ -f ${METADATAMIPSELROOTFS}/util_linux_la ] || \
+  rm ${PREFIXMIPSELROOTFS}/usr/lib/libuuid.la ${PREFIXMIPSELROOTFS}/usr/lib/libblkid.la || \
+    die "rm util linux uuid blkid la files" && \
+      touch ${METADATAMIPSELROOTFS}/util_linux_la
 popd
 
 pushd ${BUILDMIPSELROOTFS}
@@ -1292,6 +1266,7 @@ gl_cv_func_wctob_works=yes
 EOF
 [ -f ${METADATAMIPSELROOTFS}/coreutils_configure ] || \
   ${SRCMIPSELROOTFS}/coreutils-${COREUTILS_VERSION}/configure \
+  EXTRA_MANS='' \
   --build=${CROSS_HOST} \
   --host=${CROSS_TARGET32} \
   --prefix=/usr --cache-file=config.cache \
@@ -1299,12 +1274,16 @@ EOF
   --enable-install-program=hostname || \
     die "***config coreutils error" && \
       touch ${METADATAMIPSELROOTFS}/coreutils_configure
+[ -f ${METADATAMIPSELROOTFS}/coreutils_make ] || \
+  make CC=gcc src/make-prime-list || \
+    die "***make coreutils error" && \
+      touch ${METADATAMIPSELROOTFS}/coreutils_make
 [ -f ${METADATAMIPSELROOTFS}/coreutils_build ] || \
-  make -j${JOBS} || \
+  make EXTRA_MANS='' -j${JOBS} || \
     die "***build coreutils error" && \
       touch ${METADATAMIPSELROOTFS}/coreutils_build
 [ -f ${METADATAMIPSELROOTFS}/coreutils_install ] || \
-  make DESTDIR=${PREFIXMIPSELROOTFS} install || \
+  make DESTDIR=${PREFIXMIPSELROOTFS} EXTRA_MANS='' install || \
     die "***install coreutils error" && \
       touch ${METADATAMIPSELROOTFS}/coreutils_install
 [ -f ${METADATAMIPSELROOTFS}/coreutils_move1 ] || \
@@ -1347,6 +1326,14 @@ cd iana-etc-${IANA_VERSION}
   make DESTDIR=${PREFIXMIPSELROOTFS} install || \
     die "***install iana-etc error" && \
       touch ${METADATAMIPSELROOTFS}/iana_install
+popd
+
+pushd ${SRCMIPSELROOTFS}
+cd m4-${M4_VERSION}
+[ -f ${METADATAMIPSELROOTFS}/m4_patch ] || \
+  sed -i '/gets is a security hole/d' lib/stdio.in.h || \
+    die "patch m4 stdio.h error" && \
+      touch ${METADATAMIPS64ELROOTFS}/m4_patch_stdio.h
 popd
 
 pushd ${BUILDMIPSELROOTFS}
@@ -1736,6 +1723,13 @@ ln -sfv bzip2 ${PREFIXMIPSELROOTFS}/bin/bunzip2
 ln -sfv bzip2 ${PREFIXMIPSELROOTFS}/bin/bzcat
 popd
 
+pushd ${SRCMIPSELROOTFS}
+cd diffutils-${DIFFUTILS_VERSION}
+[ -f ${METADATAMIPSELROOTFS}/diffutils_patch ] || \
+  sed -i '/gets is a security hole/d' lib/stdio.in.h || \
+    die "***patch diffutils error" && \
+      touch ${METADATAMIPSELROOTFS}/diffutils_patch
+popd
 
 pushd ${BUILDMIPSELROOTFS}
 [ -d diffutils_build ] || mkdir diffutils_build
@@ -1746,7 +1740,7 @@ cd diffutils_build
   --host=${CROSS_TARGET32} || \
     die "***config diffutils error" && \
       touch ${METADATAMIPSELROOTFS}/diffutils_configure
-sed -i 's@\(^#define DEFAULT_EDITOR_PROGRAM \).*@\1"vi"@' config.h
+#sed -i 's@\(^#define DEFAULT_EDITOR_PROGRAM \).*@\1"vi"@' config.h
 touch man/*.1
 [ -f ${METADATAMIPSELROOTFS}/diffutils_build ] || \
   make -j${JOBS} || \
@@ -1960,27 +1954,55 @@ cd gzip_build
       touch ${METADATAMIPSELROOTFS}/gzip_mv
 popd
 
-## FIXME This use gcc, Not PREFIXMIPSELROOTFS-GCC
-#pushd ${SRCMIPSELROOTFS}
-#cd iputils-${IPUTILS_VERSION}
-#[ -f ${METADATAMIPSELROOTFS}/iputils_install ] || \
-#  make -j${JOBS} || \
-#    die "***build iputils error" && \
-#      touch ${METADATAMIPSELROOTFS}/iputils_install
-#install -v -m755 ping{,6} ${PREFIXMIPSELROOTFS}/bin
-#install -v -m755 arping ${PREFIXMIPSELROOTFS}/usr/bin
-#install -v -m755 clockdiff ${PREFIXMIPSELROOTFS}/usr/bin
-#install -v -m755 rdisc ${PREFIXMIPSELROOTFS}/usr/bin
-#install -v -m755 tracepath ${PREFIXMIPSELROOTFS}/usr/bin
-#install -v -m755 trace{path,route}6 ${PREFIXMIPSELROOTFS}/usr/bin
-#install -v -m644 doc/*.8 ${PREFIXMIPSELROOTFS}/usr/share/man/man8
-#popd
+
+# FIXME This use gcc, Not PREFIXMIPSELROOTFS-GCC
+pushd ${BUILDMIPSELROOTFS}
+cd iputils-${IPUTILS_VERSION}
+[ -f ${METADATAMIPSELROOTFS}/iputilsfix_patch ] || \
+  patch -p1 < ${PATCH}/iputils-s20121221-fixes-1.patch || \
+    die "***patch fix iputils error" && \
+      touch ${METADATAMIPSELROOTFS}/iputilsfix_patch
+[ -f ${METADATAMIPSELROOTFS}/iputilsdoc_patch ] || \
+  patch -p1 < ${PATCH}/iputils-s20121221-doc-1.patch || \
+    die "***patch doc iputils error" && \
+      touch ${METADATAMIPSELROOTFS}/iputilsdoc_patch
+[ -f ${METADATAMIPSELROOTFS}/iputils_install ] || \
+  make USE_CAP=no \
+  IPV4_TARGETS="tracepath ping clockdiff rdisc" \
+  IPV6_TARGETS="tracepath6 traceroute6" || \
+    die "***build iputils error" && \
+      touch ${METADATAMIPSELROOTFS}/iputils_install
+[ -f ${METADATAMIPSELROOTFS}/iputilsping_install ] || \
+  install -v -m755 ping ${PREFIXMIPSELROOTFS}/bin || \
+    die "***install ping iputils error" && \
+      touch ${METADATAMIPSELROOTFS}/iputilsping_install
+[ -f ${METADATAMIPSELROOTFS}/iputilsclockdiff_install ] || \
+  install -v -m755 clockdiff ${PREFIXMIPSELROOTFS}/usr/bin || \
+    die "***install clockdiff iputils error" && \
+      touch ${METADATAMIPSELROOTFS}/iputilsclockdiff_install
+[ -f ${METADATAMIPSELROOTFS}/iputilsrdisc_install ] || \
+  install -v -m755 rdisc ${PREFIXMIPSELROOTFS}/usr/bin || \
+    die "***install rdisc iputils error" && \
+      touch ${METADATAMIPSELROOTFS}/iputilsrdisc_install
+[ -f ${METADATAMIPSELROOTFS}/iputilstrace_install ] || \
+  install -v -m755 tracepath ${PREFIXMIPSELROOTFS}/usr/bin || \
+    die "***install trace iputils error" && \
+      touch ${METADATAMIPSELROOTFS}/iputilstrace_install
+[ -f ${METADATAMIPSELROOTFS}/iputilsroute_install ] || \
+  install -v -m755 trace{path,route}6 ${PREFIXMIPSELROOTFS}/usr/bin || \
+    die "***install rdisc iputils error" && \
+      touch ${METADATAMIPSELROOTFS}/iputilsroute_install
+[ -f ${METADATAMIPSELROOTFS}/iputilsdoc_install ] || \
+  install -v -m644 doc/*.8 ${PREFIXMIPSELROOTFS}/usr/share/man/man8 || \
+    die "***install rdisc iputils error" && \
+      touch ${METADATAMIPSELROOTFS}/iputilsdoc_install
+popd
 
 pushd ${SRCMIPSELROOTFS}
 cd kbd-${KBD_VERSION}
 [ -f ${METADATAMIPSELROOTFS}/kbd_patch ] || \
-patch -p1 < ${PATCH}/kbd-${KBD_VERSION}-es.po_fix-1.patch \
-  || die "patch kbd error" && \
+  patch -p1 < ${PATCH}/kbd-1.15.3-es.po_fix-1.patch || \
+    die "patch kbd error" && \
       touch ${METADATAMIPSELROOTFS}/kbd_patch
 popd
 
@@ -1995,6 +2017,7 @@ EOF
 [ -f ${METADATAMIPSELROOTFS}/kbd_configure ] || \
   ${SRCMIPSELROOTFS}/kbd-${KBD_VERSION}/configure \
   --build=${CROSS_HOST} --host=${CROSS_TARGET32} \
+  --disable-vlock \
   --prefix=/usr --cache-file=config.cache || \
     die "***config kbd error" && \
       touch ${METADATAMIPSELROOTFS}/kbd_configure
@@ -2269,12 +2292,45 @@ EOF
       touch ${METADATAMIPSELROOTFS}/libee_rmla
 popd
 
+
+pushd ${BUILDMIPSELROOTFS}
+[ -d jsonc_build ] || mkdir jsonc_build
+cd jsonc_build
+cat > config.cache << EOF
+ac_cv_func_malloc_0_nonnull=yes
+ac_cv_func_realloc_0_nonnull=yes
+EOF
+[ -f ${METADATAMIPSELROOTFS}/jsonc_configure ] || \
+  PKG_CONFIG_LIBDIR=${PREFIXMIPSELROOTFS}/usr/lib \
+  PKG_CONFIG_PATH=${PREFIXMIPSELROOTFS}/usr/lib/pkgconfig \
+  ${SRCMIPSELROOTFS}/json-c-${JSONC_VERSION}/configure \
+  --build=${CROSS_HOST} \
+  --host=${CROSS_TARGET32} --prefix=/usr --sbindir=/sbin \
+  --cache-file=config.cache || \
+    die "***config jsonc error" && \
+      touch ${METADATAMIPSELROOTFS}/jsonc_configure
+[ -f ${METADATAMIPSELROOTFS}/jsonc_build ] || \
+  make || \
+    die "***build jsonc error" && \
+      touch ${METADATAMIPSELROOTFS}/jsonc_build
+[ -f ${METADATAMIPSELROOTFS}/jsonc_install ] || \
+  make DESTDIR=${PREFIXMIPSELROOTFS} install || \
+    die "***install jsonc error" && \
+      touch ${METADATAMIPSELROOTFS}/jsonc_install
+
+[ -f ${METADATAMIPSELROOTFS}/libjson_rmla ] || \
+  rm ${PREFIXMIPSELROOTFS}/usr/lib/libjson.la || \
+    die "***rm libjson.la error" && \
+      touch ${METADATAMIPSELROOTFS}/libjson_rmla
+popd
+
 pushd ${BUILDMIPSELROOTFS}
 [ -d rsyslog_build ] || mkdir rsyslog_build
 cd rsyslog_build
 cat > config.cache << EOF
 ac_cv_func_malloc_0_nonnull=yes
 ac_cv_func_realloc_0_nonnull=yes
+_pkg_short_errors_supported=no
 EOF
 [ -f ${METADATAMIPSELROOTFS}/rsyslog_configure ] || \
   PKG_CONFIG_LIBDIR=${PREFIXMIPSELROOTFS}/usr/lib \
@@ -2443,6 +2499,16 @@ EOF` || \
   die "***cat inittab forth error" && \
     touch ${METADATAMIPSELROOTFS}/cat_inittab_4
 
+
+
+pushd ${SRCMIPSELROOTFS}
+cd tar-${TAR_VERSION}
+[ -f ${METADATAMIPSELROOTFS}/tar_patch ] || \
+  sed -i '/gets is a security hole/d' gnu/stdio.in.h || \
+    die "***patch tar error"
+      touch ${METADATAMIPSELROOTFS}/tar_patch
+popd
+
 pushd ${BUILDMIPSELROOTFS}
 [ -d "tar-build" ] || mkdir tar-build
 cd tar-build
@@ -2516,35 +2582,29 @@ cd kmod_build
   ${SRCMIPSELROOTFS}/kmod-${KMOD_VERSION}/configure \
   --build=${CROSS_HOST} \
   --host=${CROSS_TARGET32} --target=${CROSS_TARGET32} \
-  --prefix=/usr --bindir=/bin || \
-    die "config kmod error" && \
+  --prefix=/usr --bindir=/bin --disable-manpages || \
+    die "***config kmod error" && \
       touch ${METADATAMIPSELROOTFS}/kmod_configure
 [ -f ${METADATAMIPSELROOTFS}/kmod_build ] || \
   make -j${JOBS} || \
-    die "build kmod error" && \
+    die "***build kmod error" && \
       touch ${METADATAMIPSELROOTFS}/kmod_build
 [ -f ${METADATAMIPSELROOTFS}/kmod_install ] || \
   make DESTDIR=${PREFIXMIPSELROOTFS} install || \
-    die "install kmod error" && \
+    die "***install kmod error" && \
       touch ${METADATAMIPSELROOTFS}/kmod_install
+[ -f ${METADATAMIPSELROOTFS}/kmod_rmla ] || \
+  rm -rf ${PREFIXMIPSELROOTFS}/usr/lib/libkmod.la || \
+    die "***remove libkmod.la error" && \
+      touch ${METADATAMIPSELROOTFS}/kmod_rmla
 popd
 
 pushd ${PREFIXMIPSELROOTFS}/usr/share/misc
 [ -f ${METADATAMIPSELROOTFS}/patch_pci ] || \
   patch -p1 < ${PATCH}/pci-ids-2.0.patch || \
-    die "***pci ids error"
+    die "***pci ids error" && \
       touch ${METADATAMIPSELROOTFS}/patch_pci
 popd
-
-[ -f ${METADATAMIPSELROOTFS}/libuuid_rmla ] || \
-  rm ${PREFIXMIPSELROOTFS}/usr/lib/libuuid.la || \
-    die "***rm libuuid.la error" && \
-      touch ${METADATAMIPSELROOTFS}/libuuid_rmla
-
-[ -f ${METADATAMIPSELROOTFS}/libblkid_rmla ] || \
-  rm ${PREFIXMIPSELROOTFS}/usr/lib/libblkid.la || \
-    die "***rm libblkid.la error" && \
-      touch ${METADATAMIPSELROOTFS}/libblkid_rmla
 
 ## FIXME Now we use --disable-gudev, so the glib is disabled
 pushd ${BUILDMIPSELROOTFS}
@@ -2552,13 +2612,13 @@ pushd ${BUILDMIPSELROOTFS}
 cd udev_build
 [ -f ${METADATAMIPSELROOTFS}/udev_configure ] || \
   PKG_CONFIG=true \
-  LDFLAGS="-lblkid -luuid -lkmod" \
+  LDFLAGS="-lblkid -luuid -lkmod -lrt" \
   CC=${CC} \
   ${SRCMIPSELROOTFS}/udev-${UDEV_VERSION}/configure \
   --build=${CROSS_HOST} --host=${CROSS_TARGET32} \
   --exec-prefix="" --sysconfdir=/etc \
-  --libexecdir=/lib --libdir=/usr/lib --disable-gudev \
-  --disable-extras \
+  --libexecdir=/lib --libdir=/usr/lib -disable-gudev \
+  --disable-manpages  \
   --with-pci-ids-path=${PREFIXMIPSELROOTFS}/usr/share/misc || \
     die "***config udev error" && \
       touch ${METADATAMIPSELROOTFS}/udev_configure
@@ -2639,19 +2699,19 @@ popd
 pushd ${BUILDMIPSELROOTFS}
 cd dhcpcd-${DHCPCD_VERSION}
 [ -f ${METADATAMIPSELROOTFS}/dhcpcd_configure ] || \
-  ./configure \
+  PREFIX="" ./configure \
   --target=${CROSS_TARGET32} --host=${CROSS_HOST} || \
     die "***config dhcpcd error" && \
       touch ${METADATAMIPSELROOTFS}/dhcpcd_configure
 [ -f ${METADATAMIPSELROOTFS}/dhcpcd_build ] || \
   make PREFIX=/usr BINDIR=/sbin SYSCONFDIR=/etc \
-  DBDIR=/var/lib/dhcpcd LIBEXECDIR=/usr/lib/dhcpcd || \
+       DBDIR=/var/lib/dhcpcd LIBEXECDIR=/usr/lib/dhcpcd || \
     die "***build dhcpcd error" && \
       touch ${METADATAMIPSELROOTFS}/dhcpcd_build
 [ -f ${METADATAMIPSELROOTFS}/dhcpcd_install ] || \
   make PREFIX=/usr BINDIR=/sbin SYSCONFDIR=/etc \
-  DBDIR=/var/lib/dhcpcd LIBEXECDIR=/usr/lib/dhcpcd \
-  DESTDIR=${PREFIXMIPSELROOTFS} install || \
+       DBDIR=/var/lib/dhcpcd LIBEXECDIR=/usr/lib/dhcpcd \
+       DESTDIR=${PREFIXMIPSELROOTFS} install || \
     die "***install dhcpcd error" && \
       touch ${METADATAMIPSELROOTFS}/dhcpcd_install
 popd
@@ -2823,12 +2883,15 @@ cd linux-${LINUX_VERSION}
 [ -f ${METADATAMIPSELROOTFS}/linux_cross_mrpro ] || \
   make mrproper || \
     die "clean cross linux error" && \
-      touch ${METADATAMIPSELSYSROOT}/linux_cross_mrpro
+      touch ${METADATAMIPSELROOTFS}/linux_cross_mrpro
 [ -f ${METADATAMIPSELROOTFS}/linux_config_patch ] || \
   patch -p1 < ${PATCH}/linux-mipsel-sysroot-defconfig.patch || \
     die "***Patch linux config error" && \
       touch ${METADATAMIPSELROOTFS}/linux_config_patch
-make ARCH=mips mipsel_sysroot_defconfig
+[ -f ${METADATAMIPSELROOTFS}/linux_defconfig ] || \
+  make ARCH=mips mipsel_sysroot_defconfig || \
+    die "***Patch linux config error" && \
+      touch ${METADATAMIPSELROOTFS}/linux_defconfig
 [ -f ${METADATAMIPSELROOTFS}/linux_cross_build ] || \
 make -j${JOBS} ARCH=mips PREFIXMIPSELSYSROOT_COMPILE=${CROSS_TARGET32}- || \
   die "build cross linux error" && \
@@ -2904,12 +2967,12 @@ EOF` || \
     die "***Link rtc error" && \
       touch ${METADATAMIPSELROOTFS}/link_rtc
 
-pushd ${PREFIXMIPSELROOTFS}
-[ -f ${METADATAMIPSELROOTFS}/cross_tools_rm ] || \
-  sudo rm -rf ${PREFIXMIPSELROOTFS}/cross-tools || \
-    die "***remove cross tools error" && \
-      touch ${METADATAMIPSELROOTFS}/cross_tools_rm
-popd
+#pushd ${PREFIXMIPSELROOTFS}
+#[ -f ${METADATAMIPSELROOTFS}/cross_tools_rm ] || \
+#  sudo rm -rf ${PREFIXMIPSELROOTFS}/cross-tools || \
+#    die "***remove cross tools error" && \
+#      touch ${METADATAMIPSELROOTFS}/cross_tools_rm
+#popd
 
 pushd ${PREFIXGNULINUX}
 [ -f ${METADATAMIPSELROOTFS}/mipsel_sysroot_ddimg ] || \
