@@ -2967,12 +2967,12 @@ EOF` || \
     die "***Link rtc error" && \
       touch ${METADATAMIPSELROOTFS}/link_rtc
 
-#pushd ${PREFIXMIPSELROOTFS}
-#[ -f ${METADATAMIPSELROOTFS}/cross_tools_rm ] || \
-#  sudo rm -rf ${PREFIXMIPSELROOTFS}/cross-tools || \
-#    die "***remove cross tools error" && \
-#      touch ${METADATAMIPSELROOTFS}/cross_tools_rm
-#popd
+pushd ${PREFIXMIPSELROOTFS}
+[ -f ${METADATAMIPSELROOTFS}/cross_tools_rm ] || \
+  sudo rm -rf ${PREFIXMIPSELROOTFS}/cross-tools || \
+    die "***remove cross tools error" && \
+      touch ${METADATAMIPSELROOTFS}/cross_tools_rm
+popd
 
 pushd ${PREFIXGNULINUX}
 [ -f ${METADATAMIPSELROOTFS}/mipsel_sysroot_ddimg ] || \
