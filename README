@@ -11,12 +11,12 @@ GNU root FS is partly come from CLFS, IDE-plugin is writen by Dongxue-Zhang.
 
 ===============================================================================
 TODO:
-- Debugger support
-- Static Analyzer support
-- U-Boot config support
-- Linux config support
-- RTEMS support
-- Bare system support
+- Switch to LLVMLinux
+- Make Clang to be the default compiler
+- IDE Debugger support
+- IDE Static Analyzer support
+- IDE U-Boot config support
+- IDE Linux config support
 
 ===============================================================================
 Prerequisites:
