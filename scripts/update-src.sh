@@ -13,11 +13,6 @@ git pull
 popd
 
 pushd ${SRC_LIVE}
-cd rtems
-git pull
-popd
-
-pushd ${SRC_LIVE}
 cd crossprojectmanager
 git pull
 popd
