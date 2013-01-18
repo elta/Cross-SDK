@@ -20,12 +20,6 @@ download "automake-${AUTOMAKE_VERSION}.${AUTOMAKE_SUFFIX}" \
   die "download automake error" && \
     touch automake_download
 
-[ -f automake_rtems_download ] || \
-download "automake-${AUTOMAKE_RTEMS_VERSION}.${AUTOMAKE_RTEMS_SUFFIX}" \
-  "${AUTOMAKE_RTEMS_URL}/automake-${AUTOMAKE_RTEMS_VERSION}.${AUTOMAKE_RTEMS_SUFFIX}" || \
-  die "download automake-rtems error" && \
-    touch automake_rtems_download
-
 [ -f bash_download ] || \
 download "bash-${BASH_VERSION}.${BASH_SUFFIX}" \
   "${BASH_URL}/bash-${BASH_VERSION}.${BASH_SUFFIX}" || \
@@ -332,12 +326,6 @@ download "ncurses-${NCURSES_VERSION}.${NCURSES_SUFFIX}" \
   die "download ncurses error" && \
     touch ncurses_download
 
-[ -f newlib_download ] || \
-download "newlib-${NEWLIB_VERSION}.${NEWLIB_SUFFIX}" \
-  "${NEWLIB_URL}/newlib-${NEWLIB_VERSION}.${NEWLIB_SUFFIX}" || \
-  die "download newlib error" && \
-    touch newlib_download
-
 [ -f openssl_download ] || \
 download "openssl-${OPENSSL_VERSION}.${OPENSSL_SUFFIX}" \
   "${OPENSSL_URL}/openssl-${OPENSSL_VERSION}.${OPENSSL_SUFFIX}" || \
@@ -487,11 +475,6 @@ pushd ${SRC_LIVE}
   git clone ${UBOOT_GITURL} || \
   die "download uboot error" && \
     touch ${METADATADOWN}/uboot_git
-
-[ -f ${METADATADOWN}/rtems_git ] || \
-  git clone ${RTEMS_GITURL} || \
-  die "download rtems error" && \
-    touch ${METADATADOWN}/rtems_git
 
 [ -f ${METADATADOWN}/crossprojectmanager_git ] || \
   git clone ${CROSSPROJECTMANAGER_GITURL} || \
