@@ -1,7 +1,8 @@
 This is a OpenSurce Cross Platform SDK.
 
-Our aim is build a easy to use Cross SDK, you are welcome to use and hack
-this project, let's make it better together.
+Our aim is build a user friendly Cross SDK for a Real Time GNU/Linux system
+which using LLVM/Clang as default compiler, you are welcome to use and hack
+this project, we can make it better together.
 
 I'll try my best to fix all the toolchain bugs, and keep the other members
 maintain their part of the SDK.
