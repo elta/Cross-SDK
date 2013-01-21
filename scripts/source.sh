@@ -304,9 +304,6 @@ export PREFIXBARE32=${PREFIX}/elf32
 export PREFIXQEMU=${PREFIX}/qemu
 export PREFIXLLVM=${PREFIX}/llvm
 export PREFIXQTC=${PREFIX}/qt-creator
-export PREFIXMUL64EL=${PREFIX}/mips64el-multilib/
-export PREFIXPURE64EL=${PREFIX}/mips64el-pure64/
-export PREFIXMIPSEL=${PREFIX}/mipsel/
 export PREFIXMIPSELROOTFS=${PREFIX}/mipsel-rootfs/
 export PREFIXKERNEL=${PREFIX}/kernel
 export PREFIXMIPS64ELROOTFS=${PREFIX}/mips64el-rootfs
@@ -321,93 +318,71 @@ export SYSROOTGNU32=${PREFIXGNU32}/${CROSS_TARGET32}/sys-root/
 export MOUNT_POINT=busybox_mount
 
 export BUSYBOXO32_IMAGE=busybox-o32.img
-export BUSYBOXN32_IMAGE=busybox-mipsel-n32.img
 export BUSYBOXMUL64_IMAGE=busybox-mul64.img
-export BUSYBOXPURE64_IMAGE=busybox-pure64.img
 
 ###########################################################
 # METADATA info
 ###########################################################
 
-export METADATADOWN=${SCRIPT}/../metadata/download
-export METADATABUSYBOXMUL64=${SCRIPT}/../metadata/busybox-mul64
-export METADATABUSYBOXPURE64=${SCRIPT}/../metadata/busybox-pure64
-export METADATABUSYBOXN32=${SCRIPT}/../metadata/busybox-n32
-export METADATABUSYBOXO32=${SCRIPT}/../metadata/busybox-o32
-export METADATAKERNEL64=${SCRIPT}/../metadata/kernel-64
-export METADATAKERNELN32=${SCRIPT}/../metadata/kernel-n32
-export METADATAKERNELO32=${SCRIPT}/../metadata/kernel-o32
-export METADATABARE32=${SCRIPT}/../metadata/elf32
-export METADATABARE64=${SCRIPT}/../metadata/elf64
-export METADATAGNU32=${SCRIPT}/../metadata/gnu32
-export METADATAGNU64=${SCRIPT}/../metadata/gnu64
-export METADATAUNIVERSAL=${SCRIPT}/../metadata/universal
-export METADATARTEMS32=${SCRIPT}/../metadata/rtems32
-export METADATARTEMS64=${SCRIPT}/../metadata/rtems64
-export METADATAMIPSELROOTFS=${SCRIPT}/../metadata/mipsel-rootfs
-export METADATAMIPS64ELROOTFS=${SCRIPT}/../metadata/mips64el-rootfs
+export METADATA=${SCRIPT}/../metadata
+export METADATADOWN=${METADATA}/download
+export METADATABUSYBOXMUL64=${METADATA}/busybox-mul64
+export METADATABUSYBOXN32=${METADATA}/busybox-n32
+export METADATABUSYBOXO32=${METADATA}/busybox-o32
+export METADATAKERNEL64=${METADATA}/kernel-64
+export METADATAKERNELN32=${METADATA}/kernel-n32
+export METADATAKERNELO32=${METADATA}/kernel-o32
+export METADATABARE32=${METADATA}/elf32
+export METADATABARE64=${METADATA}/elf64
+export METADATAGNU32=${METADATA}/gnu32
+export METADATAGNU64=${METADATA}/gnu64
+export METADATAUNIVERSAL=${METADATA}/universal
+export METADATARTEMS32=${METADATA}/rtems32
+export METADATARTEMS64=${METADATA}/rtems64
+export METADATAMIPSELROOTFS=${METADATA}/mipsel-rootfs
+export METADATAMIPS64ELROOTFS=${METADATA}/mips64el-rootfs
 
 ###########################################################
 # SRC info
 ###########################################################
 
 export SRC=${SCRIPT}/../src
-export SRCBUSYBOXMUL64=${SCRIPT}/../src/busybox-mul64
-export SRCBUSYBOXPURE64=${SCRIPT}/../src/busybox-pure64
-export SRCBUSYBOXN32=${SCRIPT}/../src/busybox-n32
-export SRCBUSYBOXO32=${SCRIPT}/../src/busybox-o32
-export SRCKERNEL64=${SCRIPT}/../src/kernel-64
-export SRCKERNELN32=${SCRIPT}/../src/kernel-n32
-export SRCKERNELO32=${SCRIPT}/../src/kernel-o32
-export SRCMUL64ELSTAGE1=${SCRIPT}/../src/mips64el-multilib64-linux/stage1
-export SRCMUL64ELSTAGE2=${SCRIPT}/../src/mips64el-multilib64-linux/stage2
-export SRCMUL64ELSTAGE3=${SCRIPT}/../src/mips64el-multilib64-linux/stage3
-export SRCPURE64ELSTAGE1=${SCRIPT}/../src/mips64el-pure64-linux/stage1
-export SRCPURE64ELSTAGE2=${SCRIPT}/../src/mips64el-pure64-linux/stage2
-export SRCPURE64ELSTAGE3=${SCRIPT}/../src/mips64el-pure64-linux/stage3
-export SRCMIPSELSTAGE1=${SCRIPT}/../src/mipsel-unknown-linux/stage1
-export SRCMIPSELSTAGE2=${SCRIPT}/../src/mipsel-unknown-linux/stage2
-export SRCMIPSELSTAGE3=${SCRIPT}/../src/mipsel-unknown-linux/stage3
-export SRCBARE32=${SCRIPT}/../src/mips-elf-tool
-export SRCBARE64=${SCRIPT}/../src/mips64-elf-tool
-export SRCGNU32=${SCRIPT}/../src/mips-linux-tool
-export SRCGNU64=${SCRIPT}/../src/mips64-linux-tool
-export SRCUNIVERSAL=${SCRIPT}/../src/universal
-export SRCRTEMS32=${SCRIPT}/../src/mips-rtems-tool
-export SRCRTEMS64=${SCRIPT}/../src/mips64-rtems-tool
-export SRCMIPSELROOTFS=${SCRIPT}/../src/mipsel-rootfs
-export SRCMIPS64ELROOTFS=${SCRIPT}/../src/mips64el-rootfs
+export SRCBUSYBOXMUL64=${SRC}/busybox-mul64
+export SRCBUSYBOXN32=${SRC}/busybox-n32
+export SRCBUSYBOXO32=${SRC}/busybox-o32
+export SRCKERNEL64=${SRC}/kernel-64
+export SRCKERNELN32=${SRC}/kernel-n32
+export SRCKERNELO32=${SRC}/kernel-o32
+export SRCBARE32=${SRC}/mips-elf-tool
+export SRCBARE64=${SRC}/mips64-elf-tool
+export SRCGNU32=${SRC}/mips-linux-tool
+export SRCGNU64=${SRC}/mips64-linux-tool
+export SRCUNIVERSAL=${SRC}/universal
+export SRCRTEMS32=${SRC}/mips-rtems-tool
+export SRCRTEMS64=${SRC}/mips64-rtems-tool
+export SRCMIPSELROOTFS=${SRC}/mipsel-rootfs
+export SRCMIPS64ELROOTFS=${SRC}/mips64el-rootfs
 
 ###########################################################
 # BUILD info
 ###########################################################
 
 export BUILD=${SCRIPT}/../build
-export BUILDBUSYBOXMUL64=${SCRIPT}/../build/busybox-mul64
-export BUILDBUSYBOXPURE64=${SCRIPT}/../build/busybox-pure64
-export BUILDBUSYBOXN32=${SCRIPT}/../build/busybox-n32
-export BUILDBUSYBOXO32=${SCRIPT}/../build/busybox-o32
-export BUILDKERNEL64=${SCRIPT}/../build/kernel-64
-export BUILDKERNELN32=${SCRIPT}/../build/kernel-n32
-export BUILDKERNELO32=${SCRIPT}/../build/kernel-o32
-export BUILDMUL64ELSTAGE1=${SCRIPT}/../build/mips64el-multilib64-linux/stage1
-export BUILDMUL64ELSTAGE2=${SCRIPT}/../build/mips64el-multilib64-linux/stage2
-export BUILDMUL64ELSTAGE3=${SCRIPT}/../build/mips64el-multilib64-linux/stage3
-export BUILDPURE64ELSTAGE1=${SCRIPT}/../build/mips64el-pure64-linux/stage1
-export BUILDPURE64ELSTAGE2=${SCRIPT}/../build/mips64el-pure64-linux/stage2
-export BUILDPURE64ELSTAGE3=${SCRIPT}/../build/mips64el-pure64-linux/stage3
-export BUILDMIPSELSTAGE1=${SCRIPT}/../build/mipsel-unknown-linux/stage1
-export BUILDMIPSELSTAGE2=${SCRIPT}/../build/mipsel-unknown-linux/stage2
-export BUILDMIPSELSTAGE3=${SCRIPT}/../build/mipsel-unknown-linux/stage3
-export BUILDBARE32=${SCRIPT}/../build/mips-elf-tool
-export BUILDBARE64=${SCRIPT}/../build/mips64-elf-tool
-export BUILDGNU32=${SCRIPT}/../build/mips-linux-tool
-export BUILDGNU64=${SCRIPT}/../build/mips64-linux-tool
-export BUILDUNIVERSAL=${SCRIPT}/../build/universal
-export BUILDRTEMS32=${SCRIPT}/../build/mips-rtems-tool
-export BUILDRTEMS64=${SCRIPT}/../build/mips64-rtems-tool
-export BUILDMIPSELROOTFS=${SCRIPT}/../build/mipsel-rootfs
-export BUILDMIPS64ELROOTFS=${SCRIPT}/../build/mips64el-rootfs
+export BUILDBUSYBOXMUL64=${BUILD}/busybox-mul64
+export BUILDBUSYBOXN32=${BUILD}/busybox-n32
+export BUILDBUSYBOXO32=${BUILD}/busybox-o32
+export BUILDKERNEL64=${BUILD}/kernel-64
+export BUILDKERNELN32=${BUILD}/kernel-n32
+export BUILDKERNELO32=${BUILD}/kernel-o32
+export BUILDBARE32=${BUILD}/mips-elf-tool
+export BUILDBARE64=${BUILD}/mips64-elf-tool
+export BUILDGNU32=${BUILD}/mips-linux-tool
+export BUILDGNU64=${BUILD}/mips64-linux-tool
+export BUILDUNIVERSAL=${BUILD}/universal
+export BUILDRTEMS32=${BUILD}/mips-rtems-tool
+export BUILDRTEMS64=${BUILD}/mips64-rtems-tool
+export BUILDMIPSELROOTFS=${BUILD}/mipsel-rootfs
+export BUILDMIPS64ELROOTFS=${BUILD}/mips64el-rootfs
 
 ###########################################################
 # Functions
