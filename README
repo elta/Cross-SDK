@@ -1,4 +1,4 @@
-This is a OpenSurce Cross Platform SDK.
+This is a OpenSource Cross Platform SDK.
 
 Our aim is build a user friendly Cross SDK for a Real Time GNU/Linux system
 which using LLVM/Clang as default compiler, you are welcome to use and hack
@@ -31,10 +31,10 @@ sudo apt-get install libncurses5-dev libsdl1.2-dev libqt4-dev g++ flex bison \
 
 ===============================================================================
 Usage:
-${TOOL}.sh ${SDK_PREFIX}
-${ROOS_FS}.sh ${SDK_PREFIX}
+${TOOL}.sh
+${ROOS_FS}.sh
 
-Excample:
+Example:
 run
 ./tool-mips*el-linux.sh
 to get gnu toolchain.
