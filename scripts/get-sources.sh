@@ -465,16 +465,18 @@ download "qemu-${QEMU_VERSION}.${QEMU_SUFFIX}" \
     touch qemu_download
 popd
 
+[ -f uboot_download ] || \
+download "u-boot-${UBOOT_VERSION}.${UBOOT_SUFFIX}" \
+  "${QEMU_URL}/u-boot-${UBOOT_VERSION}.${UBOOT_SUFFIX}" || \
+  die "download u-boot error" && \
+    touch uboot_download
+popd
+
 pushd ${SRC_LIVE}
 [ -f ${METADATADOWN}/openocd_git ] || \
   git clone ${OPENOCD_GITURL} || \
   die "download openocd error" && \
     touch ${METADATADOWN}/openocd_git
-
-[ -f ${METADATADOWN}/uboot_git ] || \
-  git clone ${UBOOT_GITURL} || \
-  die "download uboot error" && \
-    touch ${METADATADOWN}/uboot_git
 
 [ -f ${METADATADOWN}/crossprojectmanager_git ] || \
   git clone ${CROSSPROJECTMANAGER_GITURL} || \
