@@ -483,6 +483,11 @@ pushd ${SRC_LIVE}
   die "download llvmlinux error" && \
     touch ${METADATADOWN}/llvmlinux_git
 
+[ -f ${METADATADOWN}/bionic_git ] || \
+  git clone ${BIONIC_GITURL} || \
+  die "download bionic error" && \
+    touch ${METADATADOWN}/bionic_git
+
 [ -f ${METADATADOWN}/crossprojectmanager_git ] || \
   git clone ${CROSSPROJECTMANAGER_GITURL} || \
   die "download IDE plugin error" && \
