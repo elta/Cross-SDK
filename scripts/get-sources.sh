@@ -478,6 +478,11 @@ pushd ${SRC_LIVE}
   die "download openocd error" && \
     touch ${METADATADOWN}/openocd_git
 
+[ -f ${METADATADOWN}/llvmlinux_git ] || \
+  git clone ${LLVMLINUX_GITURL} || \
+  die "download llvmlinux error" && \
+    touch ${METADATADOWN}/llvmlinux_git
+
 [ -f ${METADATADOWN}/crossprojectmanager_git ] || \
   git clone ${CROSSPROJECTMANAGER_GITURL} || \
   die "download IDE plugin error" && \

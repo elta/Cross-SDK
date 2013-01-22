@@ -250,7 +250,7 @@ export QEMU_SUFFIX=${BZ}
 export QEMU_URL=http://wiki.qemu-project.org/download/
 
 export OPENOCD_GITURL=git://openocd.git.sourceforge.net/gitroot/openocd/openocd
-export UBOOT_GITURL=git://git.denx.de/u-boot.git
+export LLVMLINUX_GITURL=http://git.linuxfoundation.org/llvmlinux.git
 export CROSSPROJECTMANAGER_GITURL=https://github.com/elta/crossprojectmanager.git
 
 ###########################################################
