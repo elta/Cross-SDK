@@ -23,7 +23,7 @@ tar xf ${TARBALL}/clang-${CLANG_VERSION}.${CLANG_SUFFIX} || \
 mv clang-${CLANG_VERSION} clang
 
 [ -f ${METADATAUNIVERSAL}/compiler-rt_extract ] || \
-cd llvm-${LLVM_VERSION}/projects && \
+cd ${SRCUNIVERSAL}/llvm-${LLVM_VERSION}/projects && \
 tar xf ${TARBALL}/compiler-rt-${CRT_VERSION}.${CRT_SUFFIX} || \
   die "extract compiler-rt error" && \
     touch ${METADATAUNIVERSAL}/compiler-rt_extract
