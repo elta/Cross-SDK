@@ -251,7 +251,6 @@ export QEMU_URL=http://wiki.qemu-project.org/download/
 
 export OPENOCD_GITURL=git://openocd.git.sourceforge.net/gitroot/openocd/openocd
 export LLVMLINUX_GITURL=http://git.linuxfoundation.org/llvmlinux.git
-export BIONIC_GITURL=https://android.googlesource.com/platform/bionic
 export CROSSPROJECTMANAGER_GITURL=https://github.com/elta/crossprojectmanager.git
 
 ###########################################################
