@@ -244,10 +244,10 @@ export ZLIB_SUFFIX=${BZ}
 export ZLIB_URL=http://pkgs.fedoraproject.org/repo/pkgs/zlib/zlib-1.2.7.tar.bz2/2ab442d169156f34c379c968f3f482dd
 export QTC_VERSION=2.5.2-src
 export QTC_SUFFIX=${GZ}
-export QTC_URL=http://releases.qt-project.org/qtcreator/2.5.2/
+export QTC_URL=http://releases.qt-project.org/qtcreator/2.5.2
 export QEMU_VERSION=1.3.0
 export QEMU_SUFFIX=${BZ}
-export QEMU_URL=http://wiki.qemu-project.org/download/
+export QEMU_URL=http://wiki.qemu-project.org/download
 
 export OPENOCD_GITURL=git://openocd.git.sourceforge.net/gitroot/openocd/openocd
 export LLVMLINUX_GITURL=http://git.linuxfoundation.org/llvmlinux.git
