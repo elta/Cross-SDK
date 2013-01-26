@@ -398,6 +398,12 @@ download "readline-${READLINE_VERSION}.${READLINE_SUFFIX}" \
   die "download readline error" && \
     touch readline_download
 
+[ -f rsyslog_download ] || \
+download "rsyslog-${RSYSLOG_VERSION}.${RSYSLOG_SUFFIX}" \
+  "${RSYSLOG_URL}/rsyslog-${RSYSLOG_VERSION}.${RSYSLOG_SUFFIX}" || \
+  die "download rsyslog error" && \
+    touch rsyslog_download
+
 [ -f sed_download ] || \
 download "sed-${SED_VERSION}.${SED_SUFFIX}" \
   "${SED_URL}/sed-${SED_VERSION}.${SED_SUFFIX}" || \

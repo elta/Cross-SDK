@@ -385,7 +385,7 @@ popd
 pushd ${BUILDMIPS64ELROOTFS}
 cd perl-${PERL_VERSION}
 [ -f "${METADATAMIPS64ELROOTFS}/perl_cross_merge" ] || \
-  cp -ar ${SRCMIPS64ELROOTFS}/perl-${PERL_VERSION}/* ./ || \
+  cp -a ${SRCMIPS64ELROOTFS}/perl-${PERL_VERSION}/* ./ || \
     die "merge cross perl error" && \
       touch ${METADATAMIPS64ELROOTFS}/perl_cross_merge
 popd

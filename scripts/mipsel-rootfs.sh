@@ -125,6 +125,14 @@ pushd ${SRCMIPSELROOTFS}
     die "***extract cross perl error" && \
       touch ${METADATAMIPSELROOTFS}/perl_cross_extract
 
+pushd ${BUILDMIPSELROOTFS}
+cd perl-${PERL_VERSION}
+[ -f "${METADATAMIPSELROOTFS}/perl_cross_merge" ] || \
+  cp -a ${SRCMIPSELROOTFS}/perl-${PERL_VERSION}/* ./ || \
+    die "merge cross perl error" && \
+      touch ${METADATAMIPSELROOTFS}/perl_cross_merge
+popd
+
 [ -f ${METADATAMIPSELROOTFS}/gmp_extract ] || \
   tar xf ${TARBALL}/gmp-${GMP_VERSION}.${GMP_SUFFIX} || \
     die "***extract gmp error" && \
