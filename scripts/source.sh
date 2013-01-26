@@ -186,7 +186,7 @@ export PERL_SUFFIX=${GZ}
 export PERL_URL=http://www.cpan.org/src/5.0
 export PERLCROSS_VERSION=5.16.0-cross-0.7.1
 export PERLCROSS_SUFFIX=${GZ}
-export PERLCROSS_URL=http://http://prdownload.berlios.de/perlcross
+export PERLCROSS_URL=http://prdownload.berlios.de/perlcross
 export PKG_VERSION=0.27.1
 export PKG_SUFFIX=${GZ}
 export PKG_URL=http://pkgconfig.freedesktop.org/releases
@@ -304,12 +304,12 @@ export PREFIXBARE32=${PREFIX}/elf32
 export PREFIXQEMU=${PREFIX}/qemu
 export PREFIXLLVM=${PREFIX}/llvm
 export PREFIXQTC=${PREFIX}/qt-creator
-export PREFIXMIPSELROOTFS=${PREFIX}/mipsel-rootfs/
+export PREFIXMIPSELROOTFS=${PREFIX}/mipsel-rootfs
 export PREFIXKERNEL=${PREFIX}/kernel
 export PREFIXMIPS64ELROOTFS=${PREFIX}/mips64el-rootfs
 
-export SYSROOTGNU64=${PREFIXGNU64}/${CROSS_TARGET64}/sys-root/
-export SYSROOTGNU32=${PREFIXGNU32}/${CROSS_TARGET32}/sys-root/
+export SYSROOTGNU64=${PREFIXGNU64}/${CROSS_TARGET64}/sys-root
+export SYSROOTGNU32=${PREFIXGNU32}/${CROSS_TARGET32}/sys-root
 
 ###########################################################
 # Busybox info
