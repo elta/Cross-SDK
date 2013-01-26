@@ -293,8 +293,8 @@ export PREFIXMIPSELROOTFS=${PREFIX}/mipsel-rootfs
 export PREFIXKERNEL=${PREFIX}/kernel
 export PREFIXMIPS64ELROOTFS=${PREFIX}/mips64el-rootfs
 
-export SYSROOTGNU64=${PREFIXGNU64}/${CROSS_TARGET64}/sys-root/
-export SYSROOTGNU32=${PREFIXGNU32}/${CROSS_TARGET32}/sys-root/
+export SYSROOTGNU64=${PREFIXGNU64}/${CROSS_TARGET64}/sys-root
+export SYSROOTGNU32=${PREFIXGNU32}/${CROSS_TARGET32}/sys-root
 
 ###########################################################
 # Busybox info
