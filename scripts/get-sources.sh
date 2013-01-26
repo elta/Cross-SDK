@@ -344,6 +344,12 @@ download "perl-${PERL_VERSION}.${PERL_SUFFIX}" \
   die "download perl error" && \
     touch perl_download
 
+[ -f perlcross_download ] || \
+download "perl-${PERLCROSS_VERSION}.${PERLCROSS_SUFFIX}" \
+  "${PERLCROSS_URL}/perl-${PERLCROSS_VERSION}.${PERLCROSS_SUFFIX}" || \
+  die "download perlcross error" && \
+    touch perlcross_download
+
 [ -f pkg-config_download ] || \
 download "pkg-config-${PKG_VERSION}.${PKG_SUFFIX}" \
   "${PKG_URL}/pkg-config-${PKG_VERSION}.${PKG_SUFFIX}" || \
