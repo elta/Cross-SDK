@@ -358,7 +358,7 @@ download "perl-${PERL_VERSION}.${PERL_SUFFIX}" \
 
 [ -f perlcross_download ] || \
 download "perl-${PERLCROSS_VERSION}.${PERLCROSS_SUFFIX}" \
-  "${PERLCROSS_URL}/perl-${PERLCROSS_VERSION}.${PERLCROSS_SUFFIX}" || \
+  "${PERLCROSS_URL}/perl-${PERLCROSS_VERSION}.${PERLCROSS_SUFFIX}/download" || \
   die "download perlcross error" && \
     touch perlcross_download
 
