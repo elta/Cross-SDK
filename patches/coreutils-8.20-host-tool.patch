@@ -1,0 +1,12 @@
+diff -uNpr coreutils-8.20-orig/Makefile.in coreutils-8.20/Makefile.in
+--- coreutils-8.20-orig/Makefile.in	2012-10-24 00:26:32.000000000 +0800
++++ coreutils-8.20/Makefile.in	2013-01-29 21:40:47.000000000 +0800
+@@ -3114,7 +3114,7 @@ src_expand_LDADD = $(LDADD)
+ 
+ # for various GMP functions
+ src_expr_LDADD = $(LDADD) $(LIB_GMP)
+-src_factor_LDADD = $(LDADD) $(LIB_GMP)
++src_factor_LDADD = $(LDADD) $(LIB_GMP) $(LIBICONV)
+ src_false_LDADD = $(LDADD)
+ src_fmt_LDADD = $(LDADD)
+ src_fold_LDADD = $(LDADD)
