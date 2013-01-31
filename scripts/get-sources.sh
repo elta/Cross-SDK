@@ -104,6 +104,12 @@ download "e2fsprogs-${E2FSPROGS_VERSION}.${E2FSPROGS_SUFFIX}" \
   die "download e2fsprogs error" && \
     touch e2fsprogs_download
 
+[ -f elfutils_download ] || \
+download "elfutils-${ELFUTILS_VERSION}.${ELFUTILS_SUFFIX}" \
+  "${ELFUTILS_URL}/elfutils-${ELFUTILS_VERSION}.${ELFUTILS_SUFFIX}" || \
+  die "download elfutils error" && \
+    touch elfutils_download
+
 [ -f expat_download ] || \
 download "expat-${EXPAT_VERSION}.${EXPAT_SUFFIX}" \
   "${EXPAT_URL}/expat-${EXPAT_VERSION}.${EXPAT_SUFFIX}" || \
@@ -253,6 +259,12 @@ download "libtool-${LIBTOOL_VERSION}.${LIBTOOL_SUFFIX}" \
   "${LIBTOOL_URL}/libtool-${LIBTOOL_VERSION}.${LIBTOOL_SUFFIX}" || \
   die "download libtool error" && \
     touch libtool_download
+
+[ -f libiconv_download ] || \
+download "libiconv-${LIBICONV_VERSION}.${LIBICONV_SUFFIX}" \
+  "${LIBICONV_URL}/libiconv-${LIBICONV_VERSION}.${LIBICONV_SUFFIX}" || \
+  die "download libiconv error" && \
+    touch libiconv_download
 
 [ -f linux_download ] || \
 download "linux-${LINUX_VERSION}.${LINUX_SUFFIX}" \
