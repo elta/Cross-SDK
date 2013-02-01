@@ -2,6 +2,9 @@
 
 source source.sh
 
+[ -d "${SRCHOSTTOOLS}" ] || mkdir -p "${SRCHOSTTOOLS}"
+[ -d "${METADATAHOSTTOOLS}" ] || mkdir -p "${METADATAHOSTTOOLS}"
+
 pushd ${SRCHOSTTOOLS}
 [ -f ${METADATAHOSTTOOLS}/autoconf_extract ] || \
   tar xvf ${TARBALL}/autoconf-${AUTOCONF_VERSION}.${AUTOCONF_SUFFIX} || \
@@ -105,7 +108,7 @@ popd
 pushd ${SRCHOSTTOOLS}
 cd coreutils-${COREUTILS_VERSION}
 [ -f ${METADATAHOSTTOOLS}/coreutils_patch ] || \
-  patch -p1 < ${PATCHES}/coreutils-8.20-host-tool.patch  || \
+  patch -p1 < ${PATCH}/coreutils-8.20-host-tool.patch  || \
     die "patch coreutils error" && \
       touch ${METADATAHOSTTOOLS}/coreutils_patch
 [ -f ${METADATAHOSTTOOLS}/coreutils_configure ] || \
