@@ -237,6 +237,7 @@ popd
 
 pushd ${SRCGNU64}
 if [ $(uname) = "Darwin" ]; then
+cd glibc-${GLIBC_VERSION}
 [ -f "${METADATAGNU64}/glibc_macos_patch" ] || \
   patch -p1 < ${PATCH}/glibc-2.17-os-x-build.patch || \
     die "***patch glibc for macosx error" && \
