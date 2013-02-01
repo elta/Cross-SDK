@@ -226,10 +226,22 @@ cd gcc-build-stage1
       touch ${METADATAGNU64}/gcc_stage1_install
 popd
 
+#################################################################
+### 64bit gnu patch
+#################################################################
 pushd ${SRCGNU64}
 cd glibc-${GLIBC_VERSION}
 cp -v Makeconfig{,.orig}
 sed -e 's/-lgcc_eh//g' Makeconfig.orig > Makeconfig
+popd
+
+pushd ${SRCGNU64}
+if [ $(uname) = "Darwin" ]; then
+[ -f "${METADATAGNU64}/glibc_macos_patch" ] || \
+  patch -p1 < ${PATCH}/glibc-2.17-os-x-build.patch || \
+    die "***patch glibc for macosx error" && \
+      touch ${METADATAGNU64}/glibc_macos_patch
+fi
 popd
 
 pushd ${BUILDGNU64}
