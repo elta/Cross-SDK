@@ -138,12 +138,12 @@ pushd ${SRCGNU64}
   || tar xf ${TARBALL}/ppl-${PPL_VERSION}.${PPL_SUFFIX}
 cd ppl-${PPL_VERSION}
 [ -f ${METADATAGNU64}/ppl_configure ] || \
-CPPFLAGS="-I${PREFIXGNU64}/include" \
+  CPPFLAGS="-I${PREFIXGNU64}/include" \
   LDFLAGS="-Wl,-rpath,${PREFIXGNU64}/lib" \
   ./configure --prefix=${PREFIXGNU64} --enable-shared \
   --enable-interfaces="c,cxx" --disable-optimization \
-  --with-libgmp-prefix=${PREFIXGNU64} \
-  --with-libgmpxx-prefix=${PREFIXGNU64} || die "***config ppl error 64bit" && \
+  --with-gmp=${PREFIXGNU64} || \
+  die "***config ppl error 64bit" && \
     touch ${METADATAGNU64}/ppl_configure
 [ -f ${METADATAGNU64}/ppl_build ] || \
 make -j${JOBS} || die "***build ppl error 64bit" && \
@@ -240,6 +240,8 @@ libc_cv_forced_unwind=yes
 libc_cv_c_cleanup=yes
 libc_cv_gnu89_inline=yes
 libc_cv_ssp=no
+READELF=${CROSS_TARGET64}-readelf
+NM=${CROSS_TARGET64}-nm
 EOF
 cat > configparms << EOF
 install_root=${SYSROOTGNU64}
@@ -273,6 +275,8 @@ libc_cv_forced_unwind=yes
 libc_cv_c_cleanup=yes
 libc_cv_gnu89_inline=yes
 libc_cv_ssp=no
+READELF=${CROSS_TARGET64}-readelf
+NM=${CROSS_TARGET64}-nm
 EOF
 cat > configparms << EOF
 install_root=${SYSROOTGNU64}
@@ -308,6 +312,8 @@ libc_cv_forced_unwind=yes
 libc_cv_c_cleanup=yes
 libc_cv_gnu89_inline=yes
 libc_cv_ssp=no
+READELF=${CROSS_TARGET64}-readelf
+NM=${CROSS_TARGET64}-nm
 EOF
 cat > configparms << EOF
 install_root=${SYSROOTGNU64}
