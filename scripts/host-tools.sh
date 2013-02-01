@@ -42,6 +42,10 @@ pushd ${SRCHOSTTOOLS}
   tar vxf ${TARBALL}/libtool-${LIBTOOL_VERSION}.${LIBTOOL_SUFFIX} || \
     die "extract libtool error" && \
       touch ${METADATAHOSTTOOLS}/libtool_extract
+[ -f ${METADATAHOSTTOOLS}/make_extract ] || \
+  tar vxf ${TARBALL}/make-${MAKE_VERSION}.${MAKE_SUFFIX} || \
+    die "extract make error" && \
+      touch ${METADATAHOSTTOOLS}/make_extract
 [ -f ${METADATAHOSTTOOLS}/sed_extract ] || \
   tar vxf ${TARBALL}/sed-${SED_VERSION}.${SED_SUFFIX} || \
     die "extract sed error" && \
@@ -187,6 +191,22 @@ cd libtool-${LIBTOOL_VERSION}
   make install || \
     die "install libtool error" && \
       touch ${METADATAHOSTTOOLS}/libtool_install
+popd
+
+pushd ${SRCHOSTTOOLS}
+cd make-${MAKE_VERSION}
+[ -f ${METADATAHOSTTOOLS}/make_configure ] || \
+  ./configure --prefix=${PREFIXHOSTTOOLS} || \
+    die "configure sed error" && \
+      touch ${METADATAHOSTTOOLS}/make_configure
+[ -f ${METADATAHOSTTOOLS}/make_build ] || \
+  make -j${JOBS} || \
+    die "build make error" && \
+      touch ${METADATAHOSTTOOLS}/make_build
+[ -f ${METADATAHOSTTOOLS}/make_install ] || \
+  make install || \
+    die "install make error" && \
+      touch ${METADATAHOSTTOOLS}/make_install
 popd
 
 pushd ${SRCHOSTTOOLS}
