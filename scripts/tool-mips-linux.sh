@@ -6,7 +6,7 @@ source source.sh
 [ -d "${BUILDGNU64}" ] || mkdir -p "${BUILDGNU64}"
 [ -d "${METADATAGNU64}" ] || mkdir -p "${METADATAGNU64}"
 
-export PATH=${PATH}:${PREFIXGNU64}/bin
+export PATH=${PREFIXHOSTTOOLS}/bin:${PATH}:${PREFIXGNU64}/bin
 
 #################################################################
 ### 64bit gnu extract
