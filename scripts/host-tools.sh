@@ -3,10 +3,10 @@
 source source.sh
 
 pushd ${SRCHOSTTOOLS}
-[ -f ${METADATAHOSTTOOLS}/autoconfig_extract ] || \
-  tar xvf ${TARBALL}/autoconfig-${AUTOCONFIG_VERSION}.${AUTOCONFIG_SUFFIX} || \
-    die "extract autoconfig error" && \
-      touch ${METADATAHOSTTOOLS}/autoconfig_extract
+[ -f ${METADATAHOSTTOOLS}/autoconf_extract ] || \
+  tar xvf ${TARBALL}/autoconf-${AUTOCONF_VERSION}.${AUTOCONF_SUFFIX} || \
+    die "extract autoconf error" && \
+      touch ${METADATAHOSTTOOLS}/autoconf_extract
 [ -f ${METADATAHOSTTOOLS}/automake_extract ] || \
   tar vxf ${TARBALL}/automake-${AUTOMAKE_VERSION}.${AUTOMAKE_SUFFIX} || \
     die "extract automake error" && \
@@ -54,19 +54,19 @@ pushd ${SRCHOSTTOOLS}
 popd
 
 pushd ${SRCHOSTTOOLS}
-cd autoconf-${AUTOCONFIG_VERSION}/
-[ -f ${METADATAHOSTTOOLS}/autoconfig_configure ] || \
+cd autoconf-${AUTOCONF_VERSION}/
+[ -f ${METADATAHOSTTOOLS}/autoconf_configure ] || \
   ./configure --prefix=${PREFIXHOSTTOOLS} || \
-    die "configure autoconfig error" && \
-      touch ${METADATAHOSTTOOLS}/autoconfig_configure
-[ -f ${METADATAHOSTTOOLS}/autoconfig_build ] || \
-  make -j3 || \
-    die "build autoconfig error" && \
-      touch ${METADATAHOSTTOOLS}/autoconfig_build
-[ -f ${METADATAHOSTTOOLS}/autoconfig_install ] || \
+    die "configure autoconf error" && \
+      touch ${METADATAHOSTTOOLS}/autoconf_configure
+[ -f ${METADATAHOSTTOOLS}/autoconf_build ] || \
+  make -j${JOBS} || \
+    die "build autoconf error" && \
+      touch ${METADATAHOSTTOOLS}/autoconf_build
+[ -f ${METADATAHOSTTOOLS}/autoconf_install ] || \
   make install || \
-    die "install autoconfig error" && \
-      touch ${METADATAHOSTTOOLS}/autoconfig_install
+    die "install autoconf error" && \
+      touch ${METADATAHOSTTOOLS}/autoconf_install
 popd
 
 pushd ${SRCHOSTTOOLS}
@@ -76,7 +76,7 @@ cd automake-${AUTOMAKE_VERSION}
     die "configure automake error" && \
       touch ${METADATAHOSTTOOLS}/automake_configure
 [ -f ${METADATAHOSTTOOLS}/automake_build ] || \
-  make -j3 || \
+  make -j${JOBS} || \
     die "build automake error" && \
       touch ${METADATAHOSTTOOLS}/automake_build
 [ -f ${METADATAHOSTTOOLS}/automake_install ] || \
@@ -93,7 +93,7 @@ cd bash-${BASH_VERSION}
     die "configure bash error" && \
       touch ${METADATAHOSTTOOLS}/bash_configure
 [ -f ${METADATAHOSTTOOLS}/bash_build ] || \
-  make -j3 || \
+  make -j${JOBS} || \
     die "build bash error" && \
       touch ${METADATAHOSTTOOLS}/bash_build
 [ -f ${METADATAHOSTTOOLS}/bash_install ] || \
@@ -113,7 +113,7 @@ cd coreutils-${COREUTILS_VERSION}
     die "configure coreutils error" && \
       touch ${METADATAHOSTTOOLS}/coreutils_configure
 [ -f ${METADATAHOSTTOOLS}/coreutils_build ] || \
-  make -j3 || \
+  make -j${JOBS} || \
     die "build coreutils error" && \
       touch ${METADATAHOSTTOOLS}/coreutils_build
 [ -f ${METADATAHOSTTOOLS}/coreutils_install ] || \
@@ -129,7 +129,7 @@ cd gawk-${GAWK_VERSION}
     die "configure gawk error" && \
       touch ${METADATAHOSTTOOLS}/gawk_configure
 [ -f ${METADATAHOSTTOOLS}/gawk_build ] || \
-  make -j3 || \
+  make -j${JOBS} || \
     die "build gawk error" && \
       touch ${METADATAHOSTTOOLS}/gawk_build
 [ -f ${METADATAHOSTTOOLS}/gawk_install ] || \
@@ -145,7 +145,7 @@ cd gettext-${GETTEXT_VERSION}
     die "configure gettext error" && \
       touch ${METADATAHOSTTOOLS}/gettext_configure
 [ -f ${METADATAHOSTTOOLS}/gettext_build ] || \
-  make -j3 || \
+  make -j${JOBS} || \
     die "build gettext error" && \
       touch ${METADATAHOSTTOOLS}/gettext_build
 [ -f ${METADATAHOSTTOOLS}/gettext_install ] || \
@@ -161,7 +161,7 @@ cd grep-${GREP_VERSION}
     die "configure grep error" && \
       touch ${METADATAHOSTTOOLS}/grep_configure
 [ -f ${METADATAHOSTTOOLS}/grep_build ] || \
-  make -j3 || \
+  make -j${JOBS} || \
     die "build grep error" && \
       touch ${METADATAHOSTTOOLS}/grep_build
 [ -f ${METADATAHOSTTOOLS}/grep_install ] || \
@@ -177,7 +177,7 @@ cd libtool-${LIBTOOL_VERSION}
     die "configure libtool error" && \
       touch ${METADATAHOSTTOOLS}/libtool_configure
 [ -f ${METADATAHOSTTOOLS}/libtool_build ] || \
-  make -j3 || \
+  make -j${JOBS} || \
     die "build libtool error" && \
       touch ${METADATAHOSTTOOLS}/libtool_build
 [ -f ${METADATAHOSTTOOLS}/libtool_install ] || \
@@ -193,7 +193,7 @@ cd sed-${SED_VERSION}
     die "configure sed error" && \
       touch ${METADATAHOSTTOOLS}/sed_configure
 [ -f ${METADATAHOSTTOOLS}/sed_build ] || \
-  make -j3 || \
+  make -j${JOBS} || \
     die "build sed error" && \
       touch ${METADATAHOSTTOOLS}/sed_build
 [ -f ${METADATAHOSTTOOLS}/sed_install ] || \
@@ -209,7 +209,7 @@ cd texinfo-${TEXINFO_VERSION}
     die "configure texinfo error" && \
       touch ${METADATAHOSTTOOLS}/texinfo_configure
 [ -f ${METADATAHOSTTOOLS}/texinfo_build ] || \
-  make -j3 || \
+  make -j${JOBS} || \
     die "build texinfo error" && \
       touch ${METADATAHOSTTOOLS}/texinfo_build
 [ -f ${METADATAHOSTTOOLS}/texinfo_install ] || \
@@ -225,7 +225,7 @@ cd zlib-${ZLIB_VERSION}
     die "configure zlib error" && \
       touch ${METADATAHOSTTOOLS}/zlib_configure
 [ -f ${METADATAHOSTTOOLS}/zlib_build ] || \
-  make -j3 || \
+  make -j${JOBS} || \
     die "build zlib error" && \
       touch ${METADATAHOSTTOOLS}/zlib_build
 [ -f ${METADATAHOSTTOOLS}/zlib_install ] || \
@@ -241,7 +241,7 @@ cd libiconv-${LIBICONV_VERSION}
     die "configure libiconv error" && \
       touch ${METADATAHOSTTOOLS}/libiconv_configure
 [ -f ${METADATAHOSTTOOLS}/libiconv_build ] || \
-  make -j3 || \
+  make -j${JOBS} || \
     die "build libiconv error" && \
       touch ${METADATAHOSTTOOLS}/libiconv_build
 [ -f ${METADATAHOSTTOOLS}/libiconv_install ] || \
