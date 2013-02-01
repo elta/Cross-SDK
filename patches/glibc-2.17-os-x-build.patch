@@ -1,0 +1,19 @@
+diff -uNpr glibc-2.17-orig/sunrpc/rpc/types.h glibc-2.17/sunrpc/rpc/types.h
+--- glibc-2.17-orig/sunrpc/rpc/types.h	2012-12-25 11:02:13.000000000 +0800
++++ glibc-2.17/sunrpc/rpc/types.h	2013-02-01 15:31:20.000000000 +0800
+@@ -69,6 +69,7 @@ typedef unsigned long rpcport_t;
+ #include <sys/types.h>
+ #endif
+ 
++#ifndef __APPLE__
+ #ifndef __u_char_defined
+ typedef __u_char u_char;
+ typedef __u_short u_short;
+@@ -84,6 +85,7 @@ typedef __daddr_t daddr_t;
+ typedef __caddr_t caddr_t;
+ # define __daddr_t_defined
+ #endif
++#endif
+ 
+ #include <sys/time.h>
+ #include <sys/param.h>
