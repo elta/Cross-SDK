@@ -4,6 +4,7 @@ source source.sh
 
 [ -d "${BUILDKERNELO32}" ] || mkdir -p "${BUILDKERNELO32}"
 [ -d "${METADATAKERNELO32}" ] || mkdir -p "${METADATAKERNELO32}"
+[ -d "${PREFIXGNULINUX}" ] || mkdir -p "${PREFIXGNULINUX}"
 
 export PATH=${PREFIXHOSTTOOLS}/bin:${PREFIXGNU64}/bin:${PATH}
 export CC="${CROSS_TARGET64}-gcc"

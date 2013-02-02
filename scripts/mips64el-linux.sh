@@ -4,6 +4,7 @@ source source.sh
 
 [ -d "${BUILDKERNEL64}" ] || mkdir -p "${BUILDKERNEL64}"
 [ -d "${METADATAKERNEL64}" ] || mkdir -p "${METADATAKERNEL64}"
+[ -d "${PREFIXGNULINUX}" ] || mkdir -p "${PREFIXGNULINUX}"
 
 export PATH=${PREFIXHOSTTOOLS}/bin:${PREFIXGNU64}/bin:${PATH}
 export CC="${CROSS_TARGET64}-gcc"
