@@ -236,7 +236,7 @@ sed -e 's/-lgcc_eh//g' Makeconfig.orig > Makeconfig
 popd
 
 pushd ${SRCGNU64}
-if [ $(uname) = "Darwin" ]; then
+if [ ${HOSTOS} = "Darwin" ]; then
 cd glibc-${GLIBC_VERSION}
 [ -f "${METADATAGNU64}/glibc_macos_patch" ] || \
   patch -p1 < ${PATCH}/glibc-2.17-os-x-build.patch || \
