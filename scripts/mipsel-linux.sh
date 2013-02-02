@@ -5,7 +5,7 @@ source source.sh
 [ -d "${BUILDKERNELO32}" ] || mkdir -p "${BUILDKERNELO32}"
 [ -d "${METADATAKERNELO32}" ] || mkdir -p "${METADATAKERNELO32}"
 
-export PATH=${PATH}:${PREFIXGNU64}/bin
+export PATH=${PREFIXHOSTTOOLS}/bin:${PREFIXGNU64}/bin:${PATH}
 export CC="${CROSS_TARGET64}-gcc"
 export CXX="${CROSS_TARGET64}-g++"
 export AR="${CROSS_TARGET64}-ar"
@@ -22,6 +22,12 @@ pushd ${BUILDKERNELO32}
     die "***extract linux error" && \
       touch ${METADATAKERNELO32}/linux_extract
 cd linux-${LINUX_VERSION}
+if [ ${HOSTOS} = "Darwin" ]; then
+[ -f "${METADATAKERNELO32}/linux_macos_patch" ] || \
+  patch -p1 < ${PATCH}/linux-3.7.4-mips-macos.patch || \
+    die "***patch linux for macosx error" && \
+      touch ${METADATAKERNELO32}/linux_macos_patch
+fi
 [ -f ${METADATAKERNELO32}/linux_mrpro ] || \
   make mrproper || \
     die "***clean cross linux error" && \
