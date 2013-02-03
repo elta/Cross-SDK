@@ -42,6 +42,11 @@ tar xf ${TARBALL}/cloog-${CLOOG_VERSION}.${CLOOG_SUFFIX} || \
   die "extract cloog error" && \
     touch ${METADATAGNU64}/cloog_extract
 
+[ -f ${METADATAGNU64}/libelf_extract ] || \
+tar xf ${TARBALL}/libelf-${LIBELF_VERSION}.${LIBELF_SUFFIX} || \
+  die "extract libelf error" && \
+    touch ${METADATAGNU64}/libelf_extract
+
 [ -f ${METADATAGNU64}/binutils_extract ] || \
 tar xf ${TARBALL}/binutils-${BINUTILS_VERSION}.${BINUTILS_SUFFIX} || \
   die "extract binutils error" && \
@@ -173,6 +178,24 @@ make -j${JOBS} || die "***build cloog error 64bit" && \
     touch ${METADATAGNU64}/cloog_install
 popd
 
+pushd ${SRCGNU64}
+[ -d "libelf-${LIBELF_VERSION}" ] \
+  || tar xf ${TARBALL}/libelf-${LIBELF_VERSION}.${LIBELF_SUFFIX}
+cd libelf-${LIBELF_VERSION}
+[ -f ${METADATAGNU64}/libelf_configure ] || \
+./configure --prefix=${PREFIXGNU64} \
+  --build=${CROSS_HOST} --host=${CROSS_HOST} --target=${CROSS_TARGET64} \
+  --disable-nls --disable-shared \
+      die "***config libelf error 64bit" && \
+        touch ${METADATAGNU64}/libelf_configure
+[ -f ${METADATAGNU64}/libelf_build ] || \
+make -j${JOBS} || die "***build libelf error 64bit" && \
+  touch ${METADATAGNU64}/libelf_build
+[ -f ${METADATAGNU64}/libelf_install ] || \
+make install || die "***install libelf error 64bit" && \
+  touch ${METADATAGNU64}/libelf_install
+popd
+
 pushd ${BUILDGNU64}
 [ -d "binutils-build" ] || mkdir binutils-build
 cd binutils-build
@@ -184,6 +207,7 @@ cd binutils-build
   --enable-cloog-backend=isl --enable-poison-system-directories \
   --with-gmp=${PREFIXGNU64} --with-mpfr=${PREFIXGNU64} \
   --with-ppl=${PREFIXGNU64} --with-cloog=${PREFIXGNU64} \
+  --with-libelf=${PREFIXGNU64} \
   --with-build-sysroot=${SYSROOTGNU64} || \
     die "***config 64bit binutils error" && \
       touch ${METADATAGNU64}/binutils_configure
@@ -213,6 +237,7 @@ cd gcc-build-stage1
   --enable-cloog-backend=isl \
   --with-gmp=${PREFIXGNU64} --with-mpfr=${PREFIXGNU64} \
   --with-ppl=${PREFIXGNU64} --with-cloog=${PREFIXGNU64} \
+  --with-libelf=${PREFIXGNU64} \
   --enable-poison-system-directories --with-build-sysroot=${SYSROOTGNU64} || \
     die "***config 64bit gcc stage1 error" && \
       touch ${METADATAGNU64}/gcc_stage1_configure
@@ -370,6 +395,7 @@ cd gcc-build-stage2
   --enable-cloog-backend=isl \
   --with-gmp=${PREFIXGNU64} --with-mpfr=${PREFIXGNU64} \
   --with-ppl=${PREFIXGNU64} --with-cloog=${PREFIXGNU64} \
+  --with-libelf=${PREFIXGNU64} \
   --enable-poison-system-directories --with-build-sysroot=${SYSROOTGNU64} || \
     die "***config 64bit gcc stage2 error" && \
       touch ${METADATAGNU64}/gcc_stage2_configure
