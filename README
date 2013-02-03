@@ -8,7 +8,17 @@ I'll try my best to fix all the toolchain bugs, and keep the other members
 maintain their part of the SDK.
 
 ===============================================================================
-GNU root FS is partly come from CLFS, IDE-plugin is writen by Dongxue-Zhang.
+Version History:
+0.1:
+- KUbuntu 12.04 AMD64 well tested.
+
+0.2:
+- KUbuntu 12.10 AMD64 well tested.
+- Compile GNU rootfs using sysroot way.
+
+0.3:
+- OS X 10.8.2 and KUbuntu 12.10 AMD64 well tested.
+- Remove RTEMS, baremetal support.
 
 ===============================================================================
 TODO:
@@ -21,13 +31,20 @@ TODO:
 
 ===============================================================================
 Prerequisites:
-(K)Ubuntu 12.10 AMD64 and (K)Ubuntu 12.04 AMD64 are well tested,
-and you are welcome to test it on other platforms.
+OS X 10.8.2 is well tested, we are using Homebrew, and we need a Case-sensitive,
+Journaled FS or working DMG.
+You need run this in your terminal:
+brew install autoconf gettext libpng pkg-config xz automake glib libtool qt \
+             zlib bash-completion gnu-getopt macvim quilt coreutils gnu-sed \
+             texinfo libelf p7zip unrar libffi pixman wget
 
-Just run this in your terminal:
+(K)Ubuntu 12.10 AMD64 and (K)Ubuntu 12.04 AMD64 are well tested.
+You need run this in your terminal:
 sudo apt-get install libncurses5-dev libsdl1.2-dev libqt4-dev g++ flex bison \
                      cmake automake gawk libtool gettext gperf dejagnu \
                      guile-2.0 autogen texinfo patch xz-utils
+
+You are welcome to test it on other platforms.
 
 ===============================================================================
 Usage:
@@ -36,7 +53,7 @@ ${ROOS_FS}.sh
 
 Example:
 run
-./tool-mips*el-linux.sh
+./tool-mips-linux.sh
 to get gnu toolchain.
 
 run
@@ -48,10 +65,14 @@ run
 to get 64bit & n32 linux kernel.
 
 Notice:
-It will take a huge disk space in your disk, make sure you run them in
-a big partation:)
-make sure you have run ./get_tarballs.sh first, if you got failed,
+It will take a lot of space in your disk, make sure you run them in a big
+partation:)
+Make sure you have run ./get_tarballs.sh first, if you got failed,
 just run it again.
+Run ./cleanup to free your disk space.
+
+===============================================================================
+GNU root FS is partly come from CLFS, IDE-plugin is writen by Dongxue-Zhang.
 
 ===============================================================================
 The last thing, Happy Hacking:)
