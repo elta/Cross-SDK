@@ -297,7 +297,7 @@ EOF
     die "***config o32 glibc error" && \
       touch ${METADATAGNU64}/glibc_configure_32
 [ -f "${METADATAGNU64}/glibc_build_32" ] || \
-  make -j${JOBS} || die "***build o32 glibc error" && \
+  make || die "***build o32 glibc error" && \
     touch ${METADATAGNU64}/glibc_build_32
 [ -f "${METADATAGNU64}/glibc_install_32" ] || \
   make install inst_vardbdir=${SYSROOTGNU64}/var/db || \
@@ -334,7 +334,7 @@ EOF
     die "***config n32 glibc error" && \
       touch ${METADATAGNU64}/glibc_configure_n32
 [ -f "${METADATAGNU64}/glibc_build_n32" ] || \
-  make -j${JOBS} || die "***build n32 glibc error" && \
+  make || die "***build n32 glibc error" && \
     touch ${METADATAGNU64}/glibc_build_n32
 [ -f "${METADATAGNU64}/glibc_install_n32" ] || \
   make install inst_vardbdir=${SYSROOTGNU64}/var/db || \
@@ -371,7 +371,7 @@ EOF
     die "***config 64bit glibc error" && \
       touch ${METADATAGNU64}/glibc_configure_64
 [ -f "${METADATAGNU64}/glibc_build_64" ] || \
-  make -j${JOBS} || die "***build 64bit glibc error" && \
+  make || die "***build 64bit glibc error" && \
     touch ${METADATAGNU64}/glibc_build_64
 [ -f "${METADATAGNU64}/glibc_install_64" ] || \
   make install inst_vardbdir=${SYSROOTGNU64}/var/db || \
