@@ -28,6 +28,10 @@ if [ ${HOSTOS} = "Darwin" ]; then
   patch -p1 < ${PATCH}/linux-3.7.4-mips-macos.patch || \
     die "***patch linux for macosx error" && \
       touch ${METADATAKERNEL64}/linux_macos_patch
+[ -f "${METADATAKERNEL64}/linux_macos_2_patch" ] || \
+  patch -p1 < ${PATCH}/linux-3.7.4-mips-macos-2.patch || \
+    die "***patch linux for macosx 2 error" && \
+      touch ${METADATAKERNEL64}/linux_macos_2_patch
 fi
 [ -f ${METADATAKERNEL64}/linux_mrpro ] || \
   make mrproper || \
