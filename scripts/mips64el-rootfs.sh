@@ -739,7 +739,7 @@ EOF` || \
     die "***config glibc32 error" && \
       touch ${METADATAMIPS64ELROOTFS}/glibc_config32
 [ -f "${METADATAMIPS64ELROOTFS}/glibc_build32" ] || \
-  make -j${JOBS} || \
+  make || \
     die "***build glibc32 error" && \
       touch ${METADATAMIPS64ELROOTFS}/glibc_build32
 [ -f "${METADATAMIPS64ELROOTFS}/glibc_install32" ] || \
@@ -781,7 +781,7 @@ EOF` || \
     die "***config glibcn32 error" && \
       touch ${METADATAMIPS64ELROOTFS}/glibc_confign32
 [ -f "${METADATAMIPS64ELROOTFS}/glibc_buildn32" ] || \
-  make -j${JOBS} || \
+  make || \
     die "***build glibcn32 error" && \
       touch ${METADATAMIPS64ELROOTFS}/glibc_buildn32
 [ -f "${METADATAMIPS64ELROOTFS}/glibc_installn32" ] || \
@@ -823,7 +823,7 @@ EOF` || \
     die "***config glibc64 error" && \
       touch ${METADATAMIPS64ELROOTFS}/glibc_config64
 [ -f "${METADATAMIPS64ELROOTFS}/glibc_build64" ] || \
-make -j${JOBS} || \
+make || \
   die "***build glibc64 error" && \
     touch ${METADATAMIPS64ELROOTFS}/glibc_build64
 [ -f "${METADATAMIPS64ELROOTFS}/glibc_install64" ] || \

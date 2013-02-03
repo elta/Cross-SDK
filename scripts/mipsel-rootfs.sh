@@ -608,7 +608,7 @@ EOF
     die "***config glibc error" && \
       touch ${METADATAMIPSELROOTFS}/glibc_configure
 [ -f ${METADATAMIPSELROOTFS}/glibc_build ] || \
-  make -j${JOBS} || die "***build glibc error" && \
+  make || die "***build glibc error" && \
     touch ${METADATAMIPSELROOTFS}/glibc_build
 [ -f ${METADATAMIPSELROOTFS}/glibc_install ] || \
   make DESTDIR=${PREFIXMIPSELROOTFS} install || \
