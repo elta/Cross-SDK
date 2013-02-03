@@ -2,7 +2,7 @@
 
 source source.sh
 
-export PATH=${PREFIXMIPS64ELROOTFS}/cross-tools/bin:$PATH
+export PATH=${PREFIXHOSTTOOLS}/bin:${PREFIXMIPS64ELROOTFS}/cross-tools/bin:$PATH
 
 [ -d "${SRCMIPS64ELROOTFS}" ] || mkdir -p "${SRCMIPS64ELROOTFS}"
 [ -d "${BUILDMIPS64ELROOTFS}" ] || mkdir -p "${BUILDMIPS64ELROOTFS}"
@@ -695,6 +695,16 @@ cd gcc-build-stage1
   make install-gcc install-target-libgcc || \
     die "***install gcc stage1 error" && \
       touch ${METADATAMIPS64ELROOTFS}/gcc_stage1_install
+popd
+
+pushd ${SRCMIPS64ELROOTFS}
+if [ ${HOSTOS} = "Darwin" ]; then
+cd glibc-${GLIBC_VERSION}
+[ -f "${METADATAMIPS64ELROOTFS}/glibc_macos_patch" ] || \
+  patch -p1 < ${PATCH}/glibc-2.17-os-x-build.patch || \
+    die "***patch glibc for macosx error" && \
+      touch ${METADATAMIPS64ELROOTFS}/glibc_macos_patch
+fi
 popd
 
 pushd ${BUILDMIPS64ELROOTFS}

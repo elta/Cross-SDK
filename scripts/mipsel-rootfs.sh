@@ -8,7 +8,7 @@ source source.sh
 
 mkdir -p ${PREFIXMIPSELROOTFS}
 mkdir -p ${PREFIXMIPSELROOTFS}/cross-tools
-export PATH=$PATH:${PREFIXMIPSELROOTFS}/cross-tools/bin
+export PATH=${PREFIXHOSTTOOLS}/bin:${PREFIXMIPSELROOTFS}/cross-tools/bin:$PATH
 
 #################### Creating Directories ###############
 mkdir -pv ${PREFIXMIPSELROOTFS}/{bin,boot,dev,{etc/,}opt,home,lib,mnt,run}
@@ -568,6 +568,16 @@ cd gcc-static-build
   make install-gcc install-target-libgcc || \
     die "***install gcc static stage1 error" && \
       touch ${METADATAMIPSELROOTFS}/gcc_static_install
+popd
+
+pushd ${SRCMIPSELROOTFS}
+if [ ${HOSTOS} = "Darwin" ]; then
+cd glibc-${GLIBC_VERSION}
+[ -f "${METADATAMIPSELROOTFS}/glibc_macos_patch" ] || \
+  patch -p1 < ${PATCH}/glibc-2.17-os-x-build.patch || \
+    die "***patch glibc for macosx error" && \
+      touch ${METADATAMIPSELROOTFS}/glibc_macos_patch
+fi
 popd
 
 pushd ${BUILDMIPSELROOTFS}
