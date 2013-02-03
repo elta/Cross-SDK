@@ -266,6 +266,12 @@ download "libiconv-${LIBICONV_VERSION}.${LIBICONV_SUFFIX}" \
   die "download libiconv error" && \
     touch libiconv_download
 
+[ -f libelf_download ] || \
+download "libelf-${LIBELF_VERSION}.${LIBELF_SUFFIX}" \
+  "${LIBELF_URL}/libelf-${LIBELF_VERSION}.${LIBELF_SUFFIX}" || \
+  die "download libelf error" && \
+    touch libelf_download
+
 [ -f linux_download ] || \
 download "linux-${LINUX_VERSION}.${LINUX_SUFFIX}" \
   "${LINUX_URL}/linux-${LINUX_VERSION}.${LINUX_SUFFIX}" || \
