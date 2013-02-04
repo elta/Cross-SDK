@@ -36,7 +36,7 @@ Journaled FS or working DMG.
 You need run this in your terminal:
 brew install autoconf gettext libpng pkg-config xz automake glib libtool qt \
              zlib bash-completion gnu-getopt macvim quilt coreutils gnu-sed \
-             texinfo libelf p7zip unrar libffi pixman wget
+             texinfo libelf p7zip unrar libffi pixman wget e2fsprogs
 
 (K)Ubuntu 12.10 AMD64 and (K)Ubuntu 12.04 AMD64 are well tested.
 You need run this in your terminal:
