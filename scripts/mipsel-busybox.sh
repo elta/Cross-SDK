@@ -114,6 +114,7 @@ sudo cp -a /dev/zero ${MOUNT_POINT}/dev/
 sudo cp -a /dev/console ${MOUNT_POINT}/dev/
 sudo cp -a /dev/null ${MOUNT_POINT}/dev/
 sudo cp -a /dev/tty ${MOUNT_POINT}/dev/
+sudo cp -a /dev/tty1 ${MOUNT_POINT}/dev/
 sudo cp -a /dev/tty2 ${MOUNT_POINT}/dev/
 sudo cp -a /dev/ttyS0 ${MOUNT_POINT}/dev/
 
