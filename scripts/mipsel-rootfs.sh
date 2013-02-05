@@ -685,6 +685,7 @@ cd groff_build
 popd
 
 
+if [ ${HOSTOS} != "Darwin" ]; then
 pushd ${BUILDMIPSELROOTFS}
 cd perl-${PERL_VERSION}
 [ -f ${METADATAMIPSELROOTFS}/perl_cross_copy ] || \
@@ -707,6 +708,7 @@ cd perl-${PERL_VERSION}
     die "***install perl error" && \
       touch ${METADATAMIPSELROOTFS}/perl_install
 popd
+fi
 
 pushd ${BUILDMIPSELROOTFS}
 [ -d "python_build" ] || mkdir python_build
@@ -1501,6 +1503,7 @@ sed '/^TARGETS/s@arpd@@g' misc/Makefile.orig > misc/Makefile
              touch ${METADATAMIPSELROOTFS}/iproute2_build2
 popd
 
+if [ ${HOSTOS} != "Darwin" ]; then
 pushd ${BUILDMIPSELROOTFS}
 cd perl-${PERL_VERSION}
 [ -f ${METADATAMIPSELROOTFS}/perl_cross_configure ] || \
@@ -1517,8 +1520,8 @@ cd perl-${PERL_VERSION}
   make DESTDIR=${PREFIXMIPSELROOTFS} install || \
     die "***install cross perl error" && \
       touch ${METADATAMIPSELROOTFS}/perl_cross_install
-
 popd
+fi
 
 pushd ${BUILDMIPSELROOTFS}
 [ -d readline_build ] || mkdir readline_build
