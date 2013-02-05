@@ -4,7 +4,7 @@ source source.sh
 
 #[ -f ${PREFIXGNU64}/bin/${CC} ] || die "No toolchain found, process error"
 
-export PATH=${PATH}:${PREFIXGNU64}/bin
+export PATH=${PREFIXHOSTTOOLS}/bin:${PREFIXGNU64}/bin:${PATH}
 
 export CC=${CROSS_TARGET64}-gcc
 export CFLAGS="-isystem ${SYSROOTGNU64}/usr/include ${BUILD32}"
@@ -43,6 +43,12 @@ pushd ${SRCBUSYBOXO32}/busybox-$option
       touch ${METADATABUSYBOXO32}/busybox-${option}-extract
 
 cd busybox-${BUSYBOX_VERSION}
+if [ ${HOSTOS} = "Darwin" ]; then
+[ -f ${METADATABUSYBOXO32}/busybox-1.20.2-macos.patch ] || \
+  patch -Np1 -i ${PATCH}/busybox-${BUSYBOX_VERSION}-macos.patch || \
+    die "Patch for MacOS failed" && \
+      touch ${METADATABUSYBOXO32}/busybox-1.20.2-macos.patch
+fi
 [ -f ${METADATABUSYBOXO32}/busybox-${option}-patch-busybox-${BUSYBOX_VERSION} ] || \
   patch -Np1 -i ${PATCH}/busybox-${BUSYBOX_VERSION}.patch || \
     die "Patch failed" && \
@@ -90,7 +96,12 @@ pushd ${SRCBUSYBOXO32}/busybox-$option
 dd if=/dev/zero of=${BUSYBOXO32_IMAGE} bs=4k count=512k
 echo y | mkfs.ext3 ${BUSYBOXO32_IMAGE}
 [ -d "${MOUNT_POINT}" ] || mkdir ${MOUNT_POINT}
+if [ ${HOSTOS} = "Darwin" ]; then
+#ext2fuse ${BUSYBOXO32_IMAGE} ${MOUNT_POINT} &
+die "There is something wrong with ext3 under Mac, so we complete busybox and stop here."
+else
 sudo mount -o loop ${BUSYBOXO32_IMAGE} ${MOUNT_POINT}
+fi
 
 # Build BusyBox File System
 cp -ar ${SRCBUSYBOXO32}/busybox-$option/busybox-${BUSYBOX_VERSION}/_install/* ${MOUNT_POINT}

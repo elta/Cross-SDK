@@ -26,6 +26,10 @@ pushd ${SRCHOSTTOOLS}
   tar vxf ${TARBALL}/gawk-${GAWK_VERSION}.${GAWK_SUFFIX} || \
     die "extract gawk error" && \
       touch ${METADATAHOSTTOOLS}/gawk_extract
+[ -f ${METADATAHOSTTOOLS}/e2fs_extract ] || \
+  tar vxf ${TARBALL}/e2fsprogs-${E2FSPROGS_VERSION}.${E2FSPROGS_SUFFIX} || \
+    die "extract e2fs error" && \
+      touch ${METADATAHOSTTOOLS}/e2fs_extract
 [ -f ${METADATAHOSTTOOLS}/gettext_extract ] || \
   tar vxf ${TARBALL}/gettext-${GETTEXT_VERSION}.${GETTEXT_SUFFIX} || \
     die "extract gettext error" && \
@@ -143,6 +147,22 @@ cd gawk-${GAWK_VERSION}
   make install || \
     die "install gawk error" && \
       touch ${METADATAHOSTTOOLS}/gawk_install
+popd
+
+pushd ${SRCHOSTTOOLS}
+cd e2fsprogs-${E2FSPROGS_VERSION}
+[ -f ${METADATAHOSTTOOLS}/e2fs_configure ] || \
+  ./configure --prefix=${PREFIXHOSTTOOLS} --sbin=${PREFIXHOSTTOOLS}/bin || \
+    die "configure e2fs error" && \
+      touch ${METADATAHOSTTOOLS}/e2fs_configure
+[ -f ${METADATAHOSTTOOLS}/e2fs_build ] || \
+  make -j${JOBS} || \
+    die "build e2fs error" && \
+      touch ${METADATAHOSTTOOLS}/e2fs_build
+[ -f ${METADATAHOSTTOOLS}/e2fs_install ] || \
+  make install || \
+    die "install e2fs error" && \
+      touch ${METADATAHOSTTOOLS}/e2fs_install
 popd
 
 pushd ${SRCHOSTTOOLS}

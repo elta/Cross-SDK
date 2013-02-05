@@ -1,0 +1,14 @@
+diff -uNpr busybox-1.20.2.orig/scripts/kconfig/mconf.c busybox-1.20.2/scripts/kconfig/mconf.c
+--- busybox-1.20.2.orig/scripts/kconfig/mconf.c	2013-02-04 15:26:12.000000000 +0800
++++ busybox-1.20.2/scripts/kconfig/mconf.c	2013-02-04 15:27:03.000000000 +0800
+@@ -28,6 +28,10 @@
+ #define LKC_DIRECT_LINK
+ #include "lkc.h"
+ 
++#ifndef SIGWINCH
++#define SIGWINCH 28
++#endif
++
+ static char menu_backtitle[128];
+ static const char mconf_readme[] = N_(
+ "Overview\n"
