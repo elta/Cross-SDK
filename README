@@ -17,7 +17,7 @@ Version History:
 - Compile GNU rootfs using sysroot way.
 
 0.3:
-- OS X 10.8.2 and KUbuntu 12.10 AMD64 well tested.
+- OS X 10.8.2 partly support.
 - Remove RTEMS, baremetal support.
 
 ===============================================================================
@@ -31,8 +31,8 @@ TODO:
 
 ===============================================================================
 Prerequisites:
-OS X 10.8.2 is well tested, we are using Homebrew, and we need a Case-sensitive,
-Journaled FS or working DMG.
+OS X 10.8.2 is partly suppoted, we are using Homebrew, and we need a
+Case-sensitive, Journaled FS or working DMG.
 You need run this in your terminal:
 brew install autoconf gettext libpng pkg-config xz automake glib libtool qt \
              zlib bash-completion gnu-getopt macvim quilt coreutils gnu-sed \

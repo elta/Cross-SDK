@@ -496,11 +496,6 @@ download "u-boot-${UBOOT_VERSION}.${UBOOT_SUFFIX}" \
 popd
 
 pushd ${SRC_LIVE}
-[ -f ${METADATADOWN}/openocd_git ] || \
-  git clone ${OPENOCD_GITURL} || \
-  die "download openocd error" && \
-    touch ${METADATADOWN}/openocd_git
-
 [ -f ${METADATADOWN}/llvmlinux_git ] || \
   git clone ${LLVMLINUX_GITURL} || \
   die "download llvmlinux error" && \
