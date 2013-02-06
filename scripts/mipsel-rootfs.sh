@@ -456,7 +456,7 @@ pushd ${BUILDMIPSELROOTFS}
 [ -d "mpc_build" ] || mkdir mpc_build
 cd mpc_build
 [ -f ${METADATAMIPSELROOTFS}/mpc_configure ] || \
-  LDFLAGS="-Wl,-rpath,/cross-tools/lib" \
+  LDFLAGS="-Wl,-rpath,${PREFIXMIPSELROOTFS}/cross-tools/lib" \
   ${SRCMIPSELROOTFS}/mpc-${MPC_VERSION}/configure \
   --prefix=${PREFIXMIPSELROOTFS}/cross-tools \
   --with-gmp=${PREFIXMIPSELROOTFS}/cross-tools \
@@ -589,9 +589,9 @@ lic_cv_forced_unwind=yes
 libc_cv_c_cleanup=yes
 libc_cv_gnu89_inline=yes
 EOF
-#cat > configparms << EOF
-#install_root=${PREFIXMIPSELROOTFS}
-#EOF
+cat > configparms << EOF
+install_root=${PREFIXMIPSELROOTFS}
+EOF
 [ -f ${METADATAMIPSELROOTFS}/glibc_configure ] || \
   BUILD_CC="gcc" CC="${CROSS_TARGET32}-gcc" \
   AR="${CROSS_TARGET32}-ar" \
@@ -611,7 +611,7 @@ EOF
   make || die "***build glibc error" && \
     touch ${METADATAMIPSELROOTFS}/glibc_build
 [ -f ${METADATAMIPSELROOTFS}/glibc_install ] || \
-  make DESTDIR=${PREFIXMIPSELROOTFS} install || \
+  make install || \
     die "***install glibc error" && \
       touch ${METADATAMIPSELROOTFS}/glibc_install
 popd

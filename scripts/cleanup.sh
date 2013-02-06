@@ -1,10 +1,6 @@
 #! /bin/bash
 
-export SCRIPT="$(pwd)"
-
-export METADATA=${SCRIPT}/../metadata
-export SRC=${SCRIPT}/../src
-export BUILD=${SCRIPT}/../build
+source source.sh
 
 [ -d ${METADATA} ] && \
   for dir in `ls ${METADATA}`; do \
