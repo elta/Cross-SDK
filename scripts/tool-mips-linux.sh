@@ -1,6 +1,6 @@
 #! /bin/bash
 
-source source.sh
+source source.env
 
 [ -d "${SRCGNU64}" ] || mkdir -p "${SRCGNU64}"
 [ -d "${BUILDGNU64}" ] || mkdir -p "${BUILDGNU64}"

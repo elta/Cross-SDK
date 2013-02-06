@@ -1,6 +1,6 @@
 #! /bin/bash
 
-source source.sh
+source source.env
 
 #[ -f ${PREFIXGNU64}/bin/${CC} ] || die "No toolchain found, process error"
 

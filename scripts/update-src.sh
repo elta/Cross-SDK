@@ -1,6 +1,6 @@
 #! /bin/bash
 
-source source.sh
+source source.env
 
 pushd ${SRC_LIVE}
 cd llvmlinux

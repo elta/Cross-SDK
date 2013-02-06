@@ -1,6 +1,6 @@
 #! /bin/bash
 
-source source.sh
+source source.env
 
 [ -d "${SRCUNIVERSAL}" ] ||  mkdir -p "${SRCUNIVERSAL}"
 [ -d "${BUILDUNIVERSAL}" ] ||  mkdir -p "${BUILDUNIVERSAL}"

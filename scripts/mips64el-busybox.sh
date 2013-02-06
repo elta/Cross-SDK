@@ -1,6 +1,6 @@
 #! /bin/bash
 
-source source.sh
+source source.env
 
 export PATH=${PREFIXHOSTTOOLS}/bin:${PREFIXGNU64}/bin:${PATH}
 export CC=${CROSS_TARGET64}-gcc

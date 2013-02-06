@@ -1,6 +1,6 @@
 #! /bin/bash
 
-source source.sh
+source source.env
 
 export PATH=${PREFIXHOSTTOOLS}/bin:${PREFIXMIPS64ELROOTFS}/cross-tools/bin:$PATH
 

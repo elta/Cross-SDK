@@ -1,6 +1,6 @@
 #! /bin/bash
 
-source source.sh
+source source.env
 
 [ -d ${METADATA} ] && \
   for dir in `ls ${METADATA}`; do \

@@ -1,6 +1,6 @@
 #! /bin/bash
 
-source source.sh
+source source.env
 
 [ -d "${BUILDKERNEL64}" ] || mkdir -p "${BUILDKERNEL64}"
 [ -d "${METADATAKERNEL64}" ] || mkdir -p "${METADATAKERNEL64}"

@@ -1,6 +1,6 @@
 #! /bin/bash
 
-source source.sh
+source source.env
 
 [ -d "${SRCMIPSELROOTFS}" ] || mkdir -p "${SRCMIPSELROOTFS}"
 [ -d "${BUILDMIPSELROOTFS}" ] || mkdir -p "${BUILDMIPSELROOTFS}"

@@ -1,6 +1,6 @@
 #! /bin/bash
 
-source source.sh
+source source.env
 
 [ -d "${TARBALL}" ] || mkdir -p "${TARBALL}"
 [ -d "${SRC_LIVE}" ] || mkdir -p "${SRC_LIVE}"

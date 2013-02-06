@@ -1,6 +1,6 @@
 #! /bin/bash
 
-source source.sh
+source source.env
 
 [ -d "${BUILDKERNELO32}" ] || mkdir -p "${BUILDKERNELO32}"
 [ -d "${METADATAKERNELO32}" ] || mkdir -p "${METADATAKERNELO32}"
