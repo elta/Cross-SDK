@@ -2914,11 +2914,11 @@ cd linux-${LINUX_VERSION}
     die "***Patch linux config error" && \
       touch ${METADATAMIPSELROOTFS}/linux_defconfig
 [ -f ${METADATAMIPSELROOTFS}/linux_cross_build ] || \
-make -j${JOBS} ARCH=mips PREFIXMIPSELSYSROOT_COMPILE=${CROSS_TARGET32}- || \
+make -j${JOBS} ARCH=mips CROSS_COMPILE=${CROSS_TARGET32}- || \
   die "build cross linux error" && \
       touch ${METADATAMIPSELROOTFS}/linux_cross_build
 [ -f ${METADATAMIPSELROOTFS}/linux_cross_install ] || \
-  make ARCH=mips PREFIXMIPSELSYSROOT_COMPILE=${CROSS_TARGET32}- \
+  make ARCH=mips CROSS_COMPILE=${CROSS_TARGET32}- \
   INSTALL_MOD_PATH=${PREFIXMIPSELROOTFS} modules_install || \
     die "install cross linux module error" && \
       touch ${METADATAMIPSELROOTFS}/linux_cross_install
