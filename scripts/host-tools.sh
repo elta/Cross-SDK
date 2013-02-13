@@ -3,7 +3,9 @@
 source source.env
 
 [ -d "${SRCHOSTTOOLS}" ] || mkdir -p "${SRCHOSTTOOLS}"
+[ -d "${BUILDHOSTTOOLS}" ] || mkdir -p "${BUILDHOSTTOOLS}"
 [ -d "${METADATAHOSTTOOLS}" ] || mkdir -p "${METADATAHOSTTOOLS}"
+[ -d "${PREFIXHOSTTOOLS}" ] || mkdir -p "${PREFIXHOSTTOOLS}"
 
 pushd ${SRCHOSTTOOLS}
 [ -f ${METADATAHOSTTOOLS}/coreutils_extract ] || \
@@ -36,15 +38,30 @@ pushd ${SRCHOSTTOOLS}
     die "extract texinfo error" && \
       touch ${METADATAHOSTTOOLS}/texinfo_extract
 
-[ -f ${METADATAHOSTTOOLS}/perl_extract ] || \
-  tar xf ${TARBALL}/perl-${PERL_VERSION}.${PERL_SUFFIX} || \
-    die "***extract perl error" && \
-      touch ${METADATAHOSTTOOLS}/perl_extract
+[ -f ${METADATAHOSTTOOLS}/perl_cross_extract ] || \
+  tar xf ${TARBALL}/perl-${PERLCROSS_VERSION}.tar.gz || \
+    die "***extract cross perl error" && \
+      touch ${METADATAHOSTTOOLS}/perl_cross_extract
 
 [ -f ${METADATAHOSTTOOLS}/python_extract ] || \
   tar xf ${TARBALL}/python-${PYTHON_VERSION}.${PYTHON_SUFFIX} || \
     die "***extract python error" && \
       touch ${METADATAHOSTTOOLS}/python_extract
+popd
+
+pushd ${BUILDHOSTTOOLS}
+[ -f ${METADATAHOSTTOOLS}/perl_extract ] || \
+  tar xf ${TARBALL}/perl-${PERL_VERSION}.${PERL_SUFFIX} || \
+    die "***extract perl error" && \
+      touch ${METADATAHOSTTOOLS}/perl_extract
+popd
+
+pushd ${BUILDHOSTTOOLS}
+cd perl-${PERL_VERSION}
+[ -f ${METADATAHOSTTOOLS}/perl_cross_copy ] || \
+  cp -ar ${SRCHOSTTOOLS}/perl-${PERL_VERSION}/* . || \
+    die "***copy cross perl error" && \
+      touch ${METADATAHOSTTOOLS}/perl_cross_copy
 popd
 
 pushd ${SRCHOSTTOOLS}
@@ -163,18 +180,20 @@ cd Python-${PYTHON_VERSION}
       touch ${METADATAHOSTTOOLS}/python_install
 popd
 
-#pushd ${SRCHOSTTOOLS}
-#cd perl-${PERL_VERSION}
-#[ -f ${METADATAHOSTTOOLS}/perl_configure ] || \
-#  ./Configure -des -Dprefix=${PREFIXHOSTTOOLS} || \
-#    die "configure perl error" && \
-#      touch ${METADATAHOSTTOOLS}/perl_configure
-#[ -f ${METADATAHOSTTOOLS}/perl_build ] || \
-#  make -j${JOBS} || \
-#    die "build perl error" && \
-#      touch ${METADATAHOSTTOOLS}/perl_build
-#[ -f ${METADATAHOSTTOOLS}/perl_install ] || \
-#  make install || \
-#    die "install perl error" && \
-#      touch ${METADATAHOSTTOOLS}/perl_install
+pushd ${BUILDHOSTTOOLS}
+cd perl-${PERL_VERSION}
+[ -f ${METADATAHOSTTOOLS}/perl_configure ] || \
+  ./configure --prefix=${PREFIXHOSTTOOLS} || \
+    die "***config perl error" && \
+      touch ${METADATAHOSTTOOLS}/perl_configure
+
+[ -f ${METADATAHOSTTOOLS}/perl_build ] || \
+  make || \
+    die "***make perl error" && \
+      touch ${METADATAHOSTTOOLS}/perl_build
+
+[ -f ${METADATAHOSTTOOLS}/perl_install ] || \
+  make install || \
+    die "***install perl error" && \
+      touch ${METADATAHOSTTOOLS}/perl_install
 popd
