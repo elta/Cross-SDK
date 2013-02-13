@@ -146,3 +146,35 @@ cd texinfo-${TEXINFO_VERSION}
     die "install texinfo error" && \
       touch ${METADATAHOSTTOOLS}/texinfo_install
 popd
+
+pushd ${SRCHOSTTOOLS}
+cd Python-${PYTHON_VERSION}
+[ -f ${METADATAHOSTTOOLS}/python_configure ] || \
+  ./configure --prefix=${PREFIXHOSTTOOLS} || \
+    die "configure python error" && \
+      touch ${METADATAHOSTTOOLS}/python_configure
+[ -f ${METADATAHOSTTOOLS}/python_build ] || \
+  make -j${JOBS} || \
+    die "build python error" && \
+      touch ${METADATAHOSTTOOLS}/python_build
+[ -f ${METADATAHOSTTOOLS}/python_install ] || \
+  make install || \
+    die "install python error" && \
+      touch ${METADATAHOSTTOOLS}/python_install
+popd
+
+#pushd ${SRCHOSTTOOLS}
+#cd perl-${PERL_VERSION}
+#[ -f ${METADATAHOSTTOOLS}/perl_configure ] || \
+#  ./Configure -des -Dprefix=${PREFIXHOSTTOOLS} || \
+#    die "configure perl error" && \
+#      touch ${METADATAHOSTTOOLS}/perl_configure
+#[ -f ${METADATAHOSTTOOLS}/perl_build ] || \
+#  make -j${JOBS} || \
+#    die "build perl error" && \
+#      touch ${METADATAHOSTTOOLS}/perl_build
+#[ -f ${METADATAHOSTTOOLS}/perl_install ] || \
+#  make install || \
+#    die "install perl error" && \
+#      touch ${METADATAHOSTTOOLS}/perl_install
+popd
