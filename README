@@ -9,25 +9,25 @@ maintain their part of the SDK.
 
 ===============================================================================
 Version History:
-0.1:
-- KUbuntu 12.04 AMD64 well tested.
-
-0.2:
-- KUbuntu 12.10 AMD64 well tested.
-- Compile GNU rootfs using sysroot way.
+0.4:
+- Slipt scripts.
 
 0.3:
 - OS X 10.8.2 partly support.
 - Remove RTEMS, baremetal support.
 
+0.2:
+- KUbuntu 12.10 AMD64 well tested.
+- Compile GNU rootfs using sysroot way.
+
+0.1:
+- KUbuntu 12.04 AMD64 well tested.
+
 ===============================================================================
 TODO:
 - Switch to LLVMLinux
 - Make Clang to be the default compiler
-- IDE Debugger support
-- IDE Static Analyzer support
-- IDE U-Boot config support
-- IDE Linux config support
+- IDE Debugger, Static Analyzer, U-Boot & Linux config support
 
 ===============================================================================
 Prerequisites:
