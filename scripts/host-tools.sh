@@ -38,6 +38,7 @@ pushd ${SRCHOSTTOOLS}
     die "extract texinfo error" && \
       touch ${METADATAHOSTTOOLS}/texinfo_extract
 
+if [ ${HOSTOS} != "Darwin" ]; then
 [ -f ${METADATAHOSTTOOLS}/perl_cross_extract ] || \
   tar xf ${TARBALL}/perl-${PERLCROSS_VERSION}.tar.gz || \
     die "***extract cross perl error" && \
@@ -47,8 +48,10 @@ pushd ${SRCHOSTTOOLS}
   tar xf ${TARBALL}/python-${PYTHON_VERSION}.${PYTHON_SUFFIX} || \
     die "***extract python error" && \
       touch ${METADATAHOSTTOOLS}/python_extract
+fi
 popd
 
+if [ ${HOSTOS} != "Darwin" ]; then
 pushd ${BUILDHOSTTOOLS}
 [ -f ${METADATAHOSTTOOLS}/perl_extract ] || \
   tar xf ${TARBALL}/perl-${PERL_VERSION}.${PERL_SUFFIX} || \
@@ -63,6 +66,7 @@ cd perl-${PERL_VERSION}
     die "***copy cross perl error" && \
       touch ${METADATAHOSTTOOLS}/perl_cross_copy
 popd
+fi
 
 pushd ${SRCHOSTTOOLS}
 cd coreutils-${COREUTILS_VERSION}
@@ -164,6 +168,7 @@ cd texinfo-${TEXINFO_VERSION}
       touch ${METADATAHOSTTOOLS}/texinfo_install
 popd
 
+if [ ${HOSTOS} != "Darwin" ]; then
 pushd ${SRCHOSTTOOLS}
 cd Python-${PYTHON_VERSION}
 [ -f ${METADATAHOSTTOOLS}/python_configure ] || \
@@ -201,5 +206,6 @@ cd perl-${PERL_VERSION}
     die "***install perl error" && \
       touch ${METADATAHOSTTOOLS}/perl_install
 popd
+fi
 
 touch ${METADATAHOSTTOOLS}/host_tools_finished
