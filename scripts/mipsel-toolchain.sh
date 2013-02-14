@@ -11,10 +11,10 @@ source source.env
     die "build mipsel tools error" && \
       touch ${METADATAMIPSELTOOLCHAIN}/mipsel_tools_finished
 [ -f "${METADATAUNIVERSAL}/tool_llvm_finished" ] || \
-  source tool-llvm.step || \
+  source mips-llvm.step || \
     die "build llvm error" && \
       touch ${METADATAUNIVERSAL}/tool_llvm_finished
 [ -f "${METADATAUNIVERSAL}/tool_mips_qemu_finished" ] || \
-  source tool-mips-qemu.step || \
+  source mips-qemu.step || \
     die "build mips qemu error" && \
       touch ${METADATAUNIVERSAL}/tool_mips_qemu_finished
