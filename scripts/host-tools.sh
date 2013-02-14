@@ -178,6 +178,10 @@ cd Python-${PYTHON_VERSION}
   make install || \
     die "install python error" && \
       touch ${METADATAHOSTTOOLS}/python_install
+[ -f ${METADATAHOSTTOOLS}/python_pgen_install ] || \
+  cp Parser/pgen ${PREFIXHOSTTOOLS}/bin/pgen || \
+    die "***install python error" && \
+      touch ${METADATAHOSTTOOLS}/python_pgen_install
 popd
 
 pushd ${BUILDHOSTTOOLS}
@@ -197,3 +201,5 @@ cd perl-${PERL_VERSION}
     die "***install perl error" && \
       touch ${METADATAHOSTTOOLS}/perl_install
 popd
+
+touch ${METADATAHOSTTOOLS}/host_tools_finished
