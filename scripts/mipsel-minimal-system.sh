@@ -6,14 +6,17 @@ source source.env
   source host-tools.step || \
     die "build host-tools error" && \
       touch ${METADATAHOSTTOOLS}/host_tools_finished
+
 [ -f "${METADATAMIPSELTOOLCHAIN}/mipsel_tools_finished" ] || \
   source mipsel-linux-tool.step || \
     die "build mipsel tools error" && \
       touch ${METADATAMIPSELTOOLCHAIN}/mipsel_tools_finished
+
 [ -f "${METADATAMIPSELKERNEL}/linux_kernel_finished" ] || \
-  source mipsel-linux-kernel.step || \
+  source mipsel-linux.step || \
     die "build mipsel linux kernel and modules error" && \
       touch ${METADATAMIPSELKERNEL}/linux_kernel_finished
+
 [ -f "${METADATABUSYBOXO32}/mipsel_busybox_finished" ] || \
   source mipsel-busybox.step || \
     die "build mipsel busybox error" && \
