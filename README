@@ -13,7 +13,8 @@ Version History:
 - Slipt scripts.
 
 0.3:
-- OS X 10.8.2 partly support.
+- OS X 10.8.2 partly support, toolchain and linux kernel can be compiled, rootfs
+  and busybox can not.
 - Remove RTEMS, baremetal support.
 - KUbuntu 12.04 AMD64 no longger tested.
 
