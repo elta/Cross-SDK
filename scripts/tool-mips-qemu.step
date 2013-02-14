@@ -35,3 +35,5 @@ cd qemu-build
   make install || die "***install qemu error" && \
     touch ${METADATAUNIVERSAL}/qemu_install
 popd
+
+touch ${METADATAUNIVERSAL}/tool_mips_qemu_finished

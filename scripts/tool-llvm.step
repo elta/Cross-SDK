@@ -49,3 +49,5 @@ cd llvm-build
   make install || die "***install llvm error" && \
     touch ${METADATAUNIVERSAL}/llvm_install
 popd
+
+touch ${METADATAUNIVERSAL}/tool_llvm_finished
