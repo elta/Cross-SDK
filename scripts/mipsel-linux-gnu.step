@@ -459,4 +459,24 @@ cd gcc-build
       touch ${METADATAMIPSELTOOLCHAIN}/gcc_install
 popd
 
+pushd ${BUILDMIPSELTOOLCHAIN}
+[ -d "gdb_build" ] || mkdir gdb_build
+cd gdb_build
+[ -f ${METADATAMIPSELTOOLCHAIN}/gdb_configure ] || \
+  ${SRCMIPSELTOOLCHAIN}/gdb-${GDB_VERSION}/configure \
+  --prefix=${PREFIXMIPSELTOOLCHAIN} \
+  --build=${CROSS_HOST} --host=${CROSS_HOST} \
+  --target=${CROSS_TARGET32} || \
+    die "***config gdb error" && \
+      touch ${METADATAMIPSELTOOLCHAIN}/gdb_configure
+[ -f ${METADATAMIPSELTOOLCHAIN}/gdb_build ] || \
+  make -j${JOBS} || \
+    die "***build gdb error" && \
+      touch ${METADATAMIPSELTOOLCHAIN}/gdb_build
+[ -f ${METADATAMIPSELTOOLCHAIN}/gdb_install ] || \
+  make install || \
+    die "***install gdb error" && \
+      touch ${METADATAMIPSELTOOLCHAIN}/gdb_install
+popd
+
 touch ${METADATAMIPSELTOOLCHAIN}/mipsel_tools_finished
