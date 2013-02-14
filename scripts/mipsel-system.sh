@@ -8,7 +8,7 @@ source source.env
       touch ${METADATAHOSTTOOLS}/host_tools_finished
 
 [ -f "${METADATAMIPSELTOOLCHAIN}/mipsel_tools_finished" ] || \
-  source mipsel-linux-tool.step || \
+  source mipsel-linux-gnu.step || \
     die "build mipsel tools error" && \
       touch ${METADATAMIPSELTOOLCHAIN}/mipsel_tools_finished
 
