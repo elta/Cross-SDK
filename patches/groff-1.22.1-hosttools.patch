@@ -1,0 +1,105 @@
+diff -ruNb a/contrib/mom/Makefile.sub b/contrib/mom/Makefile.sub
+--- a/contrib/mom/Makefile.sub	2012-12-30 08:40:29.000000000 +0000
++++ b/contrib/mom/Makefile.sub	2013-01-02 17:54:20.655519295 +0000
+@@ -158,6 +158,8 @@
+ 	  rm -f $(DESTDIR)$(exampledir)/mom/$$f; \
+ 	  $(INSTALL_DATA) examples/$$f $(DESTDIR)$(exampledir)/mom/$$f; \
+ 	done
++	-test -d $(DESTDIR)$(pdfdocdir) \
++	  || $(mkinstalldirs) $(DESTDIR)$(pdfdocdir)
+ 	for f in $(PDFDOCFILE); do \
+ 	  rm -f $(DESTDIR)$(pdfdocdir)/$$f; \
+ 	  ln -s $(DESTDIR)$(exampledir)/mom/$$f $(DESTDIR)$(pdfdocdir)/$$f; \
+diff -ruNb a/src/devices/gropdf/gropdf.pl b/src/devices/gropdf/gropdf.pl
+--- a/src/devices/gropdf/gropdf.pl	2012-12-30 08:40:29.000000000 +0000
++++ b/src/devices/gropdf/gropdf.pl	2013-01-02 12:14:36.000000000 +0000
+@@ -892,8 +892,8 @@
+ 	    elsif (lc($xprm[1]) eq 'pdfpic')
+ 	    {
+ 		my $fil=$xprm[2];
+-		my $flag=uc($xprm[3]);
+-		my $wid=GetPoints($xprm[4]);
++		my $flag=uc($xprm[3])||'-L';
++		my $wid=GetPoints($xprm[4])||-1;
+ 		my $hgt=GetPoints($xprm[5]||-1);
+ 		my $ll=GetPoints($xprm[6]||0);
+ 		my $mat=[1,0,0,1,0,0];
+@@ -907,6 +907,7 @@
+ 		{
+ 		    IsGraphic();
+ 		    my $bbox=$incfil{$fil}->[1];
++		    $wid=($bbox->[2]-$bbox->[0]) if $wid <= 0;
+ 		    my $xscale=$wid/($bbox->[2]-$bbox->[0]);
+ 		    my $yscale=($hgt<=0)?$xscale:($hgt/($bbox->[3]-$bbox->[1]));
+ 		    $xscale=($wid<=0)?$yscale:$xscale;
+@@ -917,11 +918,11 @@
+ 
+ 		    if ($flag eq '-C' and $ll > $wid)
+ 		    {
+-			$xpos+=int(($ll-$wid)/2);
++			$xpos=int(($ll-$wid)/2);
+ 		    }
+ 		    elsif ($flag eq '-R' and $ll > $wid)
+ 		    {
+-			$xpos+=$ll-$wid;
++			$xpos=$ll-$wid;
+ 		    }
+ 
+ 		    $ypos+=$hgt;
+@@ -1270,10 +1271,10 @@
+ sub LoadPDF
+ {
+     my $pdfnm=shift;
++    my $mat=shift;
+     my $wid=shift;
+     my $hgt=shift;
+     my $type=shift;
+-    my $mat=[1,0,0,1,0,0];
+     my $pdf;
+     my $pdftxt='';
+     my $strmlen=0;
+@@ -1411,8 +1412,9 @@
+ 
+     $BBox=[0,0,595,842] if !defined($BBox);
+ 
+-    my $xscale=$wid/($BBox->[2]-$BBox->[0]+1);
+-    my $yscale=($hgt<=0)?$xscale:($hgt/($BBox->[3]-$BBox->[1]+1));
++    $wid=($BBox->[2]-$BBox->[0]+1) if $wid==0;
++    my $xscale=abs($wid)/($BBox->[2]-$BBox->[0]+1);
++    my $yscale=($hgt<=0)?$xscale:(abs($hgt)/($BBox->[3]-$BBox->[1]+1));
+     $hgt=($BBox->[3]-$BBox->[1]+1)*$yscale;
+ 
+     if ($type eq "import")
+@@ -2422,6 +2424,10 @@
+ 	$fontchg=1;
+ 	$widtbl=CacheWid($cft);
+     }
++    else
++    {
++	$cftsz=$par;
++    }
+ }
+ 
+ sub do_m
+diff -ruNb a/tmac/europs.tmac b/tmac/europs.tmac
+--- a/tmac/europs.tmac	2012-12-30 08:40:29.000000000 +0000
++++ b/tmac/europs.tmac	2013-01-02 16:22:35.046679204 +0000
+@@ -2,6 +2,9 @@
+ .
+ .do char \[eu] \f[EURO]\N'0'
+ .
++.nr eups#f \n[.f]
++.nr eups#w \n[.warn]
++.warn \n[.warn]&16646143
+ .do fschar AB   \[Eu] \f[EURO]\N'1'
+ .do fschar ABI  \[Eu] \f[EURO]\N'3'
+ .do fschar AI   \[Eu] \f[EURO]\N'2'
+@@ -34,5 +37,8 @@
+ .do fschar TBI  \[Eu] \f[EURO]\N'7'
+ .do fschar TI   \[Eu] \f[EURO]\N'6'
+ .do fschar TR   \[Eu] \f[EURO]\N'4'
++.warn \n[eups#w]
++.ft \n[eups#f]
++.rr eups#f eups#w
+ .
+ .\" EOF

@@ -7,6 +7,8 @@ source source.env
 [ -d "${METADATAHOSTTOOLS}" ] || mkdir -p "${METADATAHOSTTOOLS}"
 [ -d "${PREFIXHOSTTOOLS}" ] || mkdir -p "${PREFIXHOSTTOOLS}"
 
+export PATH=${PREFIXHOSTTOOLS}/bin:$PATH
+
 pushd ${SRCHOSTTOOLS}
 [ -f ${METADATAHOSTTOOLS}/coreutils_extract ] || \
   tar vxf ${TARBALL}/coreutils-${COREUTILS_VERSION}.${COREUTILS_SUFFIX} || \
@@ -53,10 +55,12 @@ pushd ${SRCHOSTTOOLS}
     die "extract texinfo error" && \
       touch ${METADATAHOSTTOOLS}/texinfo_extract
 
+if [ ${HOSTOS} != "Darwin" ]; then
 [ -f ${METADATAHOSTTOOLS}/shadow_extract ] || \
   tar xf ${TARBALL}/shadow-${SHADOW_VERSION}.${SHADOW_SUFFIX} || \
     die "***extract shadow error" && \
       touch ${METADATAHOSTTOOLS}/shadow_extract
+fi
 
 if [ ${HOSTOS} != "Darwin" ]; then
 [ -f ${METADATAHOSTTOOLS}/perl_cross_extract ] || \
@@ -158,24 +162,6 @@ cd gettext-${GETTEXT_VERSION}
       touch ${METADATAHOSTTOOLS}/gettext_install
 popd
 
-pushd ${BUILDHOSTTOOLS}
-[ -d "groff_build" ] || mkdir groff_build
-cd groff_build
-[ -f ${METADATAHOSTTOOLS}/groff_configure ] || \
-  PAGE=A4 ${SRCHOSTTOOLS}/groff-${GROFF_VERSION}/configure \
-  --prefix=${PREFIXHOSTTOOLS} --without-x || \
-    die "***config groff error" && \
-      touch ${METADATAHOSTTOOLS}/groff_configure
-[ -f ${METADATAHOSTTOOLS}/groff_build ] || \
-  make -j${JOBS} || \
-    die "***build groff error" && \
-      touch ${METADATAHOSTTOOLS}/groff_build
-[ -f ${METADATAHOSTTOOLS}/groff_install ] || \
-  make install || \
-    die "***install groff error" && \
-      touch ${METADATAHOSTTOOLS}/groff_install
-popd
-
 pushd ${SRCHOSTTOOLS}
 cd make-${MAKE_VERSION}
 [ -f ${METADATAHOSTTOOLS}/make_configure ] || \
@@ -240,6 +226,34 @@ cd sed-${SED_VERSION}
 popd
 
 pushd ${SRCHOSTTOOLS}
+cd groff-${GROFF_VERSION}
+[ -f "${METADATAHOSTTOOLS}/groff_patch" ] || \
+  patch -p1 < ${PATCH}/groff-1.22.1-hosttools.patch || \
+    die "patch groff hosttools error" && \
+      touch ${METADATAHOSTTOOLS}/groff_patch
+popd
+
+pushd ${BUILDHOSTTOOLS}
+[ -d "groff_build" ] || mkdir groff_build
+cd groff_build
+[ -f ${METADATAHOSTTOOLS}/groff_configure ] || \
+  PAGE=A4 ${SRCHOSTTOOLS}/groff-${GROFF_VERSION}/configure \
+  --prefix=${PREFIXHOSTTOOLS} --without-x || \
+    die "***config groff error" && \
+      touch ${METADATAHOSTTOOLS}/groff_configure
+[ -f ${METADATAHOSTTOOLS}/groff_build ] || \
+  make -j${JOBS} || \
+    die "***build groff error" && \
+      touch ${METADATAHOSTTOOLS}/groff_build
+[ -f ${METADATAHOSTTOOLS}/groff_install ] || \
+  make install || \
+    die "***install groff error" && \
+      touch ${METADATAHOSTTOOLS}/groff_install
+popd
+
+
+if [ ${HOSTOS} != "Darwin" ]; then
+pushd ${SRCHOSTTOOLS}
 cd shadow-${SHADOW_VERSION}
 [ -f ${METADATAHOSTTOOLS}/shadow_patch ] || \
   patch -p1 < ${PATCH}/shadow-${SHADOW_VERSION}-sysroot_hacks-1.patch || \
@@ -284,6 +298,7 @@ EOF
     die "***install shadow error" && \
       touch ${METADATAHOSTTOOLS}/shadow_install
 popd
+fi
 
 pushd ${SRCHOSTTOOLS}
 cd texinfo-${TEXINFO_VERSION}
