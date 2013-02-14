@@ -13,6 +13,11 @@ pushd ${SRCHOSTTOOLS}
     die "extract coreutils error" && \
       touch ${METADATAHOSTTOOLS}/coreutils_extract
 
+[ -f ${METADATAHOSTTOOLS}/file_extract ] || \
+  tar xf ${TARBALL}/file-${FILE_VERSION}.${FILE_SUFFIX} || \
+    die "***extract file error" && \
+      touch ${METADATAHOSTTOOLS}/file_extract
+
 [ -f ${METADATAHOSTTOOLS}/gawk_extract ] || \
   tar vxf ${TARBALL}/gawk-${GAWK_VERSION}.${GAWK_SUFFIX} || \
     die "extract gawk error" && \
@@ -23,10 +28,20 @@ pushd ${SRCHOSTTOOLS}
     die "extract gettext error" && \
       touch ${METADATAHOSTTOOLS}/gettext_extract
 
+[ -f ${METADATAHOSTTOOLS}/groff_extract ] || \
+  tar xf ${TARBALL}/groff-${GROFF_VERSION}.${GROFF_SUFFIX} || \
+    die "***extract groff cross error" && \
+      touch ${METADATAHOSTTOOLS}/groff_extract
+
 [ -f ${METADATAHOSTTOOLS}/make_extract ] || \
   tar vxf ${TARBALL}/make-${MAKE_VERSION}.${MAKE_SUFFIX} || \
     die "extract make error" && \
       touch ${METADATAHOSTTOOLS}/make_extract
+
+[ -f ${METADATAHOSTTOOLS}/ncurses_extract ] || \
+  tar xf ${TARBALL}/ncurses-${NCURSES_VERSION}.${NCURSES_SUFFIX} || \
+    die "***extract ncurses error" && \
+      touch ${METADATAHOSTTOOLS}/ncurses_extract
 
 [ -f ${METADATAHOSTTOOLS}/sed_extract ] || \
   tar vxf ${TARBALL}/sed-${SED_VERSION}.${SED_SUFFIX} || \
@@ -37,6 +52,11 @@ pushd ${SRCHOSTTOOLS}
   tar vxf ${TARBALL}/texinfo-${TEXINFO_VERSION}a.${TEXINFO_SUFFIX} || \
     die "extract texinfo error" && \
       touch ${METADATAHOSTTOOLS}/texinfo_extract
+
+[ -f ${METADATAHOSTTOOLS}/shadow_extract ] || \
+  tar xf ${TARBALL}/shadow-${SHADOW_VERSION}.${SHADOW_SUFFIX} || \
+    die "***extract shadow error" && \
+      touch ${METADATAHOSTTOOLS}/shadow_extract
 
 if [ ${HOSTOS} != "Darwin" ]; then
 [ -f ${METADATAHOSTTOOLS}/perl_cross_extract ] || \
@@ -88,6 +108,24 @@ cd coreutils-${COREUTILS_VERSION}
       touch ${METADATAHOSTTOOLS}/coreutils_install
 popd
 
+pushd ${BUILDHOSTTOOLS}
+[ -d "file_build" ] || mkdir file_build
+cd file_build
+[ -f ${METADATAHOSTTOOLS}/file_configure ] || \
+  ${SRCHOSTTOOLS}/file-${FILE_VERSION}/configure \
+  --prefix=${PREFIXHOSTTOOLS} || \
+    die "***config file error" && \
+      touch ${METADATAHOSTTOOLS}/file_configure
+[ -f ${METADATAHOSTTOOLS}/file_build ] || \
+  make -j${JOBS} || \
+    die "***build file error" && \
+      touch ${METADATAHOSTTOOLS}/file_build
+[ -f ${METADATAHOSTTOOLS}/file_install ] || \
+  make install || \
+    die "***install file error" && \
+      touch ${METADATAHOSTTOOLS}/file_install
+popd
+
 pushd ${SRCHOSTTOOLS}
 cd gawk-${GAWK_VERSION}
 [ -f ${METADATAHOSTTOOLS}/gawk_configure ] || \
@@ -120,6 +158,24 @@ cd gettext-${GETTEXT_VERSION}
       touch ${METADATAHOSTTOOLS}/gettext_install
 popd
 
+pushd ${BUILDHOSTTOOLS}
+[ -d "groff_build" ] || mkdir groff_build
+cd groff_build
+[ -f ${METADATAHOSTTOOLS}/groff_configure ] || \
+  PAGE=A4 ${SRCHOSTTOOLS}/groff-${GROFF_VERSION}/configure \
+  --prefix=${PREFIXHOSTTOOLS} --without-x || \
+    die "***config groff error" && \
+      touch ${METADATAHOSTTOOLS}/groff_configure
+[ -f ${METADATAHOSTTOOLS}/groff_build ] || \
+  make -j${JOBS} || \
+    die "***build groff error" && \
+      touch ${METADATAHOSTTOOLS}/groff_build
+[ -f ${METADATAHOSTTOOLS}/groff_install ] || \
+  make install || \
+    die "***install groff error" && \
+      touch ${METADATAHOSTTOOLS}/groff_install
+popd
+
 pushd ${SRCHOSTTOOLS}
 cd make-${MAKE_VERSION}
 [ -f ${METADATAHOSTTOOLS}/make_configure ] || \
@@ -137,6 +193,37 @@ cd make-${MAKE_VERSION}
 popd
 
 pushd ${SRCHOSTTOOLS}
+cd ncurses-${NCURSES_VERSION}
+[ -f ${METADATAHOSTTOOLS}/ncurses_patch ] || \
+  patch -Np1 -i ${PATCH}/ncurses-5.9-bash_fix-1.patch || \
+    die "***patch ncurses error" && \
+      touch ${METADATAHOSTTOOLS}/ncurses_patch
+popd
+
+pushd ${BUILDHOSTTOOLS}
+[ -d "ncurses_build" ] || mkdir ncurses_build
+cd ncurses_build
+[ -f ${METADATAHOSTTOOLS}/ncurses_configure ] || \
+  ${SRCHOSTTOOLS}/ncurses-${NCURSES_VERSION}/configure \
+  --prefix=${PREFIXHOSTTOOLS} \
+  --without-debug --without-shared || \
+    die "***config ncurses error" && \
+      touch ${METADATAHOSTTOOLS}/ncurses_configure
+[ -f ${METADATAHOSTTOOLS}/ncurses_include_build ] || \
+  make -C include || \
+    die "***build ncurses include error" && \
+      touch ${METADATAHOSTTOOLS}/ncurses_include_build
+[ -f ${METADATAHOSTTOOLS}/ncurses_tic_build ] || \
+  make -C progs tic || \
+    die "***build ncurses tic error" && \
+      touch ${METADATAHOSTTOOLS}/ncurses_tic_build
+[ -f ${METADATAHOSTTOOLS}/ncurses_install ] || \
+  install -m755 progs/tic ${PREFIXHOSTTOOLS}/bin || \
+    die "***install ncurses error" && \
+      touch ${METADATAHOSTTOOLS}/ncurses_install
+popd
+
+pushd ${SRCHOSTTOOLS}
 cd sed-${SED_VERSION}
 [ -f ${METADATAHOSTTOOLS}/sed_configure ] || \
   ./configure --prefix=${PREFIXHOSTTOOLS} || \
@@ -150,6 +237,52 @@ cd sed-${SED_VERSION}
   make install || \
     die "install sed error" && \
       touch ${METADATAHOSTTOOLS}/sed_install
+popd
+
+pushd ${SRCHOSTTOOLS}
+cd shadow-${SHADOW_VERSION}
+[ -f ${METADATAHOSTTOOLS}/shadow_patch ] || \
+  patch -p1 < ${PATCH}/shadow-${SHADOW_VERSION}-sysroot_hacks-1.patch || \
+    die "Patch shadow error" && \
+      touch ${METADATAHOSTTOOLS}/shadow_patch
+popd
+
+pushd ${BUILDHOSTTOOLS}
+[ -d "shadow_build" ] || mkdir shadow_build
+cd shadow_build
+cat > config.cache << EOF
+shadow_cv_passwd_dir="${PREFIXMIPSELROOTFS}/bin"
+EOF
+cat >> config.cache << EOF
+ac_cv_func_lckpwdf=no
+EOF
+[ -f ${METADATAHOSTTOOLS}/shadow_configure ] || \
+  ${SRCHOSTTOOLS}/shadow-${SHADOW_VERSION}/configure \
+  --prefix=${PREFIXHOSTTOOLS} \
+  --sbindir=${PREFIXHOSTTOOLS}/bin \
+  --sysconfdir=$PREFIXMIPSELROOTFS/etc \
+  --disable-shared --without-libpam \
+  --without-audit --without-selinux \
+  --program-prefix=${CROSS_TARGET32}- \
+  --without-nscd --cache-file=config.cache || \
+    die "***config shadow error" && \
+      touch ${METADATAHOSTTOOLS}/shadow_configure
+[ -f ${METADATAHOSTTOOLS}/cp_config ] || \
+  cp config.h{,.orig} || \
+    die "***copy config error" && \
+      touch ${METADATAHOSTTOOLS}/cp_config
+[ -f ${METADATAHOSTTOOLS}/cp_config_sed ] || \
+  sed "/PASSWD_PROGRAM/s/passwd/${CROSS_TARGET32}-&/" config.h.orig > config.h || \
+    die "***sed config.h error" && \
+      touch ${METADATAHOSTTOOLS}/cp_config_sed
+[ -f ${METADATAHOSTTOOLS}/shadow_build ] || \
+  make -j${JOBS} || \
+    die "***build shadow error" && \
+      touch ${METADATAHOSTTOOLS}/shadow_build
+[ -f ${METADATAHOSTTOOLS}/shadow_install ] || \
+  make install || \
+    die "***install shadow error" && \
+      touch ${METADATAHOSTTOOLS}/shadow_install
 popd
 
 pushd ${SRCHOSTTOOLS}

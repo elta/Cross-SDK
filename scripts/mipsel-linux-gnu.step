@@ -28,10 +28,6 @@ pushd ${SRCMIPSELTOOLCHAIN}
   tar xf ${TARBALL}/gmp-${GMP_VERSION}.${GMP_SUFFIX} || \
     die "***extract gmp error" && \
       touch ${METADATAMIPSELTOOLCHAIN}/gmp_extract
-[ -f ${METADATAMIPSELTOOLCHAIN}/groff_extract_cross ] || \
-  tar xf ${TARBALL}/groff-${GROFF_VERSION}.${GROFF_SUFFIX} || \
-    die "***extract groff cross error" && \
-      touch ${METADATAMIPSELTOOLCHAIN}/groff_extract_cross
 
 [ -f ${METADATAMIPSELTOOLCHAIN}/mpfr_extract ] || \
   tar xf ${TARBALL}/mpfr-${MPFR_VERSION}.${MPFR_SUFFIX} || \
@@ -68,137 +64,10 @@ pushd ${SRCMIPSELTOOLCHAIN}
     die "***extract glibc error" && \
       touch ${METADATAMIPSELTOOLCHAIN}/glibc_extract
 
-[ -f ${METADATAMIPSELTOOLCHAIN}/file_extract ] || \
-  tar xf ${TARBALL}/file-${FILE_VERSION}.${FILE_SUFFIX} || \
-    die "***extract file error" && \
-      touch ${METADATAMIPSELTOOLCHAIN}/file_extract
-
-[ -f ${METADATAMIPSELTOOLCHAIN}/ncurses_extract ] || \
-  tar xf ${TARBALL}/ncurses-${NCURSES_VERSION}.${NCURSES_SUFFIX} || \
-    die "***extract ncurses error" && \
-      touch ${METADATAMIPSELTOOLCHAIN}/ncurses_extract
-
 [ -f ${METADATAMIPSELTOOLCHAIN}/gdb_extract ] || \
   tar xf ${TARBALL}/gdb-${GDB_VERSION}.${GDB_SUFFIX} || \
     die "***extractjgdb error" && \
       touch ${METADATAMIPSELTOOLCHAIN}/gdb_extract
-[ -f ${METADATAMIPSELTOOLCHAIN}/shadow_extract ] || \
-  tar xf ${TARBALL}/shadow-${SHADOW_VERSION}.${SHADOW_SUFFIX} || \
-    die "***extract shadow error" && \
-      touch ${METADATAMIPSELTOOLCHAIN}/shadow_extract
-popd
-
-pushd ${BUILDMIPSELTOOLCHAIN}
-[ -d "file_build" ] || mkdir file_build
-cd file_build
-[ -f ${METADATAMIPSELTOOLCHAIN}/file_configure ] || \
-  ${SRCMIPSELTOOLCHAIN}/file-${FILE_VERSION}/configure \
-  --prefix=${PREFIXMIPSELTOOLCHAIN} || \
-    die "***config file error" && \
-      touch ${METADATAMIPSELTOOLCHAIN}/file_configure
-[ -f ${METADATAMIPSELTOOLCHAIN}/file_build ] || \
-  make -j${JOBS} || \
-    die "***build file error" && \
-      touch ${METADATAMIPSELTOOLCHAIN}/file_build
-[ -f ${METADATAMIPSELTOOLCHAIN}/file_install ] || \
-  make install || \
-    die "***install file error" && \
-      touch ${METADATAMIPSELTOOLCHAIN}/file_install
-popd
-
-pushd ${BUILDMIPSELTOOLCHAIN}
-[ -d "groff_build" ] || mkdir groff_build
-cd groff_build
-[ -f ${METADATAMIPSELTOOLCHAIN}/groff_configure ] || \
-  PAGE=A4 ${SRCMIPSELTOOLCHAIN}/groff-${GROFF_VERSION}/configure \
-  --prefix=${PREFIXMIPSELTOOLCHAIN} --without-x || \
-    die "***config groff error" && \
-      touch ${METADATAMIPSELTOOLCHAIN}/groff_configure
-[ -f ${METADATAMIPSELTOOLCHAIN}/groff_build ] || \
-  make -j${JOBS} || \
-    die "***build groff error" && \
-      touch ${METADATAMIPSELTOOLCHAIN}/groff_build
-[ -f ${METADATAMIPSELTOOLCHAIN}/groff_install ] || \
-  make install || \
-    die "***install groff error" && \
-      touch ${METADATAMIPSELTOOLCHAIN}/groff_install
-popd
-
-pushd ${SRCMIPSELTOOLCHAIN}
-cd shadow-${SHADOW_VERSION}
-[ -f ${METADATAMIPSELTOOLCHAIN}/shadow_patch ] || \
-  patch -p1 < ${PATCH}/shadow-${SHADOW_VERSION}-sysroot_hacks-1.patch || \
-    die "Patch shadow error" && \
-      touch ${METADATAMIPSELTOOLCHAIN}/shadow_patch
-popd
-
-pushd ${BUILDMIPSELTOOLCHAIN}
-[ -d "shadow_build" ] || mkdir shadow_build
-cd shadow_build
-cat > config.cache << EOF
-shadow_cv_passwd_dir="${PREFIXMIPSELROOTFS}/bin"
-EOF
-cat >> config.cache << EOF
-ac_cv_func_lckpwdf=no
-EOF
-[ -f ${METADATAMIPSELTOOLCHAIN}/shadow_configure ] || \
-  ${SRCMIPSELTOOLCHAIN}/shadow-${SHADOW_VERSION}/configure \
-  --prefix=${PREFIXMIPSELTOOLCHAIN} \
-  --sbindir=${PREFIXMIPSELTOOLCHAIN}/bin \
-  --sysconfdir=$PREFIXMIPSELROOTFS/etc \
-  --disable-shared --without-libpam \
-  --without-audit --without-selinux \
-  --program-prefix=${CROSS_TARGET32}- \
-  --without-nscd --cache-file=config.cache || \
-    die "***config shadow error" && \
-      touch ${METADATAMIPSELTOOLCHAIN}/shadow_configure
-[ -f ${METADATAMIPSELTOOLCHAIN}/cp_config ] || \
-  cp config.h{,.orig} || \
-    die "***copy config error" && \
-      touch ${METADATAMIPSELTOOLCHAIN}/cp_config
-[ -f ${METADATAMIPSELTOOLCHAIN}/cp_config_sed ] || \
-  sed "/PASSWD_PROGRAM/s/passwd/${CROSS_TARGET32}-&/" config.h.orig > config.h || \
-    die "***sed config.h error" && \
-      touch ${METADATAMIPSELTOOLCHAIN}/cp_config_sed
-[ -f ${METADATAMIPSELTOOLCHAIN}/shadow_build ] || \
-  make -j${JOBS} || \
-    die "***build shadow error" && \
-      touch ${METADATAMIPSELTOOLCHAIN}/shadow_build
-[ -f ${METADATAMIPSELTOOLCHAIN}/shadow_install ] || \
-  make install || \
-    die "***install shadow error" && \
-      touch ${METADATAMIPSELTOOLCHAIN}/shadow_install
-popd
-
-pushd ${SRCMIPSELTOOLCHAIN}
-cd ncurses-${NCURSES_VERSION}
-[ -f ${METADATAMIPSELTOOLCHAIN}/ncurses_patch ] || \
-  patch -Np1 -i ${PATCH}/ncurses-5.9-bash_fix-1.patch || \
-    die "***patch ncurses error" && \
-      touch ${METADATAMIPSELTOOLCHAIN}/ncurses_patch
-popd
-
-pushd ${BUILDMIPSELTOOLCHAIN}
-[ -d "ncurses_build" ] || mkdir ncurses_build
-cd ncurses_build
-[ -f ${METADATAMIPSELTOOLCHAIN}/ncurses_configure ] || \
-  ${SRCMIPSELTOOLCHAIN}/ncurses-${NCURSES_VERSION}/configure \
-  --prefix=${PREFIXMIPSELTOOLCHAIN} \
-  --without-debug --without-shared || \
-    die "***config ncurses error" && \
-      touch ${METADATAMIPSELTOOLCHAIN}/ncurses_configure
-[ -f ${METADATAMIPSELTOOLCHAIN}/ncurses_include_build ] || \
-  make -C include || \
-    die "***build ncurses include error" && \
-      touch ${METADATAMIPSELTOOLCHAIN}/ncurses_include_build
-[ -f ${METADATAMIPSELTOOLCHAIN}/ncurses_tic_build ] || \
-  make -C progs tic || \
-    die "***build ncurses tic error" && \
-      touch ${METADATAMIPSELTOOLCHAIN}/ncurses_tic_build
-[ -f ${METADATAMIPSELTOOLCHAIN}/ncurses_install ] || \
-  install -m755 progs/tic ${PREFIXMIPSELTOOLCHAIN}/bin || \
-    die "***install ncurses error" && \
-      touch ${METADATAMIPSELTOOLCHAIN}/ncurses_install
 popd
 
 pushd ${BUILDMIPSELTOOLCHAIN}
