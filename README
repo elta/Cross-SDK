@@ -15,6 +15,7 @@ Version History:
 0.3:
 - OS X 10.8.2 partly support.
 - Remove RTEMS, baremetal support.
+- KUbuntu 12.04 AMD64 no longger tested.
 
 0.2:
 - KUbuntu 12.10 AMD64 well tested.
@@ -53,16 +54,16 @@ ${ROOS_FS}.sh
 
 Example:
 run
-./tool-mips-linux.sh
-to get gnu toolchain.
+./mipsel-toolchain.sh
+to get toolchain.
 
 run
-./mips64el-rootfs.sh
-to get 64bit multilib gnu root fs.
+./mipsel-system.sh
+to get gnu root fs.
 
 run
-./mips64el-linux.sh
-to get 64bit & n32 linux kernel.
+./mipsel-minimal-system.sh
+to get a busybox root fs.
 
 Notice:
 It will take a lot of space in your disk, make sure you run them in a big
