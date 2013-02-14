@@ -4,19 +4,19 @@ source source.env
 
 #[ -f ${PREFIXGNU64}/bin/${CC} ] || die "No toolchain found, process error"
 
-export PATH=${PREFIXHOSTTOOLS}/bin:${PREFIXGNU64}/bin:${PATH}
+export PATH=${PREFIXHOSTTOOLS}/bin:${PREFIXMIPSELTOOLCHAIN}/bin:${PATH}
 
-export CC=${CROSS_TARGET64}-gcc
-export CFLAGS="-isystem ${SYSROOTGNU64}/usr/include ${BUILD32}"
-export CXX=${CROSS_TARGET64}-g++
-export CXXFLAGS="-isystem ${SYSROOTGNU64}/usr/include ${BUILD32}"
-export LDFLAGS="-Wl,-rpath-link,${SYSROOTGNU64}/usr/lib:${SYSROOTGNU64}/lib ${BUILD32}"
+export CC=${CROSS_TARGET32}-gcc
+export CFLAGS="-isystem ${PREFIXMIPSELROOTFS}/usr/include"
+export CXX=${CROSS_TARGET32}-g++
+export CXXFLAGS="-isystem ${PREFIXMIPSELROOTFS}/usr/include"
+export LDFLAGS="-Wl,-rpath-link,${PREFIXMIPSELROOTFS}/usr/lib:${PREFIXMIPSELROOTFS}/lib"
 
 [ -d "${SRCBUSYBOXO32}" ] || mkdir -p "${SRCBUSYBOXO32}"
 [ -d "${BUILDBUSYBOXO32}" ] || mkdir -p "${BUILDBUSYBOXO32}"
 [ -d "${METADATABUSYBOXO32}" ] || mkdir -p "${METADATABUSYBOXO32}"
 
-[ -f ${PREFIXGNU64}/bin/${CC} ] || die "No toolchain found, process error"
+[ -f ${PREFIXMIPSELTOOLCHAIN}/bin/${CC} ] || die "No toolchain found, process error"
 
 #export BUSYBOX_OPTIONS="static dynamic"
 export BUSYBOX_OPTIONS="dynamic"
@@ -62,11 +62,11 @@ fi
     die "busybox-${option}-config error" && \
       touch ${METADATABUSYBOXO32}/busybox-${option}-config
 [ -f ${METADATABUSYBOXO32}/busybox-${option}-build ] || \
-  make -j${JOBS} ARCH=mips CROSS_COMPILE=${CROSS_TARGET64}- || \
+  make -j${JOBS} ARCH=mips CROSS_COMPILE=${CROSS_TARGET32}- || \
     die "busybox-${option}-build error" && \
       touch ${METADATABUSYBOXO32}/busybox-${option}-build
 [ -f ${METADATABUSYBOXO32}/busybox-${option}-install ] || \
-  make ARCH=mips CROSS_COMPILE=${CROSS_TARGET64}- install || \
+  make ARCH=mips CROSS_COMPILE=${CROSS_TARGET32}- install || \
     die "busybox-${option}-install error" && \
       touch ${METADATABUSYBOXO32}/busybox-${option}-install
 popd
@@ -86,7 +86,7 @@ popd
 #    die "***make linux defconfig error" && \
 #      touch ${METADATABUSYBOXO32}/linux_mkconfig
 #[ -f ${METADATABUSYBOXO32}/linux_build ] || \
-#  make -j${JOBS} ARCH=mips CROSS_COMPILE=${CROSS_TARGET64}- || \
+#  make -j${JOBS} ARCH=mips CROSS_COMPILE=${CROSS_TARGET32}- || \
 #    die "***build linux error" && \
 #      touch ${METADATABUSYBOXO32}/linux_build
 #popd
@@ -132,8 +132,8 @@ sudo cp -a /dev/ttyS0 ${MOUNT_POINT}/dev/
 #      touch ${METADATABUSYBOXO32}/linux_cpconfig
 
 # Copy Library to File System
-if [ -d ${SYSROOTGNU64}/lib ]; then
-    cp -ar ${SYSROOTGNU64}/lib ${MOUNT_POINT}/
+if [ -d ${PREFIXMIPSELROOTFS}/lib ]; then
+    cp -ar ${PREFIXMIPSELROOTFS}/lib ${MOUNT_POINT}/
 fi
 
 sudo echo "/bin/mount -o remount,rw /" >> ${MOUNT_POINT}/etc/init.d/rcS
@@ -145,3 +145,5 @@ popd
 mv ${SRCBUSYBOXO32}/busybox-$option/${BUSYBOXO32_IMAGE} ${PREFIXGNULINUX}
 # End for loop, build static/dynamic busybox.
 done
+
+touch ${METADATABUSYBOXO32}/mipsel_busybox_finished
