@@ -50,13 +50,16 @@ You are welcome to test it on other platforms.
 
 ===============================================================================
 Usage:
-${TOOL}.sh
-${ROOS_FS}.sh
+${SCRIPT}.sh
 
 Example:
 run
-./mipsel-toolchain.sh
-to get toolchain.
+./mipsel-development-kit.sh
+to get a SDK.
+
+run
+./mipsel-command-line-tools.sh
+to get command line toolchain.
 
 run
 ./mipsel-system.sh
