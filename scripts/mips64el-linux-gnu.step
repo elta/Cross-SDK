@@ -1,0 +1,420 @@
+#! /bin/bash
+
+source source.env
+
+[ -d "${SRCMIPS64ELTOOLCHAIN}" ] || mkdir -p "${SRCMIPS64ELTOOLCHAIN}"
+[ -d "${BUILDMIPS64ELTOOLCHAIN}" ] || mkdir -p "${BUILDMIPS64ELTOOLCHAIN}"
+[ -d "${METADATAMIPS64ELTOOLCHAIN}" ] || mkdir -p "${METADATAMIPS64ELTOOLCHAIN}"
+[ -d "${PREFIXGNULINUX}" ] || mkdir -p "${PREFIXGNULINUX}"
+
+mkdir -p ${PREFIXMIPS64ELTOOLCHAIN}
+mkdir -p ${PREFIXMIPS64ELROOTFS}/usr/include
+mkdir -p ${PREFIXMIPS64ELROOTFS}/{etc,bin}
+export PATH=${PREFIXHOSTTOOLS}/bin:${PREFIXMIPS64ELTOOLCHAIN}/bin:$PATH
+
+############################### Extract tarballs ##############################
+pushd ${SRCMIPS64ELTOOLCHAIN}
+[ -f "${METADATAMIPS64ELTOOLCHAIN}/linux_extract" ] || \
+  tar xf ${TARBALL}/linux-${LINUX_VERSION}.${LINUX_SUFFIX} || \
+    die "extract linux error" && \
+      touch ${METADATAMIPS64ELTOOLCHAIN}/linux_extract
+[ -f "${METADATAMIPS64ELTOOLCHAIN}/gmp_extract" ] || \
+  tar xf ${TARBALL}/gmp-${GMP_VERSION}.${GMP_SUFFIX} || \
+    die "extract gmp error" && \
+      touch ${METADATAMIPS64ELTOOLCHAIN}/gmp_extract
+[ -f "${METADATAMIPS64ELTOOLCHAIN}/mpfr_extract" ] || \
+  tar xf ${TARBALL}/mpfr-${MPFR_VERSION}.${MPFR_SUFFIX} || \
+    die "extract mpfr error" && \
+      touch ${METADATAMIPS64ELTOOLCHAIN}/mpfr_extract
+[ -f "${METADATAMIPS64ELTOOLCHAIN}/mpc_extract" ] || \
+  tar xf ${TARBALL}/mpc-${MPC_VERSION}.${MPC_SUFFIX} || \
+    die "extract mpc error" && \
+      touch ${METADATAMIPS64ELTOOLCHAIN}/mpc_extract
+[ -f "${METADATAMIPS64ELTOOLCHAIN}/ppl_extract" ] || \
+  tar xf ${TARBALL}/ppl-${PPL_VERSION}.${PPL_SUFFIX} || \
+    die "extract ppl error" && \
+      touch ${METADATAMIPS64ELTOOLCHAIN}/ppl_extract
+[ -f "${METADATAMIPS64ELTOOLCHAIN}/cloog_extract" ] || \
+  tar xf ${TARBALL}/cloog-${CLOOG_VERSION}.${CLOOG_SUFFIX} || \
+    die "extract cloog error" && \
+      touch ${METADATAMIPS64ELTOOLCHAIN}/cloog_extract
+[ -f "${METADATAMIPS64ELTOOLCHAIN}/binutils_extract" ] || \
+  tar xf ${TARBALL}/binutils-${BINUTILS_VERSION}.${BINUTILS_SUFFIX} || \
+    die "extract binutils error" && \
+      touch ${METADATAMIPS64ELTOOLCHAIN}/binutils_extract
+[ -f "${METADATAMIPS64ELTOOLCHAIN}/gcc_extract" ] || \
+  tar xf ${TARBALL}/gcc-${GCC_VERSION}.${GCC_SUFFIX} || \
+    die "extract gcc error" && \
+      touch ${METADATAMIPS64ELTOOLCHAIN}/gcc_extract
+[ -f "${METADATAMIPS64ELTOOLCHAIN}/glibc_extract" ] || \
+  tar xf ${TARBALL}/glibc-${GLIBC_VERSION}.${GLIBC_SUFFIX} || \
+    die "extract glibc error" && \
+      touch ${METADATAMIPS64ELTOOLCHAIN}/glibc_extract
+[ -f "${METADATAMIPS64ELTOOLCHAIN}/procps_extract" ] || \
+  tar xf ${TARBALL}/procps-${PROCPS_VERSION}.${PROCPS_SUFFIX} || \
+    die "extract procps error" && \
+      touch ${METADATAMIPS64ELTOOLCHAIN}/procps_extract
+popd
+
+######################## Begin Compiler CrossGcc ##############################
+pushd ${BUILDMIPS64ELTOOLCHAIN}
+[ -f "${METADATAMIPS64ELTOOLCHAIN}/linux_copy" ] || \
+  cp -ar ${SRCMIPS64ELTOOLCHAIN}/linux-${LINUX_VERSION} linux-headers || \
+    die "copy linux error" && \
+      touch ${METADATAMIPS64ELTOOLCHAIN}/linux_copy
+cd linux-headers
+[ -f "${METADATAMIPS64ELTOOLCHAIN}/linux_clean" ] || \
+  make mrproper || \
+    die "clean linux error" && \
+      touch ${METADATAMIPS64ELTOOLCHAIN}/linux_clean
+[ -f "${METADATAMIPS64ELTOOLCHAIN}/linux_check_headers" ] || \
+  make ARCH=mips headers_check || \
+    die "***check headers error" && \
+      touch ${METADATAMIPS64ELTOOLCHAIN}/linux_check_headers
+[ -f "${METADATAMIPS64ELTOOLCHAIN}/linux_headers_install" ] || \
+  make ARCH=mips INSTALL_HDR_PATH=dest headers_install || \
+    die "***install headers error" && \
+      touch ${METADATAMIPS64ELTOOLCHAIN}/linux_headers_install
+[ -f "${METADATAMIPS64ELTOOLCHAIN}/linux_copy_headers" ] || \
+  cp -r dest/include/* ${PREFIXMIPS64ELROOTFS}/usr/include || \
+    die "***copy headers error" && \
+      touch ${METADATAMIPS64ELTOOLCHAIN}/linux_copy_headers
+[ -f "${METADATAMIPS64ELTOOLCHAIN}/linux_clean_install.cmd" ] || \
+  find ${PREFIXMIPS64ELROOTFS}/usr/include -name .install -or -name ..install.cmd | xargs rm -fv || \
+    die "clean linux install.cmd error" && \
+      touch ${METADATAMIPS64ELTOOLCHAIN}/linux_clean_install.cmd
+popd
+
+pushd ${BUILDMIPS64ELTOOLCHAIN}
+[ -d gmp-build ] || mkdir gmp-build
+cd gmp-build
+[ -f "${METADATAMIPS64ELTOOLCHAIN}/gmp_config" ] || \
+  CPPFLAGS=-fexceptions ${SRCMIPS64ELTOOLCHAIN}/gmp-${GMP_VERSION}/configure \
+  --prefix=${PREFIXMIPS64ELTOOLCHAIN} --enable-cxx || \
+    die "***config gmp error" && \
+      touch ${METADATAMIPS64ELTOOLCHAIN}/gmp_config
+[ -f "${METADATAMIPS64ELTOOLCHAIN}/gmp_build" ] || \
+  make -j${JOBS} || \
+    die "***build gmp error" && \
+      touch ${METADATAMIPS64ELTOOLCHAIN}/gmp_build
+[ -f "${METADATAMIPS64ELTOOLCHAIN}/gmp_install" ] || \
+  make install || \
+    die "***install gmp error" && \
+      touch ${METADATAMIPS64ELTOOLCHAIN}/gmp_install
+popd
+
+pushd ${BUILDMIPS64ELTOOLCHAIN}
+[ -d mpfr-build ] || mkdir mpfr-build
+cd mpfr-build
+[ -f "${METADATAMIPS64ELTOOLCHAIN}/mpfr_config" ] || \
+  LDFLAGS="-Wl,-rpath,${PREFIXMIPS64ELTOOLCHAIN}/lib" \
+  ${SRCMIPS64ELTOOLCHAIN}/mpfr-${MPFR_VERSION}/configure \
+  --prefix=${PREFIXMIPS64ELTOOLCHAIN} \
+  --with-gmp=${PREFIXMIPS64ELTOOLCHAIN} --enable-shared || \
+    die "***config mpfr error" && \
+      touch ${METADATAMIPS64ELTOOLCHAIN}/mpfr_config
+[ -f "${METADATAMIPS64ELTOOLCHAIN}/mpfr_build" ] || \
+  make -j${JOBS} || \
+    die "***build mpfr error" && \
+      touch ${METADATAMIPS64ELTOOLCHAIN}/mpfr_build
+[ -f "${METADATAMIPS64ELTOOLCHAIN}/mpfr_install" ] || \
+  make install || \
+    die "***install mpfr error" && \
+      touch ${METADATAMIPS64ELTOOLCHAIN}/mpfr_install
+popd
+
+pushd ${BUILDMIPS64ELTOOLCHAIN}
+[ -d mpc-build ] || mkdir mpc-build
+cd mpc-build
+[ -f "${METADATAMIPS64ELTOOLCHAIN}/mpc_config" ] || \
+  LDFLAGS="-Wl,-rpath,/lib" \
+  ${SRCMIPS64ELTOOLCHAIN}/mpc-${MPC_VERSION}/configure \
+  --prefix=${PREFIXMIPS64ELTOOLCHAIN} \
+  --with-gmp=${PREFIXMIPS64ELTOOLCHAIN} --with-mpfr=${PREFIXMIPS64ELTOOLCHAIN} || \
+    die "***config mpc error" && \
+      touch ${METADATAMIPS64ELTOOLCHAIN}/mpc_config
+[ -f "${METADATAMIPS64ELTOOLCHAIN}/mpc_build" ] || \
+  make -j${JOBS} || \
+    die "***build mpc error" && \
+      touch ${METADATAMIPS64ELTOOLCHAIN}/mpc_build
+[ -f "${METADATAMIPS64ELTOOLCHAIN}/mpc_install" ] || \
+  make install || \
+    die "***install mpc error" && \
+      touch ${METADATAMIPS64ELTOOLCHAIN}/mpc_install
+popd
+
+pushd ${BUILDMIPS64ELTOOLCHAIN}
+[ -d ppl-build ] || mkdir ppl-build
+cd ppl-build
+[ -f "${METADATAMIPS64ELTOOLCHAIN}/ppl_config" ] || \
+  LDFLAGS="-Wl,-rpath,${PREFIXMIPS64ELTOOLCHAIN}/lib" \
+  ${SRCMIPS64ELTOOLCHAIN}/ppl-${PPL_VERSION}/configure \
+  --prefix=${PREFIXMIPS64ELTOOLCHAIN} \
+  --enable-shared --enable-interfaces="c,cxx" --disable-optimization \
+  --with-gmp=${PREFIXMIPS64ELTOOLCHAIN} || \
+    die "***config ppl error" && \
+      touch ${METADATAMIPS64ELTOOLCHAIN}/ppl_config
+[ -f "${METADATAMIPS64ELTOOLCHAIN}/ppl_build" ] || \
+  make -j${JOBS} || \
+    die "***build ppl error" && \
+      touch ${METADATAMIPS64ELTOOLCHAIN}/ppl_build
+[ -f "${METADATAMIPS64ELTOOLCHAIN}/ppl_install" ] || \
+  make install || \
+    die "***install ppl error" && \
+      touch ${METADATAMIPS64ELTOOLCHAIN}/ppl_install
+popd
+
+pushd ${BUILDMIPS64ELTOOLCHAIN}
+[ -d cloog-build ] || mkdir cloog-build
+cd cloog-build
+[ -f "${METADATAMIPS64ELTOOLCHAIN}/cloog_config" ] || \
+  LDFLAGS="-Wl,-rpath,${PREFIXMIPS64ELTOOLCHAIN}/lib" \
+  ${SRCMIPS64ELTOOLCHAIN}/cloog-${CLOOG_VERSION}/configure \
+  --prefix=${PREFIXMIPS64ELTOOLCHAIN} \
+  --enable-shared \
+  --with-gmp-prefix=${PREFIXMIPS64ELTOOLCHAIN} || \
+    die "***config cloog error" && \
+      touch ${METADATAMIPS64ELTOOLCHAIN}/cloog_config
+[ -f "${METADATAMIPS64ELTOOLCHAIN}/cloog_build" ] || \
+  make -j${JOBS} || \
+    die "***build cloog error" && \
+      touch ${METADATAMIPS64ELTOOLCHAIN}/cloog_build
+[ -f "${METADATAMIPS64ELTOOLCHAIN}/cloog_install" ] || \
+  make install || \
+    die "***install cloog error" && \
+      touch ${METADATAMIPS64ELTOOLCHAIN}/cloog_install
+popd
+
+pushd ${BUILDMIPS64ELTOOLCHAIN}
+[ -d "binutils-build" ] || mkdir binutils-build
+cd binutils-build
+[ -f "${METADATAMIPS64ELTOOLCHAIN}/binutils_config" ] || \
+  AS="as" AR="ar" \
+  ${SRCMIPS64ELTOOLCHAIN}/binutils-${BINUTILS_VERSION}/configure \
+  --prefix=${PREFIXMIPS64ELTOOLCHAIN} --host=${CROSS_HOST} --target=${CROSS_TARGET64} \
+  --with-sysroot=${PREFIXMIPS64ELROOTFS} --disable-nls --enable-shared || \
+    die "***config binutils error" && \
+      touch ${METADATAMIPS64ELTOOLCHAIN}/binutils_config
+[ -f "${METADATAMIPS64ELTOOLCHAIN}/binutils_config_host" ] || \
+  make configure-host || \
+    die "config binutils host error" && \
+      touch ${METADATAMIPS64ELTOOLCHAIN}/binutils_config_host
+[ -f "${METADATAMIPS64ELTOOLCHAIN}/binutils_build" ] || \
+  make -j${JOBS} || \
+    die "***build binutils error" && \
+      touch ${METADATAMIPS64ELTOOLCHAIN}/binutils_build
+[ -f "${METADATAMIPS64ELTOOLCHAIN}/binutils_install" ] || \
+  make install || \
+    die "***install binutils error" && \
+      touch ${METADATAMIPS64ELTOOLCHAIN}/binutils_install
+[ -f "${METADATAMIPS64ELTOOLCHAIN}/binutils_copy_headers" ] || \
+  cp ${SRCMIPS64ELTOOLCHAIN}/binutils-${BINUTILS_VERSION}/include/libiberty.h \
+  ${PREFIXMIPS64ELROOTFS}/usr/include || \
+    die "***copy binutils header error" && \
+      touch ${METADATAMIPS64ELTOOLCHAIN}/binutils_copy_headers
+popd
+
+pushd ${BUILDMIPS64ELTOOLCHAIN}
+[ -d "gcc-build-stage1" ] || mkdir gcc-build-stage1
+cd gcc-build-stage1
+[ -f "${METADATAMIPS64ELTOOLCHAIN}/gcc_stage1_config" ] || \
+  AR=ar LDFLAGS="-Wl,-rpath,${PREFIXMIPS64ELTOOLCHAIN}/lib" \
+  ${SRCMIPS64ELTOOLCHAIN}/gcc-${GCC_VERSION}/configure \
+  --prefix=${PREFIXMIPS64ELTOOLCHAIN} --build=${CROSS_HOST} \
+  --host=${CROSS_HOST} --disable-nls \
+  --target=${CROSS_TARGET64} --with-sysroot=${PREFIXMIPS64ELROOTFS} \
+  --without-headers --with-newlib --disable-decimal-float \
+  --disable-libgomp --disable-libmudflap --disable-libssp \
+  --with-mpfr=${PREFIXMIPS64ELTOOLCHAIN} \
+  --with-gmp=${PREFIXMIPS64ELTOOLCHAIN} \
+  --with-ppl=${PREFIXMIPS64ELTOOLCHAIN} \
+  --with-cloog=${PREFIXMIPS64ELTOOLCHAIN} \
+  --with-mpc=${PREFIXMIPS64ELTOOLCHAIN} \
+  --disable-shared --disable-threads --enable-languages=c \
+  --enable-cloog-backend=isl || \
+    die "***config gcc stage1 error" && \
+      touch ${METADATAMIPS64ELTOOLCHAIN}/gcc_stage1_config
+[ -f "${METADATAMIPS64ELTOOLCHAIN}/gcc_stage1_build" ] || \
+  make -j${JOBS} all-gcc all-target-libgcc || \
+    die "***build gcc stage1 error" && \
+      touch ${METADATAMIPS64ELTOOLCHAIN}/gcc_stage1_build
+[ -f "${METADATAMIPS64ELTOOLCHAIN}/gcc_stage1_install" ] || \
+  make install-gcc install-target-libgcc || \
+    die "***install gcc stage1 error" && \
+      touch ${METADATAMIPS64ELTOOLCHAIN}/gcc_stage1_install
+popd
+
+pushd ${SRCMIPS64ELTOOLCHAIN}
+if [ ${HOSTOS} = "Darwin" ]; then
+cd glibc-${GLIBC_VERSION}
+[ -f "${METADATAMIPS64ELTOOLCHAIN}/glibc_macos_patch" ] || \
+  patch -p1 < ${PATCH}/glibc-2.17-os-x-build.patch || \
+    die "***patch glibc for macosx error" && \
+      touch ${METADATAMIPS64ELTOOLCHAIN}/glibc_macos_patch
+fi
+popd
+
+pushd ${BUILDMIPS64ELTOOLCHAIN}
+[ -d "glibc-build32" ] || mkdir glibc-build32
+cd glibc-build32
+[ -f "${METADATAMIPS64ELTOOLCHAIN}/glibc_create32_config.cache" ] || \
+  `cat > config.cache << "EOF"
+libc_cv_forced_unwind=yes
+libc_cv_c_cleanup=yes
+libc_cv_gnu89_inline=yes
+EOF` || \
+    die "create glibc32 config.cache" && \
+      touch ${METADATAMIPS64ELTOOLCHAIN}/glibc_create32_config.cache
+
+[ -f "${METADATAMIPS64ELTOOLCHAIN}/glibc_update32_configparms" ] || \
+  `cat > configparms << EOF
+install_root=${PREFIXMIPS64ELROOTFS}
+EOF` || \
+    die "update glibc32 configparms" && \
+      touch ${METADATAMIPS64ELTOOLCHAIN}/glibc_update32_configparms
+
+[ -f "${METADATAMIPS64ELTOOLCHAIN}/glibc_config32" ] || \
+  BUILD_CC="gcc" CC="${CROSS_TARGET64}-gcc ${BUILD32}" \
+  AR="${CROSS_TARGET64}-ar" RANLIB="${CROSS_TARGET64}-ranlib" \
+  CFLAGS_FOR_TARGET="-O2" CFLAGS+="-O2" \
+  ${SRCMIPS64ELTOOLCHAIN}/glibc-${GLIBC_VERSION}/configure \
+  --prefix=/usr --libexecdir=/usr/lib/glibc \
+  --host=${CROSS_TARGET32} --build=${CROSS_HOST} \
+  --disable-profile --enable-add-ons --with-tls --enable-kernel=2.6.0 \
+  --with-__thread --with-binutils=${PREFIXMIPS64ELTOOLCHAIN}/bin \
+  --with-headers=${PREFIXMIPS64ELROOTFS}/usr/include --cache-file=config.cache || \
+    die "***config glibc32 error" && \
+      touch ${METADATAMIPS64ELTOOLCHAIN}/glibc_config32
+[ -f "${METADATAMIPS64ELTOOLCHAIN}/glibc_build32" ] || \
+  make || \
+    die "***build glibc32 error" && \
+      touch ${METADATAMIPS64ELTOOLCHAIN}/glibc_build32
+[ -f "${METADATAMIPS64ELTOOLCHAIN}/glibc_install32" ] || \
+  make install || \
+    die "***install glibc32 error" && \
+      touch ${METADATAMIPS64ELTOOLCHAIN}/glibc_install32
+popd
+
+pushd ${BUILDMIPS64ELTOOLCHAIN}
+[ -d "glibc-buildn32" ] || mkdir glibc-buildn32
+cd glibc-buildn32
+[ -f "${METADATAMIPS64ELTOOLCHAIN}/glibc_createn32_config.cache" ] || \
+  `cat > config.cache << "EOF"
+libc_cv_forced_unwind=yes
+libc_cv_c_cleanup=yes
+libc_cv_gnu89_inline=yes
+EOF` || \
+    die "create glibcn32 config.cache" && \
+      touch ${METADATAMIPS64ELTOOLCHAIN}/glibc_createn32_config.cache
+
+[ -f "${METADATAMIPS64ELTOOLCHAIN}/glibc_updaten32_configparms" ] || \
+  `cat > configparms << EOF
+install_root=${PREFIXMIPS64ELROOTFS}
+EOF` || \
+    die "update glibcn32 configparms" && \
+      touch ${METADATAMIPS64ELTOOLCHAIN}/glibc_updaten32_configparms
+
+
+[ -f "${METADATAMIPS64ELTOOLCHAIN}/glibc_confign32" ] || \
+  BUILD_CC="gcc" CC="${CROSS_TARGET64}-gcc ${BUILDN32}" \
+  AR="${CROSS_TARGET64}-ar" RANLIB="${CROSS_TARGET64}-ranlib" \
+  CFLAGS_FOR_TARGET="-O2" CFLAGS+="-O2" \
+  ${SRCMIPS64ELTOOLCHAIN}/glibc-${GLIBC_VERSION}/configure \
+  --prefix=/usr --libdir=/usr/lib32 \
+  --libexecdir=/usr/lib32/glibc --host=${CROSS_TARGET64} --build=${CROSS_HOST} \
+  --disable-profile --enable-add-ons --with-tls --enable-kernel=2.6.0 \
+  --with-__thread --with-binutils=${PREFIXMIPS64ELTOOLCHAIN}/bin \
+  --with-headers=${PREFIXMIPS64ELROOTFS}/usr/include --cache-file=config.cache || \
+    die "***config glibcn32 error" && \
+      touch ${METADATAMIPS64ELTOOLCHAIN}/glibc_confign32
+[ -f "${METADATAMIPS64ELTOOLCHAIN}/glibc_buildn32" ] || \
+  make || \
+    die "***build glibcn32 error" && \
+      touch ${METADATAMIPS64ELTOOLCHAIN}/glibc_buildn32
+[ -f "${METADATAMIPS64ELTOOLCHAIN}/glibc_installn32" ] || \
+  make install || \
+    die "***install glibcn32 error" && \
+      touch ${METADATAMIPS64ELTOOLCHAIN}/glibc_installn32
+popd
+
+pushd ${BUILDMIPS64ELTOOLCHAIN}
+[ -d "glibc-build64" ] || mkdir glibc-build64
+cd glibc-build64
+
+[ -f "${METADATAMIPS64ELTOOLCHAIN}/glibc_create64_config.cache" ] || \
+  `cat > config.cache << "EOF"
+libc_cv_forced_unwind=yes
+libc_cv_c_cleanup=yes
+libc_cv_gnu89_inline=yes
+EOF` || \
+    die "create glibc64 config.cache" && \
+      touch ${METADATAMIPS64ELTOOLCHAIN}/glibc_create64_config.cache
+
+[ -f "${METADATAMIPS64ELTOOLCHAIN}/glibc_update64_configparms" ] || \
+  `cat > configparms << EOF
+install_root=${PREFIXMIPS64ELROOTFS}
+EOF` || \
+    die "update glibc32 configparms" && \
+      touch ${METADATAMIPS64ELTOOLCHAIN}/glibc_update64_configparms
+
+[ -f "${METADATAMIPS64ELTOOLCHAIN}/glibc_config64" ] || \
+  BUILD_CC="gcc" CC="${CROSS_TARGET64}-gcc ${BUILD64}" \
+  AR="${CROSS_TARGET64}-ar" RANLIB="${CROSS_TARGET64}-ranlib" \
+  CFLAGS_FOR_TARGET="-O2" CFLAGS+="-O2" \
+  ${SRCMIPS64ELTOOLCHAIN}/glibc-${GLIBC_VERSION}/configure \
+  --prefix=/usr --libdir=/usr/lib64 \
+  --libexecdir=/usr/lib64/glibc --host=${CROSS_TARGET64} --build=${CROSS_HOST} \
+  --disable-profile --enable-add-ons --with-tls --enable-kernel=2.6.0 \
+  --with-__thread --with-binutils=${PREFIXMIPS64ELTOOLCHAIN}/bin \
+  --with-headers=${PREFIXMIPS64ELROOTFS}/usr/include --cache-file=config.cache || \
+    die "***config glibc64 error" && \
+      touch ${METADATAMIPS64ELTOOLCHAIN}/glibc_config64
+[ -f "${METADATAMIPS64ELTOOLCHAIN}/glibc_build64" ] || \
+make || \
+  die "***build glibc64 error" && \
+    touch ${METADATAMIPS64ELTOOLCHAIN}/glibc_build64
+[ -f "${METADATAMIPS64ELTOOLCHAIN}/glibc_install64" ] || \
+make install || \
+  die "***install glibc64 error" && \
+    touch ${METADATAMIPS64ELTOOLCHAIN}/glibc_install64
+
+[ -f "${METADATAMIPS64ELTOOLCHAIN}/glibc_copy_headers" ] || \
+  cp -v ${SRCMIPS64ELTOOLCHAIN}/glibc-${GLIBC_VERSION}/sunrpc/rpc/*.h \
+        ${PREFIXMIPS64ELROOTFS}/usr/include/rpc && \
+  cp -v ${SRCMIPS64ELTOOLCHAIN}/glibc-${GLIBC_VERSION}/sunrpc/rpcsvc/*.h \
+        ${PREFIXMIPS64ELROOTFS}/usr/include/rpcsvc && \
+  cp -v ${SRCMIPS64ELTOOLCHAIN}/glibc-${GLIBC_VERSION}/nis/rpcsvc/*.h \
+        ${PREFIXMIPS64ELROOTFS}/usr/include/rpcsvc || \
+    die "copy glibc headers error" && \
+      touch ${METADATAMIPS64ELTOOLCHAIN}/glibc_copy_headers
+popd
+
+pushd ${BUILDMIPS64ELTOOLCHAIN}
+[ -d "gcc-build-stage2" ] || mkdir gcc-build-stage2
+cd gcc-build-stage2
+[ -f "${METADATAMIPS64ELTOOLCHAIN}/gcc_stage2_config" ] || \
+  AR=ar LDFLAGS="-Wl,-rpath,${PREFIXMIPS64ELTOOLCHAIN}/lib" \
+  ${SRCMIPS64ELTOOLCHAIN}/gcc-${GCC_VERSION}/configure \
+  --prefix=${PREFIXMIPS64ELTOOLCHAIN} \
+  --build=${CROSS_HOST} --host=${CROSS_HOST} --target=${CROSS_TARGET64} \
+  --with-sysroot=${PREFIXMIPS64ELROOTFS} --disable-nls \
+  --enable-shared --enable-languages=c,c++ --enable-__cxa_atexit \
+  --with-mpfr=${PREFIXMIPS64ELTOOLCHAIN} --with-gmp=${PREFIXMIPS64ELTOOLCHAIN} \
+  --with-ppl=${PREFIXMIPS64ELTOOLCHAIN} --with-cloog=${PREFIXMIPS64ELTOOLCHAIN} \
+  --with-mpc=${PREFIXMIPS64ELTOOLCHAIN} \
+  --enable-c99 --enable-long-long --enable-threads=posix \
+  --enable-cloog-backend=isl || \
+    die "***config gcc stage2 error" && \
+      touch ${METADATAMIPS64ELTOOLCHAIN}/gcc_stage2_config
+[ -f "${METADATAMIPS64ELTOOLCHAIN}/gcc_stage2_build" ] || \
+  make -j${JOBS} AS_FOR_TARGET="${CROSS_TARGET64}-as" \
+  LD_FOR_TARGET="${CROSS_TARGET64}-ld" || \
+    die "***build gcc stage2 error" && \
+      touch ${METADATAMIPS64ELTOOLCHAIN}/gcc_stage2_build
+[ -f "${METADATAMIPS64ELTOOLCHAIN}/gcc_stage2_install" ] || \
+  make install || \
+    die "***install gcc stage2 error" && \
+      touch ${METADATAMIPS64ELTOOLCHAIN}/gcc_stage2_install
+popd
+
+touch ${METADATAMIPS64ELTOOLCHAIN}/mips64el_tools_finished

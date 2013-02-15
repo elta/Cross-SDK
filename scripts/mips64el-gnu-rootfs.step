@@ -2,7 +2,7 @@
 
 source source.env
 
-export PATH=${PREFIXHOSTTOOLS}/bin:${PREFIXMIPS64ELROOTFS}/cross-tools/bin:$PATH
+export PATH=${PREFIXHOSTTOOLS}/bin:${PREFIXMIPS64ELTOOLCHAIN}/bin:$PATH
 
 [ -d "${SRCMIPS64ELROOTFS}" ] || mkdir -p "${SRCMIPS64ELROOTFS}"
 [ -d "${BUILDMIPS64ELROOTFS}" ] || mkdir -p "${BUILDMIPS64ELROOTFS}"
@@ -10,7 +10,6 @@ export PATH=${PREFIXHOSTTOOLS}/bin:${PREFIXMIPS64ELROOTFS}/cross-tools/bin:$PATH
 [ -d "${PREFIXGNULINUX}" ] || mkdir -p "${PREFIXGNULINUX}"
 
 mkdir -p ${PREFIXMIPS64ELROOTFS}
-mkdir -p ${PREFIXMIPS64ELROOTFS}/cross-tools
 
 #################### Creating Directories ###############
 [ -f "${METADATAMIPS64ELROOTFS}/create_bin_dirs" ] || \
@@ -103,10 +102,6 @@ EOF` || \
 
 ############################### Extract tarballs ##############################
 pushd ${SRCMIPS64ELROOTFS}
-[ -f "${METADATAMIPS64ELROOTFS}/linux_extract" ] || \
-  tar xf ${TARBALL}/linux-${LINUX_VERSION}.${LINUX_SUFFIX} || \
-    die "extract linux error" && \
-      touch ${METADATAMIPS64ELROOTFS}/linux_extract
 [ -f "${METADATAMIPS64ELROOTFS}/gmp_extract" ] || \
   tar xf ${TARBALL}/gmp-${GMP_VERSION}.${GMP_SUFFIX} || \
     die "extract gmp error" && \
@@ -208,7 +203,7 @@ pushd ${SRCMIPS64ELROOTFS}
     die "extract iproute error" && \
       touch ${METADATAMIPS64ELROOTFS}/iproute2_extract
 [ -f "${METADATAMIPS64ELROOTFS}/python_extract" ] || \
-  tar xvf ${TARBALL}/python-${PYTHON_VERSION}.${PYTHON_SUFFIX} || \
+  tar xf ${TARBALL}/python-${PYTHON_VERSION}.${PYTHON_SUFFIX} || \
     die "extract python error" && \
       touch ${METADATAMIPS64ELROOTFS}/python_extract
 [ -f "${METADATAMIPS64ELROOTFS}/readline_extract" ] || \
@@ -335,10 +330,6 @@ pushd ${SRCMIPS64ELROOTFS}
   tar xf ${TARBALL}/bootscripts-cross-lfs-${BOOTSCRIPTS_VERSION}.${BOOTSCRIPTS_SUFFIX} || \
     die "extract bootscript error" && \
       touch ${METADATAMIPS64ELROOTFS}/bootscript_extract
-[ -f "${METADATAMIPS64ELROOTFS}/linux_extract" ] || \
-  tar xf ${TARBALL}/linux-${LINUX_VERSION}.${LINUX_SUFFIX} || \
-    die "extract linux error" && \
-      touch ${METADATAMIPS64ELROOTFS}/linux_extract
 [ -f "${METADATAMIPS64ELROOTFS}/e2fs_extract" ] || \
   tar xf ${TARBALL}/e2fsprogs-${E2FSPROGS_VERSION}.${E2FSPROGS_SUFFIX} || \
     die "extract e2fs error" && \
@@ -389,611 +380,6 @@ cd perl-${PERL_VERSION}
     die "merge cross perl error" && \
       touch ${METADATAMIPS64ELROOTFS}/perl_cross_merge
 popd
-
-######################## Begin Compiler CrossGcc ##############################
-pushd ${BUILDMIPS64ELROOTFS}
-[ -f "${METADATAMIPS64ELROOTFS}/linux_copy" ] || \
-  cp -ar ${SRCMIPS64ELROOTFS}/linux-${LINUX_VERSION} linux-headers || \
-    die "copy linux error" && \
-      touch ${METADATAMIPS64ELROOTFS}/linux_copy
-cd linux-headers
-[ -f "${METADATAMIPS64ELROOTFS}/linux_clean" ] || \
-  make mrproper || \
-    die "clean linux error" && \
-      touch ${METADATAMIPS64ELROOTFS}/linux_clean
-[ -f "${METADATAMIPS64ELROOTFS}/linux_check_headers" ] || \
-  make ARCH=mips headers_check || \
-    die "***check headers error" && \
-      touch ${METADATAMIPS64ELROOTFS}/linux_check_headers
-[ -f "${METADATAMIPS64ELROOTFS}/linux_headers_install" ] || \
-  make ARCH=mips INSTALL_HDR_PATH=dest headers_install || \
-    die "***install headers error" && \
-      touch ${METADATAMIPS64ELROOTFS}/linux_headers_install
-[ -f "${METADATAMIPS64ELROOTFS}/linux_copy_headers" ] || \
-  cp -r dest/include/* ${PREFIXMIPS64ELROOTFS}/usr/include || \
-    die "***copy headers error" && \
-      touch ${METADATAMIPS64ELROOTFS}/linux_copy_headers
-[ -f "${METADATAMIPS64ELROOTFS}/linux_clean_install.cmd" ] || \
-  find ${PREFIXMIPS64ELROOTFS}/usr/include -name .install -or -name ..install.cmd | xargs rm -fv || \
-    die "clean linux install.cmd error" && \
-      touch ${METADATAMIPS64ELROOTFS}/linux_clean_install.cmd
-popd
-
-pushd ${BUILDMIPS64ELROOTFS}
-[ -d gmp-build ] || mkdir gmp-build
-cd gmp-build
-[ -f "${METADATAMIPS64ELROOTFS}/gmp_config" ] || \
-  CPPFLAGS=-fexceptions ${SRCMIPS64ELROOTFS}/gmp-${GMP_VERSION}/configure \
-  --prefix=${PREFIXMIPS64ELROOTFS}/cross-tools --enable-cxx || \
-    die "***config gmp error" && \
-      touch ${METADATAMIPS64ELROOTFS}/gmp_config
-[ -f "${METADATAMIPS64ELROOTFS}/gmp_build" ] || \
-  make -j${JOBS} || \
-    die "***build gmp error" && \
-      touch ${METADATAMIPS64ELROOTFS}/gmp_build
-[ -f "${METADATAMIPS64ELROOTFS}/gmp_install" ] || \
-  make install || \
-    die "***install gmp error" && \
-      touch ${METADATAMIPS64ELROOTFS}/gmp_install
-popd
-
-pushd ${BUILDMIPS64ELROOTFS}
-[ -d mpfr-build ] || mkdir mpfr-build
-cd mpfr-build
-[ -f "${METADATAMIPS64ELROOTFS}/mpfr_config" ] || \
-  LDFLAGS="-Wl,-rpath,${PREFIXMIPS64ELROOTFS}/cross-tools/lib" \
-  ${SRCMIPS64ELROOTFS}/mpfr-${MPFR_VERSION}/configure --prefix=${PREFIXMIPS64ELROOTFS}/cross-tools \
-  --with-gmp=${PREFIXMIPS64ELROOTFS}/cross-tools --enable-shared || \
-    die "***config mpfr error" && \
-      touch ${METADATAMIPS64ELROOTFS}/mpfr_config
-[ -f "${METADATAMIPS64ELROOTFS}/mpfr_build" ] || \
-  make -j${JOBS} || \
-    die "***build mpfr error" && \
-      touch ${METADATAMIPS64ELROOTFS}/mpfr_build
-[ -f "${METADATAMIPS64ELROOTFS}/mpfr_install" ] || \
-  make install || \
-    die "***install mpfr error" && \
-      touch ${METADATAMIPS64ELROOTFS}/mpfr_install
-popd
-
-pushd ${BUILDMIPS64ELROOTFS}
-[ -d mpc-build ] || mkdir mpc-build
-cd mpc-build
-[ -f "${METADATAMIPS64ELROOTFS}/mpc_config" ] || \
-  LDFLAGS="-Wl,-rpath,/cross-tools/lib" \
-  ${SRCMIPS64ELROOTFS}/mpc-${MPC_VERSION}/configure --prefix=${PREFIXMIPS64ELROOTFS}/cross-tools \
-  --with-gmp=${PREFIXMIPS64ELROOTFS}/cross-tools --with-mpfr=${PREFIXMIPS64ELROOTFS}/cross-tools || \
-    die "***config mpc error" && \
-      touch ${METADATAMIPS64ELROOTFS}/mpc_config
-[ -f "${METADATAMIPS64ELROOTFS}/mpc_build" ] || \
-  make -j${JOBS} || \
-    die "***build mpc error" && \
-      touch ${METADATAMIPS64ELROOTFS}/mpc_build
-[ -f "${METADATAMIPS64ELROOTFS}/mpc_install" ] || \
-  make install || \
-    die "***install mpc error" && \
-      touch ${METADATAMIPS64ELROOTFS}/mpc_install
-popd
-
-pushd ${BUILDMIPS64ELROOTFS}
-[ -d ppl-build ] || mkdir ppl-build
-cd ppl-build
-[ -f "${METADATAMIPS64ELROOTFS}/ppl_config" ] || \
-  LDFLAGS="-Wl,-rpath,${PREFIXMIPS64ELROOTFS}/cross-tools/lib" \
-  ${SRCMIPS64ELROOTFS}/ppl-${PPL_VERSION}/configure \
-  --prefix=${PREFIXMIPS64ELROOTFS}/cross-tools \
-  --enable-shared --enable-interfaces="c,cxx" --disable-optimization \
-  --with-gmp=${PREFIXMIPS64ELROOTFS}/cross-tools || \
-    die "***config ppl error" && \
-      touch ${METADATAMIPS64ELROOTFS}/ppl_config
-[ -f "${METADATAMIPS64ELROOTFS}/ppl_build" ] || \
-  make -j${JOBS} || \
-    die "***build ppl error" && \
-      touch ${METADATAMIPS64ELROOTFS}/ppl_build
-[ -f "${METADATAMIPS64ELROOTFS}/ppl_install" ] || \
-  make install || \
-    die "***install ppl error" && \
-      touch ${METADATAMIPS64ELROOTFS}/ppl_install
-popd
-
-pushd ${BUILDMIPS64ELROOTFS}
-[ -d cloog-build ] || mkdir cloog-build
-cd cloog-build
-[ -f "${METADATAMIPS64ELROOTFS}/cloog_config" ] || \
-  LDFLAGS="-Wl,-rpath,${PREFIXMIPS64ELROOTFS}/cross-tools/lib" \
-  ${SRCMIPS64ELROOTFS}/cloog-${CLOOG_VERSION}/configure --prefix=${PREFIXMIPS64ELROOTFS}/cross-tools \
-  --enable-shared \
-  --with-gmp-prefix=${PREFIXMIPS64ELROOTFS}/cross-tools || \
-    die "***config cloog error" && \
-      touch ${METADATAMIPS64ELROOTFS}/cloog_config
-[ -f "${METADATAMIPS64ELROOTFS}/cloog_build" ] || \
-  make -j${JOBS} || \
-    die "***build cloog error" && \
-      touch ${METADATAMIPS64ELROOTFS}/cloog_build
-[ -f "${METADATAMIPS64ELROOTFS}/cloog_install" ] || \
-  make install || \
-    die "***install cloog error" && \
-      touch ${METADATAMIPS64ELROOTFS}/cloog_install
-popd
-
-pushd ${BUILDMIPS64ELROOTFS}
-[ -d libestr-build ] || mkdir libestr-build
-cd libestr-build
-[ -f "${METADATAMIPS64ELROOTFS}/libestr_create_config.cache" ] || \
-  `cat > config.cache << EOF
-ac_cv_func_malloc_0_nonnull=yes
-ac_cv_func_realloc_0_nonnull=yes
-EOF` || \
-    die "create libestr config.cache error" && \
-      touch ${METADATAMIPS64ELROOTFS}/libestr_create_config.cache
-[ -f "${METADATAMIPS64ELROOTFS}/libestr_config" ] || \
-  ${SRCMIPS64ELROOTFS}/libestr-${LIBESTR_VERSION}/configure \
-  --prefix=/cross-tools --sbindir=/sbin \
-  --cache-file=config.cache || \
-    die "***config libestr error" && \
-      touch ${METADATAMIPS64ELROOTFS}/libestr_config
-[ -f "${METADATAMIPS64ELROOTFS}/libestr_build" ] || \
-  make -j${JOBS} || \
-    die "***build libestr error" && \
-      touch ${METADATAMIPS64ELROOTFS}/libestr_build
-[ -f "${METADATAMIPS64ELROOTFS}/libestr_install" ] || \
-  make DESTDIR=${PREFIXMIPS64ELROOTFS} install || \
-    die "***install libestr error" && \
-      touch ${METADATAMIPS64ELROOTFS}/libestr_install
-popd
-
-pushd ${BUILDMIPS64ELROOTFS}
-[ -d libee-build ] || mkdir libee-build
-cd libee-build
-[ -f "${METADATAMIPS64ELROOTFS}/libee_create_config.cache" ] || \
-  `cat > config.cache << EOF
-ac_cv_func_malloc_0_nonnull=yes
-ac_cv_func_realloc_0_nonnull=yes
-EOF` || \
-    die "create libee config.cache error" && \
-      touch ${METADATAMIPS64ELROOTFS}/libee_create_config.cache
-[ -f "${METADATAMIPS64ELROOTFS}/libee_config" ] || \
-  PKG_CONFIG_PATH=${PREFIXMIPS64ELROOTFS}/cross-tools/lib/pkgconfig \
-  CPPFLAGS="-I${PREFIXMIPS64ELROOTFS}/cross-tools/include" \
-  LDFLAGS="-L${PREFIXMIPS64ELROOTFS}/cross-tools/lib" \
-   ${SRCMIPS64ELROOTFS}/libee-${LIBEE_VERSION}/configure \
-  --prefix=/cross-tools --sbindir=/sbin \
-  --cache-file=config.cache || \
-    die "***config libee error" && \
-      touch ${METADATAMIPS64ELROOTFS}/libee_config
-[ -f "${METADATAMIPS64ELROOTFS}/libee_build" ] || \
-  make || \
-    die "***build libee error" && \
-      touch ${METADATAMIPS64ELROOTFS}/libee_build
-[ -f "${METADATAMIPS64ELROOTFS}/libee_install" ] || \
-  make DESTDIR=${PREFIXMIPS64ELROOTFS} install || \
-    die "***install libee error" && \
-      touch ${METADATAMIPS64ELROOTFS}/libee_install
-popd
-
-pushd ${BUILDMIPS64ELROOTFS}
-[ -d json-c-build ] || mkdir json-c-build
-cd json-c-build
-[ -f "${METADATAMIPS64ELROOTFS}/json-c_create_config.cache" ] || \
-  `cat > config.cache << EOF
-ac_cv_func_malloc_0_nonnull=yes
-ac_cv_func_realloc_0_nonnull=yes
-EOF` || \
-    die "create json-c config.cache error" && \
-      touch ${METADATAMIPS64ELROOTFS}/json-c_create_config.cache
-[ -f "${METADATAMIPS64ELROOTFS}/json-c_config" ] || \
-  PKG_CONFIG_PATH=${PREFIXMIPS64ELROOTFS}/cross-tools/lib/pkgconfig \
-  CPPFLAGS="-I${PREFIXMIPS64ELROOTFS}/cross-tools/include" \
-  LDFLAGS="-L${PREFIXMIPS64ELROOTFS}/cross-tools/lib" \
-   ${SRCMIPS64ELROOTFS}/json-c-${JSONC_VERSION}/configure \
-  --prefix=/cross-tools --sbindir=/sbin \
-  --cache-file=config.cache || \
-    die "***config json-c error" && \
-      touch ${METADATAMIPS64ELROOTFS}/json-c_config
-[ -f "${METADATAMIPS64ELROOTFS}/json-c_build" ] || \
-  make || \
-    die "***build json-c error" && \
-      touch ${METADATAMIPS64ELROOTFS}/json-c_build
-[ -f "${METADATAMIPS64ELROOTFS}/json-c_install" ] || \
-  make DESTDIR=${PREFIXMIPS64ELROOTFS} install || \
-    die "***install json-c error" && \
-      touch ${METADATAMIPS64ELROOTFS}/json-c_install
-popd
-
-# TREATE AS PATCH
-pushd ${SRCMIPS64ELROOTFS}/util-${UTIL_VERSION}
-cp hwclock/hwclock.c{,.orig}
-[ -f "${METADATAMIPS64ELROOTFS}/util-linux_update hwclock" ] || \
-  sed -e 's@etc/adjtime@var/lib/hwclock/adjtime@g' \
-  hwclock/hwclock.c.orig > hwclock/hwclock.c || \
-    die "update util-linux hwclock" && \
-      touch ${METADATAMIPS64ELROOTFS}/util-linux_update hwclock
-popd
-
-pushd ${BUILDMIPS64ELROOTFS}
-[ -d util-linux-build ] || mkdir util-linux-build
-cd util-linux-build
-[ -f "${METADATAMIPS64ELROOTFS}/util-linux_create_config.cache" ] || \
-  `cat > config.cache << EOF
-scanf_cv_type_modifier=ms
-EOF` || \
-    die "create util-linux config.cache" && \
-      touch ${METADATAMIPS64ELROOTFS}/util-linux_create_config.cache
-[ -f "${METADATAMIPS64ELROOTFS}/util-linux_config" ] || \
-  ${SRCMIPS64ELROOTFS}/util-${UTIL_VERSION}/configure \
-  --prefix=/cross-tools \
-  --enable-arch --enable-partx --disable-wall \
-  --enable-write --disable-makeinstall-chown \
-  --cache-file=config.cache \
-  --disable-login --disable-su || \
-    die "***config util-linux error" && \
-      touch ${METADATAMIPS64ELROOTFS}/util-linux_config
-[ -f "${METADATAMIPS64ELROOTFS}/util-linux_build" ] || \
-  make -j${JOBS} || \
-    die "***build util-linux error" && \
-      touch ${METADATAMIPS64ELROOTFS}/util-linux_build
-[ -f "${METADATAMIPS64ELROOTFS}/util-linux_install" ] || \
-  make DESTDIR=${PREFIXMIPS64ELROOTFS} install || \
-    die "***install util-linux error" && \
-      touch ${METADATAMIPS64ELROOTFS}/util-linux_install
-popd
-
-pushd ${BUILDMIPS64ELROOTFS}
-[ -d "binutils-build" ] || mkdir binutils-build
-cd binutils-build
-[ -f "${METADATAMIPS64ELROOTFS}/binutils_config" ] || \
-  AS="as" AR="ar" \
-  ${SRCMIPS64ELROOTFS}/binutils-${BINUTILS_VERSION}/configure \
-  --prefix=${PREFIXMIPS64ELROOTFS}/cross-tools --host=${CROSS_HOST} --target=${CROSS_TARGET64} \
-  --with-sysroot=${PREFIXMIPS64ELROOTFS} --disable-nls --enable-shared || \
-    die "***config binutils error" && \
-      touch ${METADATAMIPS64ELROOTFS}/binutils_config
-[ -f "${METADATAMIPS64ELROOTFS}/binutils_config_host" ] || \
-  make configure-host || \
-    die "config binutils host error" && \
-      touch ${METADATAMIPS64ELROOTFS}/binutils_config_host
-[ -f "${METADATAMIPS64ELROOTFS}/binutils_build" ] || \
-  make -j${JOBS} || \
-    die "***build binutils error" && \
-      touch ${METADATAMIPS64ELROOTFS}/binutils_build
-[ -f "${METADATAMIPS64ELROOTFS}/binutils_install" ] || \
-  make install || \
-    die "***install binutils error" && \
-      touch ${METADATAMIPS64ELROOTFS}/binutils_install
-[ -f "${METADATAMIPS64ELROOTFS}/binutils_copy_headers" ] || \
-  cp ${SRCMIPS64ELROOTFS}/binutils-${BINUTILS_VERSION}/include/libiberty.h \
-  ${PREFIXMIPS64ELROOTFS}/usr/include || \
-    die "***copy binutils header error" && \
-      touch ${METADATAMIPS64ELROOTFS}/binutils_copy_headers
-popd
-
-pushd ${BUILDMIPS64ELROOTFS}
-[ -d "gcc-build-stage1" ] || mkdir gcc-build-stage1
-cd gcc-build-stage1
-[ -f "${METADATAMIPS64ELROOTFS}/gcc_stage1_config" ] || \
-  AR=ar LDFLAGS="-Wl,-rpath,${PREFIXMIPS64ELROOTFS}/cross-tools/lib" \
-  ${SRCMIPS64ELROOTFS}/gcc-${GCC_VERSION}/configure \
-  --prefix=${PREFIXMIPS64ELROOTFS}/cross-tools --build=${CROSS_HOST} \
-  --host=${CROSS_HOST} --disable-nls \
-  --target=${CROSS_TARGET64} --with-sysroot=${PREFIXMIPS64ELROOTFS} \
-  --without-headers --with-newlib --disable-decimal-float \
-  --disable-libgomp --disable-libmudflap --disable-libssp \
-  --with-mpfr=${PREFIXMIPS64ELROOTFS}/cross-tools \
-  --with-gmp=${PREFIXMIPS64ELROOTFS}/cross-tools \
-  --with-ppl=${PREFIXMIPS64ELROOTFS}/cross-tools \
-  --with-cloog=${PREFIXMIPS64ELROOTFS}/cross-tools \
-  --with-mpc=${PREFIXMIPS64ELROOTFS}/cross-tools \
-  --disable-shared --disable-threads --enable-languages=c \
-  --enable-cloog-backend=isl || \
-    die "***config gcc stage1 error" && \
-      touch ${METADATAMIPS64ELROOTFS}/gcc_stage1_config
-[ -f "${METADATAMIPS64ELROOTFS}/gcc_stage1_build" ] || \
-  make -j${JOBS} all-gcc all-target-libgcc || \
-    die "***build gcc stage1 error" && \
-      touch ${METADATAMIPS64ELROOTFS}/gcc_stage1_build
-[ -f "${METADATAMIPS64ELROOTFS}/gcc_stage1_install" ] || \
-  make install-gcc install-target-libgcc || \
-    die "***install gcc stage1 error" && \
-      touch ${METADATAMIPS64ELROOTFS}/gcc_stage1_install
-popd
-
-pushd ${SRCMIPS64ELROOTFS}
-if [ ${HOSTOS} = "Darwin" ]; then
-cd glibc-${GLIBC_VERSION}
-[ -f "${METADATAMIPS64ELROOTFS}/glibc_macos_patch" ] || \
-  patch -p1 < ${PATCH}/glibc-2.17-os-x-build.patch || \
-    die "***patch glibc for macosx error" && \
-      touch ${METADATAMIPS64ELROOTFS}/glibc_macos_patch
-fi
-popd
-
-pushd ${BUILDMIPS64ELROOTFS}
-[ -d "glibc-build32" ] || mkdir glibc-build32
-cd glibc-build32
-[ -f "${METADATAMIPS64ELROOTFS}/glibc_create32_config.cache" ] || \
-  `cat > config.cache << "EOF"
-libc_cv_forced_unwind=yes
-libc_cv_c_cleanup=yes
-libc_cv_gnu89_inline=yes
-EOF` || \
-    die "create glibc32 config.cache" && \
-      touch ${METADATAMIPS64ELROOTFS}/glibc_create32_config.cache
-
-[ -f "${METADATAMIPS64ELROOTFS}/glibc_update32_configparms" ] || \
-  `cat > configparms << EOF
-install_root=${PREFIXMIPS64ELROOTFS}
-EOF` || \
-    die "update glibc32 configparms" && \
-      touch ${METADATAMIPS64ELROOTFS}/glibc_update32_configparms
-
-[ -f "${METADATAMIPS64ELROOTFS}/glibc_config32" ] || \
-  BUILD_CC="gcc" CC="${CROSS_TARGET64}-gcc ${BUILD32}" \
-  AR="${CROSS_TARGET64}-ar" RANLIB="${CROSS_TARGET64}-ranlib" \
-  CFLAGS_FOR_TARGET="-O2" CFLAGS+="-O2" \
-  ${SRCMIPS64ELROOTFS}/glibc-${GLIBC_VERSION}/configure \
-  --prefix=/usr --libexecdir=/usr/lib/glibc \
-  --host=${CROSS_TARGET32} --build=${CROSS_HOST} \
-  --disable-profile --enable-add-ons --with-tls --enable-kernel=2.6.0 \
-  --with-__thread --with-binutils=${PREFIXMIPS64ELROOTFS}/cross-tools/bin \
-  --with-headers=${PREFIXMIPS64ELROOTFS}/usr/include --cache-file=config.cache || \
-    die "***config glibc32 error" && \
-      touch ${METADATAMIPS64ELROOTFS}/glibc_config32
-[ -f "${METADATAMIPS64ELROOTFS}/glibc_build32" ] || \
-  make || \
-    die "***build glibc32 error" && \
-      touch ${METADATAMIPS64ELROOTFS}/glibc_build32
-[ -f "${METADATAMIPS64ELROOTFS}/glibc_install32" ] || \
-  make install || \
-    die "***install glibc32 error" && \
-      touch ${METADATAMIPS64ELROOTFS}/glibc_install32
-popd
-
-pushd ${BUILDMIPS64ELROOTFS}
-[ -d "glibc-buildn32" ] || mkdir glibc-buildn32
-cd glibc-buildn32
-[ -f "${METADATAMIPS64ELROOTFS}/glibc_createn32_config.cache" ] || \
-  `cat > config.cache << "EOF"
-libc_cv_forced_unwind=yes
-libc_cv_c_cleanup=yes
-libc_cv_gnu89_inline=yes
-EOF` || \
-    die "create glibcn32 config.cache" && \
-      touch ${METADATAMIPS64ELROOTFS}/glibc_createn32_config.cache
-
-[ -f "${METADATAMIPS64ELROOTFS}/glibc_updaten32_configparms" ] || \
-  `cat > configparms << EOF
-install_root=${PREFIXMIPS64ELROOTFS}
-EOF` || \
-    die "update glibcn32 configparms" && \
-      touch ${METADATAMIPS64ELROOTFS}/glibc_updaten32_configparms
-
-
-[ -f "${METADATAMIPS64ELROOTFS}/glibc_confign32" ] || \
-  BUILD_CC="gcc" CC="${CROSS_TARGET64}-gcc ${BUILDN32}" \
-  AR="${CROSS_TARGET64}-ar" RANLIB="${CROSS_TARGET64}-ranlib" \
-  CFLAGS_FOR_TARGET="-O2" CFLAGS+="-O2" \
-  ${SRCMIPS64ELROOTFS}/glibc-${GLIBC_VERSION}/configure \
-  --prefix=/usr --libdir=/usr/lib32 \
-  --libexecdir=/usr/lib32/glibc --host=${CROSS_TARGET64} --build=${CROSS_HOST} \
-  --disable-profile --enable-add-ons --with-tls --enable-kernel=2.6.0 \
-  --with-__thread --with-binutils=${PREFIXMIPS64ELROOTFS}/cross-tools/bin \
-  --with-headers=${PREFIXMIPS64ELROOTFS}/usr/include --cache-file=config.cache || \
-    die "***config glibcn32 error" && \
-      touch ${METADATAMIPS64ELROOTFS}/glibc_confign32
-[ -f "${METADATAMIPS64ELROOTFS}/glibc_buildn32" ] || \
-  make || \
-    die "***build glibcn32 error" && \
-      touch ${METADATAMIPS64ELROOTFS}/glibc_buildn32
-[ -f "${METADATAMIPS64ELROOTFS}/glibc_installn32" ] || \
-  make install || \
-    die "***install glibcn32 error" && \
-      touch ${METADATAMIPS64ELROOTFS}/glibc_installn32
-popd
-
-pushd ${BUILDMIPS64ELROOTFS}
-[ -d "glibc-build64" ] || mkdir glibc-build64
-cd glibc-build64
-
-[ -f "${METADATAMIPS64ELROOTFS}/glibc_create64_config.cache" ] || \
-  `cat > config.cache << "EOF"
-libc_cv_forced_unwind=yes
-libc_cv_c_cleanup=yes
-libc_cv_gnu89_inline=yes
-EOF` || \
-    die "create glibc64 config.cache" && \
-      touch ${METADATAMIPS64ELROOTFS}/glibc_create64_config.cache
-
-[ -f "${METADATAMIPS64ELROOTFS}/glibc_update64_configparms" ] || \
-  `cat > configparms << EOF
-install_root=${PREFIXMIPS64ELROOTFS}
-EOF` || \
-    die "update glibc32 configparms" && \
-      touch ${METADATAMIPS64ELROOTFS}/glibc_update64_configparms
-
-[ -f "${METADATAMIPS64ELROOTFS}/glibc_config64" ] || \
-  BUILD_CC="gcc" CC="${CROSS_TARGET64}-gcc ${BUILD64}" \
-  AR="${CROSS_TARGET64}-ar" RANLIB="${CROSS_TARGET64}-ranlib" \
-  CFLAGS_FOR_TARGET="-O2" CFLAGS+="-O2" \
-  ${SRCMIPS64ELROOTFS}/glibc-${GLIBC_VERSION}/configure \
-  --prefix=/usr --libdir=/usr/lib64 \
-  --libexecdir=/usr/lib64/glibc --host=${CROSS_TARGET64} --build=${CROSS_HOST} \
-  --disable-profile --enable-add-ons --with-tls --enable-kernel=2.6.0 \
-  --with-__thread --with-binutils=${PREFIXMIPS64ELROOTFS}/cross-tools/bin \
-  --with-headers=${PREFIXMIPS64ELROOTFS}/usr/include --cache-file=config.cache || \
-    die "***config glibc64 error" && \
-      touch ${METADATAMIPS64ELROOTFS}/glibc_config64
-[ -f "${METADATAMIPS64ELROOTFS}/glibc_build64" ] || \
-make || \
-  die "***build glibc64 error" && \
-    touch ${METADATAMIPS64ELROOTFS}/glibc_build64
-[ -f "${METADATAMIPS64ELROOTFS}/glibc_install64" ] || \
-make install || \
-  die "***install glibc64 error" && \
-    touch ${METADATAMIPS64ELROOTFS}/glibc_install64
-
-[ -f "${METADATAMIPS64ELROOTFS}/glibc_copy_headers" ] || \
-  cp -v ${SRCMIPS64ELROOTFS}/glibc-${GLIBC_VERSION}/sunrpc/rpc/*.h \
-        ${PREFIXMIPS64ELROOTFS}/usr/include/rpc && \
-  cp -v ${SRCMIPS64ELROOTFS}/glibc-${GLIBC_VERSION}/sunrpc/rpcsvc/*.h \
-        ${PREFIXMIPS64ELROOTFS}/usr/include/rpcsvc && \
-  cp -v ${SRCMIPS64ELROOTFS}/glibc-${GLIBC_VERSION}/nis/rpcsvc/*.h \
-        ${PREFIXMIPS64ELROOTFS}/usr/include/rpcsvc || \
-    die "copy glibc headers error" && \
-      touch ${METADATAMIPS64ELROOTFS}/glibc_copy_headers
-popd
-
-pushd ${BUILDMIPS64ELROOTFS}
-[ -d "gcc-build-stage2" ] || mkdir gcc-build-stage2
-cd gcc-build-stage2
-[ -f "${METADATAMIPS64ELROOTFS}/gcc_stage2_config" ] || \
-  AR=ar LDFLAGS="-Wl,-rpath,${PREFIXMIPS64ELROOTFS}/cross-tools/lib" \
-  ${SRCMIPS64ELROOTFS}/gcc-${GCC_VERSION}/configure \
-  --prefix=${PREFIXMIPS64ELROOTFS}/cross-tools \
-  --build=${CROSS_HOST} --host=${CROSS_HOST} --target=${CROSS_TARGET64} \
-  --with-sysroot=${PREFIXMIPS64ELROOTFS} --disable-nls \
-  --enable-shared --enable-languages=c,c++ --enable-__cxa_atexit \
-  --with-mpfr=${PREFIXMIPS64ELROOTFS}/cross-tools --with-gmp=${PREFIXMIPS64ELROOTFS}/cross-tools \
-  --with-ppl=${PREFIXMIPS64ELROOTFS}/cross-tools --with-cloog=${PREFIXMIPS64ELROOTFS}/cross-tools \
-  --with-mpc=${PREFIXMIPS64ELROOTFS}/cross-tools \
-  --enable-c99 --enable-long-long --enable-threads=posix \
-  --enable-cloog-backend=isl || \
-    die "***config gcc stage2 error" && \
-      touch ${METADATAMIPS64ELROOTFS}/gcc_stage2_config
-[ -f "${METADATAMIPS64ELROOTFS}/gcc_stage2_build" ] || \
-  make -j${JOBS} AS_FOR_TARGET="${CROSS_TARGET64}-as" \
-  LD_FOR_TARGET="${CROSS_TARGET64}-ld" || \
-    die "***build gcc stage2 error" && \
-      touch ${METADATAMIPS64ELROOTFS}/gcc_stage2_build
-[ -f "${METADATAMIPS64ELROOTFS}/gcc_stage2_install" ] || \
-  make install || \
-    die "***install gcc stage2 error" && \
-      touch ${METADATAMIPS64ELROOTFS}/gcc_stage2_install
-popd
-
-pushd ${BUILDMIPS64ELROOTFS}
-[ -d file-build ] || mkdir file-build
-cd file-build
-[ -f "${METADATAMIPS64ELROOTFS}/file_config" ] || \
-  ${SRCMIPS64ELROOTFS}/file-${FILE_VERSION}/configure --prefix=${PREFIXMIPS64ELROOTFS}/cross-tools || \
-    die "***config file error" && \
-      touch ${METADATAMIPS64ELROOTFS}/file_config
-[ -f "${METADATAMIPS64ELROOTFS}/file_build" ] || \
-  make -j${JOBS} || \
-    die "***build file error" && \
-      touch ${METADATAMIPS64ELROOTFS}/file_build
-[ -f "${METADATAMIPS64ELROOTFS}/file_install" ] || \
-  make install || \
-    die "***install file error" && \
-      touch ${METADATAMIPS64ELROOTFS}/file_install
-popd
-
-pushd ${BUILDMIPS64ELROOTFS}
-[ -d groff-build ] || mkdir groff-build
-cd groff-build
-[ -f "${METADATAMIPS64ELROOTFS}/groff_config" ] || \
-  PAGE=A4 ${SRCMIPS64ELROOTFS}/groff-${GROFF_VERSION}/configure \
-  --prefix=${PREFIXMIPS64ELROOTFS}/cross-tools --without-x || \
-    die "***config groff error" && \
-      touch ${METADATAMIPS64ELROOTFS}/groff_config
-[ -f "${METADATAMIPS64ELROOTFS}/groff_build" ] || \
-  make -j${JOBS} || \
-    die "***build groff error" && \
-      touch ${METADATAMIPS64ELROOTFS}/groff_build
-[ -f "${METADATAMIPS64ELROOTFS}/groff_install" ] || \
-  make install || \
-    die "***install groff error" && \
-      touch ${METADATAMIPS64ELROOTFS}/groff_install
-popd
-
-pushd ${SRCMIPS64ELROOTFS}/shadow-${SHADOW_VERSION}
-[ -f "${METADATAMIPS64ELROOTFS}/shadow_patch" ] || \
-  patch -p1 < ${PATCH}/shadow-${SHADOW_VERSION}-sysroot_hacks-1.patch || \
-    die "Patch shadow error" && \
-      touch ${METADATAMIPS64ELROOTFS}/shadow_patch
-popd
-
-pushd ${BUILDMIPS64ELROOTFS}
-[ -d shadow-build ] || mkdir shadow-build
-cd shadow-build
-[ -f "${METADATAMIPS64ELROOTFS}/shadow_create_config.cache" ] || \
-  `cat > config.cache << EOF
-shadow_cv_passwd_dir="${PREFIXMIPS64ELROOTFS}/bin"
-ac_cv_func_lckpwdf=no
-EOF` || \
-    die "create shadow config.cache error" && \
-      touch ${METADATAMIPS64ELROOTFS}/shadow_create_config.cache
-
-[ -f "${METADATAMIPS64ELROOTFS}/shadow_config" ] || \
-  ${SRCMIPS64ELROOTFS}/shadow-${SHADOW_VERSION}/configure --prefix=${PREFIXMIPS64ELROOTFS}/cross-tools \
-  --sbindir=${PREFIXMIPS64ELROOTFS}/cross-tools/bin \
-  --sysconfdir=$PREFIXMIPS64ELROOTFS/etc --disable-shared --without-libpam \
-  --without-audit --without-selinux --program-prefix=${CROSS_TARGET64}- \
-  --without-nscd --cache-file=config.cache || \
-    die "***config shadow error" && \
-      touch ${METADATAMIPS64ELROOTFS}/shadow_config
-cp config.h{,.orig} && \
-[ -f "${METADATAMIPS64ELROOTFS}/shadown_update_config.h" ] || \
-  sed "/PASSWD_PROGRAM/s/passwd/${CROSS_TARGET64}-&/" config.h.orig > config.h || \
-    die "update shadow config.h error" && \
-      touch ${METADATAMIPS64ELROOTFS}/shadown_update_config.h
-[ -f "${METADATAMIPS64ELROOTFS}/shadow_build" ] || \
-  make -j${JOBS} || \
-    die "***build shadow error" && \
-      touch ${METADATAMIPS64ELROOTFS}/shadow_build
-[ -f "${METADATAMIPS64ELROOTFS}/shadow_install" ] || \
-  make install || \
-    die "***install shadow error" && \
-      touch ${METADATAMIPS64ELROOTFS}/shadow_install
-popd
-
-pushd ${SRCMIPS64ELROOTFS}/ncurses-${NCURSES_VERSION}
-[ -f "${METADATAMIPS64ELROOTFS}/ncurses_patch" ] || \
-  patch -Np1 -i ${PATCH}/ncurses-5.9-bash_fix-1.patch || \
-    die "***patch ncurses error" && \
-      touch ${METADATAMIPS64ELROOTFS}/ncurses_patch
-popd
-
-pushd ${BUILDMIPS64ELROOTFS}
-[ -d ncurses-build ] || mkdir ncurses-build
-cd ncurses-build
-[ -f "${METADATAMIPS64ELROOTFS}/ncurses_config" ] || \
-  ${SRCMIPS64ELROOTFS}/ncurses-${NCURSES_VERSION}/configure \
-  --prefix=${PREFIXMIPS64ELROOTFS}/cross-tools \
-  --without-debug --without-shared || \
-    die "***config ncurses error" && \
-      touch ${METADATAMIPS64ELROOTFS}/ncurses_config
-[ -f "${METADATAMIPS64ELROOTFS}/ncurses_build" ] || \
-  make -C include || \
-    die "***build ncurses include error" && \
-      touch ${METADATAMIPS64ELROOTFS}/ncurses_build
-[ -f "${METADATAMIPS64ELROOTFS}/ncurses_build_progs-tic" ] || \
-  make -C progs tic || \
-    die "***build ncurses tic error" && \
-      touch ${METADATAMIPS64ELROOTFS}/ncurses_build_progs-tic
-[ -f "${METADATAMIPS64ELROOTFS}/ncurses_install" ] || \
-  install -m755 progs/tic ${PREFIXMIPS64ELROOTFS}/cross-tools/bin || \
-    die "***install ncurses error" && \
-      touch ${METADATAMIPS64ELROOTFS}/ncurses_install
-popd
-
-pushd ${BUILDMIPS64ELROOTFS}
-[ -d "python-build" ] || mkdir python-build
-cd python-build
-[ -f "${METADATAMIPS64ELROOTFS}/python_config" ] || \
-  ${SRCMIPS64ELROOTFS}/Python-${PYTHON_VERSION}/configure \
-  --prefix=${PREFIXMIPS64ELROOTFS}/cross-tools || \
-    die "***config python error" && \
-      touch ${METADATAMIPS64ELROOTFS}/python_config
-[ -f "${METADATAMIPS64ELROOTFS}/python_build" ] || \
-  make -j${JOBS} || \
-    die "***build python error" && \
-      touch ${METADATAMIPS64ELROOTFS}/python_build
-[ -f "${METADATAMIPS64ELROOTFS}/python_install" ] || \
-  make install || \
-    die "***install python error" && \
-      touch ${METADATAMIPS64ELROOTFS}/python_install
-popd
-
 
 ########################### Begin Cross Compile File System ####################
 export CC="${CROSS_TARGET64}-gcc"
@@ -1109,7 +495,7 @@ cd mpfr-32
   LDFLAGS="-Wl,-rpath-link,${PREFIXMIPS64ELROOTFS}/usr/lib:${PREFIXMIPS64ELROOTFS}/lib ${BUILD32}" \
   ${SRCMIPS64ELROOTFS}/mpfr-${MPFR_VERSION}/configure --prefix=/usr --enable-shared \
   --build=${CROSS_HOST} --host=${CROSS_TARGET32} \
-  --with-gmp-include=${PREFIXMIPS64ELROOTFS}/cross-tools/include \
+  --with-gmp-include=${PREFIXMIPS64ELTOOLCHAIN}/include \
   --with-gmp-lib=${PREFIXMIPS64ELROOTFS}/usr/lib || \
     die "***config mpfr32 error" && \
       touch ${METADATAMIPS64ELROOTFS}/mpfr_config32
@@ -1135,7 +521,7 @@ cd mpfr-n32
   LDFLAGS="-Wl,-rpath-link,${PREFIXMIPS64ELROOTFS}/usr/lib32:${PREFIXMIPS64ELROOTFS}/lib32 ${BUILDN32}" \
   ${SRCMIPS64ELROOTFS}/mpfr-${MPFR_VERSION}/configure --prefix=/usr --enable-shared \
   --build=${CROSS_HOST} --host=${CROSS_TARGET64} --libdir=/usr/lib32 \
-  --with-gmp-include=${PREFIXMIPS64ELROOTFS}/cross-tools/include \
+  --with-gmp-include=${PREFIXMIPS64ELTOOLCHAIN}/include \
   --with-gmp-lib=${PREFIXMIPS64ELROOTFS}/usr/lib32 || \
     die "***config mpfrn32 error" && \
       touch ${METADATAMIPS64ELROOTFS}/mpfr_confign32
@@ -1161,7 +547,7 @@ cd mpfr-64
   LDFLAGS="-Wl,-rpath-link,${PREFIXMIPS64ELROOTFS}/usr/lib64:${PREFIXMIPS64ELROOTFS}/lib64 ${BUILD64}" \
   ${SRCMIPS64ELROOTFS}/mpfr-${MPFR_VERSION}/configure --prefix=/usr --enable-shared \
   --build=${CROSS_HOST} --host=${CROSS_TARGET64} --libdir=/usr/lib64 \
-  --with-gmp-include=${PREFIXMIPS64ELROOTFS}/cross-tools/include \
+  --with-gmp-include=${PREFIXMIPS64ELTOOLCHAIN}/include \
   --with-gmp-lib=${PREFIXMIPS64ELROOTFS}/usr/lib64 || \
     die "***config mpfr64 error" && \
       touch ${METADATAMIPS64ELROOTFS}/mpfr_config64
@@ -1187,9 +573,9 @@ cd mpc-32
   LDFLAGS="-Wl,-rpath-link,${PREFIXMIPS64ELROOTFS}/usr/lib:${PREFIXMIPS64ELROOTFS}/lib ${BUILD32}" \
   ./configure --prefix=/usr --enable-shared \
   --build=${CROSS_HOST} --host=${CROSS_TARGET32} \
-  --with-gmp-include=${PREFIXMIPS64ELROOTFS}/cross-tools/include \
+  --with-gmp-include=${PREFIXMIPS64ELTOOLCHAIN}/include \
   --with-gmp-lib=${PREFIXMIPS64ELROOTFS}/usr/lib \
-  --with-mpfr-include=${PREFIXMIPS64ELROOTFS}/cross-tools/include \
+  --with-mpfr-include=${PREFIXMIPS64ELTOOLCHAIN}/include \
   --with-mpfr-lib=${PREFIXMIPS64ELROOTFS}/usr/lib || \
     die "***config mpc32 error" && \
       touch ${METADATAMIPS64ELROOTFS}/mpc_config32
@@ -1211,9 +597,9 @@ cd mpc-n32
   LDFLAGS="-Wl,-rpath-link,${PREFIXMIPS64ELROOTFS}/usr/lib32:${PREFIXMIPS64ELROOTFS}/lib32 ${BUILDN32}" \
   ./configure --prefix=/usr --enable-shared \
   --build=${CROSS_HOST} --host=${CROSS_TARGET64} --libdir=/usr/lib32 \
-  --with-gmp-include=${PREFIXMIPS64ELROOTFS}/cross-tools/include \
+  --with-gmp-include=${PREFIXMIPS64ELTOOLCHAIN}/include \
   --with-gmp-lib=${PREFIXMIPS64ELROOTFS}/usr/lib32 \
-  --with-mpfr-include=${PREFIXMIPS64ELROOTFS}/cross-tools/include \
+  --with-mpfr-include=${PREFIXMIPS64ELTOOLCHAIN}/include \
   --with-mpfr-lib=${PREFIXMIPS64ELROOTFS}/usr/lib32 || \
     die "***config mpcn32 error" && \
       touch ${METADATAMIPS64ELROOTFS}/mpc_confign32
@@ -1235,9 +621,9 @@ cd mpc-64
   LDFLAGS="-Wl,-rpath-link,${PREFIXMIPS64ELROOTFS}/usr/lib64:${PREFIXMIPS64ELROOTFS}/lib64 ${BUILD64}" \
   ./configure --prefix=/usr --enable-shared \
   --build=${CROSS_HOST} --host=${CROSS_TARGET64} --libdir=/usr/lib64 \
-  --with-gmp-include=${PREFIXMIPS64ELROOTFS}/cross-tools/include \
+  --with-gmp-include=${PREFIXMIPS64ELTOOLCHAIN}/include \
   --with-gmp-lib=${PREFIXMIPS64ELROOTFS}/usr/lib64 \
-  --with-mpfr-include=${PREFIXMIPS64ELROOTFS}/cross-tools/include \
+  --with-mpfr-include=${PREFIXMIPS64ELTOOLCHAIN}/include \
   --with-mpfr-lib=${PREFIXMIPS64ELROOTFS}/usr/lib64 || \
     die "***config mpc64 error" && \
       touch ${METADATAMIPS64ELROOTFS}/mpc_config64
@@ -1255,7 +641,7 @@ pushd ${BUILDMIPS64ELROOTFS}
 [ -d "ppl-32" ] || mkdir ppl-32
 cd ppl-32
 [ -f "${METADATAMIPS64ELROOTFS}/ppl_config32" ] || \
-  CPPFLAGS="-fexceptions -I${PREFIXMIPS64ELROOTFS}/cross-tools/include" \
+  CPPFLAGS="-fexceptions -I${PREFIXMIPS64ELTOOLCHAIN}/include" \
   CC="${CC} ${BUILD32}" CXX="${CXX} ${BUILD32}" \
   LDFLAGS="-Wl,-rpath-link,${PREFIXMIPS64ELROOTFS}/usr/lib:${PREFIXMIPS64ELROOTFS}/lib ${BUILD32}" \
   ${SRCMIPS64ELROOTFS}/ppl-${PPL_VERSION}/configure --prefix=/usr \
@@ -1298,7 +684,7 @@ pushd ${BUILDMIPS64ELROOTFS}
 [ -d "ppl-n32" ] || mkdir ppl-n32
 cd ppl-n32
 [ -f "${METADATAMIPS64ELROOTFS}/ppl_confign32" ] || \
-  CPPFLAGS="-fexceptions -I${PREFIXMIPS64ELROOTFS}/cross-tools/include" \
+  CPPFLAGS="-fexceptions -I${PREFIXMIPS64ELTOOLCHAIN}/include" \
   CC="${CC} ${BUILDN32}" CXX="${CXX} ${BUILDN32}" \
   LDFLAGS="-Wl,-rpath-link,${PREFIXMIPS64ELROOTFS}/usr/lib32:${PREFIXMIPS64ELROOTFS}/lib32 ${BUILDN32}" \
   ${SRCMIPS64ELROOTFS}/ppl-${PPL_VERSION}/configure --prefix=/usr --libdir=/usr/lib32 \
@@ -1343,7 +729,7 @@ pushd ${BUILDMIPS64ELROOTFS}
 [ -d "ppl-64" ] || mkdir ppl-64
 cd ppl-64
 [ -f "${METADATAMIPS64ELROOTFS}/ppl_config64" ] || \
-  CPPFLAGS="-fexceptions -I${PREFIXMIPS64ELROOTFS}/cross-tools/include" \
+  CPPFLAGS="-fexceptions -I${PREFIXMIPS64ELTOOLCHAIN}/include" \
   CC="${CC} ${BUILD64}" CXX="${CXX} ${BUILD64}" \
   LDFLAGS="-Wl,-rpath-link,${PREFIXMIPS64ELROOTFS}/usr/lib64:${PREFIXMIPS64ELROOTFS}/lib64 ${BUILD64}" \
   ${SRCMIPS64ELROOTFS}/ppl-${PPL_VERSION}/configure --prefix=/usr --libdir=/usr/lib64 \
@@ -1388,7 +774,7 @@ pushd ${BUILDMIPS64ELROOTFS}
 [ -d cloog-32 ] || mkdir cloog-32
 cd cloog-32
 [ -f "${METADATAMIPS64ELROOTFS}/cloog_config32" ] || \
-  CPPFLAGS="-fexceptions -I${PREFIXMIPS64ELROOTFS}/cross-tools/include" \
+  CPPFLAGS="-fexceptions -I${PREFIXMIPS64ELTOOLCHAIN}/include" \
   LDFLAGS="-Wl,-rpath-link,${PREFIXMIPS64ELROOTFS}/usr/lib:${PREFIXMIPS64ELROOTFS}/lib ${BUILD32}" \
   CC="${CC} ${BUILD32}" ${SRCMIPS64ELROOTFS}/cloog-${CLOOG_VERSION}/configure \
   --build=${CROSS_HOST} --host=${CROSS_TARGET32} \
@@ -1413,7 +799,7 @@ pushd ${BUILDMIPS64ELROOTFS}
 [ -d cloog-n32 ] || mkdir cloog-n32
 cd cloog-n32
 [ -f "${METADATAMIPS64ELROOTFS}/cloog_confign32" ] || \
-  CPPFLAGS="-fexceptions -I${PREFIXMIPS64ELROOTFS}/cross-tools/include" \
+  CPPFLAGS="-fexceptions -I${PREFIXMIPS64ELTOOLCHAIN}/include" \
   LDFLAGS="-Wl,-rpath-link,${PREFIXMIPS64ELROOTFS}/usr/lib32:${PREFIXMIPS64ELROOTFS}/lib32 ${BUILDN32}" \
   CC="${CC} ${BUILDN32}" ${SRCMIPS64ELROOTFS}/cloog-${CLOOG_VERSION}/configure \
   --build=${CROSS_HOST} --host=${CROSS_TARGET64} --libdir=/usr/lib32 \
@@ -1438,7 +824,7 @@ pushd ${BUILDMIPS64ELROOTFS}
 [ -d cloog-64 ] || mkdir cloog-64
 cd cloog-64
 [ -f "${METADATAMIPS64ELROOTFS}/cloog_config64" ] || \
-[ -f "config.log" ] || CPPFLAGS="-fexceptions -I${PREFIXMIPS64ELROOTFS}/cross-tools/include" \
+[ -f "config.log" ] || CPPFLAGS="-fexceptions -I${PREFIXMIPS64ELTOOLCHAIN}/include" \
   LDFLAGS="-Wl,-rpath-link,${PREFIXMIPS64ELROOTFS}/usr/lib64:${PREFIXMIPS64ELROOTFS}/lib64 ${BUILD64}" \
   CC="${CC} ${BUILD64}" ${SRCMIPS64ELROOTFS}/cloog-${CLOOG_VERSION}/configure \
   --build=${CROSS_HOST} --host=${CROSS_TARGET64} --libdir=/usr/lib64 \
@@ -1633,9 +1019,9 @@ cd gcc-cross-build
   --enable-shared --enable-threads=posix --enable-__cxa_atexit \
   --enable-c99 --enable-long-long --enable-clocale=gnu --with-abi=64 \
   --enable-languages=c,c++ --disable-libstdcxx-pch --libdir=/usr/lib64 \
-  --with-gmp-include=${PREFIXMIPS64ELROOTFS}/cross-tools/include \
+  --with-gmp-include=${PREFIXMIPS64ELTOOLCHAIN}/include \
   --with-gmp-lib=${PREFIXMIPS64ELROOTFS}/usr/lib64 \
-  --with-mpfr-include=${PREFIXMIPS64ELROOTFS}/cross-tools/include \
+  --with-mpfr-include=${PREFIXMIPS64ELTOOLCHAIN}/include \
   --with-mpfr-lib=${PREFIXMIPS64ELROOTFS}/usr/lib64 \
   --enable-cloog-backend=isl || \
     die "***configure gcc error" && \
@@ -2250,7 +1636,7 @@ gl_cv_func_wctob_works=yes
 EOF
 [ -f "${METADATAMIPS64ELROOTFS}/coreutils_cross_config" ] || \
   CC="${CC} ${BUILD64}" CXX="${CXX} ${BUILD64}" EXTRA_MANS='' \
-  CPPFLAGS="-I${PREFIXMIPS64ELROOTFS}/cross-tools/include" \
+  CPPFLAGS="-I${PREFIXMIPS64ELTOOLCHAIN}/include" \
   ${SRCMIPS64ELROOTFS}/coreutils-${COREUTILS_VERSION}/configure \
   --build=${CROSS_HOST} --host=${CROSS_TARGET64} \
   --prefix=/usr --cache-file=config.cache \
@@ -2447,8 +1833,13 @@ pushd ${BUILDMIPS64ELROOTFS}
 [ -d procps-32 ] || \
   cp -r ${SRCMIPS64ELROOTFS}/procps-${PROCPS_VERSION} procps-32
 cd procps-32
+[ -f ${METADATAMIPSELROOTFS}/procps_build32_so ] || \
+  make CC="${CC} ${BUILD32}" CPPFLAGS= lib64=lib m64= proc/libproc-3.2.8.so ||
+    die "***build libproc-3.2.8.so 32 error" && \
+      touch ${METADATAMIPSELROOTFS}/procps_build32_so
 [ -f "${METADATAMIPS64ELROOTFS}/procps_build32" ] || \
-  make DESTDIR=${PREFIXMIPS64ELROOTFS} CC="${CC} ${BUILD32}" CPPFLAGS= lib64=lib m64= || \
+  make DESTDIR=${PREFIXMIPS64ELROOTFS} CC="${CC} ${BUILD32}" \
+  CPPFLAGS= lib64=lib m64= LIBPROC=proc/libproc-3.2.8.so || \
     die "***build procps32 error" && \
       touch ${METADATAMIPS64ELROOTFS}/procps_build32
 [ -f "${METADATAMIPS64ELROOTFS}/procps_install32" ] || \
@@ -2462,8 +1853,13 @@ pushd ${BUILDMIPS64ELROOTFS}
 [ -d procps-n32 ] || \
   cp -r ${SRCMIPS64ELROOTFS}/procps-${PROCPS_VERSION} procps-n32
 cd procps-n32
+[ -f ${METADATAMIPSELROOTFS}/procps_buildn32_so ] || \
+  make CC="${CC} ${BUILDN32}" CPPFLAGS= lib64=lib m64= proc/libproc-3.2.8.so ||
+    die "***build libproc-3.2.8.so n32 error" && \
+      touch ${METADATAMIPSELROOTFS}/procps_buildn32_so
 [ -f "${METADATAMIPS64ELROOTFS}/procps_buildn32" ] || \
-  make DESTDIR=${PREFIXMIPS64ELROOTFS} CC="${CC} ${BUILDN32}" CPPFLAGS= lib64=lib32 m64= || \
+  make DESTDIR=${PREFIXMIPS64ELROOTFS} CC="${CC} ${BUILDN32}" CPPFLAGS= \
+  lib64=lib32 m64= LIBPROC=proc/libproc-3.2.8.so || \
     die "***build procpsn32 error" && \
       touch ${METADATAMIPS64ELROOTFS}/procps_buildn32
 [ -f "${METADATAMIPS64ELROOTFS}/procps_installn32" ] || \
@@ -2477,8 +1873,13 @@ pushd ${BUILDMIPS64ELROOTFS}
 [ -d procps-64 ] || \
   cp -r ${SRCMIPS64ELROOTFS}/procps-${PROCPS_VERSION} procps-64
 cd procps-64
+[ -f ${METADATAMIPSELROOTFS}/procps_build64_so ] || \
+  make CC="${CC} ${BUILD64}" CPPFLAGS= lib64=lib m64= proc/libproc-3.2.8.so ||
+    die "***build libproc-3.2.8.so 32 error" && \
+      touch ${METADATAMIPSELROOTFS}/procps_build64_so
 [ -f "${METADATAMIPS64ELROOTFS}/procps_build64" ] || \
-  make DESTDIR=${PREFIXMIPS64ELROOTFS} CC="${CC} ${BUILD64}" CPPFLAGS= lib64=lib64 m64= || \
+  make DESTDIR=${PREFIXMIPS64ELROOTFS} CC="${CC} ${BUILD64}" CPPFLAGS= \
+  lib64=lib64 m64= LIBPROC=proc/libproc-3.2.8.so || \
     die "***build procps64 error" && \
       touch ${METADATAMIPS64ELROOTFS}/procps_build64
 [ -f "${METADATAMIPS64ELROOTFS}/procps_install64" ] || \
@@ -2775,7 +2176,7 @@ EOF
 [ -f "${METADATAMIPS64ELROOTFS}/python_cross_config" ] || \
   CC="${CC} ${BUILD64}" \
   CXX="${CXX} ${BUILD64}" \
-  LDFLAGS="-L${PREFIXMIPS64ELROOTFS}/cross-tools/lib64 ${BUILD64}" \
+  LDFLAGS="-L${PREFIXMIPS64ELTOOLCHAIN}/lib64 ${BUILD64}" \
   ./configure --prefix=/usr \
   --build=${CROSS_HOST} --host=${CROSS_TARGET64} \
   --libdir=/lib64 \
@@ -2783,7 +2184,7 @@ EOF
     die "***config python_cross64 error" && \
       touch ${METADATAMIPS64ELROOTFS}/python_cross_config
 [ -f "${METADATAMIPS64ELROOTFS}/python_cross_build" ] || \
-  make CC="${CC} ${BUILD64}" -j${JOBS} || \
+  make PGEN=pgen CC="${CC} ${BUILD64}" -j${JOBS} || \
     die "***build cross python error" && \
       touch ${METADATAMIPS64ELROOTFS}/python_cross_build
 [ -f "${METADATAMIPS64ELROOTFS}/python_cross_install" ] || \
@@ -3523,13 +2924,6 @@ cd iputils-${IPUTILS_VERSION}
       touch ${METADATAMIPS64ELROOTFS}/iputils_cross_isntall_doc
 popd
 
-pushd ${SRCMIPS64ELROOTFS}/kbd-${KBD_VERSION}
-[ -f "${METADATAMIPS64ELROOTFS}/kbd_patch" ] || \
-  patch -p1 < ${PATCH}/kbd-${KBD_VERSION}-es.po_fix-1.patch || \
-    die "patch kbd error" && \
-      touch ${METADATAMIPS64ELROOTFS}/kbd_patch
-popd
-
 pushd ${BUILDMIPS64ELROOTFS}
 [ -d "kbd-cross-build" ] || mkdir kbd-cross-build
 cd kbd-cross-build
@@ -3778,9 +3172,9 @@ cd gdb-cross-buildusr
   ${SRCMIPS64ELROOTFS}/gdb-${GDB_VERSION}/configure \
   --prefix=${PREFIXMIPS64ELROOTFS} \
   --build=${CROSS_HOST} --host=${CROSS_TARGET64} --target=${CROSS_TARGET64} \
-  --with-gmp=${PREFIXMIPS64ELROOTFS}/cross-tools \
-  --with-mpfr=${PREFIXMIPS64ELROOTFS}/cross-tools \
-  --with-mpc=${PREFIXMIPS64ELROOTFS}/cross-tools || \
+  --with-gmp=${PREFIXMIPS64ELTOOLCHAIN} \
+  --with-mpfr=${PREFIXMIPS64ELTOOLCHAIN} \
+  --with-mpc=${PREFIXMIPS64ELTOOLCHAIN} || \
     die "config gdb error" && \
       touch ${METADATAMIPS64ELROOTFS}/gdb_cross_configusr
 [ -f "${METADATAMIPS64ELROOTFS}/gdb_cross_build" ] || \
@@ -4822,58 +4216,12 @@ umask 022
 export PYTHONHOME=/usr
 EOF
 
-pushd ${BUILDMIPS64ELROOTFS}
-[ -d linux-kernel ] || \
-  cp -ar ${SRCMIPS64ELROOTFS}/linux-${LINUX_VERSION} linux-kernel
-cd linux-kernel
-[ -f "${METADATAMIPS64ELROOTFS}/linux_patch_mips64el_defconfig" ] || \
-  patch -p1 < ${PATCH}/linux-mips64el-multilib-defconfig.patch || \
-    die "patch mips64el-multilib-defconfig error" && \
-      touch ${METADATAMIPS64ELROOTFS}/linux_patch_mips64el_defconfig
-make mrproper || die "clean linux error"
-[ -f "${METADATAMIPS64ELROOTFS}/linux_config_mips64el_mul" ] || \
-  make ARCH=mips mips64el_multilib_defconfig || \
-    die "config mips64el_multilib_defconfig error" && \
-      touch ${METADATAMIPS64ELROOTFS}/linux_config_mips64el_mul
-#make ARCH=mips CROSS_COMPILE=${CROSS_TARGET64}- menuconfig || \
-#  die "config linux error"
-[ -f "${METADATAMIPS64ELROOTFS}/linux_build_kernel" ] || \
-  make -j${JOBS} ARCH=mips CROSS_COMPILE=${CROSS_TARGET64}- \
-  CFLAGS="${BUILD64}" || \
-    die "build linux error" && \
-      touch ${METADATAMIPS64ELROOTFS}/linux_build_kernel
-[ -f "${METADATAMIPS64ELROOTFS}/linux_install_modules" ] || \
-  make ARCH=mips CROSS_COMPILE=${CROSS_TARGET64}- CFLAGS="${BUILD64}" \
-  INSTALL_MOD_PATH=${PREFIXMIPS64ELROOTFS} modules_install || \
-    die "install linux module error" && \
-      touch ${METADATAMIPS64ELROOTFS}/linux_install_modules
-[ -f "${METADATAMIPS64ELROOTFS}/linux_cp_vmlinux" ] || \
-  cp vmlinux ${PREFIXMIPS64ELROOTFS}/boot/ || \
-    die "cp vmlinux error" && \
-      touch ${METADATAMIPS64ELROOTFS}/linux_cp_vmlinux
-[ -f "${METADATAMIPS64ELROOTFS}/linux_cp_vmlinux.32" ] || \
-  cp vmlinux.32 ${PREFIXMIPS64ELROOTFS}/boot/ || \
-    die "cp vmlinux.32 error" && \
-      touch ${METADATAMIPS64ELROOTFS}/linux_cp_vmlinux.32
-[ -f "${METADATAMIPS64ELROOTFS}/linux_cp_system.map" ] || \
-  cp System.map ${PREFIXMIPS64ELROOTFS}/boot/System.map-2.6.30.1 || \
-    die "cp System.map error" && \
-      touch ${METADATAMIPS64ELROOTFS}/linux_cp_system.map
-[ -f "${METADATAMIPS64ELROOTFS}/linux_cp_config" ] || \
-  cp .config ${PREFIXMIPS64ELROOTFS}/boot/config-2.6.30.1 || \
-    die "cp config file error" && \
-      touch ${METADATAMIPS64ELROOTFS}/linux_cp_config
-popd
-
 [ -f "${METADATAMIPS64ELROOTFS}/create_clfs-release" ] || \
 `cat > ${PREFIXMIPS64ELROOTFS}/etc/clfs-release << EOF
 PREFIXMIPS64ELROOTFS-Sysroot
 EOF` || \
     die "create version number error" && \
       touch ${METADATAMIPS64ELROOTFS}/create_clfs-release
-
-##################### remove cross-tools ######################################
-rm -rf ${PREFIXMIPS64ELROOTFS}/cross-tools
 
 ################ Change Own Ship ########################
 [ -f "${METADATAMIPS64ELROOTFS}/change_all_own" ] || \
@@ -5003,3 +4351,4 @@ pushd ${PREFIXGNULINUX}
       touch ${METADATAMIPS64ELROOTFS}/mips64el_rootfs_rmmnt
 popd
 
+touch ${METADATAMIPS64ELROOTFS}/mips64el_rootfs_finished
