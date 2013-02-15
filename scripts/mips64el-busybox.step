@@ -2,18 +2,18 @@
 
 source source.env
 
-export PATH=${PREFIXHOSTTOOLS}/bin:${PREFIXGNU64}/bin:${PATH}
+export PATH=${PREFIXHOSTTOOLS}/bin:${PREFIXMIPS64ELTOOLCHAIN}/bin:${PATH}
 export CC=${CROSS_TARGET64}-gcc
-export CFLAGS="-isystem ${SYSROOTGNU64}/usr/include ${BUILD64}"
+export CFLAGS="-isystem ${PREFIXMIPS64ELROOTFS}/usr/include ${BUILD64}"
 export CXX=${CROSS_TARGET64}-g++
-export CXXFLAGS="-isystem ${SYSROOTGNU64}/usr/include ${BUILD64}"
-export LDFLAGS="-Wl,-rpath-link,${SYSROOTGNU64}/usr/lib64:${SYSROOTGNU64}/lib64 ${BUILD64}"
+export CXXFLAGS="-isystem ${PREFIXMIPS64ELROOTFS}/usr/include ${BUILD64}"
+export LDFLAGS="-Wl,-rpath-link,${PREFIXMIPS64ELROOTFS}/usr/lib64:${PREFIXMIPS64ELROOTFS}/lib64 ${BUILD64}"
 
 [ -d "${SRCBUSYBOXMUL64}" ] || mkdir -p "${SRCBUSYBOXMUL64}"
 [ -d "${BUILDBUSYBOXMUL64}" ] || mkdir -p "${BUILDBUSYBOXMUL64}"
 [ -d "${METADATABUSYBOXMUL64}" ] || mkdir -p "${METADATABUSYBOXMUL64}"
 
-[ -f ${PREFIXGNU64}/bin/${CC} ] || die "No toolchain found, process error"
+[ -f ${PREFIXMIPS64ELTOOLCHAIN}/bin/${CC} ] || die "No toolchain found, process error"
 
 export BUSYBOX_OPTIONS="dynamic"
 
@@ -88,16 +88,16 @@ sudo cp -a /dev/tty2 ${MOUNT_POINT}/dev/
 sudo cp -a /dev/ttyS0 ${MOUNT_POINT}/dev/
 
 # Copy Library to File System
-if [ -d ${SYSROOTGNU64}/lib ]; then
-    cp -ar ${SYSROOTGNU64}/lib ${MOUNT_POINT}/
+if [ -d ${PREFIXMIPS64ELROOTFS}/lib ]; then
+    cp -ar ${PREFIXMIPS64ELROOTFS}/lib ${MOUNT_POINT}/
 fi
 
-if [ -d ${SYSROOTGNU64}/lib32 ]; then
-    cp -ar ${SYSROOTGNU64}/lib32 ${MOUNT_POINT}/
+if [ -d ${PREFIXMIPS64ELROOTFS}/lib32 ]; then
+    cp -ar ${PREFIXMIPS64ELROOTFS}/lib32 ${MOUNT_POINT}/
 fi
 
-if [ -d ${SYSROOTGNU64}/lib64 ]; then
-    cp -ar ${SYSROOTGNU64}/lib64 ${MOUNT_POINT}/
+if [ -d ${PREFIXMIPS64ELROOTFS}/lib64 ]; then
+    cp -ar ${PREFIXMIPS64ELROOTFS}/lib64 ${MOUNT_POINT}/
 fi
 
 sudo echo "/bin/mount -o remount,rw /" >> ${MOUNT_POINT}/etc/init.d/rcS
@@ -109,3 +109,5 @@ popd
 mv ${SRCBUSYBOXMUL64}/busybox-$option/${BUSYBOXMUL64_IMAGE} ${PREFIXGNULINUX}
 # End for loop, build static/dynamic busybox.
 done
+
+touch ${METADATABUSYBOXMUL64}/mips64el_busybox_finished
