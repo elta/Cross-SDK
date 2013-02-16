@@ -255,8 +255,8 @@ fi
 popd
 
 pushd ${BUILDMIPS64ELTOOLCHAIN}
-[ -d "glibc-build32" ] || mkdir glibc-build32
-cd glibc-build32
+[ -d "glibc-build-32" ] || mkdir glibc-build-32
+cd glibc-build-32
 [ -f "${METADATAMIPS64ELTOOLCHAIN}/glibc_create32_config.cache" ] || \
   `cat > config.cache << "EOF"
 libc_cv_forced_unwind=yes
@@ -273,7 +273,7 @@ EOF` || \
     die "update glibc32 configparms" && \
       touch ${METADATAMIPS64ELTOOLCHAIN}/glibc_update32_configparms
 
-[ -f "${METADATAMIPS64ELTOOLCHAIN}/glibc_config32" ] || \
+[ -f "${METADATAMIPS64ELTOOLCHAIN}/glibc_config_32" ] || \
   BUILD_CC="gcc" CC="${CROSS_TARGET64}-gcc ${BUILD32}" \
   AR="${CROSS_TARGET64}-ar" RANLIB="${CROSS_TARGET64}-ranlib" \
   READELF="${CROSS_TARGET64}-readelf" NM="${CROSS_TARGET64}-nm"\
@@ -285,20 +285,20 @@ EOF` || \
   --with-__thread --with-binutils=${PREFIXMIPS64ELTOOLCHAIN}/bin \
   --with-headers=${PREFIXMIPS64ELROOTFS}/usr/include --cache-file=config.cache || \
     die "***config glibc32 error" && \
-      touch ${METADATAMIPS64ELTOOLCHAIN}/glibc_config32
-[ -f "${METADATAMIPS64ELTOOLCHAIN}/glibc_build32" ] || \
+      touch ${METADATAMIPS64ELTOOLCHAIN}/glibc_config_32
+[ -f "${METADATAMIPS64ELTOOLCHAIN}/glibc_build_32" ] || \
   make || \
     die "***build glibc32 error" && \
-      touch ${METADATAMIPS64ELTOOLCHAIN}/glibc_build32
-[ -f "${METADATAMIPS64ELTOOLCHAIN}/glibc_install32" ] || \
+      touch ${METADATAMIPS64ELTOOLCHAIN}/glibc_build_32
+[ -f "${METADATAMIPS64ELTOOLCHAIN}/glibc_install_32" ] || \
   make install || \
     die "***install glibc32 error" && \
-      touch ${METADATAMIPS64ELTOOLCHAIN}/glibc_install32
+      touch ${METADATAMIPS64ELTOOLCHAIN}/glibc_install_32
 popd
 
 pushd ${BUILDMIPS64ELTOOLCHAIN}
-[ -d "glibc-buildn32" ] || mkdir glibc-buildn32
-cd glibc-buildn32
+[ -d "glibc-build-n32" ] || mkdir glibc-build-n32
+cd glibc-build-n32
 [ -f "${METADATAMIPS64ELTOOLCHAIN}/glibc_createn32_config.cache" ] || \
   `cat > config.cache << "EOF"
 libc_cv_forced_unwind=yes
@@ -316,7 +316,7 @@ EOF` || \
       touch ${METADATAMIPS64ELTOOLCHAIN}/glibc_updaten32_configparms
 
 
-[ -f "${METADATAMIPS64ELTOOLCHAIN}/glibc_confign32" ] || \
+[ -f "${METADATAMIPS64ELTOOLCHAIN}/glibc_config_n32" ] || \
   BUILD_CC="gcc" CC="${CROSS_TARGET64}-gcc ${BUILDN32}" \
   AR="${CROSS_TARGET64}-ar" RANLIB="${CROSS_TARGET64}-ranlib" \
   READELF="${CROSS_TARGET64}-readelf" NM="${CROSS_TARGET64}-nm"\
@@ -328,20 +328,20 @@ EOF` || \
   --with-__thread --with-binutils=${PREFIXMIPS64ELTOOLCHAIN}/bin \
   --with-headers=${PREFIXMIPS64ELROOTFS}/usr/include --cache-file=config.cache || \
     die "***config glibcn32 error" && \
-      touch ${METADATAMIPS64ELTOOLCHAIN}/glibc_confign32
-[ -f "${METADATAMIPS64ELTOOLCHAIN}/glibc_buildn32" ] || \
+      touch ${METADATAMIPS64ELTOOLCHAIN}/glibc_config_n32
+[ -f "${METADATAMIPS64ELTOOLCHAIN}/glibc_build_n32" ] || \
   make || \
     die "***build glibcn32 error" && \
-      touch ${METADATAMIPS64ELTOOLCHAIN}/glibc_buildn32
-[ -f "${METADATAMIPS64ELTOOLCHAIN}/glibc_installn32" ] || \
+      touch ${METADATAMIPS64ELTOOLCHAIN}/glibc_build_n32
+[ -f "${METADATAMIPS64ELTOOLCHAIN}/glibc_install_n32" ] || \
   make install || \
     die "***install glibcn32 error" && \
-      touch ${METADATAMIPS64ELTOOLCHAIN}/glibc_installn32
+      touch ${METADATAMIPS64ELTOOLCHAIN}/glibc_install_n32
 popd
 
 pushd ${BUILDMIPS64ELTOOLCHAIN}
-[ -d "glibc-build64" ] || mkdir glibc-build64
-cd glibc-build64
+[ -d "glibc-build-64" ] || mkdir glibc-build-64
+cd glibc-build-64
 
 [ -f "${METADATAMIPS64ELTOOLCHAIN}/glibc_create64_config.cache" ] || \
   `cat > config.cache << "EOF"
@@ -359,7 +359,7 @@ EOF` || \
     die "update glibc32 configparms" && \
       touch ${METADATAMIPS64ELTOOLCHAIN}/glibc_update64_configparms
 
-[ -f "${METADATAMIPS64ELTOOLCHAIN}/glibc_config64" ] || \
+[ -f "${METADATAMIPS64ELTOOLCHAIN}/glibc_config_64" ] || \
   BUILD_CC="gcc" CC="${CROSS_TARGET64}-gcc ${BUILD64}" \
   AR="${CROSS_TARGET64}-ar" RANLIB="${CROSS_TARGET64}-ranlib" \
   READELF="${CROSS_TARGET64}-readelf" NM="${CROSS_TARGET64}-nm"\
@@ -371,15 +371,15 @@ EOF` || \
   --with-__thread --with-binutils=${PREFIXMIPS64ELTOOLCHAIN}/bin \
   --with-headers=${PREFIXMIPS64ELROOTFS}/usr/include --cache-file=config.cache || \
     die "***config glibc64 error" && \
-      touch ${METADATAMIPS64ELTOOLCHAIN}/glibc_config64
-[ -f "${METADATAMIPS64ELTOOLCHAIN}/glibc_build64" ] || \
+      touch ${METADATAMIPS64ELTOOLCHAIN}/glibc_config_64
+[ -f "${METADATAMIPS64ELTOOLCHAIN}/glibc_build_64" ] || \
 make || \
   die "***build glibc64 error" && \
-    touch ${METADATAMIPS64ELTOOLCHAIN}/glibc_build64
-[ -f "${METADATAMIPS64ELTOOLCHAIN}/glibc_install64" ] || \
+    touch ${METADATAMIPS64ELTOOLCHAIN}/glibc_build_64
+[ -f "${METADATAMIPS64ELTOOLCHAIN}/glibc_install_64" ] || \
 make install || \
   die "***install glibc64 error" && \
-    touch ${METADATAMIPS64ELTOOLCHAIN}/glibc_install64
+    touch ${METADATAMIPS64ELTOOLCHAIN}/glibc_install_64
 
 [ -f "${METADATAMIPS64ELTOOLCHAIN}/glibc_copy_headers" ] || \
   cp -v ${SRCMIPS64ELTOOLCHAIN}/glibc-${GLIBC_VERSION}/sunrpc/rpc/*.h \
