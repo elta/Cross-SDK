@@ -201,7 +201,8 @@ cd binutils-build
   AS="as" AR="ar" \
   ${SRCMIPS64ELTOOLCHAIN}/binutils-${BINUTILS_VERSION}/configure \
   --prefix=${PREFIXMIPS64ELTOOLCHAIN} --host=${CROSS_HOST} --target=${CROSS_TARGET64} \
-  --with-sysroot=${PREFIXMIPS64ELROOTFS} --disable-nls --enable-shared || \
+  --with-sysroot=${PREFIXMIPS64ELROOTFS} \
+  --disable-nls --enable-shared --enable-multilib || \
     die "***config binutils error" && \
       touch ${METADATAMIPS64ELTOOLCHAIN}/binutils_config
 [ -f "${METADATAMIPS64ELTOOLCHAIN}/binutils_config_host" ] || \
@@ -230,7 +231,7 @@ cd gcc-build-stage1
   AR=ar LDFLAGS="-Wl,-rpath,${PREFIXMIPS64ELTOOLCHAIN}/lib" \
   ${SRCMIPS64ELTOOLCHAIN}/gcc-${GCC_VERSION}/configure \
   --prefix=${PREFIXMIPS64ELTOOLCHAIN} --build=${CROSS_HOST} \
-  --host=${CROSS_HOST} --disable-nls \
+  --host=${CROSS_HOST} --disable-nls --enable-multilib \
   --target=${CROSS_TARGET64} --with-sysroot=${PREFIXMIPS64ELROOTFS} \
   --without-headers --with-newlib --disable-decimal-float \
   --disable-libgomp --disable-libmudflap --disable-libssp \
@@ -409,7 +410,7 @@ cd gcc-build-stage2
   ${SRCMIPS64ELTOOLCHAIN}/gcc-${GCC_VERSION}/configure \
   --prefix=${PREFIXMIPS64ELTOOLCHAIN} \
   --build=${CROSS_HOST} --host=${CROSS_HOST} --target=${CROSS_TARGET64} \
-  --with-sysroot=${PREFIXMIPS64ELROOTFS} --disable-nls \
+  --with-sysroot=${PREFIXMIPS64ELROOTFS} --disable-nls --enable-multilib \
   --enable-shared --enable-languages=c,c++ --enable-__cxa_atexit \
   --with-mpfr=${PREFIXMIPS64ELTOOLCHAIN} --with-gmp=${PREFIXMIPS64ELTOOLCHAIN} \
   --with-ppl=${PREFIXMIPS64ELTOOLCHAIN} --with-cloog=${PREFIXMIPS64ELTOOLCHAIN} \
@@ -436,7 +437,8 @@ cd gdb_build
   ${SRCMIPS64ELTOOLCHAIN}/gdb-${GDB_VERSION}/configure \
   --prefix=${PREFIXMIPS64ELTOOLCHAIN} \
   --build=${CROSS_HOST} --host=${CROSS_HOST} \
-  --target=${CROSS_TARGET64} || \
+  --target=${CROSS_TARGET64} --with-sysroot=${PREFIXMIPS64ELROOTFS} \
+  --enable-multilib || \
     die "***config gdb error" && \
       touch ${METADATAMIPS64ELTOOLCHAIN}/gdb_configure
 [ -f ${METADATAMIPS64ELTOOLCHAIN}/gdb_build ] || \

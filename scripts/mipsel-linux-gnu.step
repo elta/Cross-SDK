@@ -197,8 +197,7 @@ cd binutils-build
   --prefix=${PREFIXMIPSELTOOLCHAIN} \
   --host=${CROSS_HOST} --target=${CROSS_TARGET32} \
   --with-sysroot=${PREFIXMIPSELROOTFS} --disable-nls \
-  --enable-shared \
-  --disable-multilib || \
+  --enable-shared --enable-multilib || \
     die "***config binutils error" && \
       touch ${METADATAMIPSELTOOLCHAIN}/binutils_configure
 [ -f ${METADATAMIPSELTOOLCHAIN}/binutils_build_host ] || \
@@ -228,7 +227,7 @@ cd gcc-static-build
   --prefix=${PREFIXMIPSELTOOLCHAIN} \
   --build=${CROSS_HOST} --host=${CROSS_HOST} \
   --target=${CROSS_TARGET32} --with-sysroot=${PREFIXMIPSELROOTFS} \
-  --disable-multilib --disable-nls \
+  --disable-nls --enable-multilib \
   --without-headers --with-newlib --disable-decimal-float \
   --disable-libgomp --disable-libmudflap --disable-libssp \
   --with-mpfr=${PREFIXMIPSELTOOLCHAIN} \
@@ -305,7 +304,8 @@ cd gcc-build
   --prefix=${PREFIXMIPSELTOOLCHAIN} \
   --build=${CROSS_HOST} --host=${CROSS_HOST} \
   --target=${CROSS_TARGET32} \
-  --disable-multilib --with-sysroot=${PREFIXMIPSELROOTFS} --disable-nls \
+  --with-sysroot=${PREFIXMIPSELROOTFS} \
+  --disable-nls --enable-multilib \
   --enable-shared --enable-languages=c,c++ --enable-__cxa_atexit \
   --with-mpfr=${PREFIXMIPSELTOOLCHAIN} \
   --with-gmp=${PREFIXMIPSELTOOLCHAIN} \
@@ -335,7 +335,8 @@ cd gdb_build
   ${SRCMIPSELTOOLCHAIN}/gdb-${GDB_VERSION}/configure \
   --prefix=${PREFIXMIPSELTOOLCHAIN} \
   --build=${CROSS_HOST} --host=${CROSS_HOST} \
-  --target=${CROSS_TARGET32} || \
+  --target=${CROSS_TARGET32} --with-sysroot=${PREFIXMIPSELROOTFS}\
+  --enable-multilib || \
     die "***config gdb error" && \
       touch ${METADATAMIPSELTOOLCHAIN}/gdb_configure
 [ -f ${METADATAMIPSELTOOLCHAIN}/gdb_build ] || \
