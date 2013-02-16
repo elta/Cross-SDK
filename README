@@ -11,6 +11,8 @@ maintain their part of the SDK.
 Version History:
 0.4:
 - Slipt scripts.
+- OS X 10.8.2 well tested command-line-tools and development-kit, KUbuntu 12.10
+  AMD64 well tested all of the scripts.
 
 0.3:
 - OS X 10.8.2 partly support, toolchain and linux kernel can be compiled, rootfs
