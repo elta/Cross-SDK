@@ -274,8 +274,8 @@ install_root=${PREFIXMIPSELROOTFS}
 EOF
 [ -f ${METADATAMIPSELTOOLCHAIN}/glibc_configure ] || \
   BUILD_CC="gcc" CC="${CROSS_TARGET32}-gcc" \
-  AR="${CROSS_TARGET32}-ar" \
-  RANLIB="${CROSS_TARGET32}-ranlib" \
+  AR="${CROSS_TARGET32}-ar" RANLIB="${CROSS_TARGET32}-ranlib" \
+  READELF="${CROSS_TARGET32}-readelf" NM="${CROSS_TARGET32}-nm"\
   CFLAGS_FOR_TARGET="-O2" CFLAGS+="-O2" \
   ${SRCMIPSELTOOLCHAIN}/glibc-${GLIBC_VERSION}/configure \
   --prefix=/usr \

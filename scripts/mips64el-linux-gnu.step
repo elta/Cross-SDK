@@ -276,6 +276,7 @@ EOF` || \
 [ -f "${METADATAMIPS64ELTOOLCHAIN}/glibc_config32" ] || \
   BUILD_CC="gcc" CC="${CROSS_TARGET64}-gcc ${BUILD32}" \
   AR="${CROSS_TARGET64}-ar" RANLIB="${CROSS_TARGET64}-ranlib" \
+  READELF="${CROSS_TARGET64}-readelf" NM="${CROSS_TARGET64}-nm"\
   CFLAGS_FOR_TARGET="-O2" CFLAGS+="-O2" \
   ${SRCMIPS64ELTOOLCHAIN}/glibc-${GLIBC_VERSION}/configure \
   --prefix=/usr --libexecdir=/usr/lib/glibc \
@@ -318,6 +319,7 @@ EOF` || \
 [ -f "${METADATAMIPS64ELTOOLCHAIN}/glibc_confign32" ] || \
   BUILD_CC="gcc" CC="${CROSS_TARGET64}-gcc ${BUILDN32}" \
   AR="${CROSS_TARGET64}-ar" RANLIB="${CROSS_TARGET64}-ranlib" \
+  READELF="${CROSS_TARGET64}-readelf" NM="${CROSS_TARGET64}-nm"\
   CFLAGS_FOR_TARGET="-O2" CFLAGS+="-O2" \
   ${SRCMIPS64ELTOOLCHAIN}/glibc-${GLIBC_VERSION}/configure \
   --prefix=/usr --libdir=/usr/lib32 \
@@ -360,6 +362,7 @@ EOF` || \
 [ -f "${METADATAMIPS64ELTOOLCHAIN}/glibc_config64" ] || \
   BUILD_CC="gcc" CC="${CROSS_TARGET64}-gcc ${BUILD64}" \
   AR="${CROSS_TARGET64}-ar" RANLIB="${CROSS_TARGET64}-ranlib" \
+  READELF="${CROSS_TARGET64}-readelf" NM="${CROSS_TARGET64}-nm"\
   CFLAGS_FOR_TARGET="-O2" CFLAGS+="-O2" \
   ${SRCMIPS64ELTOOLCHAIN}/glibc-${GLIBC_VERSION}/configure \
   --prefix=/usr --libdir=/usr/lib64 \
