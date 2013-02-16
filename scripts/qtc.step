@@ -33,7 +33,7 @@ cd qt-creator-build
 
 if [ ${HOSTOS} = "Darwin" ]; then
 [ -f "${METADATAUNIVERSAL}/qt-creator_install" ] || \
-  mv bin/Qt\ Creator.app ${PREFIX}/ || \
+  cp -a bin/Qt\ Creator.app ${PREFIX}/ || \
     die "***install qt-creator error" && \
       touch ${METADATAUNIVERSAL}/qt-creator_install
 else
