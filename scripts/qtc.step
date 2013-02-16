@@ -30,8 +30,16 @@ cd qt-creator-build
 [ -f "${METADATAUNIVERSAL}/qt-creator_build" ] || \
   make -j${JOBS} || die "***build qt-creator error" && \
     touch ${METADATAUNIVERSAL}/qt-creator_build
+
+if [ ${HOSTOS} = "Darwin" ]; then
+[ -f "${METADATAUNIVERSAL}/qt-creator_install" ] || \
+  mv bin/Qt\ Creator.app ${PREFIX}/ || \
+    die "***install qt-creator error" && \
+      touch ${METADATAUNIVERSAL}/qt-creator_install
+else
 [ -f "${METADATAUNIVERSAL}/qt-creator_install" ] || \
   INSTALL_ROOT=${PREFIX}/qt-creator make install || \
     die "***install qt-creator error" && \
       touch ${METADATAUNIVERSAL}/qt-creator_install
+fi
 popd
