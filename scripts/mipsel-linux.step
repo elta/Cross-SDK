@@ -29,6 +29,14 @@ cd linux-${LINUX_VERSION}
   make mrproper || \
     die "clean cross linux error" && \
       touch ${METADATAMIPSELKERNEL}/linux_cross_mrpro
+[ -f ${METADATAMIPSELKERNEL}/linux_mac_patch ] || \
+  patch -p1 < ${PATCH}/linux-${LINUX_VERSION}-mips-macos.patch || \
+    die "***Patch linux mac config error" && \
+      touch ${METADATAMIPSELKERNEL}/linux_mac_patch
+[ -f ${METADATAMIPSELKERNEL}/linux_mac2_patch ] || \
+  patch -p1 < ${PATCH}/linux-${LINUX_VERSION}-mips-macos-2.patch || \
+    die "***Patch linux mac2 config error" && \
+      touch ${METADATAMIPSELKERNEL}/linux_mac2_patch
 [ -f ${METADATAMIPSELKERNEL}/linux_config_patch ] || \
   patch -p1 < ${PATCH}/linux-mipsel-sysroot-defconfig.patch || \
     die "***Patch linux config error" && \

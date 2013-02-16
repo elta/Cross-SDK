@@ -21,6 +21,14 @@ popd
 
 pushd ${SRCMIPS64ELKERNEL}
 cd linux-${LINUX_VERSION}
+[ -f ${METADATAMIPS64ELKERNEL}/linux_mac_patch ] || \
+  patch -p1 < ${PATCH}/linux-${LINUX_VERSION}-mips-macos.patch || \
+    die "***Patch linux mac config error" && \
+      touch ${METADATAMIPS64ELKERNEL}/linux_mac_patch
+[ -f ${METADATAMIPS64ELKERNEL}/linux_mac2_patch ] || \
+  patch -p1 < ${PATCH}/linux-${LINUX_VERSION}-mips-macos-2.patch || \
+    die "***Patch linux mac2 config error" && \
+      touch ${METADATAMIPS64ELKERNEL}/linux_mac2_patch
 [ -f "${METADATAMIPS64ELKERNEL}/linux_patch_mips64el_defconfig" ] || \
   patch -p1 < ${PATCH}/linux-mips64el-multilib-defconfig.patch || \
     die "patch mips64el-multilib-defconfig error" && \
