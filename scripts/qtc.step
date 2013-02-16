@@ -38,7 +38,7 @@ if [ ${HOSTOS} = "Darwin" ]; then
       touch ${METADATAUNIVERSAL}/qt-creator_install
 else
 [ -f "${METADATAUNIVERSAL}/qt-creator_install" ] || \
-  INSTALL_ROOT=${PREFIX}/qt-creator make install || \
+  INSTALL_ROOT=${PREFIXQTC} make install || \
     die "***install qt-creator error" && \
       touch ${METADATAUNIVERSAL}/qt-creator_install
 fi
