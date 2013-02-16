@@ -3,7 +3,7 @@
 source source.env
 
 [ -d "${TARBALL}" ] || mkdir -p "${TARBALL}"
-[ -d "${SRC_LIVE}" ] || mkdir -p "${SRC_LIVE}"
+[ -d "${LIVE_SRC}" ] || mkdir -p "${LIVE_SRC}"
 [ -d "${METADATADOWN}" ] || mkdir -p "${METADATADOWN}"
 
 pushd ${METADATADOWN}
@@ -495,7 +495,7 @@ download "u-boot-${UBOOT_VERSION}.${UBOOT_SUFFIX}" \
     touch uboot_download
 popd
 
-pushd ${SRC_LIVE}
+pushd ${LIVE_SRC}
 [ -f ${METADATADOWN}/llvmlinux_git ] || \
   git clone ${LLVMLINUX_GITURL} || \
   die "download llvmlinux error" && \

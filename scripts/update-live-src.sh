@@ -2,12 +2,12 @@
 
 source source.env
 
-pushd ${SRC_LIVE}
+pushd ${LIVE_SRC}
 cd llvmlinux
 git pull
 popd
 
-pushd ${SRC_LIVE}
+pushd ${LIVE_SRC}
 cd crossprojectmanager
 git pull
 popd
