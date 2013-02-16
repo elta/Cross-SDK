@@ -18,42 +18,46 @@ pushd ${SRCMIPS64ELTOOLCHAIN}
   tar xf ${TARBALL}/linux-${LINUX_VERSION}.${LINUX_SUFFIX} || \
     die "extract linux error" && \
       touch ${METADATAMIPS64ELTOOLCHAIN}/linux_extract
+
 [ -f "${METADATAMIPS64ELTOOLCHAIN}/gmp_extract" ] || \
   tar xf ${TARBALL}/gmp-${GMP_VERSION}.${GMP_SUFFIX} || \
     die "extract gmp error" && \
       touch ${METADATAMIPS64ELTOOLCHAIN}/gmp_extract
+
 [ -f "${METADATAMIPS64ELTOOLCHAIN}/mpfr_extract" ] || \
   tar xf ${TARBALL}/mpfr-${MPFR_VERSION}.${MPFR_SUFFIX} || \
     die "extract mpfr error" && \
       touch ${METADATAMIPS64ELTOOLCHAIN}/mpfr_extract
+
 [ -f "${METADATAMIPS64ELTOOLCHAIN}/mpc_extract" ] || \
   tar xf ${TARBALL}/mpc-${MPC_VERSION}.${MPC_SUFFIX} || \
     die "extract mpc error" && \
       touch ${METADATAMIPS64ELTOOLCHAIN}/mpc_extract
+
 [ -f "${METADATAMIPS64ELTOOLCHAIN}/ppl_extract" ] || \
   tar xf ${TARBALL}/ppl-${PPL_VERSION}.${PPL_SUFFIX} || \
     die "extract ppl error" && \
       touch ${METADATAMIPS64ELTOOLCHAIN}/ppl_extract
+
 [ -f "${METADATAMIPS64ELTOOLCHAIN}/cloog_extract" ] || \
   tar xf ${TARBALL}/cloog-${CLOOG_VERSION}.${CLOOG_SUFFIX} || \
     die "extract cloog error" && \
       touch ${METADATAMIPS64ELTOOLCHAIN}/cloog_extract
+
 [ -f "${METADATAMIPS64ELTOOLCHAIN}/binutils_extract" ] || \
   tar xf ${TARBALL}/binutils-${BINUTILS_VERSION}.${BINUTILS_SUFFIX} || \
     die "extract binutils error" && \
       touch ${METADATAMIPS64ELTOOLCHAIN}/binutils_extract
+
 [ -f "${METADATAMIPS64ELTOOLCHAIN}/gcc_extract" ] || \
   tar xf ${TARBALL}/gcc-${GCC_VERSION}.${GCC_SUFFIX} || \
     die "extract gcc error" && \
       touch ${METADATAMIPS64ELTOOLCHAIN}/gcc_extract
+
 [ -f "${METADATAMIPS64ELTOOLCHAIN}/glibc_extract" ] || \
   tar xf ${TARBALL}/glibc-${GLIBC_VERSION}.${GLIBC_SUFFIX} || \
     die "extract glibc error" && \
       touch ${METADATAMIPS64ELTOOLCHAIN}/glibc_extract
-[ -f "${METADATAMIPS64ELTOOLCHAIN}/procps_extract" ] || \
-  tar xf ${TARBALL}/procps-${PROCPS_VERSION}.${PROCPS_SUFFIX} || \
-    die "extract procps error" && \
-      touch ${METADATAMIPS64ELTOOLCHAIN}/procps_extract
 popd
 
 ######################## Begin Compiler CrossGcc ##############################
