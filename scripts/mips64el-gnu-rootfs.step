@@ -106,234 +106,292 @@ pushd ${SRCMIPS64ELROOTFS}
   tar xf ${TARBALL}/gmp-${GMP_VERSION}.${GMP_SUFFIX} || \
     die "extract gmp error" && \
       touch ${METADATAMIPS64ELROOTFS}/gmp_extract
+
 [ -f "${METADATAMIPS64ELROOTFS}/mpfr_extract" ] || \
   tar xf ${TARBALL}/mpfr-${MPFR_VERSION}.${MPFR_SUFFIX} || \
     die "extract mpfr error" && \
       touch ${METADATAMIPS64ELROOTFS}/mpfr_extract
+
 [ -f "${METADATAMIPS64ELROOTFS}/mpc_extract" ] || \
   tar xf ${TARBALL}/mpc-${MPC_VERSION}.${MPC_SUFFIX} || \
     die "extract mpc error" && \
       touch ${METADATAMIPS64ELROOTFS}/mpc_extract
+
 [ -f "${METADATAMIPS64ELROOTFS}/ppl_extract" ] || \
   tar xf ${TARBALL}/ppl-${PPL_VERSION}.${PPL_SUFFIX} || \
     die "extract ppl error" && \
       touch ${METADATAMIPS64ELROOTFS}/ppl_extract
+
 [ -f "${METADATAMIPS64ELROOTFS}/cloog_extract" ] || \
   tar xf ${TARBALL}/cloog-${CLOOG_VERSION}.${CLOOG_SUFFIX} || \
     die "extract cloog error" && \
       touch ${METADATAMIPS64ELROOTFS}/cloog_extract
+
 [ -f "${METADATAMIPS64ELROOTFS}/libestr_extract" ] || \
   tar xf ${TARBALL}/libestr-${LIBESTR_VERSION}.${LIBESTR_SUFFIX} || \
     die "extract libestr error" && \
       touch ${METADATAMIPS64ELROOTFS}/libestr_extract
+
 [ -f "${METADATAMIPS64ELROOTFS}/libee_extract" ] || \
   tar xf ${TARBALL}/libee-${LIBEE_VERSION}.${LIBEE_SUFFIX} || \
     die "extract libee error" && \
       touch ${METADATAMIPS64ELROOTFS}/libee_extract
+
 [ -f "${METADATAMIPS64ELROOTFS}/util-linux_extract" ] || \
   tar xf ${TARBALL}/util-${UTIL_VERSION}.${UTIL_SUFFIX} || \
     die "extract util-linux error" && \
       touch ${METADATAMIPS64ELROOTFS}/util-linux_extract
+
 [ -f "${METADATAMIPS64ELROOTFS}/binutils_extract" ] || \
   tar xf ${TARBALL}/binutils-${BINUTILS_VERSION}.${BINUTILS_SUFFIX} || \
     die "extract binutils error" && \
       touch ${METADATAMIPS64ELROOTFS}/binutils_extract
+
 [ -f "${METADATAMIPS64ELROOTFS}/gcc_extract" ] || \
   tar xf ${TARBALL}/gcc-${GCC_VERSION}.${GCC_SUFFIX} || \
     die "extract gcc error" && \
       touch ${METADATAMIPS64ELROOTFS}/gcc_extract
+
 [ -f "${METADATAMIPS64ELROOTFS}/glibc_extract" ] || \
   tar xf ${TARBALL}/glibc-${GLIBC_VERSION}.${GLIBC_SUFFIX} || \
     die "extract glibc error" && \
       touch ${METADATAMIPS64ELROOTFS}/glibc_extract
+
 [ -f "${METADATAMIPS64ELROOTFS}/file_extract" ] || \
   tar xf ${TARBALL}/file-${FILE_VERSION}.${FILE_SUFFIX} || \
     die "extract file error" && \
       touch ${METADATAMIPS64ELROOTFS}/file_extract
+
 [ -f "${METADATAMIPS64ELROOTFS}/groff_extract" ] || \
   tar xf ${TARBALL}/groff-${GROFF_VERSION}.${GROFF_SUFFIX} || \
     die "extract groff error" && \
       touch ${METADATAMIPS64ELROOTFS}/groff_extract
+
 [ -f "${METADATAMIPS64ELROOTFS}/shadow_extract" ] || \
   tar xf ${TARBALL}/shadow-${SHADOW_VERSION}.${SHADOW_SUFFIX} || \
     die "extract shadow error" && \
       touch ${METADATAMIPS64ELROOTFS}/shadow_extract
+
 [ -f "${METADATAMIPS64ELROOTFS}/ncurses_extract" ] || \
   tar xf ${TARBALL}/ncurses-${NCURSES_VERSION}.${NCURSES_SUFFIX} || \
     die "extract ncurses error" && \
       touch ${METADATAMIPS64ELROOTFS}/ncurses_extract
+
 [ -f "${METADATAMIPS64ELROOTFS}/zlib_extract" ] || \
   tar xf ${TARBALL}/zlib-${ZLIB_VERSION}.${ZLIB_SUFFIX} || \
     die "extract zlib error" && \
       touch ${METADATAMIPS64ELROOTFS}/zlib_extract
+
 [ -f "${METADATAMIPS64ELROOTFS}/sed_extract" ] || \
   tar xf ${TARBALL}/sed-${SED_VERSION}.${SED_SUFFIX} || \
     die "extract sed error" && \
       touch ${METADATAMIPS64ELROOTFS}/sed_extract
+
 [ -f "${METADATAMIPS64ELROOTFS}/coreutils_extract" ] || \
   tar xf ${TARBALL}/coreutils-${COREUTILS_VERSION}.${COREUTILS_SUFFIX} || \
     die "extract coreutils error" && \
       touch ${METADATAMIPS64ELROOTFS}/coreutils_extract
+
 [ -f "${METADATAMIPS64ELROOTFS}/iana-etc_extract" ] || \
   tar xf ${TARBALL}/iana-etc-${IANA_VERSION}.${IANA_SUFFIX} || \
     die "extract iana-etc error" && \
       touch ${METADATAMIPS64ELROOTFS}/iana-etc_extract
+
 [ -f "${METADATAMIPS64ELROOTFS}/m4_extract" ] || \
   tar xf ${TARBALL}/m4-${M4_VERSION}.${M4_SUFFIX} || \
     die "extract m4 error" && \
       touch ${METADATAMIPS64ELROOTFS}/m4_extract
+
 [ -f "${METADATAMIPS64ELROOTFS}/bison_extract" ] || \
   tar xf ${TARBALL}/bison-${BISON_VERSION}.${BISON_SUFFIX} || \
     die "extract bison error" && \
       touch ${METADATAMIPS64ELROOTFS}/bison_extract
+
 [ -f "${METADATAMIPS64ELROOTFS}/procps_extract" ] || \
   tar xf ${TARBALL}/procps-${PROCPS_VERSION}.${PROCPS_SUFFIX} || \
     die "extract procps error" && \
       touch ${METADATAMIPS64ELROOTFS}/procps_extract
+
 [ -f "${METADATAMIPS64ELROOTFS}/libtool_extract" ] || \
   tar xf ${TARBALL}/libtool-${LIBTOOL_VERSION}.${LIBTOOL_SUFFIX} || \
     die "extract libtool error" && \
       touch ${METADATAMIPS64ELROOTFS}/libtool_extract
+
 [ -f "${METADATAMIPS64ELROOTFS}/flex_extract" ] || \
   tar xf ${TARBALL}/flex-${FLEX_VERSION}.${FLEX_SUFFIX} || \
     die "extract flex error" && \
       touch ${METADATAMIPS64ELROOTFS}/flex_extract
+
 [ -f "${METADATAMIPS64ELROOTFS}/iproute2_extract" ] || \
   tar xf ${TARBALL}/iproute2-${IPROUTE2_VERSION}.${IPROUTE2_SUFFIX} || \
     die "extract iproute error" && \
       touch ${METADATAMIPS64ELROOTFS}/iproute2_extract
+
 [ -f "${METADATAMIPS64ELROOTFS}/python_extract" ] || \
   tar xf ${TARBALL}/python-${PYTHON_VERSION}.${PYTHON_SUFFIX} || \
     die "extract python error" && \
       touch ${METADATAMIPS64ELROOTFS}/python_extract
+
 [ -f "${METADATAMIPS64ELROOTFS}/readline_extract" ] || \
   tar xf ${TARBALL}/readline-${READLINE_VERSION}.${READLINE_SUFFIX} || \
     die "extract readline error" && \
       touch ${METADATAMIPS64ELROOTFS}/readline_extract
+
 [ -f "${METADATAMIPS64ELROOTFS}/autoconf_extract" ] || \
   tar xf ${TARBALL}/autoconf-${AUTOCONF_VERSION}.${AUTOCONF_SUFFIX} || \
     die "extract autoconf error" && \
       touch ${METADATAMIPS64ELROOTFS}/autoconf_extract
+
 [ -f "${METADATAMIPS64ELROOTFS}/automake_extract" ] || \
   tar xf ${TARBALL}/automake-${AUTOMAKE_VERSION}.${AUTOMAKE_SUFFIX} || \
     die "extract automake error" && \
       touch ${METADATAMIPS64ELROOTFS}/automake_extract
+
 [ -f "${METADATAMIPS64ELROOTFS}/bash_extract" ] || \
   tar xf ${TARBALL}/bash-${BASH_VERSION}.${BASH_SUFFIX} || \
     die "extract bash error" && \
       touch ${METADATAMIPS64ELROOTFS}/bash_extract
+
 [ -f "${METADATAMIPS64ELROOTFS}/bzip2_extract" ] || \
   tar xf ${TARBALL}/bzip2-${BZIP2_VERSION}.${BZIP2_SUFFIX} || \
     die "extract bzip2 error" && \
       touch ${METADATAMIPS64ELROOTFS}/bzip2_extract
+
 [ -f "${METADATAMIPS64ELROOTFS}/diffutils_extract" ] || \
   tar xf ${TARBALL}/diffutils-${DIFFUTILS_VERSION}.${DIFFUTILS_SUFFIX} || \
     die "extract diffutils error" && \
       touch ${METADATAMIPS64ELROOTFS}/diffutils_extract
+
 [ -f "${METADATAMIPS64ELROOTFS}/findutils_extract" ] || \
   tar xf ${TARBALL}/findutils-${FINDUTILS_VERSION}.${FINDUTILS_SUFFIX} || \
     die "extract findutils error" && \
       touch ${METADATAMIPS64ELROOTFS}/findutils_extract
+
 [ -f "${METADATAMIPS64ELROOTFS}/gawk_extract" ] || \
   tar xf ${TARBALL}/gawk-${GAWK_VERSION}.${GAWK_SUFFIX} || \
     die "extract gawk error" && \
       touch ${METADATAMIPS64ELROOTFS}/gawk_extract
+
 [ -f "${METADATAMIPS64ELROOTFS}/gettext_extract" ] || \
   tar xf ${TARBALL}/gettext-${GETTEXT_VERSION}.${GETTEXT_SUFFIX} || \
     die "extract gettext error" && \
       touch ${METADATAMIPS64ELROOTFS}/gettext_extract
+
 [ -f "${METADATAMIPS64ELROOTFS}/grep_extract" ] || \
   tar xf ${TARBALL}/grep-${GREP_VERSION}.${GREP_SUFFIX} || \
     die "extract grep error" && \
       touch ${METADATAMIPS64ELROOTFS}/grep_extract
+
 [ -f "${METADATAMIPS64ELROOTFS}/gzip_extract" ] || \
   tar xf ${TARBALL}/gzip-${GZIP_VERSION}.${GZIP_SUFFIX} || \
     die "extract gzip error" && \
       touch ${METADATAMIPS64ELROOTFS}/gzip_extract
+
 [ -f "${METADATAMIPS64ELROOTFS}/kbd_extract" ] || \
   tar xf ${TARBALL}/kbd-${KBD_VERSION}.${KBD_SUFFIX} || \
     die "extract kbd error" && \
       touch ${METADATAMIPS64ELROOTFS}/kbd_extract
+
 [ -f "${METADATAMIPS64ELROOTFS}/less_extract" ] || \
   tar xf ${TARBALL}/less-${LESS_VERSION}.${LESS_SUFFIX} || \
     die "extract less error" && \
       touch ${METADATAMIPS64ELROOTFS}/less_extract
+
 [ -f "${METADATAMIPS64ELROOTFS}/make_extract" ] || \
   tar xf ${TARBALL}/make-${MAKE_VERSION}.${MAKE_SUFFIX} || \
     die "extract make error" && \
       touch ${METADATAMIPS64ELROOTFS}/make_extract
+
 [ -f "${METADATAMIPS64ELROOTFS}/man_extract" ] || \
   tar xf ${TARBALL}/man-${MAN_VERSION}.${MAN_SUFFIX} || \
     die "extract man error" && \
       touch ${METADATAMIPS64ELROOTFS}/man_extract
+
 [ -f "${METADATAMIPS64ELROOTFS}/module-init-tools_extract" ] || \
   tar xf ${TARBALL}/module-init-tools-${MODULE_VERSION}.${MODULE_SUFFIX} || \
     die "extract module-init-tools error" && \
       touch ${METADATAMIPS64ELROOTFS}/module-init-tools_extract
+
 [ -f "${METADATAMIPS64ELROOTFS}/patch_extract" ] || \
   tar xf ${TARBALL}/patch-${PATCH_VERSION}.${PATCH_SUFFIX} || \
     die "extract patch error" && \
       touch ${METADATAMIPS64ELROOTFS}/patch_extract
+
 [ -f "${METADATAMIPS64ELROOTFS}/psmisc_extract" ] || \
   tar xf ${TARBALL}/psmisc-${PSMISC_VERSION}.${PSMISC_SUFFIX} || \
     die "extract psmisc error" && \
       touch ${METADATAMIPS64ELROOTFS}/psmisc_extract
+
 [ -f "${METADATAMIPS64ELROOTFS}/shadow_extract" ] || \
   tar xf ${TARBALL}/shadow-${SHADOW_VERSION}.${SHADOW_SUFFIX} || \
     die "extract shadow error" && \
       touch ${METADATAMIPS64ELROOTFS}/shadow_extract
+
 [ -f "${METADATAMIPS64ELROOTFS}/libestr_extract" ] || \
   tar xf ${TARBALL}/libestr-${LIBESTR_VERSION}.${LIBESTR_SUFFIX} || \
     die "extract libestr error" && \
       touch ${METADATAMIPS64ELROOTFS}/libestr_extract
+
 [ -f "${METADATAMIPS64ELROOTFS}/libee_extract" ] || \
   tar xf ${TARBALL}/libee-${LIBEE_VERSION}.${LIBEE_SUFFIX} || \
     die "extract libee error" && \
       touch ${METADATAMIPS64ELROOTFS}/libee_extract
+
 [ -f "${METADATAMIPS64ELROOTFS}/rsyslog_extract" ] || \
   tar xf ${TARBALL}/rsyslog-${RSYSLOG_VERSION}.${RSYSLOG_SUFFIX} || \
     die "extract rsyslog error" && \
       touch ${METADATAMIPS64ELROOTFS}/rsyslog_extract
+
 [ -f "${METADATAMIPS64ELROOTFS}/jsonc_extract" ] || \
   tar xf ${TARBALL}/json-c-${JSONC_VERSION}.${JSONC_SUFFIX} || \
     die "extract json-c error" && \
       touch ${METADATAMIPS64ELROOTFS}/jsonc_extract
+
 [ -f "${METADATAMIPS64ELROOTFS}/sysvinit_extract" ] || \
   tar xf ${TARBALL}/sysvinit-${SYSVINIT_VERSION}.${SYSVINIT_SUFFIX} || \
     die "extract sysvinit error" && \
       touch ${METADATAMIPS64ELROOTFS}/sysvinit_extract
+
 [ -f "${METADATAMIPS64ELROOTFS}/tar_extract" ] || \
   tar xf ${TARBALL}/tar-${TAR_VERSION}.${TAR_SUFFIX} || \
     die "extract tar error" && \
       touch ${METADATAMIPS64ELROOTFS}/tar_extract
+
 [ -f "${METADATAMIPS64ELROOTFS}/texinfo_extract" ] || \
   tar xf ${TARBALL}/texinfo-${TEXINFO_VERSION}a.${TEXINFO_SUFFIX} || \
     die "extract texinfo error" && \
       touch ${METADATAMIPS64ELROOTFS}/texinfo_extract
+
 [ -f "${METADATAMIPS64ELROOTFS}/kmod_extract" ] || \
   tar xf ${TARBALL}/kmod-${KMOD_VERSION}.${KMOD_SUFFIX} || \
     die "extract kmod error" && \
       touch ${METADATAMIPS64ELROOTFS}/kmod_extract
+
 [ -f "${METADATAMIPS64ELROOTFS}/udev_extract" ] || \
   tar xf ${TARBALL}/udev-${UDEV_VERSION}.${UDEV_SUFFIX} || \
     die "extract udev error" && \
       touch ${METADATAMIPS64ELROOTFS}/udev_extract
+
 [ -f "${METADATAMIPS64ELROOTFS}/vim_extract" ] || \
   tar xf ${TARBALL}/vim-${VIM_VERSION}.${VIM_SUFFIX} || \
     die "extract vim error" && \
       touch ${METADATAMIPS64ELROOTFS}/vim_extract
+
 [ -f "${METADATAMIPS64ELROOTFS}/xz_extract" ] || \
   tar xf ${TARBALL}/xz-${XZ_VERSION}.${XZ_SUFFIX} || \
     die "extract xz error" && \
       touch ${METADATAMIPS64ELROOTFS}/xz_extract
+
 [ -f "${METADATAMIPS64ELROOTFS}/bootscript_extract" ] || \
   tar xf ${TARBALL}/bootscripts-cross-lfs-${BOOTSCRIPTS_VERSION}.${BOOTSCRIPTS_SUFFIX} || \
     die "extract bootscript error" && \
       touch ${METADATAMIPS64ELROOTFS}/bootscript_extract
+
 [ -f "${METADATAMIPS64ELROOTFS}/e2fs_extract" ] || \
   tar xf ${TARBALL}/e2fsprogs-${E2FSPROGS_VERSION}.${E2FSPROGS_SUFFIX} || \
     die "extract e2fs error" && \
       touch ${METADATAMIPS64ELROOTFS}/e2fs_extract
+
 [ -f "${METADATAMIPS64ELROOTFS}/gdb_extract" ] || \
   tar xf ${TARBALL}/gdb-${GDB_VERSION}.${GDB_SUFFIX} || \
     die "extract gdb error" && \
@@ -345,14 +403,17 @@ pushd ${BUILDMIPS64ELROOTFS}
   tar xf ${TARBALL}/groff-${GROFF_VERSION}.${GROFF_SUFFIX} || \
     die "extract groff error" && \
       touch ${METADATAMIPS64ELROOTFS}/groff_extract
+
 [ -f "${METADATAMIPS64ELROOTFS}/man-pages_extract" ] || \
   tar xf ${TARBALL}/man-pages-${MANPAGES_VERSION}.${MANPAGES_SUFFIX} || \
     die "extract man-pages error" && \
       touch ${METADATAMIPS64ELROOTFS}/man-pages_extract
+
 [ -f "${METADATAMIPS64ELROOTFS}/iputils_extract" ] || \
   tar xf ${TARBALL}/iputils-${IPUTILS_VERSION}.${IPUTILS_SUFFIX} || \
     die "extract iputils error" && \
       touch ${METADATAMIPS64ELROOTFS}/iputils_extract
+
 [ -f "${METADATAMIPS64ELROOTFS}/dhcpcd_extract" ] || \
   tar xf ${TARBALL}/dhcpcd-${DHCPCD_VERSION}.${DHCPCD_SUFFIX} || \
     die "extract dhcpcd error" && \
