@@ -58,6 +58,11 @@ pushd ${SRCMIPS64ELTOOLCHAIN}
   tar xf ${TARBALL}/glibc-${GLIBC_VERSION}.${GLIBC_SUFFIX} || \
     die "extract glibc error" && \
       touch ${METADATAMIPS64ELTOOLCHAIN}/glibc_extract
+
+[ -f "${METADATAMIPS64ELTOOLCHAIN}/gdb_extract" ] || \
+  tar xf ${TARBALL}/gdb-${GDB_VERSION}.${GDB_SUFFIX} || \
+    die "extract gdb error" && \
+      touch ${METADATAMIPS64ELROOTFS}/gdb_extract
 popd
 
 ######################## Begin Compiler CrossGcc ##############################
@@ -422,6 +427,26 @@ cd gcc-build-stage2
   make install || \
     die "***install gcc stage2 error" && \
       touch ${METADATAMIPS64ELTOOLCHAIN}/gcc_stage2_install
+popd
+
+pushd ${BUILDMIPS64ELTOOLCHAIN}
+[ -d "gdb_build" ] || mkdir gdb_build
+cd gdb_build
+[ -f ${METADATAMIPS64ELTOOLCHAIN}/gdb_configure ] || \
+  ${SRCMIPS64ELTOOLCHAIN}/gdb-${GDB_VERSION}/configure \
+  --prefix=${PREFIXMIPS64ELTOOLCHAIN} \
+  --build=${CROSS_HOST} --host=${CROSS_HOST} \
+  --target=${CROSS_TARGET64} || \
+    die "***config gdb error" && \
+      touch ${METADATAMIPS64ELTOOLCHAIN}/gdb_configure
+[ -f ${METADATAMIPS64ELTOOLCHAIN}/gdb_build ] || \
+  make -j${JOBS} || \
+    die "***build gdb error" && \
+      touch ${METADATAMIPS64ELTOOLCHAIN}/gdb_build
+[ -f ${METADATAMIPS64ELTOOLCHAIN}/gdb_install ] || \
+  make install || \
+    die "***install gdb error" && \
+      touch ${METADATAMIPS64ELTOOLCHAIN}/gdb_install
 popd
 
 touch ${METADATAMIPS64ELTOOLCHAIN}/mips64el_tools_finished
