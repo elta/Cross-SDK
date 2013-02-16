@@ -17,7 +17,7 @@ source source.env
     die "build mipsel linux n32/64 kernel and modules error" && \
       touch ${METADATAMIPS64ELKERNEL}/linux_n32_64_kernel_finished
 
-[ -f "${METADATABUSYBOXMUL64}/mips64el_busybox_finished" ] || \
+[ -f "${METADATABUSYBOX_64}/mips64el_busybox_finished" ] || \
   source mips64el-busybox.step || \
     die "build mipsel busybox error" && \
-      touch ${METADATABUSYBOXMUL64}/mips64el_busybox_finished
+      touch ${METADATABUSYBOX_64}/mips64el_busybox_finished

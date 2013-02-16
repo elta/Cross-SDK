@@ -9,9 +9,9 @@ export CXX=${CROSS_TARGET64}-g++
 export CXXFLAGS="-isystem ${PREFIXMIPS64ELROOTFS}/usr/include ${BUILD64}"
 export LDFLAGS="-Wl,-rpath-link,${PREFIXMIPS64ELROOTFS}/usr/lib64:${PREFIXMIPS64ELROOTFS}/lib64 ${BUILD64}"
 
-[ -d "${SRCBUSYBOXMUL64}" ] || mkdir -p "${SRCBUSYBOXMUL64}"
-[ -d "${BUILDBUSYBOXMUL64}" ] || mkdir -p "${BUILDBUSYBOXMUL64}"
-[ -d "${METADATABUSYBOXMUL64}" ] || mkdir -p "${METADATABUSYBOXMUL64}"
+[ -d "${SRCBUSYBOX_64}" ] || mkdir -p "${SRCBUSYBOX_64}"
+[ -d "${BUILDBUSYBOX_64}" ] || mkdir -p "${BUILDBUSYBOX_64}"
+[ -d "${METADATABUSYBOX_64}" ] || mkdir -p "${METADATABUSYBOX_64}"
 
 [ -f ${PREFIXMIPS64ELTOOLCHAIN}/bin/${CC} ] || die "No toolchain found, process error"
 
@@ -20,61 +20,61 @@ export BUSYBOX_OPTIONS="dynamic"
 # Begin for loop, build static/dynamic busybox.
 for option in ${BUSYBOX_OPTIONS}; do
 
-[ -f ${METADATABUSYBOXMUL64}/busybox-${option}-create ] || \
-  mkdir ${SRCBUSYBOXMUL64}/busybox-$option || \
+[ -f ${METADATABUSYBOX_64}/busybox-${option}-create ] || \
+  mkdir ${SRCBUSYBOX_64}/busybox-$option || \
     die "busybox-${option}-create dir create failed" && \
-      touch ${METADATABUSYBOXMUL64}/busybox-${option}-create
+      touch ${METADATABUSYBOX_64}/busybox-${option}-create
 
-pushd ${SRCBUSYBOXMUL64}/busybox-$option
-[ -f ${METADATABUSYBOXMUL64}/busybox-${option}-extract ] || \
+pushd ${SRCBUSYBOX_64}/busybox-$option
+[ -f ${METADATABUSYBOX_64}/busybox-${option}-extract ] || \
   tar xf ${TARBALL}/busybox-${BUSYBOX_VERSION}.${BUSYBOX_SUFFIX} || \
     die "busybox-${option}-extract error" && \
-      touch ${METADATABUSYBOXMUL64}/busybox-${option}-extract
+      touch ${METADATABUSYBOX_64}/busybox-${option}-extract
 
 cd busybox-${BUSYBOX_VERSION}
 if [ ${HOSTOS} = "Darwin" ]; then
-[ -f ${METADATABUSYBOXMUL64}/busybox-1.20.2-macos.patch ] || \
+[ -f ${METADATABUSYBOX_64}/busybox-1.20.2-macos.patch ] || \
   patch -Np1 -i ${PATCH}/busybox-${BUSYBOX_VERSION}-macos.patch || \
     die "Patch for MacOS failed" && \
-      touch ${METADATABUSYBOXMUL64}/busybox-1.20.2-macos.patch
+      touch ${METADATABUSYBOX_64}/busybox-1.20.2-macos.patch
 fi
-[ -f ${METADATABUSYBOXMUL64}/busybox-${option}-patch-busybox-${BUSYBOX_VERSION} ] || \
+[ -f ${METADATABUSYBOX_64}/busybox-${option}-patch-busybox-${BUSYBOX_VERSION} ] || \
   patch -Np1 -i ${PATCH}/busybox-${BUSYBOX_VERSION}.patch || \
     die "Patch failed" && \
-      touch ${METADATABUSYBOXMUL64}/busybox-${option}-patch-busybox-${BUSYBOX_VERSION}
-[ -f ${METADATABUSYBOXMUL64}/busybox-${option}-patch-busybox-mips64el-${option}_defconfig ] || \
+      touch ${METADATABUSYBOX_64}/busybox-${option}-patch-busybox-${BUSYBOX_VERSION}
+[ -f ${METADATABUSYBOX_64}/busybox-${option}-patch-busybox-mips64el-${option}_defconfig ] || \
   patch -Np1 -i ${PATCH}/busybox-mips64el-${option}_defconfig.patch \
     || die "Patch failed" && \
-      touch ${METADATABUSYBOXMUL64}/busybox-${option}-patch-busybox-mips64el-${option}_defconfig
-[ -f ${METADATABUSYBOXMUL64}/busybox-${option}-config ] || \
+      touch ${METADATABUSYBOX_64}/busybox-${option}-patch-busybox-mips64el-${option}_defconfig
+[ -f ${METADATABUSYBOX_64}/busybox-${option}-config ] || \
   make mips64el-${option}_defconfig || \
     die "busybox-${option}-config error" && \
-      touch ${METADATABUSYBOXMUL64}/busybox-${option}-config
-[ -f ${METADATABUSYBOXMUL64}/busybox-${option}-build ] || \
+      touch ${METADATABUSYBOX_64}/busybox-${option}-config
+[ -f ${METADATABUSYBOX_64}/busybox-${option}-build ] || \
   make -j${JOBS} ARCH=mips CROSS_COMPILE=${CROSS_TARGET64}- || \
     die "busybox-${option}-build error" && \
-      touch ${METADATABUSYBOXMUL64}/busybox-${option}-build
-[ -f ${METADATABUSYBOXMUL64}/busybox-${option}-install ] || \
+      touch ${METADATABUSYBOX_64}/busybox-${option}-build
+[ -f ${METADATABUSYBOX_64}/busybox-${option}-install ] || \
   make ARCH=mips CROSS_COMPILE=${CROSS_TARGET64}- install || \
     die "busybox-${option}-install error" && \
-      touch ${METADATABUSYBOXMUL64}/busybox-${option}-install
+      touch ${METADATABUSYBOX_64}/busybox-${option}-install
 popd
 
 # Make BusyBox Image
-pushd ${SRCBUSYBOXMUL64}/busybox-$option
-dd if=/dev/zero of=${BUSYBOXMUL64_IMAGE} bs=4k count=512k
-echo y | mkfs.ext3 ${BUSYBOXMUL64_IMAGE}
+pushd ${SRCBUSYBOX_64}/busybox-$option
+dd if=/dev/zero of=${BUSYBOX_64_IMAGE} bs=4k count=512k
+echo y | mkfs.ext3 ${BUSYBOX_64_IMAGE}
 [ -d "${MOUNT_POINT}" ] || mkdir ${MOUNT_POINT}
 if [ ${HOSTOS} = "Darwin" ]; then
-#ext2fuse ${BUSYBOXMUL64_IMAGE} ${MOUNT_POINT} &
+#ext2fuse ${BUSYBOX_64_IMAGE} ${MOUNT_POINT} &
 die "There is something wrong with ext3 under Mac, so we complete busybox and stop here."
 else
-sudo mount -o loop ${BUSYBOXMUL64_IMAGE} ${MOUNT_POINT}
+sudo mount -o loop ${BUSYBOX_64_IMAGE} ${MOUNT_POINT}
 fi
 
 # Build BusyBox File System
-cp -ar ${SRCBUSYBOXMUL64}/busybox-$option/busybox-${BUSYBOX_VERSION}/_install/* ${MOUNT_POINT}
-sudo cp -ar ${SRCBUSYBOXMUL64}/busybox-$option/busybox-${BUSYBOX_VERSION}/examples/bootfloppy/etc \
+cp -ar ${SRCBUSYBOX_64}/busybox-$option/busybox-${BUSYBOX_VERSION}/_install/* ${MOUNT_POINT}
+sudo cp -ar ${SRCBUSYBOX_64}/busybox-$option/busybox-${BUSYBOX_VERSION}/examples/bootfloppy/etc \
   ${MOUNT_POINT}/
 mkdir ${MOUNT_POINT}/dev
 mkdir ${MOUNT_POINT}/proc
@@ -106,8 +106,8 @@ sudo umount ${MOUNT_POINT}
 popd
 
 [ -d ${PREFIXGNULINUX} ] || mkdir -p ${PREFIXGNULINUX}
-mv ${SRCBUSYBOXMUL64}/busybox-$option/${BUSYBOXMUL64_IMAGE} ${PREFIXGNULINUX}
+mv ${SRCBUSYBOX_64}/busybox-$option/${BUSYBOX_64_IMAGE} ${PREFIXGNULINUX}
 # End for loop, build static/dynamic busybox.
 done
 
-touch ${METADATABUSYBOXMUL64}/mips64el_busybox_finished
+touch ${METADATABUSYBOX_64}/mips64el_busybox_finished
