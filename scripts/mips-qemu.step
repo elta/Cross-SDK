@@ -2,6 +2,8 @@
 
 source source.env
 
+export PATH=${PREFIXHOSTTOOLS}/bin:$PATH
+
 [ -d "${SRCUNIVERSAL}" ] ||  mkdir -p "${SRCUNIVERSAL}"
 [ -d "${BUILDUNIVERSAL}" ] ||  mkdir -p "${BUILDUNIVERSAL}"
 [ -d "${METADATAUNIVERSAL}" ] || mkdir -p "${METADATAUNIVERSAL}"

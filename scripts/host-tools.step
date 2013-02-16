@@ -35,6 +35,11 @@ pushd ${SRCHOSTTOOLS}
     die "***extract groff cross error" && \
       touch ${METADATAHOSTTOOLS}/groff_extract
 
+[ -f ${METADATAHOSTTOOLS}/libtool_extract ] || \
+  tar vxf ${TARBALL}/libtool-${LIBTOOL_VERSION}.${LIBTOOL_SUFFIX} || \
+    die "extract libtool error" && \
+      touch ${METADATAHOSTTOOLS}/libtool_extract
+
 [ -f ${METADATAHOSTTOOLS}/make_extract ] || \
   tar vxf ${TARBALL}/make-${MAKE_VERSION}.${MAKE_SUFFIX} || \
     die "extract make error" && \
@@ -163,6 +168,22 @@ cd gettext-${GETTEXT_VERSION}
 popd
 
 pushd ${SRCHOSTTOOLS}
+cd libtool-${LIBTOOL_VERSION}
+[ -f ${METADATAHOSTTOOLS}/libtool_configure ] || \
+  ./configure --prefix=${PREFIXHOSTTOOLS} || \
+    die "configure sed error" && \
+      touch ${METADATAHOSTTOOLS}/libtool_configure
+[ -f ${METADATAHOSTTOOLS}/libtool_build ] || \
+  make -j${JOBS} || \
+    die "build libtool error" && \
+      touch ${METADATAHOSTTOOLS}/libtool_build
+[ -f ${METADATAHOSTTOOLS}/libtool_install ] || \
+  make install || \
+    die "install libtool error" && \
+      touch ${METADATAHOSTTOOLS}/libtool_install
+popd
+
+pushd ${SRCHOSTTOOLS}
 cd make-${MAKE_VERSION}
 [ -f ${METADATAHOSTTOOLS}/make_configure ] || \
   ./configure --prefix=${PREFIXHOSTTOOLS} || \
@@ -207,7 +228,6 @@ cd ncurses_build
   install -m755 progs/tic ${PREFIXHOSTTOOLS}/bin || \
     die "***install ncurses error" && \
       touch ${METADATAHOSTTOOLS}/ncurses_install
-popd
 
 pushd ${SRCHOSTTOOLS}
 cd sed-${SED_VERSION}
@@ -250,7 +270,6 @@ cd groff_build
     die "***install groff error" && \
       touch ${METADATAHOSTTOOLS}/groff_install
 popd
-
 
 if [ ${HOSTOS} != "Darwin" ]; then
 pushd ${SRCHOSTTOOLS}
