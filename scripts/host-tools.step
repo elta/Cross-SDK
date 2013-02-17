@@ -228,6 +228,7 @@ cd ncurses_build
   install -m755 progs/tic ${PREFIXHOSTTOOLS}/bin || \
     die "***install ncurses error" && \
       touch ${METADATAHOSTTOOLS}/ncurses_install
+popd
 
 pushd ${SRCHOSTTOOLS}
 cd sed-${SED_VERSION}
