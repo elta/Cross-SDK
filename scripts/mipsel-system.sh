@@ -14,13 +14,13 @@ echo $(pwd)
       touch ${METADATAMIPSELTOOLCHAIN}/mipsel_tools_finished
 
 echo $(pwd)
-[ -f "${METADATAMIPSELKERNEL}/linux_kernel_finished" ] || \
-  source mipsel-linux.step || \
-    die "build mipsel linux kernel and modules error" && \
-      touch ${METADATAMIPSELKERNEL}/linux_kernel_finished
-
-echo $(pwd)
 [ -f "${METADATAMIPSELROOTFS}/mipsel_rootfs_finished" ] || \
   source mipsel-gnu-rootfs.step || \
     die "build mipsel rootfs error" && \
       touch ${METADATAMIPSELROOTFS}/mipsel_rootfs_finished
+
+echo $(pwd)
+[ -f "${METADATAMIPSELKERNEL}/linux_kernel_finished" ] || \
+  source mipsel-linux.step || \
+    die "build mipsel linux kernel and modules error" && \
+      touch ${METADATAMIPSELKERNEL}/linux_kernel_finished
