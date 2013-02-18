@@ -49,7 +49,7 @@ fi
   CFLAGS="${BUILD64}" || \
     die "build linux error" && \
       touch ${METADATAMIPS64ELKERNEL}/linux_build_kernel
-if [ ${MOD} = "gu-rootfs" ]; then
+if [ ${MOD} = "gnu-rootfs" ]; then
 [ -f "${METADATAMIPS64ELKERNEL}/linux_mod_rootfs_install" ] || \
   make ARCH=mips CROSS_COMPILE=${CROSS_TARGET64}- CFLAGS="${BUILD64}" \
   INSTALL_MOD_PATH=${PREFIXMIPS64ELROOTFS} modules_install || \
