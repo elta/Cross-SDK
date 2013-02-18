@@ -7,6 +7,7 @@ export PATH=${PREFIXHOSTTOOLS}/bin:${PREFIXMIPS64ELTOOLCHAIN}/bin:$PATH
 [ -d "${SRCMIPS64ELROOTFS}" ] || mkdir -p "${SRCMIPS64ELROOTFS}"
 [ -d "${BUILDMIPS64ELROOTFS}" ] || mkdir -p "${BUILDMIPS64ELROOTFS}"
 [ -d "${METADATAMIPS64ELROOTFS}" ] || mkdir -p "${METADATAMIPS64ELROOTFS}"
+[ -d "${METADATAEXTRACT}" ] || mkdir -p "${METADATAEXTRACT}"
 [ -d "${PREFIXGNULINUX}" ] || mkdir -p "${PREFIXGNULINUX}"
 
 mkdir -p ${PREFIXMIPS64ELROOTFS}
@@ -102,344 +103,338 @@ EOF` || \
 
 ############################### Extract tarballs ##############################
 pushd ${SRCMIPS64ELROOTFS}
-[ -f "${METADATAMIPS64ELROOTFS}/gmp_extract" ] || \
+[ -f "${METADATAEXTRACT}/gmp_extract" ] || \
   tar xf ${TARBALL}/gmp-${GMP_VERSION}.${GMP_SUFFIX} || \
     die "extract gmp error" && \
-      touch ${METADATAMIPS64ELROOTFS}/gmp_extract
+      touch ${METADATAEXTRACT}/gmp_extract
 
-[ -f "${METADATAMIPS64ELROOTFS}/mpfr_extract" ] || \
+[ -f "${METADATAEXTRACT}/mpfr_extract" ] || \
   tar xf ${TARBALL}/mpfr-${MPFR_VERSION}.${MPFR_SUFFIX} || \
     die "extract mpfr error" && \
-      touch ${METADATAMIPS64ELROOTFS}/mpfr_extract
+      touch ${METADATAEXTRACT}/mpfr_extract
 
-[ -f "${METADATAMIPS64ELROOTFS}/mpc_extract" ] || \
+[ -f "${METADATAEXTRACT}/mpc_extract" ] || \
   tar xf ${TARBALL}/mpc-${MPC_VERSION}.${MPC_SUFFIX} || \
     die "extract mpc error" && \
-      touch ${METADATAMIPS64ELROOTFS}/mpc_extract
+      touch ${METADATAEXTRACT}/mpc_extract
 
-[ -f "${METADATAMIPS64ELROOTFS}/ppl_extract" ] || \
+[ -f "${METADATAEXTRACT}/ppl_extract" ] || \
   tar xf ${TARBALL}/ppl-${PPL_VERSION}.${PPL_SUFFIX} || \
     die "extract ppl error" && \
-      touch ${METADATAMIPS64ELROOTFS}/ppl_extract
+      touch ${METADATAEXTRACT}/ppl_extract
 
-[ -f "${METADATAMIPS64ELROOTFS}/cloog_extract" ] || \
+[ -f "${METADATAEXTRACT}/cloog_extract" ] || \
   tar xf ${TARBALL}/cloog-${CLOOG_VERSION}.${CLOOG_SUFFIX} || \
     die "extract cloog error" && \
-      touch ${METADATAMIPS64ELROOTFS}/cloog_extract
+      touch ${METADATAEXTRACT}/cloog_extract
 
-[ -f "${METADATAMIPS64ELROOTFS}/libestr_extract" ] || \
+[ -f "${METADATAEXTRACT}/libestr_extract" ] || \
   tar xf ${TARBALL}/libestr-${LIBESTR_VERSION}.${LIBESTR_SUFFIX} || \
     die "extract libestr error" && \
-      touch ${METADATAMIPS64ELROOTFS}/libestr_extract
+      touch ${METADATAEXTRACT}/libestr_extract
 
-[ -f "${METADATAMIPS64ELROOTFS}/libee_extract" ] || \
+[ -f "${METADATAEXTRACT}/libee_extract" ] || \
   tar xf ${TARBALL}/libee-${LIBEE_VERSION}.${LIBEE_SUFFIX} || \
     die "extract libee error" && \
-      touch ${METADATAMIPS64ELROOTFS}/libee_extract
+      touch ${METADATAEXTRACT}/libee_extract
 
-[ -f "${METADATAMIPS64ELROOTFS}/util-linux_extract" ] || \
+[ -f "${METADATAEXTRACT}/util-linux_extract" ] || \
   tar xf ${TARBALL}/util-${UTIL_VERSION}.${UTIL_SUFFIX} || \
     die "extract util-linux error" && \
-      touch ${METADATAMIPS64ELROOTFS}/util-linux_extract
+      touch ${METADATAEXTRACT}/util-linux_extract
 
-[ -f "${METADATAMIPS64ELROOTFS}/binutils_extract" ] || \
+[ -f "${METADATAEXTRACT}/binutils_extract" ] || \
   tar xf ${TARBALL}/binutils-${BINUTILS_VERSION}.${BINUTILS_SUFFIX} || \
     die "extract binutils error" && \
-      touch ${METADATAMIPS64ELROOTFS}/binutils_extract
+      touch ${METADATAEXTRACT}/binutils_extract
 
-[ -f "${METADATAMIPS64ELROOTFS}/gcc_extract" ] || \
+[ -f "${METADATAEXTRACT}/gcc_extract" ] || \
   tar xf ${TARBALL}/gcc-${GCC_VERSION}.${GCC_SUFFIX} || \
     die "extract gcc error" && \
-      touch ${METADATAMIPS64ELROOTFS}/gcc_extract
+      touch ${METADATAEXTRACT}/gcc_extract
 
-[ -f "${METADATAMIPS64ELROOTFS}/glibc_extract" ] || \
+[ -f "${METADATAEXTRACT}/glibc_extract" ] || \
   tar xf ${TARBALL}/glibc-${GLIBC_VERSION}.${GLIBC_SUFFIX} || \
     die "extract glibc error" && \
-      touch ${METADATAMIPS64ELROOTFS}/glibc_extract
+      touch ${METADATAEXTRACT}/glibc_extract
 
-[ -f "${METADATAMIPS64ELROOTFS}/file_extract" ] || \
+[ -f "${METADATAEXTRACT}/file_extract" ] || \
   tar xf ${TARBALL}/file-${FILE_VERSION}.${FILE_SUFFIX} || \
     die "extract file error" && \
-      touch ${METADATAMIPS64ELROOTFS}/file_extract
+      touch ${METADATAEXTRACT}/file_extract
 
-[ -f "${METADATAMIPS64ELROOTFS}/groff_extract" ] || \
-  tar xf ${TARBALL}/groff-${GROFF_VERSION}.${GROFF_SUFFIX} || \
-    die "extract groff error" && \
-      touch ${METADATAMIPS64ELROOTFS}/groff_extract
-
-[ -f "${METADATAMIPS64ELROOTFS}/shadow_extract" ] || \
+[ -f "${METADATAEXTRACT}/shadow_extract" ] || \
   tar xf ${TARBALL}/shadow-${SHADOW_VERSION}.${SHADOW_SUFFIX} || \
     die "extract shadow error" && \
-      touch ${METADATAMIPS64ELROOTFS}/shadow_extract
+      touch ${METADATAEXTRACT}/shadow_extract
 
-[ -f "${METADATAMIPS64ELROOTFS}/ncurses_extract" ] || \
+[ -f "${METADATAEXTRACT}/ncurses_extract" ] || \
   tar xf ${TARBALL}/ncurses-${NCURSES_VERSION}.${NCURSES_SUFFIX} || \
     die "extract ncurses error" && \
-      touch ${METADATAMIPS64ELROOTFS}/ncurses_extract
+      touch ${METADATAEXTRACT}/ncurses_extract
 
-[ -f "${METADATAMIPS64ELROOTFS}/zlib_extract" ] || \
+[ -f "${METADATAEXTRACT}/zlib_extract" ] || \
   tar xf ${TARBALL}/zlib-${ZLIB_VERSION}.${ZLIB_SUFFIX} || \
     die "extract zlib error" && \
-      touch ${METADATAMIPS64ELROOTFS}/zlib_extract
+      touch ${METADATAEXTRACT}/zlib_extract
 
-[ -f "${METADATAMIPS64ELROOTFS}/sed_extract" ] || \
+[ -f "${METADATAEXTRACT}/sed_extract" ] || \
   tar xf ${TARBALL}/sed-${SED_VERSION}.${SED_SUFFIX} || \
     die "extract sed error" && \
-      touch ${METADATAMIPS64ELROOTFS}/sed_extract
+      touch ${METADATAEXTRACT}/sed_extract
 
-[ -f "${METADATAMIPS64ELROOTFS}/coreutils_extract" ] || \
+[ -f "${METADATAEXTRACT}/coreutils_extract" ] || \
   tar xf ${TARBALL}/coreutils-${COREUTILS_VERSION}.${COREUTILS_SUFFIX} || \
     die "extract coreutils error" && \
-      touch ${METADATAMIPS64ELROOTFS}/coreutils_extract
+      touch ${METADATAEXTRACT}/coreutils_extract
 
-[ -f "${METADATAMIPS64ELROOTFS}/iana-etc_extract" ] || \
+[ -f "${METADATAEXTRACT}/iana_extract" ] || \
   tar xf ${TARBALL}/iana-etc-${IANA_VERSION}.${IANA_SUFFIX} || \
     die "extract iana-etc error" && \
-      touch ${METADATAMIPS64ELROOTFS}/iana-etc_extract
+      touch ${METADATAEXTRACT}/iana_extract
 
-[ -f "${METADATAMIPS64ELROOTFS}/m4_extract" ] || \
+[ -f "${METADATAEXTRACT}/m4_extract" ] || \
   tar xf ${TARBALL}/m4-${M4_VERSION}.${M4_SUFFIX} || \
     die "extract m4 error" && \
-      touch ${METADATAMIPS64ELROOTFS}/m4_extract
+      touch ${METADATAEXTRACT}/m4_extract
 
-[ -f "${METADATAMIPS64ELROOTFS}/bison_extract" ] || \
+[ -f "${METADATAEXTRACT}/bison_extract" ] || \
   tar xf ${TARBALL}/bison-${BISON_VERSION}.${BISON_SUFFIX} || \
     die "extract bison error" && \
-      touch ${METADATAMIPS64ELROOTFS}/bison_extract
+      touch ${METADATAEXTRACT}/bison_extract
 
-[ -f "${METADATAMIPS64ELROOTFS}/procps_extract" ] || \
+[ -f "${METADATAEXTRACT}/procps_extract" ] || \
   tar xf ${TARBALL}/procps-${PROCPS_VERSION}.${PROCPS_SUFFIX} || \
     die "extract procps error" && \
-      touch ${METADATAMIPS64ELROOTFS}/procps_extract
+      touch ${METADATAEXTRACT}/procps_extract
 
-[ -f "${METADATAMIPS64ELROOTFS}/libtool_extract" ] || \
+[ -f "${METADATAEXTRACT}/libtool_extract" ] || \
   tar xf ${TARBALL}/libtool-${LIBTOOL_VERSION}.${LIBTOOL_SUFFIX} || \
     die "extract libtool error" && \
-      touch ${METADATAMIPS64ELROOTFS}/libtool_extract
+      touch ${METADATAEXTRACT}/libtool_extract
 
-[ -f "${METADATAMIPS64ELROOTFS}/flex_extract" ] || \
+[ -f "${METADATAEXTRACT}/flex_extract" ] || \
   tar xf ${TARBALL}/flex-${FLEX_VERSION}.${FLEX_SUFFIX} || \
     die "extract flex error" && \
-      touch ${METADATAMIPS64ELROOTFS}/flex_extract
+      touch ${METADATAEXTRACT}/flex_extract
 
-[ -f "${METADATAMIPS64ELROOTFS}/iproute2_extract" ] || \
+[ -f "${METADATAEXTRACT}/iproute2_extract" ] || \
   tar xf ${TARBALL}/iproute2-${IPROUTE2_VERSION}.${IPROUTE2_SUFFIX} || \
     die "extract iproute error" && \
-      touch ${METADATAMIPS64ELROOTFS}/iproute2_extract
+      touch ${METADATAEXTRACT}/iproute2_extract
 
-[ -f "${METADATAMIPS64ELROOTFS}/python_extract" ] || \
+[ -f "${METADATAEXTRACT}/python_extract" ] || \
   tar xf ${TARBALL}/python-${PYTHON_VERSION}.${PYTHON_SUFFIX} || \
     die "extract python error" && \
-      touch ${METADATAMIPS64ELROOTFS}/python_extract
+      touch ${METADATAEXTRACT}/python_extract
 
-[ -f "${METADATAMIPS64ELROOTFS}/readline_extract" ] || \
+[ -f "${METADATAEXTRACT}/readline_extract" ] || \
   tar xf ${TARBALL}/readline-${READLINE_VERSION}.${READLINE_SUFFIX} || \
     die "extract readline error" && \
-      touch ${METADATAMIPS64ELROOTFS}/readline_extract
+      touch ${METADATAEXTRACT}/readline_extract
 
-[ -f "${METADATAMIPS64ELROOTFS}/autoconf_extract" ] || \
+[ -f "${METADATAEXTRACT}/autoconf_extract" ] || \
   tar xf ${TARBALL}/autoconf-${AUTOCONF_VERSION}.${AUTOCONF_SUFFIX} || \
     die "extract autoconf error" && \
-      touch ${METADATAMIPS64ELROOTFS}/autoconf_extract
+      touch ${METADATAEXTRACT}/autoconf_extract
 
-[ -f "${METADATAMIPS64ELROOTFS}/automake_extract" ] || \
+[ -f "${METADATAEXTRACT}/automake_extract" ] || \
   tar xf ${TARBALL}/automake-${AUTOMAKE_VERSION}.${AUTOMAKE_SUFFIX} || \
     die "extract automake error" && \
-      touch ${METADATAMIPS64ELROOTFS}/automake_extract
+      touch ${METADATAEXTRACT}/automake_extract
 
-[ -f "${METADATAMIPS64ELROOTFS}/bash_extract" ] || \
+[ -f "${METADATAEXTRACT}/bash_extract" ] || \
   tar xf ${TARBALL}/bash-${BASH_VERSION}.${BASH_SUFFIX} || \
     die "extract bash error" && \
-      touch ${METADATAMIPS64ELROOTFS}/bash_extract
+      touch ${METADATAEXTRACT}/bash_extract
 
-[ -f "${METADATAMIPS64ELROOTFS}/bzip2_extract" ] || \
+[ -f "${METADATAEXTRACT}/bzip2_extract" ] || \
   tar xf ${TARBALL}/bzip2-${BZIP2_VERSION}.${BZIP2_SUFFIX} || \
     die "extract bzip2 error" && \
-      touch ${METADATAMIPS64ELROOTFS}/bzip2_extract
+      touch ${METADATAEXTRACT}/bzip2_extract
 
-[ -f "${METADATAMIPS64ELROOTFS}/diffutils_extract" ] || \
+[ -f "${METADATAEXTRACT}/diffutils_extract" ] || \
   tar xf ${TARBALL}/diffutils-${DIFFUTILS_VERSION}.${DIFFUTILS_SUFFIX} || \
     die "extract diffutils error" && \
-      touch ${METADATAMIPS64ELROOTFS}/diffutils_extract
+      touch ${METADATAEXTRACT}/diffutils_extract
 
-[ -f "${METADATAMIPS64ELROOTFS}/findutils_extract" ] || \
+[ -f "${METADATAEXTRACT}/findutils_extract" ] || \
   tar xf ${TARBALL}/findutils-${FINDUTILS_VERSION}.${FINDUTILS_SUFFIX} || \
     die "extract findutils error" && \
-      touch ${METADATAMIPS64ELROOTFS}/findutils_extract
+      touch ${METADATAEXTRACT}/findutils_extract
 
-[ -f "${METADATAMIPS64ELROOTFS}/gawk_extract" ] || \
+[ -f "${METADATAEXTRACT}/gawk_extract" ] || \
   tar xf ${TARBALL}/gawk-${GAWK_VERSION}.${GAWK_SUFFIX} || \
     die "extract gawk error" && \
-      touch ${METADATAMIPS64ELROOTFS}/gawk_extract
+      touch ${METADATAEXTRACT}/gawk_extract
 
-[ -f "${METADATAMIPS64ELROOTFS}/gettext_extract" ] || \
+[ -f "${METADATAEXTRACT}/gettext_extract" ] || \
   tar xf ${TARBALL}/gettext-${GETTEXT_VERSION}.${GETTEXT_SUFFIX} || \
     die "extract gettext error" && \
-      touch ${METADATAMIPS64ELROOTFS}/gettext_extract
+      touch ${METADATAEXTRACT}/gettext_extract
 
-[ -f "${METADATAMIPS64ELROOTFS}/grep_extract" ] || \
+[ -f "${METADATAEXTRACT}/grep_extract" ] || \
   tar xf ${TARBALL}/grep-${GREP_VERSION}.${GREP_SUFFIX} || \
     die "extract grep error" && \
-      touch ${METADATAMIPS64ELROOTFS}/grep_extract
+      touch ${METADATAEXTRACT}/grep_extract
 
-[ -f "${METADATAMIPS64ELROOTFS}/gzip_extract" ] || \
+[ -f "${METADATAEXTRACT}/gzip_extract" ] || \
   tar xf ${TARBALL}/gzip-${GZIP_VERSION}.${GZIP_SUFFIX} || \
     die "extract gzip error" && \
-      touch ${METADATAMIPS64ELROOTFS}/gzip_extract
+      touch ${METADATAEXTRACT}/gzip_extract
 
-[ -f "${METADATAMIPS64ELROOTFS}/kbd_extract" ] || \
+[ -f "${METADATAEXTRACT}/kbd_extract" ] || \
   tar xf ${TARBALL}/kbd-${KBD_VERSION}.${KBD_SUFFIX} || \
     die "extract kbd error" && \
-      touch ${METADATAMIPS64ELROOTFS}/kbd_extract
+      touch ${METADATAEXTRACT}/kbd_extract
 
-[ -f "${METADATAMIPS64ELROOTFS}/less_extract" ] || \
+[ -f "${METADATAEXTRACT}/less_extract" ] || \
   tar xf ${TARBALL}/less-${LESS_VERSION}.${LESS_SUFFIX} || \
     die "extract less error" && \
-      touch ${METADATAMIPS64ELROOTFS}/less_extract
+      touch ${METADATAEXTRACT}/less_extract
 
-[ -f "${METADATAMIPS64ELROOTFS}/make_extract" ] || \
+[ -f "${METADATAEXTRACT}/make_extract" ] || \
   tar xf ${TARBALL}/make-${MAKE_VERSION}.${MAKE_SUFFIX} || \
     die "extract make error" && \
-      touch ${METADATAMIPS64ELROOTFS}/make_extract
+      touch ${METADATAEXTRACT}/make_extract
 
-[ -f "${METADATAMIPS64ELROOTFS}/man_extract" ] || \
+[ -f "${METADATAEXTRACT}/man_extract" ] || \
   tar xf ${TARBALL}/man-${MAN_VERSION}.${MAN_SUFFIX} || \
     die "extract man error" && \
-      touch ${METADATAMIPS64ELROOTFS}/man_extract
+      touch ${METADATAEXTRACT}/man_extract
 
-[ -f "${METADATAMIPS64ELROOTFS}/module-init-tools_extract" ] || \
+[ -f "${METADATAEXTRACT}/module-init-tools_extract" ] || \
   tar xf ${TARBALL}/module-init-tools-${MODULE_VERSION}.${MODULE_SUFFIX} || \
     die "extract module-init-tools error" && \
-      touch ${METADATAMIPS64ELROOTFS}/module-init-tools_extract
+      touch ${METADATAEXTRACT}/module-init-tools_extract
 
-[ -f "${METADATAMIPS64ELROOTFS}/patch_extract" ] || \
+[ -f "${METADATAEXTRACT}/patch_extract" ] || \
   tar xf ${TARBALL}/patch-${PATCH_VERSION}.${PATCH_SUFFIX} || \
     die "extract patch error" && \
-      touch ${METADATAMIPS64ELROOTFS}/patch_extract
+      touch ${METADATAEXTRACT}/patch_extract
 
-[ -f "${METADATAMIPS64ELROOTFS}/psmisc_extract" ] || \
+[ -f "${METADATAEXTRACT}/psmisc_extract" ] || \
   tar xf ${TARBALL}/psmisc-${PSMISC_VERSION}.${PSMISC_SUFFIX} || \
     die "extract psmisc error" && \
-      touch ${METADATAMIPS64ELROOTFS}/psmisc_extract
+      touch ${METADATAEXTRACT}/psmisc_extract
 
-[ -f "${METADATAMIPS64ELROOTFS}/shadow_extract" ] || \
+[ -f "${METADATAEXTRACT}/shadow_extract" ] || \
   tar xf ${TARBALL}/shadow-${SHADOW_VERSION}.${SHADOW_SUFFIX} || \
     die "extract shadow error" && \
-      touch ${METADATAMIPS64ELROOTFS}/shadow_extract
+      touch ${METADATAEXTRACT}/shadow_extract
 
-[ -f "${METADATAMIPS64ELROOTFS}/libestr_extract" ] || \
+[ -f "${METADATAEXTRACT}/libestr_extract" ] || \
   tar xf ${TARBALL}/libestr-${LIBESTR_VERSION}.${LIBESTR_SUFFIX} || \
     die "extract libestr error" && \
-      touch ${METADATAMIPS64ELROOTFS}/libestr_extract
+      touch ${METADATAEXTRACT}/libestr_extract
 
-[ -f "${METADATAMIPS64ELROOTFS}/libee_extract" ] || \
+[ -f "${METADATAEXTRACT}/libee_extract" ] || \
   tar xf ${TARBALL}/libee-${LIBEE_VERSION}.${LIBEE_SUFFIX} || \
     die "extract libee error" && \
-      touch ${METADATAMIPS64ELROOTFS}/libee_extract
+      touch ${METADATAEXTRACT}/libee_extract
 
-[ -f "${METADATAMIPS64ELROOTFS}/rsyslog_extract" ] || \
+[ -f "${METADATAEXTRACT}/rsyslog_extract" ] || \
   tar xf ${TARBALL}/rsyslog-${RSYSLOG_VERSION}.${RSYSLOG_SUFFIX} || \
     die "extract rsyslog error" && \
-      touch ${METADATAMIPS64ELROOTFS}/rsyslog_extract
+      touch ${METADATAEXTRACT}/rsyslog_extract
 
-[ -f "${METADATAMIPS64ELROOTFS}/jsonc_extract" ] || \
+[ -f "${METADATAEXTRACT}/jsonc_extract" ] || \
   tar xf ${TARBALL}/json-c-${JSONC_VERSION}.${JSONC_SUFFIX} || \
     die "extract json-c error" && \
-      touch ${METADATAMIPS64ELROOTFS}/jsonc_extract
+      touch ${METADATAEXTRACT}/jsonc_extract
 
-[ -f "${METADATAMIPS64ELROOTFS}/sysvinit_extract" ] || \
+[ -f "${METADATAEXTRACT}/sysvinit_extract" ] || \
   tar xf ${TARBALL}/sysvinit-${SYSVINIT_VERSION}.${SYSVINIT_SUFFIX} || \
     die "extract sysvinit error" && \
-      touch ${METADATAMIPS64ELROOTFS}/sysvinit_extract
+      touch ${METADATAEXTRACT}/sysvinit_extract
 
-[ -f "${METADATAMIPS64ELROOTFS}/tar_extract" ] || \
+[ -f "${METADATAEXTRACT}/tar_extract" ] || \
   tar xf ${TARBALL}/tar-${TAR_VERSION}.${TAR_SUFFIX} || \
     die "extract tar error" && \
-      touch ${METADATAMIPS64ELROOTFS}/tar_extract
+      touch ${METADATAEXTRACT}/tar_extract
 
-[ -f "${METADATAMIPS64ELROOTFS}/texinfo_extract" ] || \
+[ -f "${METADATAEXTRACT}/texinfo_extract" ] || \
   tar xf ${TARBALL}/texinfo-${TEXINFO_VERSION}a.${TEXINFO_SUFFIX} || \
     die "extract texinfo error" && \
-      touch ${METADATAMIPS64ELROOTFS}/texinfo_extract
+      touch ${METADATAEXTRACT}/texinfo_extract
 
-[ -f "${METADATAMIPS64ELROOTFS}/kmod_extract" ] || \
+[ -f "${METADATAEXTRACT}/kmod_extract" ] || \
   tar xf ${TARBALL}/kmod-${KMOD_VERSION}.${KMOD_SUFFIX} || \
     die "extract kmod error" && \
-      touch ${METADATAMIPS64ELROOTFS}/kmod_extract
+      touch ${METADATAEXTRACT}/kmod_extract
 
-[ -f "${METADATAMIPS64ELROOTFS}/udev_extract" ] || \
+[ -f "${METADATAEXTRACT}/udev_extract" ] || \
   tar xf ${TARBALL}/udev-${UDEV_VERSION}.${UDEV_SUFFIX} || \
     die "extract udev error" && \
-      touch ${METADATAMIPS64ELROOTFS}/udev_extract
+      touch ${METADATAEXTRACT}/udev_extract
 
-[ -f "${METADATAMIPS64ELROOTFS}/vim_extract" ] || \
+[ -f "${METADATAEXTRACT}/vim_extract" ] || \
   tar xf ${TARBALL}/vim-${VIM_VERSION}.${VIM_SUFFIX} || \
     die "extract vim error" && \
-      touch ${METADATAMIPS64ELROOTFS}/vim_extract
+      touch ${METADATAEXTRACT}/vim_extract
 
-[ -f "${METADATAMIPS64ELROOTFS}/xz_extract" ] || \
+[ -f "${METADATAEXTRACT}/xz_extract" ] || \
   tar xf ${TARBALL}/xz-${XZ_VERSION}.${XZ_SUFFIX} || \
     die "extract xz error" && \
-      touch ${METADATAMIPS64ELROOTFS}/xz_extract
+      touch ${METADATAEXTRACT}/xz_extract
 
-[ -f "${METADATAMIPS64ELROOTFS}/bootscript_extract" ] || \
+[ -f "${METADATAEXTRACT}/bootscript_extract" ] || \
   tar xf ${TARBALL}/bootscripts-cross-lfs-${BOOTSCRIPTS_VERSION}.${BOOTSCRIPTS_SUFFIX} || \
     die "extract bootscript error" && \
-      touch ${METADATAMIPS64ELROOTFS}/bootscript_extract
+      touch ${METADATAEXTRACT}/bootscript_extract
 
-[ -f "${METADATAMIPS64ELROOTFS}/e2fs_extract" ] || \
+[ -f "${METADATAEXTRACT}/e2fs_extract" ] || \
   tar xf ${TARBALL}/e2fsprogs-${E2FSPROGS_VERSION}.${E2FSPROGS_SUFFIX} || \
     die "extract e2fs error" && \
-      touch ${METADATAMIPS64ELROOTFS}/e2fs_extract
+      touch ${METADATAEXTRACT}/e2fs_extract
 
-[ -f "${METADATAMIPS64ELROOTFS}/gdb_extract" ] || \
+[ -f "${METADATAEXTRACT}/gdb_extract" ] || \
   tar xf ${TARBALL}/gdb-${GDB_VERSION}.${GDB_SUFFIX} || \
     die "extract gdb error" && \
-      touch ${METADATAMIPS64ELROOTFS}/gdb_extract
-popd
+      touch ${METADATAEXTRACT}/gdb_extract
 
-pushd ${BUILDMIPS64ELROOTFS}
-[ -f "${METADATAMIPS64ELROOTFS}/groff_extract" ] || \
+[ -f "${METADATAEXTRACT}/groff_extract" ] || \
   tar xf ${TARBALL}/groff-${GROFF_VERSION}.${GROFF_SUFFIX} || \
     die "extract groff error" && \
-      touch ${METADATAMIPS64ELROOTFS}/groff_extract
+      touch ${METADATAEXTRACT}/groff_extract
 
-[ -f "${METADATAMIPS64ELROOTFS}/man-pages_extract" ] || \
+[ -f "${METADATAEXTRACT}/man-pages_extract" ] || \
   tar xf ${TARBALL}/man-pages-${MANPAGES_VERSION}.${MANPAGES_SUFFIX} || \
     die "extract man-pages error" && \
-      touch ${METADATAMIPS64ELROOTFS}/man-pages_extract
+      touch ${METADATAEXTRACT}/man-pages_extract
 
-[ -f "${METADATAMIPS64ELROOTFS}/iputils_extract" ] || \
+[ -f "${METADATAEXTRACT}/iputils_extract" ] || \
   tar xf ${TARBALL}/iputils-${IPUTILS_VERSION}.${IPUTILS_SUFFIX} || \
     die "extract iputils error" && \
-      touch ${METADATAMIPS64ELROOTFS}/iputils_extract
+      touch ${METADATAEXTRACT}/iputils_extract
 
-[ -f "${METADATAMIPS64ELROOTFS}/dhcpcd_extract" ] || \
+[ -f "${METADATAEXTRACT}/dhcpcd_extract" ] || \
   tar xf ${TARBALL}/dhcpcd-${DHCPCD_VERSION}.${DHCPCD_SUFFIX} || \
     die "extract dhcpcd error" && \
-      touch ${METADATAMIPS64ELROOTFS}/dhcpcd_extract
-popd
+      touch ${METADATAEXTRACT}/dhcpcd_extract
 
-pushd ${SRCMIPS64ELROOTFS}
-[ -f "${METADATAMIPS64ELROOTFS}/perl_cross_extract" ] || \
-  tar xf ${TARBALL}/perl-${PERLCROSS_VERSION}.${PERLCROSS_SUFFIX} || \
-    die "extract perl cross error" && \
-      touch ${METADATAMIPS64ELROOTFS}/perl_cross_extract
-popd
+mkdir -p perl_cross
+cd perl_cross
+[ -f ${METADATAEXTRACT}/perl_cross_extract ] || \
+  tar xf ${TARBALL}/perl-${PERLCROSS_VERSION}.tar.gz || \
+    die "***extract cross perl error" && \
+      touch ${METADATAEXTRACT}/perl_cross_extract
+cd ..
 
-pushd ${BUILDMIPS64ELROOTFS}
-[ -f "${METADATAMIPS64ELROOTFS}/perl_extract" ] || \
+[ -f ${METADATAEXTRACT}/perl_extract ] || \
   tar xf ${TARBALL}/perl-${PERL_VERSION}.${PERL_SUFFIX} || \
-    die "extract perl error" && \
-      touch ${METADATAMIPS64ELROOTFS}/perl_extract
-popd
+    die "***extract perl error" && \
+      touch ${METADATAEXTRACT}/perl_extract
 
-pushd ${BUILDMIPS64ELROOTFS}
-cd perl-${PERL_VERSION}
-[ -f "${METADATAMIPS64ELROOTFS}/perl_cross_merge" ] || \
-  cp -a ${SRCMIPS64ELROOTFS}/perl-${PERL_VERSION}/* ./ || \
-    die "merge cross perl error" && \
-      touch ${METADATAMIPS64ELROOTFS}/perl_cross_merge
+[ -f ${METADATAEXTRACT}/perl_cross_copy ] || \
+  cp -ar perl_cross/perl-${PERL_VERSION}/* perl-${PERL_VERSION}/ || \
+    die "***copy cross perl error" && \
+      touch ${METADATAEXTRACT}/perl_cross_copy
+
+[ -f ${METADATAEXTRACT}/perl_cross_clean ] || \
+  rm -rf perl_cross || \
+    die "***clean cross perl error" && \
+      touch ${METADATAEXTRACT}/perl_cross_clean
 popd
 
 ########################### Begin Cross Compile File System ####################
@@ -451,7 +446,7 @@ export RANLIB="${CROSS_TARGET64}-ranlib"
 export LD="${CROSS_TARGET64}-ld"
 export STRIP="${CROSS_TARGET64}-strip"
 
-pushd ${BUILDMIPS64ELROOTFS}
+pushd ${SRCMIPS64ELROOTFS}
 cd man-pages-${MANPAGES_VERSION}
 [ -f "${METADATAMIPS64ELROOTFS}/man_cross_build" ] || \
   make CC="${CC} ${BUILD64}" prefix=${PREFIXMIPS64ELROOTFS}/usr install || \
@@ -626,9 +621,8 @@ cd mpfr-64
       touch ${METADATAMIPS64ELROOTFS}/mpfr_rm64_la
 popd
 
-pushd ${BUILDMIPS64ELROOTFS}
-[ -d mpc-32 ] || cp -ar ${SRCMIPS64ELROOTFS}/mpc-${MPC_VERSION} mpc-32
-cd mpc-32
+pushd ${SRCMIPS64ELROOTFS}
+cd mpc-${MPC_VERSION}
 [ -f "${METADATAMIPS64ELROOTFS}/mpc_config32" ] || \
   CC="${CC} ${BUILD32}" CXX="${CXX} ${BUILD32}" \
   LDFLAGS="-Wl,-rpath-link,${PREFIXMIPS64ELROOTFS}/usr/lib:${PREFIXMIPS64ELROOTFS}/lib ${BUILD32}" \
@@ -648,11 +642,14 @@ cd mpc-32
   make DESTDIR=${PREFIXMIPS64ELROOTFS} install || \
     die "***install mpc32 error" && \
       touch ${METADATAMIPS64ELROOTFS}/mpc_install32
+[ -f "${METADATAMIPS64ELROOTFS}/mpc_clean32" ] || \
+  make distclean || \
+    die "***clean mpc32 error" && \
+      touch ${METADATAMIPS64ELROOTFS}/mpc_clean32
 popd
 
-pushd ${BUILDMIPS64ELROOTFS}
-[ -d mpc-n32 ] || cp -ar ${SRCMIPS64ELROOTFS}/mpc-${MPC_VERSION} mpc-n32
-cd mpc-n32
+pushd ${SRCMIPS64ELROOTFS}
+cd mpc-${MPC_VERSION}
 [ -f "${METADATAMIPS64ELROOTFS}/mpc_confign32" ] || \
   CC="${CC} ${BUILDN32}" \
   LDFLAGS="-Wl,-rpath-link,${PREFIXMIPS64ELROOTFS}/usr/lib32:${PREFIXMIPS64ELROOTFS}/lib32 ${BUILDN32}" \
@@ -672,11 +669,14 @@ cd mpc-n32
   make DESTDIR=${PREFIXMIPS64ELROOTFS} install || \
     die "***install mpcn32 error" && \
       touch ${METADATAMIPS64ELROOTFS}/mpc_installn32
+[ -f "${METADATAMIPS64ELROOTFS}/mpc_cleann32" ] || \
+  make distclean || \
+    die "***clean mpcn32 error" && \
+      touch ${METADATAMIPS64ELROOTFS}/mpc_cleann32
 popd
 
-pushd ${BUILDMIPS64ELROOTFS}
-[ -d mpc-64 ] || cp -ar ${SRCMIPS64ELROOTFS}/mpc-${MPC_VERSION} mpc-64
-cd mpc-64
+pushd ${SRCMIPS64ELROOTFS}
+cd mpc-${MPC_VERSION}
 [ -f "${METADATAMIPS64ELROOTFS}/mpc_config64" ] || \
   CC="${CC} ${BUILD64}" \
   LDFLAGS="-Wl,-rpath-link,${PREFIXMIPS64ELROOTFS}/usr/lib64:${PREFIXMIPS64ELROOTFS}/lib64 ${BUILD64}" \
@@ -696,6 +696,10 @@ cd mpc-64
   make DESTDIR=${PREFIXMIPS64ELROOTFS} install || \
     die "***install mpc64 error" && \
       touch ${METADATAMIPS64ELROOTFS}/mpc_install64
+[ -f "${METADATAMIPS64ELROOTFS}/mpc_clean64" ] || \
+  make distclean || \
+    die "***clean mpc64 error" && \
+      touch ${METADATAMIPS64ELROOTFS}/mpc_clean64
 popd
 
 pushd ${BUILDMIPS64ELROOTFS}
@@ -906,9 +910,8 @@ cd cloog-64
 #      touch ${METADATAMIPS64ELROOTFS}/cloog_rm64_la
 popd
 
-pushd ${BUILDMIPS64ELROOTFS}
-[ -d "zlib-32" ] || cp -ar ${SRCMIPS64ELROOTFS}/zlib-${ZLIB_VERSION} zlib-32
-cd zlib-32
+pushd ${SRCMIPS64ELROOTFS}
+cd zlib-${ZLIB_VERSION}
 [ -f "${METADATAMIPS64ELROOTFS}/zlib_config32" ] || \
   CC="${CC} ${BUILD32}" CXX="${CXX} ${BUILD32}" \
   LDFLAGS="-Wl,-rpath-link,${PREFIXMIPS64ELROOTFS}/usr/lib:${PREFIXMIPS64ELROOTFS}/lib ${BUILD32}" \
@@ -929,11 +932,14 @@ cd zlib-32
   chmod -v 644 ${PREFIXMIPS64ELROOTFS}/usr/lib/libz.a || \
     die "update zlib32 files error" && \
       touch ${METADATAMIPS64ELROOTFS}/zlib_update32_files
+[ -f "${METADATAMIPS64ELROOTFS}/zlib_clean32" ] || \
+  make distclean || \
+    die "***clean zlib32 error" && \
+      touch ${METADATAMIPS64ELROOTFS}/zlib_clean32
 popd
 
-pushd ${BUILDMIPS64ELROOTFS}
-[ -d "zlib-n32" ] || cp -ar ${SRCMIPS64ELROOTFS}/zlib-${ZLIB_VERSION} zlib-n32
-cd zlib-n32
+pushd ${SRCMIPS64ELROOTFS}
+cd zlib-${ZLIB_VERSION}
 [ -f "${METADATAMIPS64ELROOTFS}/zlib_confign32" ] || \
   CC="${CC} ${BUILDN32}" CXX="${CXX} ${BUILDN32}" \
   LDFLAGS="-Wl,-rpath-link,${PREFIXMIPS64ELROOTFS}/usr/lib32:${PREFIXMIPS64ELROOTFS}/lib32 ${BUILDN32}" \
@@ -954,11 +960,14 @@ cd zlib-n32
   chmod -v 644 ${PREFIXMIPS64ELROOTFS}/usr/lib32/libz.a || \
     die "update zlibn32 files error" && \
       touch ${METADATAMIPS64ELROOTFS}/zlib_updaten32_files
+[ -f "${METADATAMIPS64ELROOTFS}/zlib_cleann32" ] || \
+  make distclean || \
+    die "***clean zlibn32 error" && \
+      touch ${METADATAMIPS64ELROOTFS}/zlib_cleann32
 popd
 
-pushd ${BUILDMIPS64ELROOTFS}
-[ -d "zlib-64" ] || cp -ar ${SRCMIPS64ELROOTFS}/zlib-${ZLIB_VERSION} zlib-64
-cd zlib-64
+pushd ${SRCMIPS64ELROOTFS}
+cd zlib-${ZLIB_VERSION}
 [ -f "${METADATAMIPS64ELROOTFS}/zlib_config64" ] || \
   CC="${CC} ${BUILD64}" CXX="${CXX} ${BUILD64}" \
   LDFLAGS="-Wl,-rpath-link,${PREFIXMIPS64ELROOTFS}/usr/lib64:${PREFIXMIPS64ELROOTFS}/lib64 ${BUILD64}" \
@@ -979,6 +988,10 @@ cd zlib-64
   chmod -v 644 ${PREFIXMIPS64ELROOTFS}/usr/lib64/libz.a || \
     die "update zlib64 files error" && \
       touch ${METADATAMIPS64ELROOTFS}/zlib_update64_files
+[ -f "${METADATAMIPS64ELROOTFS}/zlib_clean64" ] || \
+  make distclean || \
+    die "***clean zlib64 error" && \
+      touch ${METADATAMIPS64ELROOTFS}/zlib_clean64
 popd
 
 #pushd ${SRCMIPS64ELROOTFS}
@@ -1106,6 +1119,11 @@ cd gcc-cross-build
   ln -sfv gcc ${PREFIXMIPS64ELROOTFS}/usr/bin/cc || \
     die "link gcc lib/gcc error" && \
       touch ${METADATAMIPS64ELROOTFS}/gcc_cross_ln_lib.gcc
+popd
+
+pushd ${SRCMIPS64ELROOTFS}/gcc-${GCC_VERSION}
+cp libiberty/Makefile.in{.orig,}
+cp gcc/Makefile.in{.orig,}
 popd
 
 pushd ${BUILDMIPS64ELROOTFS}
@@ -1677,6 +1695,11 @@ cd e2fs-64
       touch ${METADATAMIPS64ELROOTFS}/e2fs_link64_libss.so.2
 popd
 
+pushd ${SRCMIPS64ELROOTFS}
+cd e2fsprogs-${E2FSPROGS_VERSION}
+cp configure-bk configure
+popd
+
 pushd ${SRCMIPS64ELROOTFS}/coreutils-${COREUTILS_VERSION}
   touch man/uname.1 man/hostname.1
 popd
@@ -1753,9 +1776,8 @@ EOF
       touch ${METADATAMIPS64ELROOTFS}/coreutils_link_install
 popd
 
-pushd ${BUILDMIPS64ELROOTFS}
-[ -d "iana-etc-cross-build" ] || cp -ar ${SRCMIPS64ELROOTFS}/iana-etc-${IANA_VERSION} iana-etc-cross-build
-cd iana-etc-cross-build
+pushd ${SRCMIPS64ELROOTFS}
+cd iana-etc-${IANA_VERSION}
 [ -f "${METADATAMIPS64ELROOTFS}/iana-etc_cross_build" ] || \
   make CC="${CC} ${BUILD64}" CXX="${CXX} ${BUILD64}" -j${JOBS} || \
     die "***build iana-etc error" && \
@@ -1764,9 +1786,14 @@ cd iana-etc-cross-build
   make DESTDIR=${PREFIXMIPS64ELROOTFS} install || \
     die "***install iana-etc error" && \
       touch ${METADATAMIPS64ELROOTFS}/iana-etc_cross_install
+[ -f "${METADATAMIPS64ELROOTFS}/iana-etc_cross_clean" ] || \
+  make dist || \
+    die "***clean iana-etc error" && \
+      touch ${METADATAMIPS64ELROOTFS}/iana-etc_cross_clean
 popd
 
 pushd ${SRCMIPS64ELROOTFS}/m4-${M4_VERSION}
+cp lib/stdio.in.h{,.orig}
 [ -f "${METADATAMIPS64ELROOTFS}/m4_patch_stdio.h" ] || \
   sed -i '/gets is a security hole/d' lib/stdio.in.h || \
     die "patch m4 stdio.h error" && \
@@ -1803,6 +1830,10 @@ EOF` || \
   make DESTDIR=${PREFIXMIPS64ELROOTFS} install || \
     die "***install m4 error" && \
       touch ${METADATAMIPS64ELROOTFS}/m4_cross_install
+popd
+
+pushd ${SRCMIPS64ELROOTFS}/m4-${M4_VERSION}
+cp lib/stdio.in.h{.orig,}
 popd
 
 pushd ${SRCMIPS64ELROOTFS}/bison-${BISON_VERSION}
@@ -2159,6 +2190,10 @@ EOF` || \
       touch ${METADATAMIPS64ELROOTFS}/flex_link64_libfl
 popd
 
+pushd ${SRCMIPS64ELROOTFS}/flex-${FLEX_VERSION}
+cp -v Makefile.in{.orig,}
+popd
+
 pushd ${BUILDMIPS64ELROOTFS}
 [ -f "${METADATAMIPS64ELROOTFS}/flex_cross_create_script" ] || \
   `cat > ${PREFIXMIPS64ELROOTFS}/usr/bin/lex << "EOF"
@@ -2174,10 +2209,8 @@ EOF` && \
       touch ${METADATAMIPS64ELROOTFS}/flex_cross_create_script
 popd
 
-pushd ${BUILDMIPS64ELROOTFS}
-[ -d "iproute2-cross-build" ] || \
-  cp -ar ${SRCMIPS64ELROOTFS}/iproute2-${IPROUTE2_VERSION} iproute2-cross-build
-cd iproute2-cross-build
+pushd ${SRCMIPS64ELROOTFS}
+cd iproute2-${IPROUTE2_VERSION}
 for dir in ip misc tc; do
   cp ${dir}/Makefile{,.orig};
   sed 's/0755 -s/0755/' ${dir}/Makefile.orig > ${dir}/Makefile;
@@ -2196,9 +2229,16 @@ sed '/^TARGETS/s@arpd@@g' misc/Makefile.orig > misc/Makefile
   MANDIR=/usr/share/man  LIBDIR=/usr/lib64 install || \
     die "***install iproute2 error" && \
       touch ${METADATAMIPS64ELROOTFS}/iproute2_cross_install
+[ -f "${METADATAMIPS64ELROOTFS}/iproute2_cross_clean" ] || \
+  make distclean || \
+    die "***clean iproute2 error" && \
+      touch ${METADATAMIPS64ELROOTFS}/iproute2_cross_clean
+for dir in ip misc tc; do
+  cp ${dir}/Makefile{.orig,};
+done;
 popd
 
-pushd ${BUILDMIPS64ELROOTFS}
+pushd ${SRCMIPS64ELROOTFS}
 cd perl-${PERL_VERSION}
 [ -f "${METADATAMIPS64ELROOTFS}/perl_cross_config" ] || \
   LD=${CC} ./configure --prefix=/usr --target=${CROSS_TARGET64} \
@@ -2215,12 +2255,14 @@ cd perl-${PERL_VERSION}
   make DESTDIR=${PREFIXMIPS64ELROOTFS} LD=${CC} install || \
     die "install cross perl error" && \
       touch ${METADATAMIPS64ELROOTFS}/perl_cross_install
+[ -f "${METADATAMIPS64ELROOTFS}/perl_clean_cross" ] || \
+  make clean || \
+    die "clean cross perl error" && \
+      touch ${METADATAMIPS64ELROOTFS}/perl_clean_cross
 popd
 
-pushd ${BUILDMIPS64ELROOTFS}
-[ -d "python-cross-build" ] || \
-  cp -ar ${SRCMIPS64ELROOTFS}/Python-${PYTHON_VERSION} python-cross-build
-cd python-cross-build
+pushd ${SRCMIPS64ELROOTFS}
+cd Python-${PYTHON_VERSION}
 [ -f "${METADATAMIPS64ELROOTFS}/python-cross-update-patch" ] || \
   sed -e 's/\${SYSROOT}/${PREFIXMIPS64ELROOTFS}/g' \
          ${PATCH}/python-3.3-cross-mips64.patch > tmp.patch || \
@@ -2252,6 +2294,14 @@ EOF
   make DESTDIR=${PREFIXMIPS64ELROOTFS} install || \
     die "***install python_cross error" && \
       touch ${METADATAMIPS64ELROOTFS}/python_cross_install
+[ -f "${METADATAMIPS64ELROOTFS}/python_cross_re_patch" ] || \
+  patch -Rp1 < tmp.patch || \
+    die "re-patch cross python error" && \
+      touch ${METADATAMIPS64ELROOTFS}/python_cross_re_patch
+[ -f "${METADATAMIPS64ELROOTFS}/python_cross_clean" ] || \
+  make distclean || \
+    die "***clean python_cross error" && \
+      touch ${METADATAMIPS64ELROOTFS}/python_cross_clean
 popd
 
 pushd ${BUILDMIPS64ELROOTFS}
@@ -2470,10 +2520,8 @@ EOF` || \
       touch ${METADATAMIPS64ELROOTFS}/bash_cross_link_install
 popd
 
-pushd ${BUILDMIPS64ELROOTFS}
-[ -d "bzip2-32" ] || \
-  cp -ar ${SRCMIPS64ELROOTFS}/bzip2-${BZIP2_VERSION} bzip2-32
-cd bzip2-32
+pushd ${SRCMIPS64ELROOTFS}
+cd bzip2-${BZIP2_VERSION}
 cp Makefile{,.orig}
 sed -e "/^all:/s/ test//" Makefile.orig > Makefile
 sed -i -e 's:ln -s -f $(PREFIX)/bin/:ln -s :' Makefile
@@ -2503,12 +2551,15 @@ sed -i -e 's:ln -s -f $(PREFIX)/bin/:ln -s :' Makefile
   ln -sfv ../../lib/libbz2.so.1.0 ${PREFIXMIPS64ELROOTFS}/usr/lib/libbz2.so || \
     die "link bzip32 libbz2.so.1.0 error" && \
       touch ${METADATAMIPS64ELROOTFS}/bzip_link32_libbz2.so.1.0
+[ -f "${METADATAMIPS64ELROOTFS}/bzip_distclean32" ] || \
+  make distclean || \
+    die "distclean bzip32 error" && \
+      touch ${METADATAMIPS64ELROOTFS}/bzip_distclean32
+cp Makefile{.orig,}
 popd
 
-pushd ${BUILDMIPS64ELROOTFS}
-[ -d "bzip2-n32" ] || \
-  cp -ar ${SRCMIPS64ELROOTFS}/bzip2-${BZIP2_VERSION} bzip2-n32
-cd bzip2-n32
+pushd ${SRCMIPS64ELROOTFS}
+cd bzip2-${BZIP2_VERSION}
 cp Makefile{,.orig} && \
 sed -e "/^all:/s/ test//" Makefile.orig > Makefile
 sed -i -e 's:ln -s -f $(PREFIX)/bin/:ln -s :' Makefile
@@ -2539,12 +2590,15 @@ sed -i 's@/lib\(/\| \|$\)@/lib32\1@g' Makefile
   ln -sfv ../../lib32/libbz2.so.1.0 ${PREFIXMIPS64ELROOTFS}/usr/lib32/libbz2.so || \
     die "link bzipn32 libbz2.so.1.0 error" && \
       touch ${METADATAMIPS64ELROOTFS}/bzip_linkn32_libbz2.so.1.0
+[ -f "${METADATAMIPS64ELROOTFS}/bzip_distcleann32" ] || \
+  make distclean || \
+    die "distclean bzipn32 error" && \
+      touch ${METADATAMIPS64ELROOTFS}/bzip_distcleann32
+cp Makefile{.orig,}
 popd
 
-pushd ${BUILDMIPS64ELROOTFS}
-[ -d "bzip2-64" ] || \
-  cp -ar ${SRCMIPS64ELROOTFS}/bzip2-${BZIP2_VERSION} bzip2-64
-cd bzip2-64
+pushd ${SRCMIPS64ELROOTFS}
+cd bzip2-${BZIP2_VERSION}
 cp Makefile{,.orig} && \
 sed -e "/^all:/s/ test//" Makefile.orig > Makefile
 sed -i -e 's:ln -s -f $(PREFIX)/bin/:ln -s :' Makefile
@@ -2591,12 +2645,17 @@ sed -i 's@/lib\(/\| \|$\)@/lib64\1@g' Makefile
   ln -sfv bzip2 ${PREFIXMIPS64ELROOTFS}/bin/bzcat || \
     die "link bzip64 bzip2 bzcat error" && \
       touch ${METADATAMIPS64ELROOTFS}/bzip_link64_bzip2_bzcat
+[ -f "${METADATAMIPS64ELROOTFS}/bzip_distclean64" ] || \
+  make distclean || \
+    die "distclean bzip64 error" && \
+      touch ${METADATAMIPS64ELROOTFS}/bzip_distclean64
+cp Makefile{.orig,}
 popd
 
-pushd ${BUILDMIPS64ELROOTFS}
-[ -d diffutils-cross-build ] || \
-  cp -ar ${SRCMIPS64ELROOTFS}/diffutils-${DIFFUTILS_VERSION} diffutils-cross-build
-cd diffutils-cross-build
+pushd ${SRCMIPS64ELROOTFS}
+cd diffutils-${DIFFUTILS_VERSION}
+cp lib/stdio.in.h{,.orig}
+cp lib/config.h{,.orig}
 [ -f "${METADATAMIPS64ELROOTFS}/diffutils_update_stdio.h" ] || \
   sed -i '/gets is a security hole/d' lib/stdio.in.h || \
     die "update diffutils stdio.h error" && \
@@ -2619,6 +2678,12 @@ touch man/*.1
   make DESTDIR=${PREFIXMIPS64ELROOTFS} install || \
     die "***install diffutils error" && \
       touch ${METADATAMIPS64ELROOTFS}/diffutils_cross_install
+cp lib/stdio.in.h{.orig,}
+cp lib/config.h{.orig,}
+[ -f "${METADATAMIPS64ELROOTFS}/diffutils_cross_clean" ] || \
+  make distclean || \
+    die "***clean diffutils error" && \
+      touch ${METADATAMIPS64ELROOTFS}/diffutils_cross_clean
 popd
 
 pushd ${BUILDMIPS64ELROOTFS}
@@ -2726,6 +2791,7 @@ EOF` || \
   rm ${PREFIXMIPS64ELROOTFS}/usr/bin/updatedb.orig || \
     die "rm findutils updatedb.orig error" && \
       touch ${METADATAMIPS64ELROOTFS}/findutils_rm_updatedb.orig
+cp ${PREFIXMIPS64ELROOTFS}/usr/bin/updatedb{.orig,}
 popd
 
 pushd ${BUILDMIPS64ELROOTFS}
@@ -2876,7 +2942,8 @@ cd grep-cross-build
       touch ${METADATAMIPS64ELROOTFS}/grep_cross_install
 popd
 
-pushd ${SRCMIPS64ELROOTFS}/groff-${GROFF_VERSION}
+pushd ${SRCMIPS64ELROOTFS}
+cd groff-${GROFF_VERSION}
 # FIXME This is a sub dir config, it's very strange.
   pushd src/libs/gnulib/
   [ -f "${METADATAMIPS64ELROOTFS}/groff_cross_config_gnulib" ] || \
@@ -2906,11 +2973,22 @@ pushd ${SRCMIPS64ELROOTFS}/groff-${GROFF_VERSION}
   ln -sfv tbl ${PREFIXMIPS64ELROOTFS}/usr/bin/gtbl || \
     die "link groff files error" && \
       touch ${METADATAMIPS64ELROOTFS}/groff_cross_link_files
+  pushd src/libs/gnulib/
+  [ -f "${METADATAMIPS64ELROOTFS}/groff_cross_clean_gnulib" ] || \
+    make distclean || \
+      die "clean groff/src/libs/gnulib" && \
+        touch ${METADATAMIPS64ELROOTFS}/groff_cross_clean_gnulib
+  popd
+[ -f "${METADATAMIPS64ELROOTFS}/groff_cross_clean" ] || \
+  make distclean || \
+    die "clean groff" && \
+      touch ${METADATAMIPS64ELROOTFS}/groff_cross_clean
 popd
 
 pushd ${SRCMIPS64ELROOTFS}/gzip-${GZIP_VERSION}
 [ -f "${METADATAMIPS64ELROOTFS}/gzip_update_files" ] || \
   `for file in $(grep -lr futimens *); do \
+    cp ${file}{,.orig}
     sed -ie "s/futimens/gl_&/" ${file}; \
   done;` || \
     die "gzip update files error" && \
@@ -2941,7 +3019,12 @@ cd gzip-cross-build
       touch ${METADATAMIPS64ELROOTFS}/bzip_cross_move_install
 popd
 
-pushd ${BUILDMIPS64ELROOTFS}
+pushd ${SRCMIPS64ELROOTFS}/gzip-${GZIP_VERSION}
+for file in $(grep -lr futimens *); do \
+  cp ${file}{.orig,}
+done;
+popd
+pushd ${SRCMIPS64ELROOTFS}
 cd iputils-${IPUTILS_VERSION}
 [ -f ${METADATAMIPS64ELROOTFS}/iputils_patchfix ] || \
   patch -Np1 -i ${PATCH}/iputils-s20121221-fixes-1.patch || \
@@ -2983,6 +3066,18 @@ cd iputils-${IPUTILS_VERSION}
   install -v -m644 doc/*.8 ${PREFIXMIPS64ELROOTFS}/usr/share/man/man8 || \
     die "iputils install doc error" && \
       touch ${METADATAMIPS64ELROOTFS}/iputils_cross_isntall_doc
+[ -f "${METADATAMIPS64ELROOTFS}/iputils_clean" ] || \
+  make distclean || \
+    die "clean iputils error" && \
+      touch ${METADATAMIPS64ELROOTFS}/iputils_clean
+[ -f ${METADATAMIPS64ELROOTFS}/iputils_re_patchfix ] || \
+  patch -RNp1 -i ${PATCH}/iputils-s20121221-fixes-1.patch || \
+    die "***re-patch fix iputils error" && \
+      touch ${METADATAMIPS64ELROOTFS}/iputils_re_patchfix
+[ -f ${METADATAMIPS64ELROOTFS}/iputils_re_patchdoc ] || \
+  patch -RNp1 -i ${PATCH}/iputils-s20121221-doc-1.patch || \
+    die "***re-patch doc iputils error" && \
+      touch ${METADATAMIPS64ELROOTFS}/iputils_re_patchdoc
 popd
 
 pushd ${BUILDMIPS64ELROOTFS}
@@ -3018,15 +3113,11 @@ EOF` || \
       touch ${METADATAMIPS64ELROOTFS}/kbd_cross_move_install
 popd
 
-pushd ${BUILDMIPS64ELROOTFS}
-[ -d "less-cross-buildusr" ] || \
-  cp -ar ${SRCMIPS64ELROOTFS}/less-${LESS_VERSION} less-cross-buildusr
-cd less-cross-buildusr
+pushd ${SRCMIPS64ELROOTFS}
+cd less-${LESS_VERSION}
 [ -f "${METADATAMIPS64ELROOTFS}/less_cross_configusr" ] || \
-  CC="${CC} ${BUILD64}" \
-  CXX="${CXX} ${BUILD64}" \
-  ${SRCMIPS64ELROOTFS}/less-${LESS_VERSION}/configure \
-  --build=${CROSS_HOST} --host=${CROSS_TARGET64} \
+  CC="${CC} ${BUILD64}" CXX="${CXX} ${BUILD64}" \
+  ./configure --build=${CROSS_HOST} --host=${CROSS_TARGET64} \
   --prefix=/usr --sysconfdir=/etc || \
     die "***config less error" && \
       touch ${METADATAMIPS64ELROOTFS}/less_cross_configusr
@@ -3042,6 +3133,10 @@ cd less-cross-buildusr
   mv -v ${PREFIXMIPS64ELROOTFS}/usr/bin/less ${PREFIXMIPS64ELROOTFS}/bin || \
     die "move less install" && \
       touch ${METADATAMIPS64ELROOTFS}/less_cross_move_install
+[ -f "${METADATAMIPS64ELROOTFS}/less_cross_clean" ] || \
+  make distclean || \
+    die "clean less error" && \
+      touch ${METADATAMIPS64ELROOTFS}/less_cross_clean
 popd
 
 pushd ${BUILDMIPS64ELROOTFS}
@@ -3063,10 +3158,8 @@ cd make-cross-buildusr
       touch ${METADATAMIPS64ELROOTFS}/make_cross_install
 popd
 
-pushd ${BUILDMIPS64ELROOTFS}
-[ -d "man-cross-build" ] || \
-  cp -ar ${SRCMIPS64ELROOTFS}/man-${MAN_VERSION} man-cross-build
-cd man-cross-build
+pushd ${SRCMIPS64ELROOTFS}
+cd man-${MAN_VERSION}
 
 [ -f "${METADATAMIPS64ELROOTFS}/man_cross_update_files" ] || \
   cp configure{,.orig} && \
@@ -3101,6 +3194,13 @@ cd man-cross-build
   make DESTDIR=${PREFIXMIPS64ELROOTFS} PREFIX="" install || \
     die "***install man error" && \
       touch ${METADATAMIPS64ELROOTFS}/man_cross_install
+[ -f "${METADATAMIPS64ELROOTFS}/man_cross_clean" ] || \
+  make distclean || \
+    die "***clean man error" && \
+      touch ${METADATAMIPS64ELROOTFS}/man_cross_clean
+cp configure{.orig,}
+cp src/man.conf.in{.orig,}
+cp conf_script{.orig,}
 popd
 
 pushd ${BUILDMIPS64ELROOTFS}
@@ -3183,10 +3283,8 @@ EOF` || \
       touch ${METADATAMIPS64ELROOTFS}/psmisc_cross_update_install
 popd
 
-pushd ${BUILDMIPS64ELROOTFS}
-[ -d "shadow-cross-buildusr" ] || \
-  cp -ar ${SRCMIPS64ELROOTFS}/shadow-${SHADOW_VERSION} shadow-cross-buildusr
-cd shadow-cross-buildusr
+pushd ${SRCMIPS64ELROOTFS}
+cd shadow-${SHADOW_VERSION}
 [ -f "${METADATAMIPS64ELROOTFS}/shadow_cross_create_config.cache" ] || \
   `cat > config.cache << EOF
 ac_cv_func_setpgrp_void=yes
@@ -3223,6 +3321,15 @@ sed -e's@#MD5_CRYPT_ENAB.no@MD5_CRYPT_ENAB yes@' \
     -e 's@/var/spool/mail@/var/mail@' \
     login.defs.orig > ${PREFIXMIPS64ELROOTFS}/etc/login.defs
 mv -v ${PREFIXMIPS64ELROOTFS}/usr/bin/passwd ${PREFIXMIPS64ELROOTFS}/bin
+[ -f "${METADATAMIPS64ELROOTFS}/shadow_cross_clean" ] || \
+  make distclean || \
+    die "***install shadow error" && \
+      touch ${METADATAMIPS64ELROOTFS}/shadow_cross_clean
+cp src/Makefile{.orig,}
+for mkf in $(find man -name Makefile); do
+  cp ${mkf}{.orig,};
+done;
+cp ${PREFIXMIPS64ELROOTFS}/etc/login.defs.orig login.defs
 popd
 
 pushd ${BUILDMIPS64ELROOTFS}
@@ -3655,10 +3762,8 @@ EOF` || \
   die "create rsyslog.conf error" && \
     touch ${METADATAMIPS64ELROOTFS}/create_rsyslog.conf
 
-pushd ${BUILDMIPS64ELROOTFS}
-[ -d "sysvinit-cross-buildusr" ] || \
-  cp -ar ${SRCMIPS64ELROOTFS}/sysvinit-${SYSVINIT_VERSION} sysvinit-cross-buildusr
-cd sysvinit-cross-buildusr
+pushd ${SRCMIPS64ELROOTFS}
+cd sysvinit-${SYSVINIT_VERSION}
 [ -f "${METADATAMIPS64ELROOTFS}/sysvinit_cross_update_files" ] || \
   cp -v src/Makefile src/Makefile.orig && \
   sed -e 's@/dev/initctl@$(ROOT)&@g' \
@@ -3680,6 +3785,11 @@ cd sysvinit-cross-buildusr
   make -C src ROOT=${PREFIXMIPS64ELROOTFS} INSTALL="install" install || \
     die "***install sysvinit error" && \
       touch ${METADATAMIPS64ELROOTFS}/sysvinit_cross_install
+[ -f "${METADATAMIPS64ELROOTFS}/sysvinit_cross_clean" ] || \
+  make distclean || \
+    die "***install sysvinit error" && \
+      touch ${METADATAMIPS64ELROOTFS}/sysvinit_cross_clean
+cp -v src/Makefile.orig src/Makefile
 popd
 
 [ -f "${METADATAMIPS64ELROOTFS}/create_inittab" ] || \
@@ -3718,6 +3828,7 @@ EOF` || \
     touch ${METADATAMIPS64ELROOTFS}/create_inittab
 
 pushd ${SRCMIPS64ELROOTFS}/tar-${TAR_VERSION}
+cp gnu/stdio.in.h{,.orig}
 [ -f "${METADATAMIPS64ELROOTFS}/tar_update_stdio.h" ] || \
   sed -i '/gets is a security hole/d' gnu/stdio.in.h || \
     die "update tar stdio.h error" && \
@@ -3756,6 +3867,10 @@ EOF` || \
   make DESTDIR=${PREFIXMIPS64ELROOTFS} install || \
     die "***install tar error" && \
       touch ${METADATAMIPS64ELROOTFS}/tar_cross_install
+popd
+
+pushd ${SRCMIPS64ELROOTFS}/tar-${TAR_VERSION}
+cp gnu/stdio.in.h{.orig,}
 popd
 
 pushd ${BUILDMIPS64ELROOTFS}
@@ -3981,9 +4096,8 @@ EOF` || \
       touch ${METADATAMIPS64ELROOTFS}/vim_cross_update_feature
 popd
 
-pushd ${BUILDMIPS64ELROOTFS}
-[ -d "vim-buildusr" ] || cp -ar ${SRCMIPS64ELROOTFS}/${VIM_DIR} vim-buildusr
-cd vim-buildusr
+pushd ${SRCMIPS64ELROOTFS}
+cd ${VIM_DIR}
 [ -f "${METADATAMIPS64ELROOTFS}/vim_create_config.cache" ] || \
   `cat > src/auto/config.cache << "EOF"
 vim_cv_getcwd_broken=no
@@ -4030,6 +4144,17 @@ EOF` || \
 #
 #" End /etc/vimrc
 #EOF
+[ -f "${METADATAMIPS64ELROOTFS}/vim_clean" ] || \
+  make distclean || \
+    die "***clean vim error" && \
+      touch ${METADATAMIPS64ELROOTFS}/vim_clean
+popd
+
+pushd ${SRCMIPS64ELROOTFS}/${VIM_DIR}
+[ -f "${METADATAMIPS64ELROOTFS}/vim_re_patch" ] || \
+  patch -RNp1 -i ${PATCH}/vim-7.3-branch_update-4.patch || \
+    die "*** re-patch vim error" && \
+      touch ${METADATAMIPS64ELROOTFS}/vim_re_patch
 popd
 
 pushd ${BUILDMIPS64ELROOTFS}
@@ -4110,7 +4235,7 @@ cd xz-64
       touch ${METADATAMIPS64ELROOTFS}/xz_mv64_liblzma.a
 popd
 
-pushd ${BUILDMIPS64ELROOTFS}
+pushd ${SRCMIPS64ELROOTFS}
 cd dhcpcd-${DHCPCD_VERSION}
 [ -f "${METADATAMIPS64ELROOTFS}/dhcpcd_cross_config" ] || \
   CC="${CC} ${BUILD64}" PREFIX="" ./configure --target=${CROSS_TARGET64} || \
@@ -4127,9 +4252,14 @@ cd dhcpcd-${DHCPCD_VERSION}
        DESTDIR=${PREFIXMIPS64ELROOTFS} install || \
     die "install dhcpcd error" && \
       touch ${METADATAMIPS64ELROOTFS}/dhcpcd_cross_install
+[ -f "${METADATAMIPS64ELROOTFS}/dhcpcd_cross_clean" ] || \
+  make distclean || \
+    die "install dhcpcd error" && \
+      touch ${METADATAMIPS64ELROOTFS}/dhcpcd_cross_clean
 popd
 
-pushd ${SRCMIPS64ELROOTFS}/bootscripts-cross-lfs-${BOOTSCRIPTS_VERSION}
+pushd ${SRCMIPS64ELROOTFS}
+cd bootscripts-cross-lfs-${BOOTSCRIPTS_VERSION}
 [ -f "${METADATAMIPS64ELROOTFS}/bootscript_install_boot" ] || \
   make CC="${CC} ${BUILD64}" DESTDIR=${PREFIXMIPS64ELROOTFS} install-bootscripts || \
     die "install bootscripts error" && \
@@ -4138,6 +4268,10 @@ pushd ${SRCMIPS64ELROOTFS}/bootscripts-cross-lfs-${BOOTSCRIPTS_VERSION}
   make DESTDIR=${PREFIXMIPS64ELROOTFS} install-network || \
     die "install network error" && \
       touch ${METADATAMIPS64ELROOTFS}/bootscript_install_network
+[ -f "${METADATAMIPS64ELROOTFS}/bootscript_clean" ] || \
+  make dist || \
+    die "clean network error" && \
+      touch ${METADATAMIPS64ELROOTFS}/bootscript_clean
 popd
 
 #########################################################################

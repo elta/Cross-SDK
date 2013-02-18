@@ -248,6 +248,12 @@ download "libee-${LIBEE_VERSION}.${LIBEE_SUFFIX}" \
   die "download libee error" && \
     touch libee_download
 
+[ -f libelf_download ] || \
+download "libelf-${LIBELF_VERSION}.${LIBELF_SUFFIX}" \
+  "${LIBELF_URL}/libelf-${LIBELF_VERSION}.${LIBELF_SUFFIX}" || \
+  die "download libelf error" && \
+    touch libelf_download
+
 [ -f libestr_download ] || \
 download "libestr-${LIBESTR_VERSION}.${LIBESTR_SUFFIX}" \
   "${LIBESTR_URL}/libestr-${LIBESTR_VERSION}.${LIBESTR_SUFFIX}" || \

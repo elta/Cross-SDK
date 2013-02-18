@@ -5,6 +5,7 @@ source source.env
 [ -d "${SRCMIPS64ELTOOLCHAIN}" ] || mkdir -p "${SRCMIPS64ELTOOLCHAIN}"
 [ -d "${BUILDMIPS64ELTOOLCHAIN}" ] || mkdir -p "${BUILDMIPS64ELTOOLCHAIN}"
 [ -d "${METADATAMIPS64ELTOOLCHAIN}" ] || mkdir -p "${METADATAMIPS64ELTOOLCHAIN}"
+[ -d "${METADATAEXTRACT}" ] || mkdir -p "${METADATAEXTRACT}"
 [ -d "${PREFIXGNULINUX}" ] || mkdir -p "${PREFIXGNULINUX}"
 
 mkdir -p ${PREFIXMIPS64ELTOOLCHAIN}
@@ -14,64 +15,60 @@ export PATH=${PREFIXHOSTTOOLS}/bin:${PREFIXMIPS64ELTOOLCHAIN}/bin:$PATH
 
 ############################### Extract tarballs ##############################
 pushd ${SRCMIPS64ELTOOLCHAIN}
-[ -f "${METADATAMIPS64ELTOOLCHAIN}/linux_extract" ] || \
+[ -f "${METADATAEXTRACT}/linux_extract" ] || \
   tar xf ${TARBALL}/linux-${LINUX_VERSION}.${LINUX_SUFFIX} || \
     die "extract linux error" && \
-      touch ${METADATAMIPS64ELTOOLCHAIN}/linux_extract
+      touch ${METADATAEXTRACT}/linux_extract
 
-[ -f "${METADATAMIPS64ELTOOLCHAIN}/gmp_extract" ] || \
+[ -f "${METADATAEXTRACT}/gmp_extract" ] || \
   tar xf ${TARBALL}/gmp-${GMP_VERSION}.${GMP_SUFFIX} || \
     die "extract gmp error" && \
-      touch ${METADATAMIPS64ELTOOLCHAIN}/gmp_extract
+      touch ${METADATAEXTRACT}/gmp_extract
 
-[ -f "${METADATAMIPS64ELTOOLCHAIN}/mpfr_extract" ] || \
+[ -f "${METADATAEXTRACT}/mpfr_extract" ] || \
   tar xf ${TARBALL}/mpfr-${MPFR_VERSION}.${MPFR_SUFFIX} || \
     die "extract mpfr error" && \
-      touch ${METADATAMIPS64ELTOOLCHAIN}/mpfr_extract
+      touch ${METADATAEXTRACT}/mpfr_extract
 
-[ -f "${METADATAMIPS64ELTOOLCHAIN}/mpc_extract" ] || \
+[ -f "${METADATAEXTRACT}/mpc_extract" ] || \
   tar xf ${TARBALL}/mpc-${MPC_VERSION}.${MPC_SUFFIX} || \
     die "extract mpc error" && \
-      touch ${METADATAMIPS64ELTOOLCHAIN}/mpc_extract
+      touch ${METADATAEXTRACT}/mpc_extract
 
-[ -f "${METADATAMIPS64ELTOOLCHAIN}/ppl_extract" ] || \
+[ -f "${METADATAEXTRACT}/ppl_extract" ] || \
   tar xf ${TARBALL}/ppl-${PPL_VERSION}.${PPL_SUFFIX} || \
     die "extract ppl error" && \
-      touch ${METADATAMIPS64ELTOOLCHAIN}/ppl_extract
+      touch ${METADATAEXTRACT}/ppl_extract
 
-[ -f "${METADATAMIPS64ELTOOLCHAIN}/cloog_extract" ] || \
+[ -f "${METADATAEXTRACT}/cloog_extract" ] || \
   tar xf ${TARBALL}/cloog-${CLOOG_VERSION}.${CLOOG_SUFFIX} || \
     die "extract cloog error" && \
-      touch ${METADATAMIPS64ELTOOLCHAIN}/cloog_extract
+      touch ${METADATAEXTRACT}/cloog_extract
 
-[ -f "${METADATAMIPS64ELTOOLCHAIN}/binutils_extract" ] || \
+[ -f "${METADATAEXTRACT}/binutils_extract" ] || \
   tar xf ${TARBALL}/binutils-${BINUTILS_VERSION}.${BINUTILS_SUFFIX} || \
     die "extract binutils error" && \
-      touch ${METADATAMIPS64ELTOOLCHAIN}/binutils_extract
+      touch ${METADATAEXTRACT}/binutils_extract
 
-[ -f "${METADATAMIPS64ELTOOLCHAIN}/gcc_extract" ] || \
+[ -f "${METADATAEXTRACT}/gcc_extract" ] || \
   tar xf ${TARBALL}/gcc-${GCC_VERSION}.${GCC_SUFFIX} || \
     die "extract gcc error" && \
-      touch ${METADATAMIPS64ELTOOLCHAIN}/gcc_extract
+      touch ${METADATAEXTRACT}/gcc_extract
 
-[ -f "${METADATAMIPS64ELTOOLCHAIN}/glibc_extract" ] || \
+[ -f "${METADATAEXTRACT}/glibc_extract" ] || \
   tar xf ${TARBALL}/glibc-${GLIBC_VERSION}.${GLIBC_SUFFIX} || \
     die "extract glibc error" && \
-      touch ${METADATAMIPS64ELTOOLCHAIN}/glibc_extract
+      touch ${METADATAEXTRACT}/glibc_extract
 
-[ -f "${METADATAMIPS64ELTOOLCHAIN}/gdb_extract" ] || \
+[ -f "${METADATAEXTRACT}/gdb_extract" ] || \
   tar xf ${TARBALL}/gdb-${GDB_VERSION}.${GDB_SUFFIX} || \
     die "extract gdb error" && \
-      touch ${METADATAMIPS64ELROOTFS}/gdb_extract
+      touch ${METADATAEXTRACT}/gdb_extract
 popd
 
 ######################## Begin Compiler CrossGcc ##############################
-pushd ${BUILDMIPS64ELTOOLCHAIN}
-[ -f "${METADATAMIPS64ELTOOLCHAIN}/linux_copy" ] || \
-  cp -ar ${SRCMIPS64ELTOOLCHAIN}/linux-${LINUX_VERSION} linux-headers || \
-    die "copy linux error" && \
-      touch ${METADATAMIPS64ELTOOLCHAIN}/linux_copy
-cd linux-headers
+pushd ${SRCMIPS64ELTOOLCHAIN}
+cd linux-${LINUX_VERSION}
 [ -f "${METADATAMIPS64ELTOOLCHAIN}/linux_clean" ] || \
   make mrproper || \
     die "clean linux error" && \
@@ -241,7 +238,7 @@ cd gcc-build-stage1
   --with-cloog=${PREFIXMIPS64ELTOOLCHAIN} \
   --with-mpc=${PREFIXMIPS64ELTOOLCHAIN} \
   --disable-shared --disable-threads --enable-languages=c \
-  --enable-cloog-backend=isl || \
+  --enable-cloog-backend=isl --with-system-zlib || \
     die "***config gcc stage1 error" && \
       touch ${METADATAMIPS64ELTOOLCHAIN}/gcc_stage1_config
 [ -f "${METADATAMIPS64ELTOOLCHAIN}/gcc_stage1_build" ] || \
@@ -257,12 +254,18 @@ popd
 pushd ${SRCMIPS64ELTOOLCHAIN}
 if [ ${HOSTOS} = "Darwin" ]; then
 cd glibc-${GLIBC_VERSION}
-[ -f "${METADATAMIPS64ELTOOLCHAIN}/glibc_macos_patch" ] || \
+[ -f "${METADATAEXTRACT}/glibc_macos_patch" ] || \
   patch -p1 < ${PATCH}/glibc-2.17-os-x-build.patch || \
     die "***patch glibc for macosx error" && \
-      touch ${METADATAMIPS64ELTOOLCHAIN}/glibc_macos_patch
+      touch ${METADATAEXTRACT}/glibc_macos_patch
 fi
 popd
+
+if [ ${HOSTOS} = "Darwin" ]; then
+export GLIBC_JOBS=1
+else
+export GLIBC_JOBS=${JOBS}
+fi
 
 pushd ${BUILDMIPS64ELTOOLCHAIN}
 [ -d "glibc-build-32" ] || mkdir glibc-build-32
@@ -297,7 +300,7 @@ EOF` || \
     die "***config glibc32 error" && \
       touch ${METADATAMIPS64ELTOOLCHAIN}/glibc_config_32
 [ -f "${METADATAMIPS64ELTOOLCHAIN}/glibc_build_32" ] || \
-  make || \
+  make -j${GLIBC_JOBS} || \
     die "***build glibc32 error" && \
       touch ${METADATAMIPS64ELTOOLCHAIN}/glibc_build_32
 [ -f "${METADATAMIPS64ELTOOLCHAIN}/glibc_install_32" ] || \
@@ -340,7 +343,7 @@ EOF` || \
     die "***config glibcn32 error" && \
       touch ${METADATAMIPS64ELTOOLCHAIN}/glibc_config_n32
 [ -f "${METADATAMIPS64ELTOOLCHAIN}/glibc_build_n32" ] || \
-  make || \
+  make -j${GLIBC_JOBS} || \
     die "***build glibcn32 error" && \
       touch ${METADATAMIPS64ELTOOLCHAIN}/glibc_build_n32
 [ -f "${METADATAMIPS64ELTOOLCHAIN}/glibc_install_n32" ] || \
@@ -383,13 +386,13 @@ EOF` || \
     die "***config glibc64 error" && \
       touch ${METADATAMIPS64ELTOOLCHAIN}/glibc_config_64
 [ -f "${METADATAMIPS64ELTOOLCHAIN}/glibc_build_64" ] || \
-make || \
-  die "***build glibc64 error" && \
-    touch ${METADATAMIPS64ELTOOLCHAIN}/glibc_build_64
+  make -j${GLIBC_JOBS} || \
+    die "***build glibc64 error" && \
+      touch ${METADATAMIPS64ELTOOLCHAIN}/glibc_build_64
 [ -f "${METADATAMIPS64ELTOOLCHAIN}/glibc_install_64" ] || \
-make install || \
-  die "***install glibc64 error" && \
-    touch ${METADATAMIPS64ELTOOLCHAIN}/glibc_install_64
+  make install || \
+    die "***install glibc64 error" && \
+      touch ${METADATAMIPS64ELTOOLCHAIN}/glibc_install_64
 
 [ -f "${METADATAMIPS64ELTOOLCHAIN}/glibc_copy_headers" ] || \
   cp -v ${SRCMIPS64ELTOOLCHAIN}/glibc-${GLIBC_VERSION}/sunrpc/rpc/*.h \
@@ -416,7 +419,7 @@ cd gcc-build-stage2
   --with-ppl=${PREFIXMIPS64ELTOOLCHAIN} --with-cloog=${PREFIXMIPS64ELTOOLCHAIN} \
   --with-mpc=${PREFIXMIPS64ELTOOLCHAIN} \
   --enable-c99 --enable-long-long --enable-threads=posix \
-  --enable-cloog-backend=isl || \
+  --enable-cloog-backend=isl --with-system-zlib || \
     die "***config gcc stage2 error" && \
       touch ${METADATAMIPS64ELTOOLCHAIN}/gcc_stage2_config
 [ -f "${METADATAMIPS64ELTOOLCHAIN}/gcc_stage2_build" ] || \

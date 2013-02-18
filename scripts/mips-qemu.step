@@ -7,15 +7,16 @@ export PATH=${PREFIXHOSTTOOLS}/bin:$PATH
 [ -d "${SRCUNIVERSAL}" ] ||  mkdir -p "${SRCUNIVERSAL}"
 [ -d "${BUILDUNIVERSAL}" ] ||  mkdir -p "${BUILDUNIVERSAL}"
 [ -d "${METADATAUNIVERSAL}" ] || mkdir -p "${METADATAUNIVERSAL}"
+[ -d "${METADATAEXTRACT}" ] || mkdir -p "${METADATAEXTRACT}"
 
 #################################################################
 ### universal extract
 #################################################################
 pushd ${SRCUNIVERSAL}
-[ -f ${METADATAUNIVERSAL}/qemu_extract ] || \
+[ -f ${METADATAEXTRACT}/qemu_extract ] || \
 tar xf ${TARBALL}/qemu-${QEMU_VERSION}.${QEMU_SUFFIX} || \
   die "extract qemu error" && \
-    touch ${METADATAUNIVERSAL}/qemu_extract
+    touch ${METADATAEXTRACT}/qemu_extract
 popd
 
 #################################################################

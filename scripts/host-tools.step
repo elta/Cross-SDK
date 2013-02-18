@@ -5,106 +5,128 @@ source source.env
 [ -d "${SRCHOSTTOOLS}" ] || mkdir -p "${SRCHOSTTOOLS}"
 [ -d "${BUILDHOSTTOOLS}" ] || mkdir -p "${BUILDHOSTTOOLS}"
 [ -d "${METADATAHOSTTOOLS}" ] || mkdir -p "${METADATAHOSTTOOLS}"
+[ -d "${METADATAEXTRACT}" ] || mkdir -p "${METADATAEXTRACT}"
 [ -d "${PREFIXHOSTTOOLS}" ] || mkdir -p "${PREFIXHOSTTOOLS}"
 
 export PATH=${PREFIXHOSTTOOLS}/bin:$PATH
 
 pushd ${SRCHOSTTOOLS}
-[ -f ${METADATAHOSTTOOLS}/coreutils_extract ] || \
-  tar vxf ${TARBALL}/coreutils-${COREUTILS_VERSION}.${COREUTILS_SUFFIX} || \
+[ -f ${METADATAEXTRACT}/coreutils_extract ] || \
+  tar xf ${TARBALL}/coreutils-${COREUTILS_VERSION}.${COREUTILS_SUFFIX} || \
     die "extract coreutils error" && \
-      touch ${METADATAHOSTTOOLS}/coreutils_extract
+      touch ${METADATAEXTRACT}/coreutils_extract
 
-[ -f ${METADATAHOSTTOOLS}/file_extract ] || \
+[ -f ${METADATAEXTRACT}/expat_extract ] || \
+  tar xf ${TARBALL}/expat-${EXPAT_VERSION}.${EXPAT_SUFFIX} || \
+    die "***extract expat error" && \
+      touch ${METADATAEXTRACT}/expat_extract
+
+[ -f ${METADATAEXTRACT}/file_extract ] || \
   tar xf ${TARBALL}/file-${FILE_VERSION}.${FILE_SUFFIX} || \
     die "***extract file error" && \
-      touch ${METADATAHOSTTOOLS}/file_extract
+      touch ${METADATAEXTRACT}/file_extract
 
-[ -f ${METADATAHOSTTOOLS}/gawk_extract ] || \
-  tar vxf ${TARBALL}/gawk-${GAWK_VERSION}.${GAWK_SUFFIX} || \
+[ -f ${METADATAEXTRACT}/gawk_extract ] || \
+  tar xf ${TARBALL}/gawk-${GAWK_VERSION}.${GAWK_SUFFIX} || \
     die "extract gawk error" && \
-      touch ${METADATAHOSTTOOLS}/gawk_extract
+      touch ${METADATAEXTRACT}/gawk_extract
 
-[ -f ${METADATAHOSTTOOLS}/gettext_extract ] || \
-  tar vxf ${TARBALL}/gettext-${GETTEXT_VERSION}.${GETTEXT_SUFFIX} || \
+[ -f ${METADATAEXTRACT}/gettext_extract ] || \
+  tar xf ${TARBALL}/gettext-${GETTEXT_VERSION}.${GETTEXT_SUFFIX} || \
     die "extract gettext error" && \
-      touch ${METADATAHOSTTOOLS}/gettext_extract
+      touch ${METADATAEXTRACT}/gettext_extract
 
-[ -f ${METADATAHOSTTOOLS}/groff_extract ] || \
+[ -f ${METADATAEXTRACT}/groff_extract ] || \
   tar xf ${TARBALL}/groff-${GROFF_VERSION}.${GROFF_SUFFIX} || \
     die "***extract groff cross error" && \
-      touch ${METADATAHOSTTOOLS}/groff_extract
+      touch ${METADATAEXTRACT}/groff_extract
 
-[ -f ${METADATAHOSTTOOLS}/libtool_extract ] || \
-  tar vxf ${TARBALL}/libtool-${LIBTOOL_VERSION}.${LIBTOOL_SUFFIX} || \
+[ -f ${METADATAEXTRACT}/libelf_extract ] || \
+  tar xf ${TARBALL}/libelf-${LIBELF_VERSION}.${LIBELF_SUFFIX} || \
+    die "extract libelf error" && \
+      touch ${METADATAEXTRACT}/libelf_extract
+
+[ -f ${METADATAEXTRACT}/libtool_extract ] || \
+  tar xf ${TARBALL}/libtool-${LIBTOOL_VERSION}.${LIBTOOL_SUFFIX} || \
     die "extract libtool error" && \
-      touch ${METADATAHOSTTOOLS}/libtool_extract
+      touch ${METADATAEXTRACT}/libtool_extract
 
-[ -f ${METADATAHOSTTOOLS}/make_extract ] || \
-  tar vxf ${TARBALL}/make-${MAKE_VERSION}.${MAKE_SUFFIX} || \
+[ -f ${METADATAEXTRACT}/libiconv_extract ] || \
+  tar xf ${TARBALL}/libiconv-${LIBICONV_VERSION}.${LIBICONV_SUFFIX} || \
+    die "extract libiconv error" && \
+      touch ${METADATAEXTRACT}/libiconv_extract
+
+[ -f ${METADATAEXTRACT}/make_extract ] || \
+  tar xf ${TARBALL}/make-${MAKE_VERSION}.${MAKE_SUFFIX} || \
     die "extract make error" && \
-      touch ${METADATAHOSTTOOLS}/make_extract
+      touch ${METADATAEXTRACT}/make_extract
 
-[ -f ${METADATAHOSTTOOLS}/ncurses_extract ] || \
+[ -f ${METADATAEXTRACT}/ncurses_extract ] || \
   tar xf ${TARBALL}/ncurses-${NCURSES_VERSION}.${NCURSES_SUFFIX} || \
     die "***extract ncurses error" && \
-      touch ${METADATAHOSTTOOLS}/ncurses_extract
+      touch ${METADATAEXTRACT}/ncurses_extract
 
-[ -f ${METADATAHOSTTOOLS}/sed_extract ] || \
-  tar vxf ${TARBALL}/sed-${SED_VERSION}.${SED_SUFFIX} || \
+[ -f ${METADATAEXTRACT}/sed_extract ] || \
+  tar xf ${TARBALL}/sed-${SED_VERSION}.${SED_SUFFIX} || \
     die "extract sed error" && \
-      touch ${METADATAHOSTTOOLS}/sed_extract
+      touch ${METADATAEXTRACT}/sed_extract
 
-[ -f ${METADATAHOSTTOOLS}/texinfo_extract ] || \
-  tar vxf ${TARBALL}/texinfo-${TEXINFO_VERSION}a.${TEXINFO_SUFFIX} || \
+[ -f ${METADATAEXTRACT}/texinfo_extract ] || \
+  tar xf ${TARBALL}/texinfo-${TEXINFO_VERSION}a.${TEXINFO_SUFFIX} || \
     die "extract texinfo error" && \
-      touch ${METADATAHOSTTOOLS}/texinfo_extract
+      touch ${METADATAEXTRACT}/texinfo_extract
+
+[ -f ${METADATAEXTRACT}/zlib_extract ] || \
+  tar xf ${TARBALL}/zlib-${ZLIB_VERSION}.${ZLIB_SUFFIX} || \
+    die "extract zlib error" && \
+      touch ${METADATAEXTRACT}/zlib_extract
 
 if [ ${HOSTOS} != "Darwin" ]; then
-[ -f ${METADATAHOSTTOOLS}/shadow_extract ] || \
+[ -f ${METADATAEXTRACT}/shadow_extract ] || \
   tar xf ${TARBALL}/shadow-${SHADOW_VERSION}.${SHADOW_SUFFIX} || \
     die "***extract shadow error" && \
-      touch ${METADATAHOSTTOOLS}/shadow_extract
+      touch ${METADATAEXTRACT}/shadow_extract
 fi
 
 if [ ${HOSTOS} != "Darwin" ]; then
-[ -f ${METADATAHOSTTOOLS}/perl_cross_extract ] || \
+mkdir -p perl_cross
+cd perl_cross
+[ -f ${METADATAEXTRACT}/perl_cross_extract ] || \
   tar xf ${TARBALL}/perl-${PERLCROSS_VERSION}.tar.gz || \
     die "***extract cross perl error" && \
-      touch ${METADATAHOSTTOOLS}/perl_cross_extract
+      touch ${METADATAEXTRACT}/perl_cross_extract
+cd ..
 
-[ -f ${METADATAHOSTTOOLS}/python_extract ] || \
-  tar xf ${TARBALL}/python-${PYTHON_VERSION}.${PYTHON_SUFFIX} || \
-    die "***extract python error" && \
-      touch ${METADATAHOSTTOOLS}/python_extract
-fi
-popd
-
-if [ ${HOSTOS} != "Darwin" ]; then
-pushd ${BUILDHOSTTOOLS}
-[ -f ${METADATAHOSTTOOLS}/perl_extract ] || \
+[ -f ${METADATAEXTRACT}/perl_extract ] || \
   tar xf ${TARBALL}/perl-${PERL_VERSION}.${PERL_SUFFIX} || \
     die "***extract perl error" && \
-      touch ${METADATAHOSTTOOLS}/perl_extract
-popd
+      touch ${METADATAEXTRACT}/perl_extract
 
-pushd ${BUILDHOSTTOOLS}
-cd perl-${PERL_VERSION}
-[ -f ${METADATAHOSTTOOLS}/perl_cross_copy ] || \
-  cp -ar ${SRCHOSTTOOLS}/perl-${PERL_VERSION}/* . || \
+[ -f ${METADATAEXTRACT}/perl_cross_copy ] || \
+  cp -ar perl_cross/perl-${PERL_VERSION}/* perl-${PERL_VERSION}/ || \
     die "***copy cross perl error" && \
-      touch ${METADATAHOSTTOOLS}/perl_cross_copy
-popd
-fi
+      touch ${METADATAEXTRACT}/perl_cross_copy
 
-pushd ${SRCHOSTTOOLS}
-cd coreutils-${COREUTILS_VERSION}
+[ -f ${METADATAEXTRACT}/python_extract ] || \
+  tar xf ${TARBALL}/python-${PYTHON_VERSION}.${PYTHON_SUFFIX} || \
+    die "***extract python error" && \
+      touch ${METADATAEXTRACT}/python_extract
+fi
+popd
+
+pushd ${SRCHOSTTOOLS}/coreutils-${COREUTILS_VERSION}
 [ -f ${METADATAHOSTTOOLS}/coreutils_patch ] || \
   patch -p1 < ${PATCH}/coreutils-8.20-host-tool.patch  || \
     die "patch coreutils error" && \
       touch ${METADATAHOSTTOOLS}/coreutils_patch
+popd
+
+pushd ${BUILDHOSTTOOLS}
+[ -d "coreutils-build" ] || mkdir coreutils-build
+cd coreutils-build
 [ -f ${METADATAHOSTTOOLS}/coreutils_configure ] || \
-  ./configure --prefix=${PREFIXHOSTTOOLS} || \
+  ${SRCHOSTTOOLS}/coreutils-${COREUTILS_VERSION}/configure \
+  --prefix=${PREFIXHOSTTOOLS} || \
     die "configure coreutils error" && \
       touch ${METADATAHOSTTOOLS}/coreutils_configure
 [ -f ${METADATAHOSTTOOLS}/coreutils_build ] || \
@@ -115,6 +137,31 @@ cd coreutils-${COREUTILS_VERSION}
   make install || \
     die "install coreutils error" && \
       touch ${METADATAHOSTTOOLS}/coreutils_install
+popd
+
+pushd ${SRCHOSTTOOLS}/coreutils-${COREUTILS_VERSION}
+[ -f ${METADATAHOSTTOOLS}/coreutils_rm_patch ] || \
+  patch -Rp1 < ${PATCH}/coreutils-8.20-host-tool.patch  || \
+    die "re-patch coreutils error" && \
+      touch ${METADATAHOSTTOOLS}/coreutils_rm_patch
+popd
+
+pushd ${BUILDHOSTTOOLS}
+[ -d "expat_build" ] || mkdir expat_build
+cd expat_build
+[ -f ${METADATAHOSTTOOLS}/expat_configure ] || \
+  ${SRCHOSTTOOLS}/expat-${EXPAT_VERSION}/configure \
+  --prefix=${PREFIXHOSTTOOLS} --with-sysroot=/ || \
+    die "***config expat error" && \
+      touch ${METADATAHOSTTOOLS}/expat_configure
+[ -f ${METADATAHOSTTOOLS}/expat_build ] || \
+  make -j${JOBS} || \
+    die "***build expat error" && \
+      touch ${METADATAHOSTTOOLS}/expat_build
+[ -f ${METADATAHOSTTOOLS}/expat_install ] || \
+  make install || \
+    die "***install expat error" && \
+      touch ${METADATAHOSTTOOLS}/expat_install
 popd
 
 pushd ${BUILDHOSTTOOLS}
@@ -135,10 +182,12 @@ cd file_build
       touch ${METADATAHOSTTOOLS}/file_install
 popd
 
-pushd ${SRCHOSTTOOLS}
-cd gawk-${GAWK_VERSION}
+pushd ${BUILDHOSTTOOLS}
+[ -d "gawk_build" ] || mkdir gawk_build
+cd gawk_build
 [ -f ${METADATAHOSTTOOLS}/gawk_configure ] || \
-  ./configure --prefix=${PREFIXHOSTTOOLS} || \
+  ${SRCHOSTTOOLS}/gawk-${GAWK_VERSION}/configure \
+  --prefix=${PREFIXHOSTTOOLS} || \
     die "configure gawk error" && \
       touch ${METADATAHOSTTOOLS}/gawk_configure
 [ -f ${METADATAHOSTTOOLS}/gawk_build ] || \
@@ -151,10 +200,12 @@ cd gawk-${GAWK_VERSION}
       touch ${METADATAHOSTTOOLS}/gawk_install
 popd
 
-pushd ${SRCHOSTTOOLS}
-cd gettext-${GETTEXT_VERSION}
+pushd ${BUILDHOSTTOOLS}
+[ -d "gettext_build" ] || mkdir gettext_build
+cd gettext_build
 [ -f ${METADATAHOSTTOOLS}/gettext_configure ] || \
-  ./configure --prefix=${PREFIXHOSTTOOLS} || \
+  ${SRCHOSTTOOLS}/gettext-${GETTEXT_VERSION}/configure \
+  --prefix=${PREFIXHOSTTOOLS} || \
     die "configure gettext error" && \
       touch ${METADATAHOSTTOOLS}/gettext_configure
 [ -f ${METADATAHOSTTOOLS}/gettext_build ] || \
@@ -167,11 +218,31 @@ cd gettext-${GETTEXT_VERSION}
       touch ${METADATAHOSTTOOLS}/gettext_install
 popd
 
-pushd ${SRCHOSTTOOLS}
-cd libtool-${LIBTOOL_VERSION}
+pushd ${BUILDHOSTTOOLS}
+[ -d "libelf_build" ] || mkdir libelf_build
+cd libelf_build
+[ -f ${METADATAHOSTTOOLS}/libelf_configure ] || \
+  ${SRCHOSTTOOLS}/libelf-${LIBELF_VERSION}/configure \
+  --prefix=${PREFIXHOSTTOOLS} || \
+    die "configure libelf error" && \
+      touch ${METADATAHOSTTOOLS}/libelf_configure
+[ -f ${METADATAHOSTTOOLS}/libelf_build ] || \
+  make -j${JOBS} || \
+    die "build libelf error" && \
+      touch ${METADATAHOSTTOOLS}/libelf_build
+[ -f ${METADATAHOSTTOOLS}/libelf_install ] || \
+  make install || \
+    die "install libelf error" && \
+      touch ${METADATAHOSTTOOLS}/libelf_install
+popd
+
+pushd ${BUILDHOSTTOOLS}
+[ -d "libtool_build" ] || mkdir libtool_build
+cd libtool_build
 [ -f ${METADATAHOSTTOOLS}/libtool_configure ] || \
-  ./configure --prefix=${PREFIXHOSTTOOLS} || \
-    die "configure sed error" && \
+  ${SRCHOSTTOOLS}/libtool-${LIBTOOL_VERSION}/configure \
+  --prefix=${PREFIXHOSTTOOLS} || \
+    die "configure libtool error" && \
       touch ${METADATAHOSTTOOLS}/libtool_configure
 [ -f ${METADATAHOSTTOOLS}/libtool_build ] || \
   make -j${JOBS} || \
@@ -183,10 +254,30 @@ cd libtool-${LIBTOOL_VERSION}
       touch ${METADATAHOSTTOOLS}/libtool_install
 popd
 
-pushd ${SRCHOSTTOOLS}
-cd make-${MAKE_VERSION}
+pushd ${BUILDHOSTTOOLS}
+[ -d "libiconv_build" ] || mkdir libiconv_build
+cd libiconv_build
+[ -f ${METADATAHOSTTOOLS}/libiconv_configure ] || \
+  ${SRCHOSTTOOLS}/libiconv-${LIBICONV_VERSION}/configure \
+  --prefix=${PREFIXHOSTTOOLS} --with-sysroot=/ || \
+    die "configure sed error" && \
+      touch ${METADATAHOSTTOOLS}/libiconv_configure
+[ -f ${METADATAHOSTTOOLS}/libiconv_build ] || \
+  make -j${JOBS} || \
+    die "build libiconv error" && \
+      touch ${METADATAHOSTTOOLS}/libiconv_build
+[ -f ${METADATAHOSTTOOLS}/libiconv_install ] || \
+  make install || \
+    die "install libiconv error" && \
+      touch ${METADATAHOSTTOOLS}/libiconv_install
+popd
+
+pushd ${BUILDHOSTTOOLS}
+[ -d "make_build" ] || mkdir make_build
+cd make_build
 [ -f ${METADATAHOSTTOOLS}/make_configure ] || \
-  ./configure --prefix=${PREFIXHOSTTOOLS} || \
+  ${SRCHOSTTOOLS}/make-${MAKE_VERSION}/configure \
+  --prefix=${PREFIXHOSTTOOLS} || \
     die "configure sed error" && \
       touch ${METADATAHOSTTOOLS}/make_configure
 [ -f ${METADATAHOSTTOOLS}/make_build ] || \
@@ -228,11 +319,22 @@ cd ncurses_build
   install -m755 progs/tic ${PREFIXHOSTTOOLS}/bin || \
     die "***install ncurses error" && \
       touch ${METADATAHOSTTOOLS}/ncurses_install
+popd
 
 pushd ${SRCHOSTTOOLS}
-cd sed-${SED_VERSION}
+cd ncurses-${NCURSES_VERSION}
+[ -f ${METADATAHOSTTOOLS}/ncurses_rm_patch ] || \
+  patch -R -Np1 -i ${PATCH}/ncurses-5.9-bash_fix-1.patch || \
+    die "***re-patch ncurses error" && \
+      touch ${METADATAHOSTTOOLS}/ncurses_rm_patch
+popd
+
+pushd ${BUILDHOSTTOOLS}
+[ -d "sed_build" ] || mkdir sed_build
+cd sed_build
 [ -f ${METADATAHOSTTOOLS}/sed_configure ] || \
-  ./configure --prefix=${PREFIXHOSTTOOLS} || \
+  ${SRCHOSTTOOLS}/sed-${SED_VERSION}/configure \
+  --prefix=${PREFIXHOSTTOOLS} || \
     die "configure sed error" && \
       touch ${METADATAHOSTTOOLS}/sed_configure
 [ -f ${METADATAHOSTTOOLS}/sed_build ] || \
@@ -269,6 +371,14 @@ cd groff_build
   make install || \
     die "***install groff error" && \
       touch ${METADATAHOSTTOOLS}/groff_install
+popd
+
+pushd ${SRCHOSTTOOLS}
+cd groff-${GROFF_VERSION}
+[ -f "${METADATAHOSTTOOLS}/groff_rm_patch" ] || \
+  patch -Rp1 < ${PATCH}/groff-1.22.1-hosttools.patch || \
+    die "re-patch groff hosttools error" && \
+      touch ${METADATAHOSTTOOLS}/groff_rm_patch
 popd
 
 if [ ${HOSTOS} != "Darwin" ]; then
@@ -319,10 +429,21 @@ EOF
 popd
 fi
 
+if [ ${HOSTOS} != "Darwin" ]; then
 pushd ${SRCHOSTTOOLS}
-cd texinfo-${TEXINFO_VERSION}
+cd shadow-${SHADOW_VERSION}
+[ -f ${METADATAHOSTTOOLS}/shadow_rm_patch ] || \
+  patch -Rp1 < ${PATCH}/shadow-${SHADOW_VERSION}-sysroot_hacks-1.patch || \
+    die "re-patch shadow error" && \
+      touch ${METADATAHOSTTOOLS}/shadow_rm_patch
+popd
+
+pushd ${BUILDHOSTTOOLS}
+[ -d "texinfo_build" ] || mkdir texinfo_build
+cd texinfo_build
 [ -f ${METADATAHOSTTOOLS}/texinfo_configure ] || \
-  ./configure --prefix=${PREFIXHOSTTOOLS} || \
+  ${SRCHOSTTOOLS}/texinfo-${TEXINFO_VERSION}/configure \
+  --prefix=${PREFIXHOSTTOOLS} || \
     die "configure texinfo error" && \
       touch ${METADATAHOSTTOOLS}/texinfo_configure
 [ -f ${METADATAHOSTTOOLS}/texinfo_build ] || \
@@ -335,11 +456,30 @@ cd texinfo-${TEXINFO_VERSION}
       touch ${METADATAHOSTTOOLS}/texinfo_install
 popd
 
-if [ ${HOSTOS} != "Darwin" ]; then
-pushd ${SRCHOSTTOOLS}
-cd Python-${PYTHON_VERSION}
+pushd ${BUILDHOSTTOOLS}
+[ -d "zlib_build" ] || cp -r ${SRCHOSTTOOLS}/zlib-${ZLIB_VERSION} zlib_build
+cd zlib_build
+[ -f ${METADATAHOSTTOOLS}/zlib_configure ] || \
+  ${SRCHOSTTOOLS}/zlib-${ZLIB_VERSION}/configure \
+  --prefix=${PREFIXHOSTTOOLS} || \
+    die "configure zlib error" && \
+      touch ${METADATAHOSTTOOLS}/zlib_configure
+[ -f ${METADATAHOSTTOOLS}/zlib_build ] || \
+  make -j${JOBS} || \
+    die "build zlib error" && \
+      touch ${METADATAHOSTTOOLS}/zlib_build
+[ -f ${METADATAHOSTTOOLS}/zlib_install ] || \
+  make install || \
+    die "install zlib error" && \
+      touch ${METADATAHOSTTOOLS}/zlib_install
+popd
+
+pushd ${BUILDHOSTTOOLS}
+[ -d "python_build" ] || mkdir python_build
+cd python_build
 [ -f ${METADATAHOSTTOOLS}/python_configure ] || \
-  ./configure --prefix=${PREFIXHOSTTOOLS} || \
+  ${SRCHOSTTOOLS}/Python-${PYTHON_VERSION}/configure \
+  --prefix=${PREFIXHOSTTOOLS} || \
     die "configure python error" && \
       touch ${METADATAHOSTTOOLS}/python_configure
 [ -f ${METADATAHOSTTOOLS}/python_build ] || \
@@ -356,7 +496,7 @@ cd Python-${PYTHON_VERSION}
       touch ${METADATAHOSTTOOLS}/python_pgen_install
 popd
 
-pushd ${BUILDHOSTTOOLS}
+pushd ${SRCHOSTTOOLS}
 cd perl-${PERL_VERSION}
 [ -f ${METADATAHOSTTOOLS}/perl_configure ] || \
   ./configure --prefix=${PREFIXHOSTTOOLS} || \
@@ -372,6 +512,11 @@ cd perl-${PERL_VERSION}
   make install || \
     die "***install perl error" && \
       touch ${METADATAHOSTTOOLS}/perl_install
+
+[ -f ${METADATAHOSTTOOLS}/perl_clean ] || \
+  make clean || \
+    die "***clean perl error" && \
+      touch ${METADATAHOSTTOOLS}/perl_clean
 popd
 fi
 

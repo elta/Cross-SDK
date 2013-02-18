@@ -4,6 +4,7 @@ source source.env
 
 [ -d "${SRCMIPS64ELKERNEL}" ] || mkdir -p "${SRCMIPS64ELKERNEL}"
 [ -d "${METADATAMIPS64ELKERNEL}" ] || mkdir -p "${METADATAMIPS64ELKERNEL}"
+[ -d "${METADATAEXTRACT}" ] || mkdir -p "${METADATAEXTRACT}"
 [ -d "${PREFIXGNULINUX}" ] || mkdir -p "${PREFIXGNULINUX}"
 
 mkdir -p ${PREFIXMIPS64ELROOTFS}
@@ -13,23 +14,23 @@ export PATH=${PREFIXHOSTTOOLS}/bin:${PREFIXMIPS64ELTOOLCHAIN}/bin:$PATH
 
 ############################### Extract tarballs ##############################
 pushd ${SRCMIPS64ELKERNEL}
-[ -f "${METADATAMIPS64ELKERNEL}/linux_extract" ] || \
+[ -f "${METADATAEXTRACT}/linux_extract" ] || \
   tar xf ${TARBALL}/linux-${LINUX_VERSION}.${LINUX_SUFFIX} || \
     die "extract linux error" && \
-      touch ${METADATAMIPS64ELKERNEL}/linux_extract
+      touch ${METADATAEXTRACT}/linux_extract
 popd
 
 pushd ${SRCMIPS64ELKERNEL}
 cd linux-${LINUX_VERSION}
 if [ ${HOSTOS} = "Darwin" ]; then
-[ -f ${METADATAMIPS64ELKERNEL}/linux_mac_patch ] || \
+[ -f ${METADATAEXTRACT}/linux_mac_patch ] || \
   patch -p1 < ${PATCH}/linux-${LINUX_VERSION}-mips-macos.patch || \
     die "***Patch linux mac config error" && \
-      touch ${METADATAMIPS64ELKERNEL}/linux_mac_patch
-[ -f ${METADATAMIPS64ELKERNEL}/linux_mac2_patch ] || \
+      touch ${METADATAEXTRACT}/linux_mac_patch
+[ -f ${METADATAEXTRACT}/linux_mac2_patch ] || \
   patch -p1 < ${PATCH}/linux-${LINUX_VERSION}-mips-macos-2.patch || \
     die "***Patch linux mac2 config error" && \
-      touch ${METADATAMIPS64ELKERNEL}/linux_mac2_patch
+      touch ${METADATAEXTRACT}/linux_mac2_patch
 fi
 [ -f "${METADATAMIPS64ELKERNEL}/linux_patch_mips64el_defconfig" ] || \
   patch -p1 < ${PATCH}/linux-mips64el-multilib-defconfig.patch || \

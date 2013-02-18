@@ -5,6 +5,7 @@ source source.env
 [ -d "${SRCMIPSELTOOLCHAIN}" ] || mkdir -p "${SRCMIPSELTOOLCHAIN}"
 [ -d "${BUILDMIPSELTOOLCHAIN}" ] || mkdir -p "${BUILDMIPSELTOOLCHAIN}"
 [ -d "${METADATAMIPSELTOOLCHAIN}" ] || mkdir -p "${METADATAMIPSELTOOLCHAIN}"
+[ -d "${METADATAEXTRACT}" ] || mkdir -p "${METADATAEXTRACT}"
 [ -d "${PREFIXMIPSELROOTFS}" ] || mkdir -p "${PREFIXMIPSELROOTFS}"
 
 mkdir -p ${PREFIXMIPSELTOOLCHAIN}
@@ -16,61 +17,59 @@ export PATH=${PREFIXHOSTTOOLS}/bin:${PREFIXMIPSELTOOLCHAIN}/bin:$PATH
 # mipsel sysroot extract
 ###############################################################
 
-pushd ${BUILDMIPSELTOOLCHAIN}
-[ -f ${METADATAMIPSELTOOLCHAIN}/linux_extract ] || \
+pushd ${SRCMIPSELTOOLCHAIN}
+[ -f ${METADATAEXTRACT}/linux_extract ] || \
   tar xf ${TARBALL}/linux-${LINUX_VERSION}.${LINUX_SUFFIX} || \
     die "***extract linux error" && \
-      touch ${METADATAMIPSELTOOLCHAIN}/linux_extract
+      touch ${METADATAEXTRACT}/linux_extract
+
+[ -f ${METADATAEXTRACT}/gmp_extract ] || \
+  tar xf ${TARBALL}/gmp-${GMP_VERSION}.${GMP_SUFFIX} || \
+    die "***extract gmp error" && \
+      touch ${METADATAEXTRACT}/gmp_extract
+
+[ -f ${METADATAEXTRACT}/mpfr_extract ] || \
+  tar xf ${TARBALL}/mpfr-${MPFR_VERSION}.${MPFR_SUFFIX} || \
+    die "***extract mpfr error" && \
+      touch ${METADATAEXTRACT}/mpfr_extract
+
+[ -f ${METADATAEXTRACT}/mpc_extract ] || \
+  tar xf ${TARBALL}/mpc-${MPC_VERSION}.${MPC_SUFFIX} || \
+    die "***extract mpc error" && \
+      touch ${METADATAEXTRACT}/mpc_extract
+
+[ -f ${METADATAEXTRACT}/ppl_extract ] || \
+  tar xf ${TARBALL}/ppl-${PPL_VERSION}.${PPL_SUFFIX} || \
+    die "***extract ppl error" && \
+      touch ${METADATAEXTRACT}/ppl_extract
+
+[ -f ${METADATAEXTRACT}/cloog_extract ] || \
+  tar xf ${TARBALL}/cloog-${CLOOG_VERSION}.${CLOOG_SUFFIX} || \
+    die "***extract cloog error" && \
+      touch ${METADATAEXTRACT}/cloog_extract
+
+[ -f ${METADATAEXTRACT}/binutils_extract ] || \
+  tar xf ${TARBALL}/binutils-${BINUTILS_VERSION}.${BINUTILS_SUFFIX} || \
+    die "***extract binutils error" && \
+      touch ${METADATAEXTRACT}/binutils_extract
+
+[ -f ${METADATAEXTRACT}/gcc_extract ] || \
+  tar xf ${TARBALL}/gcc-${GCC_VERSION}.${GCC_SUFFIX} || \
+    die "***extract gcc error" && \
+      touch ${METADATAEXTRACT}/gcc_extract
+
+[ -f ${METADATAEXTRACT}/glibc_extract ] || \
+  tar xf ${TARBALL}/glibc-${GLIBC_VERSION}.${GLIBC_SUFFIX} || \
+    die "***extract glibc error" && \
+      touch ${METADATAEXTRACT}/glibc_extract
+
+[ -f ${METADATAEXTRACT}/gdb_extract ] || \
+  tar xf ${TARBALL}/gdb-${GDB_VERSION}.${GDB_SUFFIX} || \
+    die "***extractjgdb error" && \
+      touch ${METADATAEXTRACT}/gdb_extract
 popd
 
 pushd ${SRCMIPSELTOOLCHAIN}
-[ -f ${METADATAMIPSELTOOLCHAIN}/gmp_extract ] || \
-  tar xf ${TARBALL}/gmp-${GMP_VERSION}.${GMP_SUFFIX} || \
-    die "***extract gmp error" && \
-      touch ${METADATAMIPSELTOOLCHAIN}/gmp_extract
-
-[ -f ${METADATAMIPSELTOOLCHAIN}/mpfr_extract ] || \
-  tar xf ${TARBALL}/mpfr-${MPFR_VERSION}.${MPFR_SUFFIX} || \
-    die "***extract mpfr error" && \
-      touch ${METADATAMIPSELTOOLCHAIN}/mpfr_extract
-
-[ -f ${METADATAMIPSELTOOLCHAIN}/mpc_extract ] || \
-  tar xf ${TARBALL}/mpc-${MPC_VERSION}.${MPC_SUFFIX} || \
-    die "***extract mpc error" && \
-      touch ${METADATAMIPSELTOOLCHAIN}/mpc_extract
-
-[ -f ${METADATAMIPSELTOOLCHAIN}/ppl_extract ] || \
-  tar xf ${TARBALL}/ppl-${PPL_VERSION}.${PPL_SUFFIX} || \
-    die "***extract ppl error" && \
-      touch ${METADATAMIPSELTOOLCHAIN}/ppl_extract
-
-[ -f ${METADATAMIPSELTOOLCHAIN}/cloog_extract ] || \
-  tar xf ${TARBALL}/cloog-${CLOOG_VERSION}.${CLOOG_SUFFIX} || \
-    die "***extract cloog error" && \
-      touch ${METADATAMIPSELTOOLCHAIN}/cloog_extract
-
-[ -f ${METADATAMIPSELTOOLCHAIN}/binutils_extract ] || \
-  tar xf ${TARBALL}/binutils-${BINUTILS_VERSION}.${BINUTILS_SUFFIX} || \
-    die "***extract binutils error" && \
-      touch ${METADATAMIPSELTOOLCHAIN}/binutils_extract
-
-[ -f ${METADATAMIPSELTOOLCHAIN}/gcc_extract ] || \
-  tar xf ${TARBALL}/gcc-${GCC_VERSION}.${GCC_SUFFIX} || \
-    die "***extract gcc error" && \
-      touch ${METADATAMIPSELTOOLCHAIN}/gcc_extract
-
-[ -f ${METADATAMIPSELTOOLCHAIN}/glibc_extract ] || \
-  tar xf ${TARBALL}/glibc-${GLIBC_VERSION}.${GLIBC_SUFFIX} || \
-    die "***extract glibc error" && \
-      touch ${METADATAMIPSELTOOLCHAIN}/glibc_extract
-
-[ -f ${METADATAMIPSELTOOLCHAIN}/gdb_extract ] || \
-  tar xf ${TARBALL}/gdb-${GDB_VERSION}.${GDB_SUFFIX} || \
-    die "***extractjgdb error" && \
-      touch ${METADATAMIPSELTOOLCHAIN}/gdb_extract
-popd
-
-pushd ${BUILDMIPSELTOOLCHAIN}
 cd linux-${LINUX_VERSION}
 [ -f ${METADATAMIPSELTOOLCHAIN}/linux_mrproper ] || \
   make mrproper || \
@@ -236,7 +235,7 @@ cd gcc-static-build
   --with-cloog=${PREFIXMIPSELTOOLCHAIN} \
   --with-mpc=${PREFIXMIPSELTOOLCHAIN} \
   --disable-shared --disable-threads --enable-languages=c \
-  --enable-cloog-backend=isl || \
+  --enable-cloog-backend=isl --with-system-zlib || \
     die "***config gcc static stage1 error" && \
       touch ${METADATAMIPSELTOOLCHAIN}/gcc_static_configure
 [ -f ${METADATAMIPSELTOOLCHAIN}/gcc_static_build ] || \
@@ -252,12 +251,18 @@ popd
 pushd ${SRCMIPSELTOOLCHAIN}
 if [ ${HOSTOS} = "Darwin" ]; then
 cd glibc-${GLIBC_VERSION}
-[ -f "${METADATAMIPSELTOOLCHAIN}/glibc_macos_patch" ] || \
+[ -f "${METADATAEXTRACT}/glibc_macos_patch" ] || \
   patch -p1 < ${PATCH}/glibc-2.17-os-x-build.patch || \
     die "***patch glibc for macosx error" && \
-      touch ${METADATAMIPSELTOOLCHAIN}/glibc_macos_patch
+      touch ${METADATAEXTRACT}/glibc_macos_patch
 fi
 popd
+
+if [ ${HOSTOS} = "Darwin" ]; then
+export GLIBC_JOBS=1
+else
+export GLIBC_JOBS=${JOBS}
+fi
 
 pushd ${BUILDMIPSELTOOLCHAIN}
 [ -d "glibc-build" ] || mkdir glibc-build
@@ -287,7 +292,7 @@ EOF
     die "***config glibc error" && \
       touch ${METADATAMIPSELTOOLCHAIN}/glibc_configure
 [ -f ${METADATAMIPSELTOOLCHAIN}/glibc_build ] || \
-  make || die "***build glibc error" && \
+  make -j${GLIBC_JOBS} || die "***build glibc error" && \
     touch ${METADATAMIPSELTOOLCHAIN}/glibc_build
 [ -f ${METADATAMIPSELTOOLCHAIN}/glibc_install ] || \
   make install || \
@@ -313,7 +318,7 @@ cd gcc-build
   --with-cloog=${PREFIXMIPSELTOOLCHAIN} \
   --with-mpc=${PREFIXMIPSELTOOLCHAIN} \
   --enable-c99 --enable-long-long --enable-threads=posix \
-  --enable-cloog-backend=isl || \
+  --enable-cloog-backend=isl --with-system-zlib || \
     die "***config gcc stage2 error" && \
       touch ${METADATAMIPSELTOOLCHAIN}/gcc_configure
 [ -f ${METADATAMIPSELTOOLCHAIN}/gcc_build ] || \

@@ -3,8 +3,8 @@
 source source.env
 
 [ -d "${SRCMIPSELKERNEL}" ] || mkdir -p "${SRCMIPSELKERNEL}"
-[ -d "${BUILDMIPSELKERNEL}" ] || mkdir -p "${BUILDMIPSELKERNEL}"
 [ -d "${METADATAMIPSELKERNEL}" ] || mkdir -p "${METADATAMIPSELKERNEL}"
+[ -d "${METADATAEXTRACT}" ] || mkdir -p "${METADATAEXTRACT}"
 [ -d "${PREFIXGNULINUX}" ] || mkdir -p "${PREFIXGNULINUX}"
 
 mkdir -p ${PREFIXMIPSELROOTFS}
@@ -12,32 +12,28 @@ mkdir -p ${PREFIXMIPSELROOTFS}/boot
 
 export PATH=${PREFIXHOSTTOOLS}/bin:${PREFIXMIPSELTOOLCHAIN}/bin:$PATH
 
-###############################################################
-# mipsel sysroot extract
-###############################################################
-
-pushd ${BUILDMIPSELKERNEL}
-[ -f ${METADATAMIPSELKERNEL}/linux_extract ] || \
+pushd ${SRCMIPSELKERNEL}
+[ -f ${METADATAEXTRACT}/linux_extract ] || \
   tar xf ${TARBALL}/linux-${LINUX_VERSION}.${LINUX_SUFFIX} || \
     die "***extract linux error" && \
-      touch ${METADATAMIPSELKERNEL}/linux_extract
+      touch ${METADATAEXTRACT}/linux_extract
 popd
 
-pushd ${BUILDMIPSELKERNEL}
+pushd ${SRCMIPSELKERNEL}
 cd linux-${LINUX_VERSION}
 [ -f ${METADATAMIPSELKERNEL}/linux_cross_mrpro ] || \
   make mrproper || \
     die "clean cross linux error" && \
       touch ${METADATAMIPSELKERNEL}/linux_cross_mrpro
 if [ ${HOSTOS} = "Darwin" ]; then
-[ -f ${METADATAMIPSELKERNEL}/linux_mac_patch ] || \
+[ -f ${METADATAEXTRACT}/linux_mac_patch ] || \
   patch -p1 < ${PATCH}/linux-${LINUX_VERSION}-mips-macos.patch || \
     die "***Patch linux mac config error" && \
-      touch ${METADATAMIPSELKERNEL}/linux_mac_patch
-[ -f ${METADATAMIPSELKERNEL}/linux_mac2_patch ] || \
+      touch ${METADATAEXTRACT}/linux_mac_patch
+[ -f ${METADATAEXTRACT}/linux_mac2_patch ] || \
   patch -p1 < ${PATCH}/linux-${LINUX_VERSION}-mips-macos-2.patch || \
     die "***Patch linux mac2 config error" && \
-      touch ${METADATAMIPSELKERNEL}/linux_mac2_patch
+      touch ${METADATAEXTRACT}/linux_mac2_patch
 fi
 [ -f ${METADATAMIPSELKERNEL}/linux_config_patch ] || \
   patch -p1 < ${PATCH}/linux-mipsel-sysroot-defconfig.patch || \

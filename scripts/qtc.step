@@ -5,15 +5,16 @@ source source.env
 [ -d "${SRCUNIVERSAL}" ] ||  mkdir -p "${SRCUNIVERSAL}"
 [ -d "${BUILDUNIVERSAL}" ] ||  mkdir -p "${BUILDUNIVERSAL}"
 [ -d "${METADATAUNIVERSAL}" ] || mkdir -p "${METADATAUNIVERSAL}"
+[ -d "${METADATAEXTRACT}" ] || mkdir -p "${METADATAEXTRACT}"
 
 #################################################################
 ### universal extract
 #################################################################
 pushd ${SRCUNIVERSAL}
-[ -f ${METADATAUNIVERSAL}/qtc_extract ] || \
+[ -f ${METADATAEXTRACT}/qtc_extract ] || \
 tar xf ${TARBALL}/qt-creator-${QTC_VERSION}.${QTC_SUFFIX} || \
   die "extract qtc error" && \
-    touch ${METADATAUNIVERSAL}/qtc_extract
+    touch ${METADATAEXTRACT}/qtc_extract
 popd
 
 #################################################################

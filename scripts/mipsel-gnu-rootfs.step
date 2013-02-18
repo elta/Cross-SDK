@@ -5,6 +5,7 @@ source source.env
 [ -d "${SRCMIPSELROOTFS}" ] || mkdir -p "${SRCMIPSELROOTFS}"
 [ -d "${BUILDMIPSELROOTFS}" ] || mkdir -p "${BUILDMIPSELROOTFS}"
 [ -d "${METADATAMIPSELROOTFS}" ] || mkdir -p "${METADATAMIPSELROOTFS}"
+[ -d "${METADATAEXTRACT}" ] || mkdir -p "${METADATAEXTRACT}"
 [ -d "${PREFIXGNULINUX}" ] || mkdir -p "${PREFIXGNULINUX}"
 
 mkdir -p ${PREFIXMIPSELROOTFS}
@@ -61,332 +62,324 @@ chmod -v 600 ${PREFIXMIPSELROOTFS}/var/log/btmp
 # mipsel sysroot extract
 ###############################################################
 
-pushd ${BUILDMIPSELROOTFS}
-[ -f ${METADATAMIPSELROOTFS}/linux_extract ] || \
-  tar xf ${TARBALL}/linux-${LINUX_VERSION}.${LINUX_SUFFIX} || \
-    die "***extract linux error" && \
-      touch ${METADATAMIPSELROOTFS}/linux_extract
-
-[ -f ${METADATAMIPSELROOTFS}/iana_extract ] || \
+pushd ${SRCMIPSELROOTFS}
+[ -f ${METADATAEXTRACT}/iana_extract ] || \
   tar xf ${TARBALL}/iana-etc-${IANA_VERSION}.${IANA_SUFFIX} || \
     die "***extract iana error" && \
-      touch ${METADATAMIPSELROOTFS}/iana_extract
+      touch ${METADATAEXTRACT}/iana_extract
 
-[ -f ${METADATAMIPSELROOTFS}/iproute2_extract ] || \
+[ -f ${METADATAEXTRACT}/iproute2_extract ] || \
   tar xf ${TARBALL}/iproute2-${IPROUTE2_VERSION}.${IPROUTE2_SUFFIX} || \
     die "***extract iproute2 error" && \
-      touch ${METADATAMIPSELROOTFS}/iproute2_extract
+      touch ${METADATAEXTRACT}/iproute2_extract
 
-[ -f ${METADATAMIPSELROOTFS}/bzip2_extract ] || \
+[ -f ${METADATAEXTRACT}/bzip2_extract ] || \
   tar xf ${TARBALL}/bzip2-${BZIP2_VERSION}.${BZIP2_SUFFIX} || \
     die "***extract bzip2 error" && \
-      touch ${METADATAMIPSELROOTFS}/bzip2_extract
+      touch ${METADATAEXTRACT}/bzip2_extract
 
-[ -f ${METADATAMIPSELROOTFS}/man_extract ] || \
+[ -f ${METADATAEXTRACT}/man_extract ] || \
   tar xf ${TARBALL}/man-${MAN_VERSION}.${MAN_SUFFIX} || \
     die "***extract man error" && \
-      touch ${METADATAMIPSELROOTFS}/man_extract
+      touch ${METADATAEXTRACT}/man_extract
 
-[ -f ${METADATAMIPSELROOTFS}/bootscript_extract ] || \
+[ -f ${METADATAEXTRACT}/bootscript_extract ] || \
   tar xf ${TARBALL}/bootscripts-cross-lfs-${BOOTSCRIPTS_VERSION}.${BOOTSCRIPTS_SUFFIX} || \
     die "***extract bootscript error" && \
-      touch ${METADATAMIPSELROOTFS}/bootscript_extract
+      touch ${METADATAEXTRACT}/bootscript_extract
 
-[ -f ${METADATAMIPSELROOTFS}/vim_extract ] || \
+[ -f ${METADATAEXTRACT}/vim_extract ] || \
   tar xf ${TARBALL}/vim-${VIM_VERSION}.${VIM_SUFFIX} || \
     die "***extract vim error" && \
-      touch ${METADATAMIPSELROOTFS}/vim_extract
+      touch ${METADATAEXTRACT}/vim_extract
 
-[ -f ${METADATAMIPSELROOTFS}/dhcpcd_extract ] || \
+[ -f ${METADATAEXTRACT}/dhcpcd_extract ] || \
   tar xf  ${TARBALL}/dhcpcd-${DHCPCD_VERSION}.${DHCPCD_SUFFIX} || \
     die "***extract dhcpcd error" && \
-      touch ${METADATAMIPSELROOTFS}/dhcpcd_extract
+      touch ${METADATAEXTRACT}/dhcpcd_extract
 
-[ -f ${METADATAMIPSELROOTFS}/groff_extract_cross ] || \
-  tar xf ${TARBALL}/groff-${GROFF_VERSION}.${GROFF_SUFFIX} || \
-    die "***extract groff cross error" && \
-      touch ${METADATAMIPSELROOTFS}/groff_extract_cross
-
-[ -f ${METADATAMIPSELROOTFS}/perl_extract ] || \
-  tar xf ${TARBALL}/perl-${PERL_VERSION}.${PERL_SUFFIX} || \
-    die "***extract perl error" && \
-      touch ${METADATAMIPSELROOTFS}/perl_extract
-
-[ -f ${METADATAMIPSELROOTFS}/iputils_extract ] || \
+[ -f ${METADATAEXTRACT}/iputils_extract ] || \
   tar xf ${TARBALL}/iputils-${IPUTILS_VERSION}.${IPUTILS_SUFFIX} || \
     die "***extract iputils error" && \
-      touch ${METADATAMIPSELROOTFS}/iputils_extract
+      touch ${METADATAEXTRACT}/iputils_extract
 
-popd
-
-pushd ${SRCMIPSELROOTFS}
-[ -f ${METADATAMIPSELROOTFS}/perl_cross_extract ] || \
+mkdir -p perl_cross
+cd perl_cross
+[ -f ${METADATAEXTRACT}/perl_cross_extract ] || \
   tar xf ${TARBALL}/perl-${PERLCROSS_VERSION}.tar.gz || \
     die "***extract cross perl error" && \
-      touch ${METADATAMIPSELROOTFS}/perl_cross_extract
+      touch ${METADATAEXTRACT}/perl_cross_extract
+cd ..
 
-pushd ${BUILDMIPSELROOTFS}
-cd perl-${PERL_VERSION}
-[ -f "${METADATAMIPSELROOTFS}/perl_cross_merge" ] || \
-  cp -a ${SRCMIPSELROOTFS}/perl-${PERL_VERSION}/* ./ || \
-    die "merge cross perl error" && \
-      touch ${METADATAMIPSELROOTFS}/perl_cross_merge
-popd
+[ -f ${METADATAEXTRACT}/perl_extract ] || \
+  tar xf ${TARBALL}/perl-${PERL_VERSION}.${PERL_SUFFIX} || \
+    die "***extract perl error" && \
+      touch ${METADATAEXTRACT}/perl_extract
 
-[ -f ${METADATAMIPSELROOTFS}/gmp_extract ] || \
+[ -f ${METADATAEXTRACT}/perl_cross_copy ] || \
+  cp -ar perl_cross/perl-${PERL_VERSION}/* perl-${PERL_VERSION}/ || \
+    die "***copy cross perl error" && \
+      touch ${METADATAEXTRACT}/perl_cross_copy
+
+[ -f ${METADATAEXTRACT}/perl_cross_clean ] || \
+  rm -rf perl_cross || \
+    die "***clean cross perl error" && \
+      touch ${METADATAEXTRACT}/perl_cross_clean
+
+[ -f ${METADATAEXTRACT}/gmp_extract ] || \
   tar xf ${TARBALL}/gmp-${GMP_VERSION}.${GMP_SUFFIX} || \
     die "***extract gmp error" && \
-      touch ${METADATAMIPSELROOTFS}/gmp_extract
+      touch ${METADATAEXTRACT}/gmp_extract
 
-[ -f ${METADATAMIPSELROOTFS}/mpfr_extract ] || \
+[ -f ${METADATAEXTRACT}/mpfr_extract ] || \
   tar xf ${TARBALL}/mpfr-${MPFR_VERSION}.${MPFR_SUFFIX} || \
     die "***extract mpfr error" && \
-      touch ${METADATAMIPSELROOTFS}/mpfr_extract
+      touch ${METADATAEXTRACT}/mpfr_extract
 
-[ -f ${METADATAMIPSELROOTFS}/mpc_extract ] || \
+[ -f ${METADATAEXTRACT}/mpc_extract ] || \
   tar xf ${TARBALL}/mpc-${MPC_VERSION}.${MPC_SUFFIX} || \
     die "***extract mpc error" && \
-      touch ${METADATAMIPSELROOTFS}/mpc_extract
+      touch ${METADATAEXTRACT}/mpc_extract
 
-[ -f ${METADATAMIPSELROOTFS}/ppl_extract ] || \
+[ -f ${METADATAEXTRACT}/ppl_extract ] || \
   tar xf ${TARBALL}/ppl-${PPL_VERSION}.${PPL_SUFFIX} || \
     die "***extract ppl error" && \
-      touch ${METADATAMIPSELROOTFS}/ppl_extract
+      touch ${METADATAEXTRACT}/ppl_extract
 
-[ -f ${METADATAMIPSELROOTFS}/cloog_extract ] || \
+[ -f ${METADATAEXTRACT}/cloog_extract ] || \
   tar xf ${TARBALL}/cloog-${CLOOG_VERSION}.${CLOOG_SUFFIX} || \
     die "***extract cloog error" && \
-      touch ${METADATAMIPSELROOTFS}/cloog_extract
+      touch ${METADATAEXTRACT}/cloog_extract
 
-[ -f ${METADATAMIPSELROOTFS}/binutils_extract ] || \
+[ -f ${METADATAEXTRACT}/binutils_extract ] || \
   tar xf ${TARBALL}/binutils-${BINUTILS_VERSION}.${BINUTILS_SUFFIX} || \
     die "***extract binutils error" && \
-      touch ${METADATAMIPSELROOTFS}/binutils_extract
+      touch ${METADATAEXTRACT}/binutils_extract
 
-[ -f ${METADATAMIPSELROOTFS}/gcc_extract ] || \
+[ -f ${METADATAEXTRACT}/gcc_extract ] || \
   tar xf ${TARBALL}/gcc-${GCC_VERSION}.${GCC_SUFFIX} || \
     die "***extract gcc error" && \
-      touch ${METADATAMIPSELROOTFS}/gcc_extract
+      touch ${METADATAEXTRACT}/gcc_extract
 
-[ -f ${METADATAMIPSELROOTFS}/glibc_extract ] || \
+[ -f ${METADATAEXTRACT}/glibc_extract ] || \
   tar xf ${TARBALL}/glibc-${GLIBC_VERSION}.${GLIBC_SUFFIX} || \
     die "***extract glibc error" && \
-      touch ${METADATAMIPSELROOTFS}/glibc_extract
+      touch ${METADATAEXTRACT}/glibc_extract
 
-[ -f ${METADATAMIPSELROOTFS}/file_extract ] || \
+[ -f ${METADATAEXTRACT}/file_extract ] || \
   tar xf ${TARBALL}/file-${FILE_VERSION}.${FILE_SUFFIX} || \
     die "***extract file error" && \
-      touch ${METADATAMIPSELROOTFS}/file_extract
+      touch ${METADATAEXTRACT}/file_extract
 
-[ -f ${METADATAMIPSELROOTFS}/groff_extract ] || \
+[ -f ${METADATAEXTRACT}/groff_extract ] || \
   tar xf ${TARBALL}/groff-${GROFF_VERSION}.${GROFF_SUFFIX} || \
     die "***extract groff error" && \
-      touch ${METADATAMIPSELROOTFS}/groff_extract
+      touch ${METADATAEXTRACT}/groff_extract
 
-[ -f ${METADATAMIPSELROOTFS}/shadow_extract ] || \
+[ -f ${METADATAEXTRACT}/shadow_extract ] || \
   tar xf ${TARBALL}/shadow-${SHADOW_VERSION}.${SHADOW_SUFFIX} || \
     die "***extract shadow error" && \
-      touch ${METADATAMIPSELROOTFS}/shadow_extract
+      touch ${METADATAEXTRACT}/shadow_extract
 
-[ -f ${METADATAMIPSELROOTFS}/ncurses_extract ] || \
+[ -f ${METADATAEXTRACT}/ncurses_extract ] || \
   tar xf ${TARBALL}/ncurses-${NCURSES_VERSION}.${NCURSES_SUFFIX} || \
     die "***extract ncurses error" && \
-      touch ${METADATAMIPSELROOTFS}/ncurses_extract
+      touch ${METADATAEXTRACT}/ncurses_extract
 
-[ -f ${METADATAMIPSELROOTFS}/man-pages_extract ] || \
+[ -f ${METADATAEXTRACT}/man-pages_extract ] || \
   tar xf ${TARBALL}/man-pages-${MANPAGES_VERSION}.${MANPAGES_SUFFIX} || \
     die "***extract man pages error" && \
-      touch ${METADATAMIPSELROOTFS}/man-pages_extract
+      touch ${METADATAEXTRACT}/man-pages_extract
 
-[ -f ${METADATAMIPSELROOTFS}/zlib_extract ] || \
+[ -f ${METADATAEXTRACT}/zlib_extract ] || \
   tar xf ${TARBALL}/zlib-${ZLIB_VERSION}.${ZLIB_SUFFIX} || \
     die "***extract zlib error" && \
-      touch ${METADATAMIPSELROOTFS}/zlib_extract
+      touch ${METADATAEXTRACT}/zlib_extract
 
-[ -f ${METADATAMIPSELROOTFS}/sed_extract ] || \
+[ -f ${METADATAEXTRACT}/sed_extract ] || \
   tar xf ${TARBALL}/sed-${SED_VERSION}.${SED_SUFFIX} || \
     die "***extract sed error" && \
-      touch ${METADATAMIPSELROOTFS}/sed_extract
+      touch ${METADATAEXTRACT}/sed_extract
 
-[ -f ${METADATAMIPSELROOTFS}/util_linux_extract ] || \
+[ -f ${METADATAEXTRACT}/util_linux_extract ] || \
   tar xf ${TARBALL}/util-${UTIL_VERSION}.${UTIL_SUFFIX} || \
     die "***extract util-linux error" && \
-      touch ${METADATAMIPSELROOTFS}/util_linux_extract
+      touch ${METADATAEXTRACT}/util_linux_extract
 
-[ -f ${METADATAMIPSELROOTFS}/e2fsprogs_extract ] || \
+[ -f ${METADATAEXTRACT}/e2fsprogs_extract ] || \
   tar xf ${TARBALL}/e2fsprogs-${E2FSPROGS_VERSION}.${E2FSPROGS_SUFFIX} || \
     die "***extract e2fsprogs error" && \
-      touch ${METADATAMIPSELROOTFS}/e2fsprogs_extract
+      touch ${METADATAEXTRACT}/e2fsprogs_extract
 
-[ -f ${METADATAMIPSELROOTFS}/coreutils_extract ] || \
+[ -f ${METADATAEXTRACT}/coreutils_extract ] || \
   tar xf ${TARBALL}/coreutils-${COREUTILS_VERSION}.${COREUTILS_SUFFIX} || \
     die "***extract coreutils error" && \
-      touch ${METADATAMIPSELROOTFS}/coreutils_extract
+      touch ${METADATAEXTRACT}/coreutils_extract
 
-[ -f ${METADATAMIPSELROOTFS}/m4_extract ] || \
+[ -f ${METADATAEXTRACT}/m4_extract ] || \
   tar xf ${TARBALL}/m4-${M4_VERSION}.${M4_SUFFIX} || \
     die "***extract m4 error" && \
-      touch ${METADATAMIPSELROOTFS}/m4_extract
+      touch ${METADATAEXTRACT}/m4_extract
 
-[ -f ${METADATAMIPSELROOTFS}/bison_extract ] || \
+[ -f ${METADATAEXTRACT}/bison_extract ] || \
   tar xf ${TARBALL}/bison-${BISON_VERSION}.${BISON_SUFFIX} || \
     die "***extract bison error" && \
-      touch ${METADATAMIPSELROOTFS}/bison_extract
+      touch ${METADATAEXTRACT}/bison_extract
 
-[ -f ${METADATAMIPSELROOTFS}/procps_extract ] || \
+[ -f ${METADATAEXTRACT}/procps_extract ] || \
   tar xf ${TARBALL}/procps-${PROCPS_VERSION}.${PROCPS_SUFFIX} || \
     die "***extract procps error" && \
-      touch ${METADATAMIPSELROOTFS}/procps_extract
+      touch ${METADATAEXTRACT}/procps_extract
 
-[ -f ${METADATAMIPSELROOTFS}/libtool_extract ] || \
+[ -f ${METADATAEXTRACT}/libtool_extract ] || \
   tar xf ${TARBALL}/libtool-${LIBTOOL_VERSION}.${LIBTOOL_SUFFIX} || \
     die "***extract libtool error" && \
-      touch ${METADATAMIPSELROOTFS}/libtool_extract
+      touch ${METADATAEXTRACT}/libtool_extract
 
-[ -f ${METADATAMIPSELROOTFS}/flex_extract ] || \
+[ -f ${METADATAEXTRACT}/flex_extract ] || \
   tar xf ${TARBALL}/flex-${FLEX_VERSION}.${FLEX_SUFFIX} || \
     die "***extract flex error" && \
-      touch ${METADATAMIPSELROOTFS}/flex_extract
+      touch ${METADATAEXTRACT}/flex_extract
 
-[ -f ${METADATAMIPSELROOTFS}/readline_extract ] || \
+[ -f ${METADATAEXTRACT}/readline_extract ] || \
   tar xf ${TARBALL}/readline-${READLINE_VERSION}.${READLINE_SUFFIX} || \
     die "***extract readline error" && \
-      touch ${METADATAMIPSELROOTFS}/readline_extract
+      touch ${METADATAEXTRACT}/readline_extract
 
-[ -f ${METADATAMIPSELROOTFS}/python_extract ] || \
+[ -f ${METADATAEXTRACT}/python_extract ] || \
   tar xf ${TARBALL}/python-${PYTHON_VERSION}.${PYTHON_SUFFIX} || \
     die "***extract python error" && \
-      touch ${METADATAMIPSELROOTFS}/python_extract
+      touch ${METADATAEXTRACT}/python_extract
 
-[ -f ${METADATAMIPSELROOTFS}/autoconf_extract ] || \
+[ -f ${METADATAEXTRACT}/autoconf_extract ] || \
   tar xf ${TARBALL}/autoconf-${AUTOCONF_VERSION}.${AUTOCONF_SUFFIX} || \
     die "***extract autoconf error" && \
-      touch ${METADATAMIPSELROOTFS}/autoconf_extract
+      touch ${METADATAEXTRACT}/autoconf_extract
 
-[ -f ${METADATAMIPSELROOTFS}/automake_extract ] || \
+[ -f ${METADATAEXTRACT}/automake_extract ] || \
   tar xf ${TARBALL}/automake-${AUTOMAKE_VERSION}.${AUTOMAKE_SUFFIX} || \
     die "***extract automake error" && \
-      touch ${METADATAMIPSELROOTFS}/automake_extract
+      touch ${METADATAEXTRACT}/automake_extract
 
-[ -f ${METADATAMIPSELROOTFS}/bash_extract ] || \
+[ -f ${METADATAEXTRACT}/bash_extract ] || \
   tar xf ${TARBALL}/bash-${BASH_VERSION}.${BASH_SUFFIX} || \
     die "***extract bash error" && \
-      touch ${METADATAMIPSELROOTFS}/bash_extract
+      touch ${METADATAEXTRACT}/bash_extract
 
-[ -f ${METADATAMIPSELROOTFS}/diffutils_extract ] || \
+[ -f ${METADATAEXTRACT}/diffutils_extract ] || \
   tar xf ${TARBALL}/diffutils-${DIFFUTILS_VERSION}.${DIFFUTILS_SUFFIX} || \
     die "***extract diffutils error" && \
-      touch ${METADATAMIPSELROOTFS}/diffutils_extract
+      touch ${METADATAEXTRACT}/diffutils_extract
 
-[ -f ${METADATAMIPSELROOTFS}/findutils_extract ] || \
+[ -f ${METADATAEXTRACT}/findutils_extract ] || \
   tar xf ${TARBALL}/findutils-${FINDUTILS_VERSION}.${FINDUTILS_SUFFIX} || \
     die "***extract findutils error" && \
-      touch ${METADATAMIPSELROOTFS}/findutils_extract
+      touch ${METADATAEXTRACT}/findutils_extract
 
-[ -f ${METADATAMIPSELROOTFS}/gawk_extract ] || \
+[ -f ${METADATAEXTRACT}/gawk_extract ] || \
   tar xf ${TARBALL}/gawk-${GAWK_VERSION}.${GAWK_SUFFIX} || \
     die "***extract gawk error" && \
-      touch ${METADATAMIPSELROOTFS}/gawk_extract
+      touch ${METADATAEXTRACT}/gawk_extract
 
-[ -f ${METADATAMIPSELROOTFS}/gettext_extract ] || \
+[ -f ${METADATAEXTRACT}/gettext_extract ] || \
   tar xf ${TARBALL}/gettext-${GETTEXT_VERSION}.${GETTEXT_SUFFIX} || \
     die "***extract gettext error" && \
-      touch ${METADATAMIPSELROOTFS}/gettext_extract
+      touch ${METADATAEXTRACT}/gettext_extract
 
-[ -f ${METADATAMIPSELROOTFS}/grep_extract ] || \
+[ -f ${METADATAEXTRACT}/grep_extract ] || \
   tar xf ${TARBALL}/grep-${GREP_VERSION}.${GREP_SUFFIX} || \
     die "***extract grep error" && \
-      touch ${METADATAMIPSELROOTFS}/grep_extract
+      touch ${METADATAEXTRACT}/grep_extract
 
-[ -f ${METADATAMIPSELROOTFS}/gzip_extract ] || \
+[ -f ${METADATAEXTRACT}/gzip_extract ] || \
   tar xf ${TARBALL}/gzip-${GZIP_VERSION}.${GZIP_SUFFIX} || \
     die "***extract gzip error" && \
-      touch ${METADATAMIPSELROOTFS}/gzip_extract
+      touch ${METADATAEXTRACT}/gzip_extract
 
-[ -f ${METADATAMIPSELROOTFS}/kbd_extract ] || \
+[ -f ${METADATAEXTRACT}/kbd_extract ] || \
   tar xf ${TARBALL}/kbd-${KBD_VERSION}.${KBD_SUFFIX} || \
     die "***extract kbd error" && \
-      touch ${METADATAMIPSELROOTFS}/kbd_extract
+      touch ${METADATAEXTRACT}/kbd_extract
 
-[ -f ${METADATAMIPSELROOTFS}/less_extract ] || \
+[ -f ${METADATAEXTRACT}/less_extract ] || \
   tar xf ${TARBALL}/less-${LESS_VERSION}.${LESS_SUFFIX} || \
     die "***extract less error" && \
-      touch ${METADATAMIPSELROOTFS}/less_extract
+      touch ${METADATAEXTRACT}/less_extract
 
-[ -f ${METADATAMIPSELROOTFS}/make_extract ] || \
+[ -f ${METADATAEXTRACT}/make_extract ] || \
   tar xf ${TARBALL}/make-${MAKE_VERSION}.${MAKE_SUFFIX} || \
     die "***extract make error" && \
-      touch ${METADATAMIPSELROOTFS}/make_extract
+      touch ${METADATAEXTRACT}/make_extract
 
-[ -f ${METADATAMIPSELROOTFS}/module_init_extract ] || \
+[ -f ${METADATAEXTRACT}/module_init_extract ] || \
   tar xf ${TARBALL}/module-init-tools-${MODULE_VERSION}.${MODULE_SUFFIX} || \
     die "***extract module init error" && \
-      touch ${METADATAMIPSELROOTFS}/module_init_extract
+      touch ${METADATAEXTRACT}/module_init_extract
 
-[ -f ${METADATAMIPSELROOTFS}/patch_extract ] || \
+[ -f ${METADATAEXTRACT}/patch_extract ] || \
   tar xf ${TARBALL}/patch-${PATCH_VERSION}.${PATCH_SUFFIX} || \
     die "***extract patch error" && \
-      touch ${METADATAMIPSELROOTFS}/patch_extract
+      touch ${METADATAEXTRACT}/patch_extract
 
-[ -f ${METADATAMIPSELROOTFS}/psmisc_extract ] || \
+[ -f ${METADATAEXTRACT}/psmisc_extract ] || \
   tar xf ${TARBALL}/psmisc-${PSMISC_VERSION}.${PSMISC_SUFFIX} || \
     die "***extract psmisc error" && \
-      touch ${METADATAMIPSELROOTFS}/psmisc_extract
+      touch ${METADATAEXTRACT}/psmisc_extract
 
-[ -f ${METADATAMIPSELROOTFS}/libestr_extract ] || \
+[ -f ${METADATAEXTRACT}/libestr_extract ] || \
   tar xf ${TARBALL}/libestr-${LIBESTR_VERSION}.${LIBESTR_SUFFIX} || \
     die "***extract libestr error" && \
-      touch ${METADATAMIPSELROOTFS}/libestr_extract
+      touch ${METADATAEXTRACT}/libestr_extract
 
-[ -f ${METADATAMIPSELROOTFS}/libee_extract ] || \
+[ -f ${METADATAEXTRACT}/libee_extract ] || \
   tar xf ${TARBALL}/libee-${LIBEE_VERSION}.${LIBEE_SUFFIX} || \
     die "***extract libee error" && \
-      touch ${METADATAMIPSELROOTFS}/libee_extract
+      touch ${METADATAEXTRACT}/libee_extract
 
-[ -f ${METADATAMIPSELROOTFS}/jsonc_extract ] || \
+[ -f ${METADATAEXTRACT}/jsonc_extract ] || \
   tar xf ${TARBALL}/json-c-${JSONC_VERSION}.${JSONC_SUFFIX} || \
     die "***extract jsonc error" && \
-      touch ${METADATAMIPSELROOTFS}/jsonc_extract
+      touch ${METADATAEXTRACT}/jsonc_extract
 
-[ -f ${METADATAMIPSELROOTFS}/rsyslog_extract ] || \
+[ -f ${METADATAEXTRACT}/rsyslog_extract ] || \
   tar xf ${TARBALL}/rsyslog-${RSYSLOG_VERSION}.${RSYSLOG_SUFFIX} || \
     die "***extract rsyslog error" && \
-      touch ${METADATAMIPSELROOTFS}/rsyslog_extract
+      touch ${METADATAEXTRACT}/rsyslog_extract
 
-[ -f ${METADATAMIPSELROOTFS}/sysvinit_extract ] || \
+[ -f ${METADATAEXTRACT}/sysvinit_extract ] || \
   tar xf ${TARBALL}/sysvinit-${SYSVINIT_VERSION}.${SYSVINIT_SUFFIX} || \
     die "***extract rsyvinit error" && \
-      touch ${METADATAMIPSELROOTFS}/sysvinit_extract
+      touch ${METADATAEXTRACT}/sysvinit_extract
 
-[ -f ${METADATAMIPSELROOTFS}/tar_extract ] || \
+[ -f ${METADATAEXTRACT}/tar_extract ] || \
   tar xf ${TARBALL}/tar-${TAR_VERSION}.${TAR_SUFFIX} || \
     die "***extract tar error" && \
-      touch ${METADATAMIPSELROOTFS}/tar_extract
+      touch ${METADATAEXTRACT}/tar_extract
 
-[ -f ${METADATAMIPSELROOTFS}/texinfo_extract ] || \
+[ -f ${METADATAEXTRACT}/texinfo_extract ] || \
   tar xf ${TARBALL}/texinfo-${TEXINFO_VERSION}a.${TEXINFO_SUFFIX} || \
     die "***extract texinfo error" && \
-      touch ${METADATAMIPSELROOTFS}/texinfo_extract
+      touch ${METADATAEXTRACT}/texinfo_extract
 
-[ -f ${METADATAMIPSELROOTFS}/kmod_extract ] || \
+[ -f ${METADATAEXTRACT}/kmod_extract ] || \
   tar xf ${TARBALL}/kmod-${KMOD_VERSION}.${KMOD_SUFFIX} || \
     die "***extract kmod error" && \
-      touch ${METADATAMIPSELROOTFS}/kmod_extract
+      touch ${METADATAEXTRACT}/kmod_extract
 
-[ -f ${METADATAMIPSELROOTFS}/udev_extract ] || \
+[ -f ${METADATAEXTRACT}/udev_extract ] || \
   tar xf ${TARBALL}/udev-${UDEV_VERSION}.${UDEV_SUFFIX} || \
     die "***extract udev error" && \
-      touch ${METADATAMIPSELROOTFS}/udev_extract
+      touch ${METADATAEXTRACT}/udev_extract
 
-[ -f ${METADATAMIPSELROOTFS}/xz_extract ] || \
+[ -f ${METADATAEXTRACT}/xz_extract ] || \
   tar xf ${TARBALL}/xz-${XZ_VERSION}.${XZ_SUFFIX} || \
     die "***extract xz error" && \
-      touch ${METADATAMIPSELROOTFS}/xz_extract
+      touch ${METADATAEXTRACT}/xz_extract
 
-[ -f ${METADATAMIPSELROOTFS}/gdb_extract ] || \
+[ -f ${METADATAEXTRACT}/gdb_extract ] || \
   tar xf ${TARBALL}/gdb-${GDB_VERSION}.${GDB_SUFFIX} || \
     die "***extractjgdb error" && \
-      touch ${METADATAMIPSELROOTFS}/gdb_extract
+      touch ${METADATAEXTRACT}/gdb_extract
 
 popd
 
@@ -505,12 +498,6 @@ cd ppl_cross_build
   rm -v ${PREFIXMIPSELROOTFS}/usr/lib/lib{ppl,ppl_c}.la || \
     die "***remove cross ppl *.la error" && \
       touch ${METADATAMIPSELROOTFS}/ppl_cross_rmla
-popd
-
-pushd ${SRCMIPSELROOTFS}
-cd cloog-${CLOOG_VERSION}
-cp -v configure{,.orig}
-sed -e "/LD_LIBRARY_PATH=/d" configure.orig > configure
 popd
 
 pushd ${BUILDMIPSELROOTFS}
@@ -699,6 +686,13 @@ sed "/^HOST_\(GMP\|PPL\|CLOOG\)\(LIBS\|INC\)/s:-[IL]/\(lib\|include\)::" \
       touch ${METADATAMIPSELROOTFS}/gcc_cross_lncc
 popd
 
+pushd ${SRCMIPSELROOTFS}
+cd gcc-${GCC_VERSION}
+cp libiberty/Makefile.in{.orig,}
+cp gcc/gccbug.in{.orig,}
+cp gcc/Makefile.in{.orig,}
+cp Makefile{.orig,}
+popd
 
 pushd ${BUILDMIPSELROOTFS}
 [ -d "sed_build" ] || mkdir sed_build
@@ -815,6 +809,11 @@ mkdir -pv ${PREFIXMIPSELROOTFS}/var/lib/hwclock
       touch ${METADATAMIPSELROOTFS}/util_linux_la
 popd
 
+pushd ${SRCMIPSELROOTFS}
+cd util-${UTIL_VERSION}
+cp hwclock/hwclock.c{.orig,}
+popd
+
 pushd ${BUILDMIPSELROOTFS}
 [ -d e2fs_build ] || mkdir e2fs_build
 cd e2fs_build
@@ -918,7 +917,7 @@ EOF
       touch ${METADATAMIPSELROOTFS}/coreutils_link
 popd
 
-pushd ${BUILDMIPSELROOTFS}
+pushd ${SRCMIPSELROOTFS}
 cd iana-etc-${IANA_VERSION}
 [ -f ${METADATAMIPSELROOTFS}/iana_build ] || \
   make -j${JOBS} || \
@@ -928,10 +927,15 @@ cd iana-etc-${IANA_VERSION}
   make DESTDIR=${PREFIXMIPSELROOTFS} install || \
     die "***install iana-etc error" && \
       touch ${METADATAMIPSELROOTFS}/iana_install
+[ -f "${METADATAMIPSELROOTFS}/iana-etc_cross_clean" ] || \
+  make dist || \
+    die "***clean iana-etc error" && \
+      touch ${METADATAMIPSELROOTFS}/iana-etc_cross_clean
 popd
 
 pushd ${SRCMIPSELROOTFS}
 cd m4-${M4_VERSION}
+cp lib/stdio.in.h{,.orig}
 [ -f ${METADATAMIPSELROOTFS}/m4_patch ] || \
   sed -i '/gets is a security hole/d' lib/stdio.in.h || \
     die "patch m4 stdio.h error" && \
@@ -965,6 +969,11 @@ EOF
   make DESTDIR=${PREFIXMIPSELROOTFS} install || \
     die "***install m4 error" && \
       touch ${METADATAMIPSELROOTFS}/m4_install
+popd
+
+pushd ${SRCMIPSELROOTFS}
+cd m4-${M4_VERSION}
+cp lib/stdio.in.h{.orig,}
 popd
 
 pushd ${BUILDMIPSELROOTFS}
@@ -1065,9 +1074,10 @@ EOF` || \
   die "***cat /usr/bin/lex flex error" && \
     touch ${METADATAMIPSELROOTFS}/flex_cat
 chmod -v 755 ${PREFIXMIPSELROOTFS}/usr/bin/lex
+cp -v Makefile.in{.orig,}
 popd
 
-pushd ${BUILDMIPSELROOTFS}
+pushd ${SRCMIPSELROOTFS}
 cd iproute2-${IPROUTE2_VERSION}
 for dir in ip misc tc; do
     cp ${dir}/Makefile{,.orig}
@@ -1087,10 +1097,17 @@ sed '/^TARGETS/s@arpd@@g' misc/Makefile.orig > misc/Makefile
        MANDIR=/usr/share/man install || \
          die "***install iproute2 error"
              touch ${METADATAMIPSELROOTFS}/iproute2_build2
+[ -f "${METADATAMIPSELROOTFS}/iproute2_cross_clean" ] || \
+  make distclean || \
+    die "***clean iproute2 error" && \
+      touch ${METADATAMIPSELROOTFS}/iproute2_cross_clean
+for dir in ip misc tc; do
+    cp ${dir}/Makefile{.orig,}
+done
 popd
 
 if [ ${HOSTOS} != "Darwin" ]; then
-pushd ${BUILDMIPSELROOTFS}
+pushd ${SRCMIPSELROOTFS}
 cd perl-${PERL_VERSION}
 [ -f ${METADATAMIPSELROOTFS}/perl_cross_configure ] || \
   ./configure --prefix=/usr --target=mipsel-unknown-linux-gnu || \
@@ -1106,6 +1123,11 @@ cd perl-${PERL_VERSION}
   make DESTDIR=${PREFIXMIPSELROOTFS} install || \
     die "***install cross perl error" && \
       touch ${METADATAMIPSELROOTFS}/perl_cross_install
+
+[ -f ${METADATAMIPSELROOTFS}/perl_cross_clean ] || \
+  make clean || \
+    die "***clean cross perl error" && \
+      touch ${METADATAMIPSELROOTFS}/perl_cross_clean
 popd
 fi
 
@@ -1180,12 +1202,8 @@ cd automake_build
       touch ${METADATAMIPSELROOTFS}/automake_install
 popd
 
-pushd ${BUILDMIPSELROOTFS}
-[ -f ${METADATAMIPSELROOTFS}/python_cross_copy ] || \
-  cp -ar ${SRCMIPSELROOTFS}/Python-${PYTHON_VERSION} python-cross-build || \
-    die "***copy cross python error" && \
-      touch ${METADATAMIPSELROOTFS}/python_cross_copy
-cd python-cross-build
+pushd ${SRCMIPSELROOTFS}
+cd Python-${PYTHON_VERSION}
 
 cat > config.cache << "EOF"
 ac_cv_have_long_long_format=yes
@@ -1219,6 +1237,16 @@ sed -e 's/\${SYSROOT}/${PREFIXMIPSELROOTFS}/g' \
   make DESTDIR=${PREFIXMIPSELROOTFS} install || \
     die "***install cross python error" && \
       touch ${METADATAMIPSELROOTFS}/python_cross_install
+
+[ -f "${METADATAMIPSELROOTFS}/python_cross_clean" ] || \
+  make distclean || \
+    die "***clean python_cross error" && \
+      touch ${METADATAMIPSELROOTFS}/python_cross_clean
+
+[ -f ${METADATAMIPSELROOTFS}/python_cross_re_patch ] || \
+  patch -Rp1 < tmp.patch || \
+    die "***re-patch cross python error" && \
+      touch ${METADATAMIPSELROOTFS}/python_cross_re_patch
 popd
 
 pushd ${BUILDMIPSELROOTFS}
@@ -1292,7 +1320,23 @@ EOF
       touch ${METADATAMIPSELROOTFS}/bash_link
 popd
 
-pushd ${BUILDMIPSELROOTFS}
+pushd ${SRCMIPSELROOTFS}
+cd bash-${BASH_VERSION}
+[ -f ${METADATAMIPSELROOTFS}/bash_rm_patch ] || \
+  patch -RNp1 -i ${PATCH}/bash-4.2-branch_update-4.patch || \
+    die "***re-patch bash error" && \
+      touch ${METADATAMIPSELROOTFS}/bash_rm_patch
+popd
+
+pushd ${SRCMIPSELROOTFS}
+cd bash-${BASH_VERSION}
+[ -f ${METADATAMIPSELROOTFS}/bash_rm_patch ] || \
+  patch -RNp1 -i ${PATCH}/bash-4.2-branch_update-4.patch || \
+    die "***re-patch bash error" && \
+      touch ${METADATAMIPSELROOTFS}/bash_rm_patch
+popd
+
+pushd ${SRCMIPSELROOTFS}
 cd bzip2-${BZIP2_VERSION}
 cp Makefile{,.orig}
 sed -e "/^all:/s/ test//" Makefile.orig > Makefile
@@ -1328,10 +1372,16 @@ ln -sfv ../../lib/libbz2.so.1.0 ${PREFIXMIPSELROOTFS}/usr/lib/libbz2.so
       touch ${METADATAMIPSELROOTFS}/bzip2_remove
 ln -sfv bzip2 ${PREFIXMIPSELROOTFS}/bin/bunzip2
 ln -sfv bzip2 ${PREFIXMIPSELROOTFS}/bin/bzcat
+[ -f "${METADATAMIPSELROOTFS}/bzip_distclea" ] || \
+  make distclean || \
+    die "distclean bzip error" && \
+      touch ${METADATAMIPSELROOTFS}/bzip_distclea
+cp Makefile{.orig,}
 popd
 
 pushd ${SRCMIPSELROOTFS}
 cd diffutils-${DIFFUTILS_VERSION}
+cp lib/stdio.in.h{,.orig}
 [ -f ${METADATAMIPSELROOTFS}/diffutils_patch ] || \
   sed -i '/gets is a security hole/d' lib/stdio.in.h || \
     die "***patch diffutils error" && \
@@ -1357,6 +1407,11 @@ touch man/*.1
   make DESTDIR=${PREFIXMIPSELROOTFS} install || \
     die "***install diffutils error" && \
       touch ${METADATAMIPSELROOTFS}/diffutils_install
+popd
+
+pushd ${SRCMIPSELROOTFS}
+cd diffutils-${DIFFUTILS_VERSION}
+cp lib/stdio.in.h{.orig,}
 popd
 
 pushd ${BUILDMIPSELROOTFS}
@@ -1420,6 +1475,7 @@ EOF
   rm ${PREFIXMIPSELROOTFS}/usr/bin/updatedb.orig || \
     die "***remove updatedb.orig findutils error" && \
       touch ${METADATAMIPSELROOTFS}/findutils_rm
+cp ${PREFIXMIPSELROOTFS}/usr/bin/updatedb{.orig,}
 popd
 
 pushd ${BUILDMIPSELROOTFS}
@@ -1488,7 +1544,7 @@ cd grep_build
       touch ${METADATAMIPSELROOTFS}/grep_install
 popd
 
-pushd ${BUILDMIPSELROOTFS}
+pushd ${SRCMIPSELROOTFS}
 cd groff-${GROFF_VERSION}
 # FIXME This is a sub dir config, it's very strange.
   pushd src/libs/gnulib/
@@ -1523,6 +1579,10 @@ cd groff-${GROFF_VERSION}
   ln -sfv tbl ${PREFIXMIPSELROOTFS}/usr/bin/gtbl || \
     die "***link3 cross groff error" && \
       touch ${METADATAMIPSELROOTFS}/groff_cross_link3
+[ -f "${METADATAMIPSELROOTFS}/groff_cross_clean" ] || \
+  make distclean || \
+    die "clean groff" && \
+      touch ${METADATAMIPSELROOTFS}/groff_cross_clean
 popd
 
 pushd ${SRCMIPSELROOTFS}
@@ -1561,9 +1621,15 @@ cd gzip_build
       touch ${METADATAMIPSELROOTFS}/gzip_mv
 popd
 
+pushd ${SRCMIPSELROOTFS}
+cd gzip-${GZIP_VERSION}
+for file in $(grep -lr futimens *); do
+  cp -v ${file}{.orig,}
+done
+popd
 
 # FIXME This use gcc, Not PREFIXMIPSELROOTFS-GCC
-pushd ${BUILDMIPSELROOTFS}
+pushd ${SRCMIPSELROOTFS}
 cd iputils-${IPUTILS_VERSION}
 [ -f ${METADATAMIPSELROOTFS}/iputilsfix_patch ] || \
   patch -p1 < ${PATCH}/iputils-s20121221-fixes-1.patch || \
@@ -1603,6 +1669,18 @@ cd iputils-${IPUTILS_VERSION}
   install -v -m644 doc/*.8 ${PREFIXMIPSELROOTFS}/usr/share/man/man8 || \
     die "***install rdisc iputils error" && \
       touch ${METADATAMIPSELROOTFS}/iputilsdoc_install
+[ -f "${METADATAMIPSELROOTFS}/iputils_clean" ] || \
+  make distclean || \
+    die "clean iputils error" && \
+      touch ${METADATAMIPSELROOTFS}/iputils_clean
+[ -f ${METADATAMIPSELROOTFS}/iputils_re_patchfix ] || \
+  patch -RNp1 -i ${PATCH}/iputils-s20121221-fixes-1.patch || \
+    die "***re-patch fix iputils error" && \
+      touch ${METADATAMIPSELROOTFS}/iputils_re_patchfix
+[ -f ${METADATAMIPSELROOTFS}/iputils_re_patchdoc ] || \
+  patch -RNp1 -i ${PATCH}/iputils-s20121221-doc-1.patch || \
+    die "***re-patch doc iputils error" && \
+      touch ${METADATAMIPSELROOTFS}/iputils_re_patchdoc
 popd
 
 #pushd ${SRCMIPSELROOTFS}
@@ -1685,7 +1763,7 @@ cd make_build
       touch ${METADATAMIPSELROOTFS}/make_install
 popd
 
-pushd ${BUILDMIPSELROOTFS}
+pushd ${SRCMIPSELROOTFS}
 cd man-${MAN_VERSION}
 cp configure{,.orig}
 sed -e "/PREPATH=/s@=.*@=\"$(eval echo ${PREFIXMIPSELROOTFS}/{,usr/}{sbin,bin})\"@g" \
@@ -1715,6 +1793,13 @@ sed "s@${PREFIXMIPSELROOTFS}@@" conf_script.orig > conf_script
   make DESTDIR=${PREFIXMIPSELROOTFS} PREFIX="" install || \
     die "***install man error" && \
       touch ${METADATAMIPSELROOTFS}/man_install
+[ -f "${METADATAMIPSELROOTFS}/man_cross_clean" ] || \
+  make distclean || \
+    die "***clean man error" && \
+      touch ${METADATAMIPSELROOTFS}/man_cross_clean
+cp configure{.orig,}
+cp src/man.conf.in{.orig,}
+cp conf_script{.orig,}
 popd
 
 pushd ${BUILDMIPSELROOTFS}
@@ -1837,6 +1922,11 @@ done
   mv -v ${PREFIXMIPSELROOTFS}/usr/bin/passwd ${PREFIXMIPSELROOTFS}/bin || \
     die "***move shadow error" && \
       touch ${METADATAMIPSELROOTFS}/shadow_cross_mv
+cp src/Makefile{.orig,}
+for mkf in $(find man -name Makefile)
+do
+  cp ${mkf}{.orig,}
+done
 popd
 
 # Use make, not make -j${JOBS}
@@ -2077,6 +2167,7 @@ EOF` || \
   make -C src ROOT=${PREFIXMIPSELROOTFS} INSTALL="install" install || \
     die "***install sysvinit error" && \
       touch ${METADATAMIPSELROOTFS}/sysvinit_install
+cp -v src/Makefile.orig src/Makefile
 popd
 
 [ -f ${METADATAMIPSELROOTFS}/cat_inittab_2 ] || \
@@ -2110,6 +2201,7 @@ EOF` || \
 
 pushd ${SRCMIPSELROOTFS}
 cd tar-${TAR_VERSION}
+cp gnu/stdio.in.h{,.orig}
 [ -f ${METADATAMIPSELROOTFS}/tar_patch ] || \
   sed -i '/gets is a security hole/d' gnu/stdio.in.h || \
     die "***patch tar error"
@@ -2145,6 +2237,11 @@ EOF
   make DESTDIR=${PREFIXMIPSELROOTFS} install || \
     die "***install tar error" && \
       touch ${METADATAMIPSELROOTFS}/tar_install
+popd
+
+pushd ${SRCMIPSELROOTFS}
+cd tar-${TAR_VERSION}
+cp gnu/stdio.in.h{.orig,}
 popd
 
 pushd ${BUILDMIPSELROOTFS}
@@ -2239,7 +2336,7 @@ cd udev_build
       touch ${METADATAMIPSELROOTFS}/udev_install
 popd
 
-pushd ${BUILDMIPSELROOTFS}
+pushd ${SRCMIPSELROOTFS}
 cd ${VIM_DIR}
 [ -f ${METADATAMIPSELROOTFS}/vim_patch ] || \
   patch -Np1 -i ${PATCH}/vim-7.3-branch_update-4.patch || \
@@ -2277,6 +2374,17 @@ EOF
       touch ${METADATAMIPSELROOTFS}/vim_install
 ln -sfv vim ${PREFIXMIPSELROOTFS}/usr/bin/vi
 ln -sfnv ../vim/vim72/doc ${PREFIXMIPSELROOTFS}/usr/share/doc/vim-7.2
+[ -f "${METADATAMIPSELROOTFS}/vim_clean" ] || \
+  make distclean || \
+    die "***clean vim error" && \
+      touch ${METADATAMIPSELROOTFS}/vim_clean
+popd
+
+pushd ${SRCMIPS64ELROOTFS}/${VIM_DIR}
+[ -f "${METADATAMIPSELROOTFS}/vim_re_patch" ] || \
+  patch -RNp1 -i ${PATCH}/vim-7.3-branch_update-4.patch || \
+    die "*** re-patch vim error" && \
+      touch ${METADATAMIPSELROOTFS}/vim_re_patch
 popd
 
 pushd ${BUILDMIPSELROOTFS}
@@ -2303,7 +2411,7 @@ cd xz_build
       touch ${METADATAMIPSELROOTFS}/xz_mv
 popd
 
-pushd ${BUILDMIPSELROOTFS}
+pushd ${SRCMIPSELROOTFS}
 cd dhcpcd-${DHCPCD_VERSION}
 [ -f ${METADATAMIPSELROOTFS}/dhcpcd_configure ] || \
   PREFIX="" ./configure \
@@ -2321,9 +2429,13 @@ cd dhcpcd-${DHCPCD_VERSION}
        DESTDIR=${PREFIXMIPSELROOTFS} install || \
     die "***install dhcpcd error" && \
       touch ${METADATAMIPSELROOTFS}/dhcpcd_install
+[ -f "${METADATAMIPSELROOTFS}/dhcpcd_cross_clean" ] || \
+  make distclean || \
+    die "install dhcpcd error" && \
+      touch ${METADATAMIPSELROOTFS}/dhcpcd_cross_clean
 popd
 
-pushd ${BUILDMIPSELROOTFS}
+pushd ${SRCMIPSELROOTFS}
 cd bootscripts-cross-lfs-${BOOTSCRIPTS_VERSION}
 [ -f ${METADATAMIPSELROOTFS}/bootscript_build ] || \
    make DESTDIR=${PREFIXMIPSELROOTFS} install-bootscripts || \
@@ -2333,6 +2445,14 @@ cd bootscripts-cross-lfs-${BOOTSCRIPTS_VERSION}
   make DESTDIR=${PREFIXMIPSELROOTFS} install-network || \
     die "***install network error" && \
       touch ${METADATAMIPSELROOTFS}/bootscript_install
+[ -f ${METADATAMIPSELROOTFS}/bootscript_install ] || \
+  make DESTDIR=${PREFIXMIPSELROOTFS} install-network || \
+    die "***install network error" && \
+      touch ${METADATAMIPSELROOTFS}/bootscript_install
+[ -f "${METADATAMIPSELROOTFS}/bootscript_clean" ] || \
+  make dist || \
+    die "clean network error" && \
+      touch ${METADATAMIPSELROOTFS}/bootscript_clean
 popd
 
 #########################################################################

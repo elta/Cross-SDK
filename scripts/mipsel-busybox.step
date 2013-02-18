@@ -21,11 +21,18 @@ export LDFLAGS="-Wl,-rpath-link,${PREFIXMIPSELROOTFS}/usr/lib:${PREFIXMIPSELROOT
 #export BUSYBOX_OPTIONS="static dynamic"
 export BUSYBOX_OPTIONS="dynamic"
 
+pushd ${SRCBUSYBOX_32}
+[ -f ${METADATAEXTRACT}/busybox-extract ] || \
+  tar xf ${TARBALL}/busybox-${BUSYBOX_VERSION}.${BUSYBOX_SUFFIX} || \
+    die "busybox extract error" && \
+      touch ${METADATAEXTRACT}/busybox-extract
+popd
+
 # Begin for loop, build static/dynamic busybox.
 for option in ${BUSYBOX_OPTIONS}; do
 
 [ -f ${METADATABUSYBOX_32}/busybox-${option}-create ] || \
-  mkdir ${SRCBUSYBOX_32}/busybox-$option || \
+  mkdir ${BUILDBUSYBOX_32}/busybox-$option || \
     die "busybox-${option}-create dir create failed" && \
       touch ${METADATABUSYBOX_32}/busybox-${option}-create
 
@@ -36,27 +43,25 @@ for option in ${BUSYBOX_OPTIONS}; do
 #      touch ${METADATABUSYBOX_32}/linux_extract
 #popd
 
-pushd ${SRCBUSYBOX_32}/busybox-$option
-[ -f ${METADATABUSYBOX_32}/busybox-${option}-extract ] || \
-  tar xvf ${TARBALL}/busybox-${BUSYBOX_VERSION}.${BUSYBOX_SUFFIX} || \
-    die "busybox-${option}-extract error" && \
-      touch ${METADATABUSYBOX_32}/busybox-${option}-extract
-
-cd busybox-${BUSYBOX_VERSION}
+pushd ${SRCBUSYBOX_32}/busybox-${BUSYBOX_VERSION}
 if [ ${HOSTOS} = "Darwin" ]; then
-[ -f ${METADATABUSYBOX_32}/busybox-1.20.2-macos.patch ] || \
+[ -f ${METADATAEXTRACT}/busybox-1.20.2-macos.patch ] || \
   patch -Np1 -i ${PATCH}/busybox-${BUSYBOX_VERSION}-macos.patch || \
     die "Patch for MacOS failed" && \
-      touch ${METADATABUSYBOX_32}/busybox-1.20.2-macos.patch
+      touch ${METADATAEXTRACT}/busybox-1.20.2-macos.patch
 fi
-[ -f ${METADATABUSYBOX_32}/busybox-${option}-patch-busybox-${BUSYBOX_VERSION} ] || \
+[ -f ${METADATAEXTRACT}/busybox-${option}-patch-busybox-${BUSYBOX_VERSION} ] || \
   patch -Np1 -i ${PATCH}/busybox-${BUSYBOX_VERSION}.patch || \
     die "Patch failed" && \
-      touch ${METADATABUSYBOX_32}/busybox-${option}-patch-busybox-${BUSYBOX_VERSION}
+      touch ${METADATAEXTRACT}/busybox-${option}-patch-busybox-${BUSYBOX_VERSION}
 [ -f ${METADATABUSYBOX_32}/busybox-${option}-patch-busybox-mipsel-${option}_defconfig ] || \
   patch -Np1 -i ${PATCH}/busybox-mipsel-${option}_defconfig.patch \
     || die "Patch failed" && \
       touch ${METADATABUSYBOX_32}/busybox-${option}-patch-busybox-mipsel-${option}_defconfig
+[ -f ${METADATABUSYBOX_32}/busybox-clean ] || \
+  make distclean || \
+    die "clean busybox error" && \
+      touch ${METADATABUSYBOX_32}/busybox-clean
 [ -f ${METADATABUSYBOX_32}/busybox-${option}-config ] || \
   make mipsel-${option}_defconfig || \
     die "busybox-${option}-config error" && \
@@ -71,28 +76,8 @@ fi
       touch ${METADATABUSYBOX_32}/busybox-${option}-install
 popd
 
-#pushd ${BUILDBUSYBOX_32}
-#cd linux-${LINUX_VERSION}
-#[ -f ${METADATABUSYBOX_32}/linux_mrpro ] || \
-#  make mrproper || \
-#    die "***clean linux error" && \
-#      touch ${METADATABUSYBOX_32}/linux_mrpro
-#[ -f ${METADATABUSYBOX_32}/linux_patch ] || \
-#  patch -p1 < ${PATCH}/linux-mipsel-sysroot-defconfig.patch || \
-#    die "***Patch linux config error" && \
-#      touch ${METADATABUSYBOX_32}/linux_patch
-#[ -f ${METADATABUSYBOX_32}/linux_mkconfig ] || \
-#  make ARCH=mips mipsel_sysroot_defconfig || \
-#    die "***make linux defconfig error" && \
-#      touch ${METADATABUSYBOX_32}/linux_mkconfig
-#[ -f ${METADATABUSYBOX_32}/linux_build ] || \
-#  make -j${JOBS} ARCH=mips CROSS_COMPILE=${CROSS_TARGET32}- || \
-#    die "***build linux error" && \
-#      touch ${METADATABUSYBOX_32}/linux_build
-#popd
-
 # Make BusyBox Image
-pushd ${SRCBUSYBOX_32}/busybox-$option
+pushd ${BUILDBUSYBOX_32}/busybox-$option
 dd if=/dev/zero of=${BUSYBOX_32_IMAGE} bs=4k count=512k
 echo y | mkfs.ext3 ${BUSYBOX_32_IMAGE}
 [ -d "${MOUNT_POINT}" ] || mkdir ${MOUNT_POINT}
@@ -104,8 +89,8 @@ sudo mount -o loop ${BUSYBOX_32_IMAGE} ${MOUNT_POINT}
 fi
 
 # Build BusyBox File System
-cp -ar ${SRCBUSYBOX_32}/busybox-$option/busybox-${BUSYBOX_VERSION}/_install/* ${MOUNT_POINT}
-sudo cp -ar ${SRCBUSYBOX_32}/busybox-$option/busybox-${BUSYBOX_VERSION}/examples/bootfloppy/etc \
+cp -ar ${SRCBUSYBOX_32}/busybox-${BUSYBOX_VERSION}/_install/* ${MOUNT_POINT}
+sudo cp -ar ${SRCBUSYBOX_32}/busybox-${BUSYBOX_VERSION}/examples/bootfloppy/etc \
   ${MOUNT_POINT}/
 mkdir ${MOUNT_POINT}/dev
 mkdir ${MOUNT_POINT}/proc
@@ -142,7 +127,7 @@ sudo umount ${MOUNT_POINT}
 popd
 
 [ -d ${PREFIXGNULINUX} ] || mkdir -p ${PREFIXGNULINUX}
-mv ${SRCBUSYBOX_32}/busybox-$option/${BUSYBOX_32_IMAGE} ${PREFIXGNULINUX}
+mv ${BUILDBUSYBOX_32}/busybox-$option/${BUSYBOX_32_IMAGE} ${PREFIXGNULINUX}
 # End for loop, build static/dynamic busybox.
 done
 
