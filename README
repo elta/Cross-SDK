@@ -10,7 +10,7 @@ maintain their part of the SDK.
 ===============================================================================
 Version History:
 0.5:
-- Combine ${SRC} as possible as we can, reduce disk using very much.
+- Combine ${SRC} as possible as we can, saving a huge disk space.
 
 0.4:
 - Slipt scripts.
