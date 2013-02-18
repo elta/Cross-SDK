@@ -47,7 +47,7 @@ fi
   make -j${JOBS} ARCH=mips CROSS_COMPILE=${CROSS_TARGET32}- || \
     die "build cross linux error" && \
       touch ${METADATAMIPSELKERNEL}/linux_cross_build
-if [ ${MOD} = "gnu-rootfs" ]; then
+if [ ${MOD} := "gnu-rootfs" ]; then
 [ -f ${METADATAMIPSELKERNEL}/linux_mod_rootfs_install ] || \
   make ARCH=mips CROSS_COMPILE=${CROSS_TARGET32}- \
   INSTALL_MOD_PATH=${PREFIXMIPSELROOTFS} modules_install || \

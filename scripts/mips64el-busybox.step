@@ -82,9 +82,8 @@ sudo mount -o loop ${BUSYBOX_64_IMAGE} ${MOUNT_POINT}
 fi
 
 # Build BusyBox File System
+sudo cp -ar ${SRCBUSYBOX_64}/busybox-${BUSYBOX_VERSION}/examples/bootfloppy/etc ${PREFIXMIPS64ELBUSYBOX}/
 cp -ar ${PREFIXMIPS64ELBUSYBOX}/* ${MOUNT_POINT}
-sudo cp -ar ${SRCBUSYBOX_64}/busybox-${BUSYBOX_VERSION}/examples/bootfloppy/etc \
-  ${MOUNT_POINT}/
 mkdir ${MOUNT_POINT}/dev
 mkdir ${MOUNT_POINT}/proc
 
