@@ -49,11 +49,16 @@ fi
   CFLAGS="${BUILD64}" || \
     die "build linux error" && \
       touch ${METADATAMIPS64ELKERNEL}/linux_build_kernel
-[ -f "${METADATAMIPS64ELKERNEL}/linux_install_modules" ] || \
+[ -f "${METADATAMIPS64ELKERNEL}/linux_mod_rootfs_install" ] || \
   make ARCH=mips CROSS_COMPILE=${CROSS_TARGET64}- CFLAGS="${BUILD64}" \
   INSTALL_MOD_PATH=${PREFIXMIPS64ELROOTFS} modules_install || \
-    die "install linux module error" && \
-      touch ${METADATAMIPS64ELKERNEL}/linux_install_modules
+    die "install rootfs linux modules error" && \
+      touch ${METADATAMIPS64ELKERNEL}/linux_mod_rootfs_install
+[ -f "${METADATAMIPS64ELKERNEL}/linux_mod_busybox_install" ] || \
+  make ARCH=mips CROSS_COMPILE=${CROSS_TARGET64}- CFLAGS="${BUILD64}" \
+  INSTALL_MOD_PATH=${PREFIXMIPS64ELROOTFS} modules_install || \
+    die "install busybox rootfs linux modules error" && \
+      touch ${METADATAMIPS64ELKERNEL}/linux_mod_busybox_install
 [ -f "${METADATAMIPS64ELKERNEL}/linux_cp_vmlinux" ] || \
   cp vmlinux ${PREFIXGNULINUX}/vmlinux-64 || \
     die "cp vmlinux error" && \

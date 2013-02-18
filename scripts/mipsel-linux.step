@@ -47,11 +47,16 @@ fi
   make -j${JOBS} ARCH=mips CROSS_COMPILE=${CROSS_TARGET32}- || \
     die "build cross linux error" && \
       touch ${METADATAMIPSELKERNEL}/linux_cross_build
-[ -f ${METADATAMIPSELKERNEL}/linux_cross_install ] || \
+[ -f ${METADATAMIPSELKERNEL}/linux_mod_rootfs_install ] || \
   make ARCH=mips CROSS_COMPILE=${CROSS_TARGET32}- \
   INSTALL_MOD_PATH=${PREFIXMIPSELROOTFS} modules_install || \
-    die "install cross linux module error" && \
-      touch ${METADATAMIPSELKERNEL}/linux_cross_install
+    die "install rootfs linux module error" && \
+      touch ${METADATAMIPSELKERNEL}/linux_mod_rootfs_install
+[ -f ${METADATAMIPSELKERNEL}/linux_mod_busybox_install ] || \
+  make ARCH=mips CROSS_COMPILE=${CROSS_TARGET32}- \
+  INSTALL_MOD_PATH=${PREFIXMIPSELBUSYBOX} modules_install || \
+    die "install busybox linux module error" && \
+      touch ${METADATAMIPSELKERNEL}/linux_mod_busybox_install
 [ -f ${METADATAMIPSELKERNEL}/linux_cross_cpvmlinux ] || \
   cp vmlinux ${PREFIXGNULINUX}/vmlinux-o32 || \
     die "cp vmlinux error" && \

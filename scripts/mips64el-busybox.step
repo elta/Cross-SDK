@@ -32,8 +32,6 @@ for option in ${BUSYBOX_OPTIONS}; do
     die "busybox-${option}-create dir create failed" && \
       touch ${METADATABUSYBOX_64}/busybox-${option}-create
 
-pushd ${BUILDBUSYBOX_64}/busybox-$option
-
 pushd ${SRCBUSYBOX_64}/busybox-${BUSYBOX_VERSION}
 if [ ${HOSTOS} = "Darwin" ]; then
 [ -f ${METADATAEXTRACT}/busybox-1.20.2-macos.patch ] || \
@@ -65,6 +63,10 @@ fi
   make ARCH=mips CROSS_COMPILE=${CROSS_TARGET64}- install || \
     die "busybox-${option}-install error" && \
       touch ${METADATABUSYBOX_64}/busybox-${option}-install
+[ -f ${METADATABUSYBOX_64}/copy-busybox-${option} ] || \
+  cp -a _install ${PREFIXMIPS64ELBUSYBOX} || \
+    die "copy busybox-${option} error" && \
+      touch ${METADATABUSYBOX_64}/copy-busybox-${option}
 popd
 
 # Make BusyBox Image
@@ -80,7 +82,7 @@ sudo mount -o loop ${BUSYBOX_64_IMAGE} ${MOUNT_POINT}
 fi
 
 # Build BusyBox File System
-cp -ar ${SRCBUSYBOX_64}/busybox-${BUSYBOX_VERSION}/_install/* ${MOUNT_POINT}
+cp -ar ${PREFIXMIPS64ELBUSYBOX}/* ${MOUNT_POINT}
 sudo cp -ar ${SRCBUSYBOX_64}/busybox-${BUSYBOX_VERSION}/examples/bootfloppy/etc \
   ${MOUNT_POINT}/
 mkdir ${MOUNT_POINT}/dev

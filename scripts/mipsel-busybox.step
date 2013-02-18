@@ -36,13 +36,6 @@ for option in ${BUSYBOX_OPTIONS}; do
     die "busybox-${option}-create dir create failed" && \
       touch ${METADATABUSYBOX_32}/busybox-${option}-create
 
-#pushd ${BUILDBUSYBOX_32}
-#[ -f ${METADATABUSYBOX_32}/linux_extract ] || \
-#  tar xf ${TARBALL}/linux-${LINUX_VERSION}.${LINUX_SUFFIX} || \
-#    die "***exract linux error" && \
-#      touch ${METADATABUSYBOX_32}/linux_extract
-#popd
-
 pushd ${SRCBUSYBOX_32}/busybox-${BUSYBOX_VERSION}
 if [ ${HOSTOS} = "Darwin" ]; then
 [ -f ${METADATAEXTRACT}/busybox-1.20.2-macos.patch ] || \
@@ -74,6 +67,10 @@ fi
   make ARCH=mips CROSS_COMPILE=${CROSS_TARGET32}- install || \
     die "busybox-${option}-install error" && \
       touch ${METADATABUSYBOX_32}/busybox-${option}-install
+[ -f ${METADATABUSYBOX_32}/copy-busybox-${option} ] || \
+  cp -a _install ${PREFIXMIPSELBUSYBOX} || \
+    die "copy busybox-${option} error" && \
+      touch ${METADATABUSYBOX_32}/copy-busybox-${option}
 popd
 
 # Make BusyBox Image
@@ -89,7 +86,7 @@ sudo mount -o loop ${BUSYBOX_32_IMAGE} ${MOUNT_POINT}
 fi
 
 # Build BusyBox File System
-cp -ar ${SRCBUSYBOX_32}/busybox-${BUSYBOX_VERSION}/_install/* ${MOUNT_POINT}
+cp -ar ${PREFIXMIPSELBUSYBOX}/* ${MOUNT_POINT}
 sudo cp -ar ${SRCBUSYBOX_32}/busybox-${BUSYBOX_VERSION}/examples/bootfloppy/etc \
   ${MOUNT_POINT}/
 mkdir ${MOUNT_POINT}/dev
@@ -102,19 +99,6 @@ sudo cp -a /dev/tty ${MOUNT_POINT}/dev/
 sudo cp -a /dev/tty1 ${MOUNT_POINT}/dev/
 sudo cp -a /dev/tty2 ${MOUNT_POINT}/dev/
 sudo cp -a /dev/ttyS0 ${MOUNT_POINT}/dev/
-
-#[ -f ${METADATABUSYBOX_32}/linux_cpvmlinux ] || \
-#  cp vmlinux ${MOUNT_POINT}/boot/ || \
-#    die "***cp vmlinux error" && \
-#      touch ${METADATABUSYBOX_32}/linux_cpvmlinux
-#[ -f ${METADATABUSYBOX_32}/linux_cpsystemmap ] || \
-#  cp System.map ${MOUNT_POINT}/boot/System.map-3.3.7 || \
-#    die "***cp System.map error" && \
-#      touch ${METADATABUSYBOX_32}/linux_cpsystemmap
-#[ -f ${METADATABUSYBOX_32}/linux_cpconfig ] || \
-#  cp .config ${MOUNT_POINT}/boot/config-3.3.7 || \
-#    die "***cp config file error" && \
-#      touch ${METADATABUSYBOX_32}/linux_cpconfig
 
 # Copy Library to File System
 if [ -d ${PREFIXMIPSELROOTFS}/lib ]; then
