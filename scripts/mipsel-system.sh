@@ -2,7 +2,7 @@
 
 source source.env
 
-export MOD_ROOTFS=1
+export MOD="gnu-rootfs"
 
 [ -f "${METADATAHOSTTOOLS}/host_tools_finished" ] || \
   source host-tools.step || \

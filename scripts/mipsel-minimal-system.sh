@@ -2,7 +2,7 @@
 
 source source.env
 
-export MOD_BUSYBOX=1
+export MOD="busybox"
 
 [ -f "${METADATAHOSTTOOLS}/host_tools_finished" ] || \
   source host-tools.step || \
