@@ -2,6 +2,8 @@
 
 source source.env
 
+export MOD_ROOTFS=1
+
 [ -f "${METADATAHOSTTOOLS}/host_tools_finished" ] || \
   source host-tools.step || \
     die "build host-tools error" && \
