@@ -344,6 +344,13 @@ cd gcc-build
       touch ${METADATAMIPSELTOOLCHAIN}/gcc_install
 popd
 
+pushd ${PREFIXMIPSELROOTFS}/lib
+[ -f ${METADATAMIPSELTOOLCHAIN}/libgcc_install ] || \
+  cp ${PREFIXMIPSELTOOLCHAIN}/${CROSS_TARGET32}/lib/libgcc_s.so* . || \
+    die "install libgcc error" && \
+      touch ${METADATAMIPSELTOOLCHAIN}/libgcc_install
+popd
+
 pushd ${BUILDMIPSELTOOLCHAIN}
 [ -d "gdb_build" ] || mkdir gdb_build
 cd gdb_build

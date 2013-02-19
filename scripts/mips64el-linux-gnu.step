@@ -455,6 +455,27 @@ cd gcc-build-stage2
       touch ${METADATAMIPS64ELTOOLCHAIN}/gcc_stage2_install
 popd
 
+pushd ${PREFIXMIPS64ELROOTFS}/lib
+[ -f ${METADATAMIPS64ELTOOLCHAIN}/libgcc_install_32 ] || \
+  cp ${PREFIXMIPS64ELTOOLCHAIN}/${CROSS_TARGET64}/lib/libgcc_s.so* . || \
+    die "install libgcc error" && \
+      touch ${METADATAMIPS64ELTOOLCHAIN}/libgcc_install-32
+popd
+
+pushd ${PREFIXMIPS64ELROOTFS}/lib32
+[ -f ${METADATAMIPS64ELTOOLCHAIN}/libgcc_install_n32 ] || \
+  cp ${PREFIXMIPS64ELTOOLCHAIN}/${CROSS_TARGET64}/lib32/libgcc_s.so* . || \
+    die "install libgcc error" && \
+      touch ${METADATAMIPS64ELTOOLCHAIN}/libgcc_install_n32
+popd
+
+pushd ${PREFIXMIPS64ELROOTFS}/lib64
+[ -f ${METADATAMIPS64ELTOOLCHAIN}/libgcc_install_64 ] || \
+  cp ${PREFIXMIPS64ELTOOLCHAIN}/${CROSS_TARGET64}/lib64/libgcc_s.so* . || \
+    die "install libgcc error" && \
+      touch ${METADATAMIPS64ELTOOLCHAIN}/libgcc_install_64
+popd
+
 pushd ${BUILDMIPS64ELTOOLCHAIN}
 [ -d "gdb_build" ] || mkdir gdb_build
 cd gdb_build
