@@ -133,7 +133,7 @@ pushd ${BUILDMIPS64ELTOOLCHAIN}
 [ -d mpc-build ] || mkdir mpc-build
 cd mpc-build
 [ -f "${METADATAMIPS64ELTOOLCHAIN}/mpc_config" ] || \
-  LDFLAGS="-Wl,-rpath,/lib" \
+  LDFLAGS="-Wl,-rpath,${PREFIXMIPS64ELTOOLCHAIN}/lib" \
   ${SRCMIPS64ELTOOLCHAIN}/mpc-${MPC_VERSION}/configure \
   --prefix=${PREFIXMIPS64ELTOOLCHAIN} \
   --with-gmp=${PREFIXMIPS64ELTOOLCHAIN} --with-mpfr=${PREFIXMIPS64ELTOOLCHAIN} || \
@@ -197,9 +197,16 @@ cd binutils-build
 [ -f "${METADATAMIPS64ELTOOLCHAIN}/binutils_config" ] || \
   AS="as" AR="ar" \
   ${SRCMIPS64ELTOOLCHAIN}/binutils-${BINUTILS_VERSION}/configure \
-  --prefix=${PREFIXMIPS64ELTOOLCHAIN} --host=${CROSS_HOST} --target=${CROSS_TARGET64} \
+  --prefix=${PREFIXMIPS64ELTOOLCHAIN} \
+  --host=${CROSS_HOST} --target=${CROSS_TARGET64} \
   --with-sysroot=${PREFIXMIPS64ELROOTFS} \
-  --disable-nls --enable-shared --enable-multilib || \
+  --with-lib-path=${PREFIXMIPS64ELROOTFS}/usr/lib \
+  --disable-nls --enable-shared --enable-64-bit-bfd \
+  --enable-cloog-backend=isl --enable-poison-system-directories \
+  --with-gmp=${PREFIXMIPS64ELTOOLCHAIN} --with-mpfr=${PREFIXMIPS64ELTOOLCHAIN} \
+  --with-ppl=${PREFIXMIPS64ELTOOLCHAIN} --with-cloog=${PREFIXMIPS64ELTOOLCHAIN} \
+  --with-build-sysroot=${PREFIXMIPS64ELROOTFS} \
+  --enable-multilib || \
     die "***config binutils error" && \
       touch ${METADATAMIPS64ELTOOLCHAIN}/binutils_config
 [ -f "${METADATAMIPS64ELTOOLCHAIN}/binutils_config_host" ] || \
@@ -228,17 +235,20 @@ cd gcc-build-stage1
   AR=ar LDFLAGS="-Wl,-rpath,${PREFIXMIPS64ELTOOLCHAIN}/lib" \
   ${SRCMIPS64ELTOOLCHAIN}/gcc-${GCC_VERSION}/configure \
   --prefix=${PREFIXMIPS64ELTOOLCHAIN} --build=${CROSS_HOST} \
-  --host=${CROSS_HOST} --disable-nls --enable-multilib \
-  --target=${CROSS_TARGET64} --with-sysroot=${PREFIXMIPS64ELROOTFS} \
-  --without-headers --with-newlib --disable-decimal-float \
+  --host=${CROSS_HOST} --target=${CROSS_TARGET64} \
+  --with-sysroot=${PREFIXMIPS64ELROOTFS} \
+  --with-local-prefix=${PREFIXMIPS64ELROOTFS}/usr \
+  --disable-nls --disable-shared --without-headers --with-newlib \
   --disable-libgomp --disable-libmudflap --disable-libssp \
+  --disable-decimal-float --disable-threads --enable-languages=c \
+  --enable-cloog-backend=isl --enable-poison-system-directories \
   --with-mpfr=${PREFIXMIPS64ELTOOLCHAIN} \
   --with-gmp=${PREFIXMIPS64ELTOOLCHAIN} \
   --with-ppl=${PREFIXMIPS64ELTOOLCHAIN} \
   --with-cloog=${PREFIXMIPS64ELTOOLCHAIN} \
   --with-mpc=${PREFIXMIPS64ELTOOLCHAIN} \
-  --disable-shared --disable-threads --enable-languages=c \
-  --enable-cloog-backend=isl --with-system-zlib || \
+  --with-build-sysroot=${PREFIXMIPS64ELROOTFS} \
+  --with-system-zlib --enable-multilib || \
     die "***config gcc stage1 error" && \
       touch ${METADATAMIPS64ELTOOLCHAIN}/gcc_stage1_config
 [ -f "${METADATAMIPS64ELTOOLCHAIN}/gcc_stage1_build" ] || \
@@ -271,16 +281,19 @@ pushd ${BUILDMIPS64ELTOOLCHAIN}
 [ -d "glibc-build-32" ] || mkdir glibc-build-32
 cd glibc-build-32
 [ -f "${METADATAMIPS64ELTOOLCHAIN}/glibc_create32_config.cache" ] || \
-  `cat > config.cache << "EOF"
+`cat > config.cache << "EOF"
 libc_cv_forced_unwind=yes
 libc_cv_c_cleanup=yes
 libc_cv_gnu89_inline=yes
+libc_cv_ssp=no
+READELF=${CROSS_TARGET64}-readelf
+NM=${CROSS_TARGET64}-nm
 EOF` || \
     die "create glibc32 config.cache" && \
       touch ${METADATAMIPS64ELTOOLCHAIN}/glibc_create32_config.cache
 
 [ -f "${METADATAMIPS64ELTOOLCHAIN}/glibc_update32_configparms" ] || \
-  `cat > configparms << EOF
+`cat > configparms << EOF
 install_root=${PREFIXMIPS64ELROOTFS}
 EOF` || \
     die "update glibc32 configparms" && \
@@ -313,16 +326,19 @@ pushd ${BUILDMIPS64ELTOOLCHAIN}
 [ -d "glibc-build-n32" ] || mkdir glibc-build-n32
 cd glibc-build-n32
 [ -f "${METADATAMIPS64ELTOOLCHAIN}/glibc_createn32_config.cache" ] || \
-  `cat > config.cache << "EOF"
+`cat > config.cache << "EOF"
 libc_cv_forced_unwind=yes
 libc_cv_c_cleanup=yes
 libc_cv_gnu89_inline=yes
+libc_cv_ssp=no
+READELF=${CROSS_TARGET64}-readelf
+NM=${CROSS_TARGET64}-nm
 EOF` || \
     die "create glibcn32 config.cache" && \
       touch ${METADATAMIPS64ELTOOLCHAIN}/glibc_createn32_config.cache
 
 [ -f "${METADATAMIPS64ELTOOLCHAIN}/glibc_updaten32_configparms" ] || \
-  `cat > configparms << EOF
+`cat > configparms << EOF
 install_root=${PREFIXMIPS64ELROOTFS}
 EOF` || \
     die "update glibcn32 configparms" && \
@@ -357,16 +373,19 @@ pushd ${BUILDMIPS64ELTOOLCHAIN}
 cd glibc-build-64
 
 [ -f "${METADATAMIPS64ELTOOLCHAIN}/glibc_create64_config.cache" ] || \
-  `cat > config.cache << "EOF"
+`cat > config.cache << "EOF"
 libc_cv_forced_unwind=yes
 libc_cv_c_cleanup=yes
 libc_cv_gnu89_inline=yes
+libc_cv_ssp=no
+READELF=${CROSS_TARGET64}-readelf
+NM=${CROSS_TARGET64}-nm
 EOF` || \
     die "create glibc64 config.cache" && \
       touch ${METADATAMIPS64ELTOOLCHAIN}/glibc_create64_config.cache
 
 [ -f "${METADATAMIPS64ELTOOLCHAIN}/glibc_update64_configparms" ] || \
-  `cat > configparms << EOF
+`cat > configparms << EOF
 install_root=${PREFIXMIPS64ELROOTFS}
 EOF` || \
     die "update glibc32 configparms" && \
@@ -413,13 +432,16 @@ cd gcc-build-stage2
   ${SRCMIPS64ELTOOLCHAIN}/gcc-${GCC_VERSION}/configure \
   --prefix=${PREFIXMIPS64ELTOOLCHAIN} \
   --build=${CROSS_HOST} --host=${CROSS_HOST} --target=${CROSS_TARGET64} \
-  --with-sysroot=${PREFIXMIPS64ELROOTFS} --disable-nls --enable-multilib \
-  --enable-shared --enable-languages=c,c++ --enable-__cxa_atexit \
+  --with-sysroot=${PREFIXMIPS64ELROOTFS} \
+  --with-local-prefix=/${PREFIXMIPS64ELROOTFS}/usr \
+  --disable-nls --enable-shared --enable-languages=c,c++ --enable-__cxa_atexit \
+  --enable-c99 --enable-long-long --enable-threads=posix \
+  --enable-cloog-backend=isl --enable-poison-system-directories \
+  --with-build-sysroot=${PREFIXMIPS64ELROOTFS} \
   --with-mpfr=${PREFIXMIPS64ELTOOLCHAIN} --with-gmp=${PREFIXMIPS64ELTOOLCHAIN} \
   --with-ppl=${PREFIXMIPS64ELTOOLCHAIN} --with-cloog=${PREFIXMIPS64ELTOOLCHAIN} \
   --with-mpc=${PREFIXMIPS64ELTOOLCHAIN} \
-  --enable-c99 --enable-long-long --enable-threads=posix \
-  --enable-cloog-backend=isl --with-system-zlib || \
+  --with-system-zlib --enable-multilib || \
     die "***config gcc stage2 error" && \
       touch ${METADATAMIPS64ELTOOLCHAIN}/gcc_stage2_config
 [ -f "${METADATAMIPS64ELTOOLCHAIN}/gcc_stage2_build" ] || \
@@ -441,6 +463,9 @@ cd gdb_build
   --prefix=${PREFIXMIPS64ELTOOLCHAIN} \
   --build=${CROSS_HOST} --host=${CROSS_HOST} \
   --target=${CROSS_TARGET64} --with-sysroot=${PREFIXMIPS64ELROOTFS} \
+  --with-lib-path=${PREFIXMIPS64ELROOTFS}/usr/lib \
+  --enable-poison-system-directories \
+  --with-build-sysroot=${PREFIXMIPS64ELROOTFS} \
   --enable-multilib || \
     die "***config gdb error" && \
       touch ${METADATAMIPS64ELTOOLCHAIN}/gdb_configure

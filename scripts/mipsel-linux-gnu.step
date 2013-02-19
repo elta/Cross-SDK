@@ -195,8 +195,14 @@ cd binutils-build
   ${SRCMIPSELTOOLCHAIN}/binutils-${BINUTILS_VERSION}/configure \
   --prefix=${PREFIXMIPSELTOOLCHAIN} \
   --host=${CROSS_HOST} --target=${CROSS_TARGET32} \
-  --with-sysroot=${PREFIXMIPSELROOTFS} --disable-nls \
-  --enable-shared --enable-multilib || \
+  --with-sysroot=${PREFIXMIPSELROOTFS} \
+  --with-lib-path=${PREFIXMIPSELROOTFS}/usr/lib \
+  --disable-nls --enable-shared \
+  --enable-cloog-backend=isl --enable-poison-system-directories \
+  --with-gmp=${PREFIXMIPSELTOOLCHAIN} --with-mpfr=${PREFIXMIPSELTOOLCHAIN} \
+  --with-ppl=${PREFIXMIPSELTOOLCHAIN} --with-cloog=${PREFIXMIPSELTOOLCHAIN} \
+  --with-build-sysroot=${PREFIXMIPSELROOTFS} \
+  --enable-multilib || \
     die "***config binutils error" && \
       touch ${METADATAMIPSELTOOLCHAIN}/binutils_configure
 [ -f ${METADATAMIPSELTOOLCHAIN}/binutils_build_host ] || \
@@ -223,19 +229,21 @@ cd gcc-static-build
 [ -f ${METADATAMIPSELTOOLCHAIN}/gcc_static_configure ] || \
   AR=ar LDFLAGS="-Wl,-rpath,${PREFIXMIPSELTOOLCHAIN}/lib" \
   ${SRCMIPSELTOOLCHAIN}/gcc-${GCC_VERSION}/configure \
-  --prefix=${PREFIXMIPSELTOOLCHAIN} \
-  --build=${CROSS_HOST} --host=${CROSS_HOST} \
-  --target=${CROSS_TARGET32} --with-sysroot=${PREFIXMIPSELROOTFS} \
-  --disable-nls --enable-multilib \
-  --without-headers --with-newlib --disable-decimal-float \
+  --prefix=${PREFIXMIPSELTOOLCHAIN} --build=${CROSS_HOST} \
+  --host=${CROSS_HOST} --target=${CROSS_TARGET32} \
+  --with-sysroot=${PREFIXMIPSELROOTFS} \
+  --with-local-prefix=${PREFIXMIPSELROOTFS}/usr \
+  --disable-nls --disable-shared --without-headers --with-newlib \
   --disable-libgomp --disable-libmudflap --disable-libssp \
+  --disable-decimal-float --disable-threads --enable-languages=c \
+  --enable-cloog-backend=isl --enable-poison-system-directories \
   --with-mpfr=${PREFIXMIPSELTOOLCHAIN} \
   --with-gmp=${PREFIXMIPSELTOOLCHAIN} \
   --with-ppl=${PREFIXMIPSELTOOLCHAIN} \
   --with-cloog=${PREFIXMIPSELTOOLCHAIN} \
   --with-mpc=${PREFIXMIPSELTOOLCHAIN} \
-  --disable-shared --disable-threads --enable-languages=c \
-  --enable-cloog-backend=isl --with-system-zlib || \
+  --with-build-sysroot=${PREFIXMIPSELROOTFS} \
+  --with-system-zlib --enable-multilib || \
     die "***config gcc static stage1 error" && \
       touch ${METADATAMIPSELTOOLCHAIN}/gcc_static_configure
 [ -f ${METADATAMIPSELTOOLCHAIN}/gcc_static_build ] || \
@@ -272,6 +280,9 @@ cat > config.cache << "EOF"
 lic_cv_forced_unwind=yes
 libc_cv_c_cleanup=yes
 libc_cv_gnu89_inline=yes
+libc_cv_ssp=no
+READELF=${CROSS_TARGET32}-readelf
+NM=${CROSS_TARGET32}-nm
 EOF
 cat > configparms << EOF
 install_root=${PREFIXMIPSELROOTFS}
@@ -310,15 +321,15 @@ cd gcc-build
   --build=${CROSS_HOST} --host=${CROSS_HOST} \
   --target=${CROSS_TARGET32} \
   --with-sysroot=${PREFIXMIPSELROOTFS} \
-  --disable-nls --enable-multilib \
-  --enable-shared --enable-languages=c,c++ --enable-__cxa_atexit \
-  --with-mpfr=${PREFIXMIPSELTOOLCHAIN} \
-  --with-gmp=${PREFIXMIPSELTOOLCHAIN} \
-  --with-ppl=${PREFIXMIPSELTOOLCHAIN} \
-  --with-cloog=${PREFIXMIPSELTOOLCHAIN} \
-  --with-mpc=${PREFIXMIPSELTOOLCHAIN} \
+  --with-local-prefix=/${PREFIXMIPSELROOTFS}/usr \
+  --disable-nls --enable-shared --enable-languages=c,c++ --enable-__cxa_atexit \
   --enable-c99 --enable-long-long --enable-threads=posix \
-  --enable-cloog-backend=isl --with-system-zlib || \
+  --enable-cloog-backend=isl --enable-poison-system-directories \
+  --with-build-sysroot=${PREFIXMIPSELROOTFS} \
+  --with-mpfr=${PREFIXMIPSELTOOLCHAIN} --with-gmp=${PREFIXMIPSELTOOLCHAIN} \
+  --with-ppl=${PREFIXMIPSELTOOLCHAIN} --with-cloog=${PREFIXMIPSELTOOLCHAIN} \
+  --with-mpc=${PREFIXMIPSELTOOLCHAIN} \
+  --with-system-zlib --enable-multilib || \
     die "***config gcc stage2 error" && \
       touch ${METADATAMIPSELTOOLCHAIN}/gcc_configure
 [ -f ${METADATAMIPSELTOOLCHAIN}/gcc_build ] || \
@@ -341,6 +352,9 @@ cd gdb_build
   --prefix=${PREFIXMIPSELTOOLCHAIN} \
   --build=${CROSS_HOST} --host=${CROSS_HOST} \
   --target=${CROSS_TARGET32} --with-sysroot=${PREFIXMIPSELROOTFS}\
+  --with-lib-path=${PREFIXMIPSELROOTFS}/usr/lib \
+  --enable-poison-system-directories \
+  --with-build-sysroot=${PREFIXMIPSELROOTFS} \
   --enable-multilib || \
     die "***config gdb error" && \
       touch ${METADATAMIPSELTOOLCHAIN}/gdb_configure
