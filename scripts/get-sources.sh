@@ -496,11 +496,6 @@ download "qemu-${QEMU_VERSION}.${QEMU_SUFFIX}" \
 popd
 
 pushd ${LIVE_SRC}
-[ -f ${METADATADOWN}/llvmlinux_git ] || \
-  git clone ${LLVMLINUX_GITURL} || \
-  die "download llvmlinux error" && \
-    touch ${METADATADOWN}/llvmlinux_git
-
 [ -f ${METADATADOWN}/crossprojectmanager_git ] || \
   git clone ${CROSSPROJECTMANAGER_GITURL} || \
   die "download IDE plugin error" && \
