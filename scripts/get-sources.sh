@@ -493,12 +493,6 @@ download "qemu-${QEMU_VERSION}.${QEMU_SUFFIX}" \
   "${QEMU_URL}/qemu-${QEMU_VERSION}.${QEMU_SUFFIX}" || \
   die "download qemu error" && \
     touch qemu_download
-
-[ -f uboot_download ] || \
-download "u-boot-${UBOOT_VERSION}.${UBOOT_SUFFIX}" \
-  "${UBOOT_URL}/u-boot-${UBOOT_VERSION}.${UBOOT_SUFFIX}" || \
-  die "download u-boot error" && \
-    touch uboot_download
 popd
 
 pushd ${LIVE_SRC}
