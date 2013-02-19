@@ -140,10 +140,10 @@ cd coreutils-build
 popd
 
 pushd ${SRCHOSTTOOLS}/coreutils-${COREUTILS_VERSION}
-[ -f ${METADATAHOSTTOOLS}/coreutils_rm_patch ] || \
+[ -f ${METADATAHOSTTOOLS}/coreutils_de_patch ] || \
   patch -Rp1 < ${PATCH}/coreutils-8.20-host-tool.patch  || \
-    die "re-patch coreutils error" && \
-      touch ${METADATAHOSTTOOLS}/coreutils_rm_patch
+    die "de-patch coreutils error" && \
+      touch ${METADATAHOSTTOOLS}/coreutils_de_patch
 popd
 
 pushd ${BUILDHOSTTOOLS}
@@ -323,10 +323,10 @@ popd
 
 pushd ${SRCHOSTTOOLS}
 cd ncurses-${NCURSES_VERSION}
-[ -f ${METADATAHOSTTOOLS}/ncurses_rm_patch ] || \
+[ -f ${METADATAHOSTTOOLS}/ncurses_de_patch ] || \
   patch -R -Np1 -i ${PATCH}/ncurses-5.9-bash_fix-1.patch || \
-    die "***re-patch ncurses error" && \
-      touch ${METADATAHOSTTOOLS}/ncurses_rm_patch
+    die "***de-patch ncurses error" && \
+      touch ${METADATAHOSTTOOLS}/ncurses_de_patch
 popd
 
 pushd ${BUILDHOSTTOOLS}
@@ -375,10 +375,10 @@ popd
 
 pushd ${SRCHOSTTOOLS}
 cd groff-${GROFF_VERSION}
-[ -f "${METADATAHOSTTOOLS}/groff_rm_patch" ] || \
+[ -f "${METADATAHOSTTOOLS}/groff_de_patch" ] || \
   patch -Rp1 < ${PATCH}/groff-1.22.1-hosttools.patch || \
-    die "re-patch groff hosttools error" && \
-      touch ${METADATAHOSTTOOLS}/groff_rm_patch
+    die "de-patch groff hosttools error" && \
+      touch ${METADATAHOSTTOOLS}/groff_de_patch
 popd
 
 if [ ${HOSTOS} != "Darwin" ]; then
@@ -432,10 +432,10 @@ fi
 if [ ${HOSTOS} != "Darwin" ]; then
 pushd ${SRCHOSTTOOLS}
 cd shadow-${SHADOW_VERSION}
-[ -f ${METADATAHOSTTOOLS}/shadow_rm_patch ] || \
+[ -f ${METADATAHOSTTOOLS}/shadow_de_patch ] || \
   patch -Rp1 < ${PATCH}/shadow-${SHADOW_VERSION}-sysroot_hacks-1.patch || \
-    die "re-patch shadow error" && \
-      touch ${METADATAHOSTTOOLS}/shadow_rm_patch
+    die "de-patch shadow error" && \
+      touch ${METADATAHOSTTOOLS}/shadow_de_patch
 popd
 
 pushd ${BUILDHOSTTOOLS}

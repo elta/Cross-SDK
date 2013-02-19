@@ -1243,10 +1243,10 @@ sed -e 's/\${SYSROOT}/${PREFIXMIPSELROOTFS}/g' \
     die "***clean python_cross error" && \
       touch ${METADATAMIPSELROOTFS}/python_cross_clean
 
-[ -f ${METADATAMIPSELROOTFS}/python_cross_re_patch ] || \
+[ -f ${METADATAMIPSELROOTFS}/python_cross_de_patch ] || \
   patch -Rp1 < tmp.patch || \
-    die "***re-patch cross python error" && \
-      touch ${METADATAMIPSELROOTFS}/python_cross_re_patch
+    die "***de-patch cross python error" && \
+      touch ${METADATAMIPSELROOTFS}/python_cross_de_patch
 popd
 
 pushd ${BUILDMIPSELROOTFS}
@@ -1322,18 +1322,18 @@ popd
 
 pushd ${SRCMIPSELROOTFS}
 cd bash-${BASH_VERSION}
-[ -f ${METADATAMIPSELROOTFS}/bash_rm_patch ] || \
+[ -f ${METADATAMIPSELROOTFS}/bash_de_patch ] || \
   patch -RNp1 -i ${PATCH}/bash-4.2-branch_update-4.patch || \
-    die "***re-patch bash error" && \
-      touch ${METADATAMIPSELROOTFS}/bash_rm_patch
+    die "***de-patch bash error" && \
+      touch ${METADATAMIPSELROOTFS}/bash_de_patch
 popd
 
 pushd ${SRCMIPSELROOTFS}
 cd bash-${BASH_VERSION}
-[ -f ${METADATAMIPSELROOTFS}/bash_rm_patch ] || \
+[ -f ${METADATAMIPSELROOTFS}/bash_de_patch ] || \
   patch -RNp1 -i ${PATCH}/bash-4.2-branch_update-4.patch || \
-    die "***re-patch bash error" && \
-      touch ${METADATAMIPSELROOTFS}/bash_rm_patch
+    die "***de-patch bash error" && \
+      touch ${METADATAMIPSELROOTFS}/bash_de_patch
 popd
 
 pushd ${SRCMIPSELROOTFS}
@@ -1673,14 +1673,14 @@ cd iputils-${IPUTILS_VERSION}
   make distclean || \
     die "clean iputils error" && \
       touch ${METADATAMIPSELROOTFS}/iputils_clean
-[ -f ${METADATAMIPSELROOTFS}/iputils_re_patchfix ] || \
+[ -f ${METADATAMIPSELROOTFS}/iputils_de_patchfix ] || \
   patch -RNp1 -i ${PATCH}/iputils-s20121221-fixes-1.patch || \
-    die "***re-patch fix iputils error" && \
-      touch ${METADATAMIPSELROOTFS}/iputils_re_patchfix
-[ -f ${METADATAMIPSELROOTFS}/iputils_re_patchdoc ] || \
+    die "***de-patch fix iputils error" && \
+      touch ${METADATAMIPSELROOTFS}/iputils_de_patchfix
+[ -f ${METADATAMIPSELROOTFS}/iputils_de_patchdoc ] || \
   patch -RNp1 -i ${PATCH}/iputils-s20121221-doc-1.patch || \
-    die "***re-patch doc iputils error" && \
-      touch ${METADATAMIPSELROOTFS}/iputils_re_patchdoc
+    die "***de-patch doc iputils error" && \
+      touch ${METADATAMIPSELROOTFS}/iputils_de_patchdoc
 popd
 
 #pushd ${SRCMIPSELROOTFS}
@@ -2381,10 +2381,10 @@ ln -sfnv ../vim/vim72/doc ${PREFIXMIPSELROOTFS}/usr/share/doc/vim-7.2
 popd
 
 pushd ${SRCMIPS64ELROOTFS}/${VIM_DIR}
-[ -f "${METADATAMIPSELROOTFS}/vim_re_patch" ] || \
+[ -f "${METADATAMIPSELROOTFS}/vim_de_patch" ] || \
   patch -RNp1 -i ${PATCH}/vim-7.3-branch_update-4.patch || \
-    die "*** re-patch vim error" && \
-      touch ${METADATAMIPSELROOTFS}/vim_re_patch
+    die "*** de-patch vim error" && \
+      touch ${METADATAMIPSELROOTFS}/vim_de_patch
 popd
 
 pushd ${BUILDMIPSELROOTFS}
