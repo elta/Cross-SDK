@@ -19,6 +19,11 @@ pushd ${SRCHOSTTOOLS}
     die "***extract expat error" && \
       touch ${METADATAEXTRACT}/expat_extract
 
+[ -f ${METADATAEXTRACT}/e2fsprogs_extract ] || \
+  tar xf ${TARBALL}/e2fsprogs-${E2FSPROGS_VERSION}.${E2FSPROGS_SUFFIX} || \
+    die "***extract e2fsprogs error" && \
+      touch ${METADATAEXTRACT}/e2fsprogs_extract
+
 [ -f ${METADATAEXTRACT}/file_extract ] || \
   tar xf ${TARBALL}/file-${FILE_VERSION}.${FILE_SUFFIX} || \
     die "***extract file error" && \
@@ -160,6 +165,24 @@ cd expat_build
   make install || \
     die "***install expat error" && \
       touch ${METADATAHOSTTOOLS}/expat_install
+popd
+
+pushd ${BUILDHOSTTOOLS}
+[ -d "e2fsprogs_build" ] || mkdir e2fsprogs_build
+cd e2fsprogs_build
+[ -f ${METADATAHOSTTOOLS}/e2fsprogs_configure ] || \
+  ${SRCHOSTTOOLS}/e2fsprogs-${E2FSPROGS_VERSION}/configure \
+  --prefix=${PREFIXHOSTTOOLS} --with-sysroot=/ || \
+    die "***config e2fsprogs error" && \
+      touch ${METADATAHOSTTOOLS}/e2fsprogs_configure
+[ -f ${METADATAHOSTTOOLS}/e2fsprogs_build ] || \
+  make -j${JOBS} || \
+    die "***build e2fsprogs error" && \
+      touch ${METADATAHOSTTOOLS}/e2fsprogs_build
+[ -f ${METADATAHOSTTOOLS}/e2fsprogs_install ] || \
+  make install || \
+    die "***install e2fsprogs error" && \
+      touch ${METADATAHOSTTOOLS}/e2fsprogs_install
 popd
 
 pushd ${BUILDHOSTTOOLS}
