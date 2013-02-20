@@ -10,7 +10,7 @@ pushd ${PREFIXGNULINUX}
       touch ${METADATAMIPS64ELROOTFSCREATEIMG}/mips64el_rootfs_ddimg
 [ -f ${METADATAMIPS64ELROOTFSCREATEIMG}/mips64el_rootfs_mkfsimg ] || \
   echo y | mkfs.ext3 mips64el-rootfs.img || \
-    die "***mkfs mipsel rootfs.img error" && \
+    die "***mkfs mips64el rootfs.img error" && \
       touch ${METADATAMIPS64ELROOTFSCREATEIMG}/mips64el_rootfs_mkfsimg
 [ -f ${METADATAMIPS64ELROOTFSCREATEIMG}/mips64el_rootfs_dirmnt ] || \
   [ -d mnt_tmp ] || mkdir mnt_tmp || \
@@ -22,7 +22,7 @@ pushd ${PREFIXGNULINUX}
       touch ${METADATAMIPS64ELROOTFSCREATEIMG}/mips64el_rootfs_mnt
 [ -f ${METADATAMIPS64ELROOTFSCREATEIMG}/mips64el_rootfs_copy ] || \
   sudo cp -ar ${PREFIXMIPS64ELROOTFS}/* ./mnt_tmp/ || \
-    die "***copy to mipsel rootfs.img error" && \
+    die "***copy to mips64el rootfs.img error" && \
       touch ${METADATAMIPS64ELROOTFSCREATEIMG}/mips64el_rootfs_copy
 [ -f "${METADATAMIPS64ELROOTFSCREATEIMG}/change_all_own" ] || \
   sudo chown -Rv 0:0 ./mnt_tmp/* || \
