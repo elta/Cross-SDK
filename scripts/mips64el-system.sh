@@ -25,6 +25,6 @@ export MOD="gnu-rootfs"
       touch ${METADATAMIPS64ELROOTFS}/mips64el_rootfs_finished
 
 [ -f "${METADATAMIPS64ELROOTFSCREATEIMG}/mips64el_rootfs_create_img_finished" ] || \
-  source mips64el-gnu-rootfs-create-img.step || \
+  source mips64el-gnu-rootfs-img.step || \
     die "create mipsel rootfs img error" && \
       touch ${METADATAMIPS64ELROOTFSCREATEIMG}/mips64el_rootfs_create_img_finished

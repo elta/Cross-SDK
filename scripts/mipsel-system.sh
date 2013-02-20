@@ -25,6 +25,6 @@ export MOD="gnu-rootfs"
       touch ${METADATAMIPSELROOTFS}/mipsel_rootfs_finished
 
 [ -f "${METADATAMIPSELROOTFSCREATEIMG}/mipsel_rootfs_create_img_finished" ] || \
-  source mipsel-gnu-rootfs-create-img.step || \
+  source mipsel-gnu-rootfs-img.step || \
     die "create mipsel rootfs img error" && \
       touch ${METADATAMIPSELROOTFSCREATEIMG}/mipsel_rootfs_create_img_finished

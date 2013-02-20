@@ -25,6 +25,6 @@ export MOD="busybox"
       touch ${METADATABUSYBOX_64}/mips64el_busybox_finished
 
 [ -f "${METADATAMIPS64ELBUSYBOXCREATEIMG}/mips64el_busybox_create_img_finished" ] || \
-  source mips64el-busybox-create-img.step || \
+  source mips64el-busybox-img.step || \
     die "create mipsel busybox img error" && \
       touch ${METADATAMIPS64ELBUSYBOXCREATEIMG}/mips64el_busybox_create_img_finished
