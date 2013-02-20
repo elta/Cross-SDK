@@ -9,13 +9,11 @@ export CXXFLAGS="-isystem ${PREFIXMIPSELROOTFS}/usr/include"
 export LDFLAGS="-Wl,-rpath-link,${PREFIXMIPSELROOTFS}/usr/lib:${PREFIXMIPSELROOTFS}/lib"
 
 [ -d "${SRCBUSYBOX_32}" ] || mkdir -p "${SRCBUSYBOX_32}"
-[ -d "${BUILDBUSYBOX_32}" ] || mkdir -p "${BUILDBUSYBOX_32}"
 [ -d "${METADATABUSYBOX_32}" ] || mkdir -p "${METADATABUSYBOX_32}"
 [ -d "${PREFIXMIPSELBUSYBOX}" ] || mkdir -p "${PREFIXMIPSELBUSYBOX}"
 
 [ -f ${PREFIXMIPSELTOOLCHAIN}/bin/${CC} ] || die "No toolchain found, process error"
 
-#export BUSYBOX_OPTIONS="static dynamic"
 export BUSYBOX_OPTIONS="dynamic"
 
 pushd ${SRCBUSYBOX_32}
@@ -27,11 +25,6 @@ popd
 
 # Begin for loop, build static/dynamic busybox.
 for option in ${BUSYBOX_OPTIONS}; do
-
-[ -f ${METADATABUSYBOX_32}/busybox-${option}-create ] || \
-  mkdir ${BUILDBUSYBOX_32}/busybox-$option || \
-    die "busybox-${option}-create dir create failed" && \
-      touch ${METADATABUSYBOX_32}/busybox-${option}-create
 
 pushd ${SRCBUSYBOX_32}/busybox-${BUSYBOX_VERSION}
 if [ ${HOSTOS} = "Darwin" ]; then

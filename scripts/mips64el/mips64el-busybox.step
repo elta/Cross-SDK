@@ -8,7 +8,6 @@ export CXXFLAGS="-isystem ${PREFIXMIPS64ELROOTFS}/usr/include ${BUILD64}"
 export LDFLAGS="-Wl,-rpath-link,${PREFIXMIPS64ELROOTFS}/usr/lib64:${PREFIXMIPS64ELROOTFS}/lib64 ${BUILD64}"
 
 [ -d "${SRCBUSYBOX_64}" ] || mkdir -p "${SRCBUSYBOX_64}"
-[ -d "${BUILDBUSYBOX_64}" ] || mkdir -p "${BUILDBUSYBOX_64}"
 [ -d "${METADATABUSYBOX_64}" ] || mkdir -p "${METADATABUSYBOX_64}"
 [ -d "${PREFIXMIPS64ELBUSYBOX}" ] || mkdir -p "${PREFIXMIPS64ELBUSYBOX}"
 
@@ -25,11 +24,6 @@ popd
 
 # Begin for loop, build static/dynamic busybox.
 for option in ${BUSYBOX_OPTIONS}; do
-
-[ -f ${METADATABUSYBOX_64}/busybox-${option}-create ] || \
-  mkdir ${BUILDBUSYBOX_64}/busybox-$option || \
-    die "busybox-${option}-create dir create failed" && \
-      touch ${METADATABUSYBOX_64}/busybox-${option}-create
 
 pushd ${SRCBUSYBOX_64}/busybox-${BUSYBOX_VERSION}
 if [ ${HOSTOS} = "Darwin" ]; then
