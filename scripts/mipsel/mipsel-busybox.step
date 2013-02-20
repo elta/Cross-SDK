@@ -1,9 +1,5 @@
 #! /bin/bash
 
-source source.env
-
-#[ -f ${PREFIXGNU64}/bin/${CC} ] || die "No toolchain found, process error"
-
 export PATH=${PREFIXHOSTTOOLS}/bin:${PREFIXMIPSELTOOLCHAIN}/bin:${PATH}
 
 export CC=${CROSS_TARGET32}-gcc

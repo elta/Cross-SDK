@@ -1,7 +1,5 @@
 #! /bin/bash
 
-source source.env
-
 export PATH=${PREFIXHOSTTOOLS}/bin:${PREFIXMIPS64ELTOOLCHAIN}/bin:$PATH
 
 [ -d "${SRCMIPS64ELROOTFS}" ] || mkdir -p "${SRCMIPS64ELROOTFS}"
@@ -1545,39 +1543,39 @@ cd e2fs-32
   --build=${CROSS_HOST} --host=${CROSS_TARGET32} --prefix=/usr \
   --with-root-prefix="" --enable-elf-shlibs --disable-libblkid \
   --disable-libuuid --disable-fsck --disable-uuidd || \
-    die "***config e2fsprogs32 error" && \
+    die "***config e2fsprogs 32 error" && \
       touch ${METADATAMIPS64ELROOTFS}/e2fs_config32
 [ -f "${METADATAMIPS64ELROOTFS}/e2fs_build32" ] || \
   make -j${JOBS} || \
-    die "***build e2fsprogs32 error" && \
+    die "***build e2fsprogs 32 error" && \
       touch ${METADATAMIPS64ELROOTFS}/e2fs_build32
 [ -f "${METADATAMIPS64ELROOTFS}/e2fs_build32_libs" ] || \
   make -j${JOBS} libs || \
-    die "***build e2fsprogs32 libs error" && \
+    die "***build e2fsprogs 32 libs error" && \
       touch ${METADATAMIPS64ELROOTFS}/e2fs_build32_libs
 [ -f "${METADATAMIPS64ELROOTFS}/e2fs_install32" ] || \
   make DESTDIR=${PREFIXMIPS64ELROOTFS} install-libs || \
-    die "***install e2fsprogs32 libs error" && \
+    die "***install e2fsprogs 32 libs error" && \
       touch ${METADATAMIPS64ELROOTFS}/e2fs_install32
 [ -f "${METADATAMIPS64ELROOTFS}/e2fs_rm32_libs.so" ] || \
-  rm -v ${PREFIXMIPS64ELROOTFS}/usr/lib/lib{com_err,e2p,ext2fs,ss}.so || \
-    die "e2fs rm32 libs.so" && \
+  rm -rfv ${PREFIXMIPS64ELROOTFS}/usr/lib/lib{com_err,e2p,ext2fs,ss}.so || \
+    die "e2fs rm 32 libs.so" && \
       touch ${METADATAMIPS64ELROOTFS}/e2fs_rm32_libs.so
 [ -f "${METADATAMIPS64ELROOTFS}/e2fs_link32_libcom_err.so.2" ] || \
   ln -sv ../../lib/libcom_err.so.2 ${PREFIXMIPS64ELROOTFS}/usr/lib/libcom_err.so || \
-    die "e2fs link32 libcom_err.so.2 error" && \
+    die "e2fs link 32 libcom_err.so.2 error" && \
       touch ${METADATAMIPS64ELROOTFS}/e2fs_link32_libcom_err.so.2
 [ -f "${METADATAMIPS64ELROOTFS}/e2fs_link32_libe2p.so.2" ] || \
   ln -sv ../../lib/libe2p.so.2 ${PREFIXMIPS64ELROOTFS}/usr/lib/libe2p.so || \
-    die "e2fs link32 libe2p.so.2 error" && \
+    die "e2fs link 32 libe2p.so.2 error" && \
       touch ${METADATAMIPS64ELROOTFS}/e2fs_link32_libe2p.so.2
 [ -f "${METADATAMIPS64ELROOTFS}/e2fs_link32_libext2fs.so.2" ] || \
   ln -sv ../../lib/libext2fs.so.2 ${PREFIXMIPS64ELROOTFS}/usr/lib/libext2fs.so || \
-    die "e2fs link32 libext2fs.so.2 error" && \
+    die "e2fs link 32 libext2fs.so.2 error" && \
       touch ${METADATAMIPS64ELROOTFS}/e2fs_link32_libext2fs.so.2
 [ -f "${METADATAMIPS64ELROOTFS}/e2fs_link32_libss.so.2" ] || \
   ln -sv ../../lib/libss.so.2 ${PREFIXMIPS64ELROOTFS}/usr/lib/libss.so || \
-    die "e2fs link32 libss.so.2 error" && \
+    die "e2fs link 32 libss.so.2 error" && \
       touch ${METADATAMIPS64ELROOTFS}/e2fs_link32_libss.so.2
 popd
 
@@ -1591,39 +1589,39 @@ cd e2fs-n32
   --build=${CROSS_HOST} --host=${CROSS_TARGET64} --prefix=/usr \
   --with-root-prefix="" --enable-elf-shlibs --disable-libblkid \
   --disable-libuuid --disable-fsck --disable-uuidd --libdir=/lib32 || \
-    die "***config e2fsprogsn32 error" && \
+    die "***config e2fsprogs n32 error" && \
       touch ${METADATAMIPS64ELROOTFS}/e2fs_confign32
 [ -f "${METADATAMIPS64ELROOTFS}/e2fs_buildn32" ] || \
   make -j${JOBS} || \
-    die "***build e2fsprogsn32 error" && \
+    die "***build e2fsprogs n32 error" && \
       touch ${METADATAMIPS64ELROOTFS}/e2fs_buildn32
 [ -f "${METADATAMIPS64ELROOTFS}/e2fs_build32_libs" ] || \
   make -j${JOBS} libs || \
-    die "***build e2fsprogsn32 libs error" && \
+    die "***build e2fsprogs n32 libs error" && \
       touch ${METADATAMIPS64ELROOTFS}/e2fs_build32_libs
 [ -f "${METADATAMIPS64ELROOTFS}/e2fs_installn32" ] || \
   make DESTDIR=${PREFIXMIPS64ELROOTFS} install-libs || \
-    die "***install e2fsprogsn32 libs error" && \
+    die "***install e2fsprogs n32 libs error" && \
       touch ${METADATAMIPS64ELROOTFS}/e2fs_installn32
 [ -f "${METADATAMIPS64ELROOTFS}/e2fs_rmn32_libs.so" ] || \
-  rm -v ${PREFIXMIPS64ELROOTFS}/usr/lib32/lib{com_err,e2p,ext2fs,ss}.so || \
-    die "e2fs rmn32 libs.so error" && \
+  rm -rfv ${PREFIXMIPS64ELROOTFS}/usr/lib32/lib{com_err,e2p,ext2fs,ss}.so || \
+    die "e2fs rm n32 libs.so error" && \
       touch ${METADATAMIPS64ELROOTFS}/e2fs_rmn32_libs.so
 [ -f "${METADATAMIPS64ELROOTFS}/e2fs_linkn32_libcom_err.so.2" ] || \
   ln -sv ../../lib32/libcom_err.so.2 ${PREFIXMIPS64ELROOTFS}/usr/lib32/libcom_err.so || \
-    die "e2fs linkn32 libcom_err.so.2 error" && \
+    die "e2fs link n32 libcom_err.so.2 error" && \
       touch ${METADATAMIPS64ELROOTFS}/e2fs_linkn32_libcom_err.so.2
 [ -f "${METADATAMIPS64ELROOTFS}/e2fs_linkn32_libe2p.so.2" ] || \
   ln -sv ../../lib32/libe2p.so.2 ${PREFIXMIPS64ELROOTFS}/usr/lib32/libe2p.so || \
-    die "e2fs linkn32 libe2p.so.2 error" && \
+    die "e2fs link n32 libe2p.so.2 error" && \
       touch ${METADATAMIPS64ELROOTFS}/e2fs_linkn32_libe2p.so.2
 [ -f "${METADATAMIPS64ELROOTFS}/e2fs_linkn32_libext2fs.so.2" ] || \
   ln -sv ../../lib32/libext2fs.so.2 ${PREFIXMIPS64ELROOTFS}/usr/lib32/libext2fs.so || \
-    die "e2fs linkn32 libext2fs.so.2 error" && \
+    die "e2fs link n32 libext2fs.so.2 error" && \
       touch ${METADATAMIPS64ELROOTFS}/e2fs_linkn32_libext2fs.so.2
 [ -f "${METADATAMIPS64ELROOTFS}/e2fs_linkn32_libss.so.2" ] || \
   ln -sv ../../lib32/libss.so.2 ${PREFIXMIPS64ELROOTFS}/usr/lib32/libss.so || \
-    die "e2fs linkn32 libss.so.2 error" && \
+    die "e2fs link n32 libss.so.2 error" && \
       touch ${METADATAMIPS64ELROOTFS}/e2fs_linkn32_libss.so.2
 popd
 
@@ -1661,19 +1659,19 @@ cd e2fs-64
       touch ${METADATAMIPS64ELROOTFS}/e2fs_rm64_libs.so
 [ -f "${METADATAMIPS64ELROOTFS}/e2fs_link64_libcom_err.so.2" ] || \
   ln -sv ../../lib64/libcom_err.so.2 ${PREFIXMIPS64ELROOTFS}/usr/lib64/libcom_err.so || \
-    die "e2fs link64 libcom_err.so.2 error" && \
+    die "e2fs link 64 libcom_err.so.2 error" && \
       touch ${METADATAMIPS64ELROOTFS}/e2fs_link64_libcom_err.so.2
 [ -f "${METADATAMIPS64ELROOTFS}/e2fs_link64_libe2p.so.2" ] || \
   ln -sv ../../lib64/libe2p.so.2 ${PREFIXMIPS64ELROOTFS}/usr/lib64/libe2p.so || \
-    die "e2fs link64 libe2p.so.2 error" && \
+    die "e2fs link 64 libe2p.so.2 error" && \
       touch ${METADATAMIPS64ELROOTFS}/e2fs_link64_libe2p.so.2
 [ -f "${METADATAMIPS64ELROOTFS}/e2fs_link64_libext2fs.so.2" ] || \
   ln -sv ../../lib64/libext2fs.so.2 ${PREFIXMIPS64ELROOTFS}/usr/lib64/libext2fs.so || \
-    die "e2fs link64 libext2fs.so.2 error" && \
+    die "e2fs link 64 libext2fs.so.2 error" && \
       touch ${METADATAMIPS64ELROOTFS}/e2fs_link64_libext2fs.so.2
 [ -f "${METADATAMIPS64ELROOTFS}/e2fs_link64_libss.so.2" ] || \
   ln -sv ../../lib64/libss.so.2 ${PREFIXMIPS64ELROOTFS}/usr/lib64/libss.so || \
-    die "e2fs link64 libss.so.2 error" && \
+    die "e2fs link 64 libss.so.2 error" && \
       touch ${METADATAMIPS64ELROOTFS}/e2fs_link64_libss.so.2
 popd
 

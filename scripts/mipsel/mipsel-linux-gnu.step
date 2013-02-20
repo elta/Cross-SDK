@@ -1,7 +1,5 @@
 #! /bin/bash
 
-source source.env
-
 [ -d "${SRCMIPSELTOOLCHAIN}" ] || mkdir -p "${SRCMIPSELTOOLCHAIN}"
 [ -d "${BUILDMIPSELTOOLCHAIN}" ] || mkdir -p "${BUILDMIPSELTOOLCHAIN}"
 [ -d "${METADATAMIPSELTOOLCHAIN}" ] || mkdir -p "${METADATAMIPSELTOOLCHAIN}"

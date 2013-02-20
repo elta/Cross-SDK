@@ -1,7 +1,5 @@
 #! /bin/bash
 
-source source.env
-
 export PATH=${PREFIXHOSTTOOLS}/bin:${PREFIXMIPS64ELTOOLCHAIN}/bin:${PATH}
 export CC=${CROSS_TARGET64}-gcc
 export CFLAGS="-isystem ${PREFIXMIPS64ELROOTFS}/usr/include ${BUILD64}"

@@ -1,7 +1,5 @@
 #! /bin/bash
 
-source source.env
-
 [ -d "${SRCHOSTTOOLS}" ] || mkdir -p "${SRCHOSTTOOLS}"
 [ -d "${BUILDHOSTTOOLS}" ] || mkdir -p "${BUILDHOSTTOOLS}"
 [ -d "${METADATAHOSTTOOLS}" ] || mkdir -p "${METADATAHOSTTOOLS}"

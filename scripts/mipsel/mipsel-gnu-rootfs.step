@@ -1,7 +1,5 @@
 #! /bin/bash
 
-source source.env
-
 [ -d "${SRCMIPSELROOTFS}" ] || mkdir -p "${SRCMIPSELROOTFS}"
 [ -d "${BUILDMIPSELROOTFS}" ] || mkdir -p "${BUILDMIPSELROOTFS}"
 [ -d "${METADATAMIPSELROOTFS}" ] || mkdir -p "${METADATAMIPSELROOTFS}"
@@ -841,7 +839,7 @@ cd e2fs_build
     die "***install e2fsprogs libs error" && \
       touch ${METADATAMIPSELROOTFS}/e2fs_install_libs
 [ -f ${METADATAMIPSELROOTFS}/e2fs_install_rmso ] || \
-  rm -v ${PREFIXMIPSELROOTFS}/usr/lib/lib{com_err,e2p,ext2fs,ss}.so || \
+  rm -rfv ${PREFIXMIPSELROOTFS}/usr/lib/lib{com_err,e2p,ext2fs,ss}.so || \
     die "***remove *.so e2fsprogs libs error" && \
       touch ${METADATAMIPSELROOTFS}/e2fs_install_rmso
 ln -sv ../../lib/libcom_err.so.2 ${PREFIXMIPSELROOTFS}/usr/lib/libcom_err.so

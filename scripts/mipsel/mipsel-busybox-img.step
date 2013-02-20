@@ -1,7 +1,5 @@
 #! /bin/bash
 
-source source.env
-
 [ -d ${PREFIXGNULINUX} ] || mkdir -p ${PREFIXGNULINUX}
 [ -d ${METADATAMIPSELBUSYBOXCREATEIMG} ] || mkdir -p ${METADATAMIPSELBUSYBOXCREATEIMG}
 

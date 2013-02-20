@@ -1,7 +1,5 @@
 #! /bin/bash
 
-source source.env
-
 if [ x${MOD} != "x" ]; then
   if [ ${MOD} = "gnu-rootfs" ]; then
     export METADATAMIPSELKERNEL=${METADATAMIPSELROOTFSMOD}

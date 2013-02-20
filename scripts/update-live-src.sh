@@ -1,6 +1,6 @@
 #! /bin/bash
 
-source source.env
+source common/source.env
 
 pushd ${LIVE_SRC}
 cd crossprojectmanager
