@@ -246,6 +246,11 @@ pushd ${SRCMIPS64ELROOTFS}
     die "extract bash error" && \
       touch ${METADATAEXTRACT}/bash_extract
 
+[ -f "${METADATAEXTRACT}/bash_completion_extract" ] || \
+  tar xf ${TARBALL}/bash-completion-${BASHCOMPLETION_VERSION}.${BASHCOMPLETION_SUFFIX} || \
+    die "extract bash-completion error" && \
+      touch ${METADATAEXTRACT}/bash_completion_extract
+
 [ -f "${METADATAEXTRACT}/bzip2_extract" ] || \
   tar xf ${TARBALL}/bzip2-${BZIP2_VERSION}.${BZIP2_SUFFIX} || \
     die "extract bzip2 error" && \
@@ -2512,6 +2517,29 @@ EOF` || \
       touch ${METADATAMIPS64ELROOTFS}/bash_cross_link_install
 popd
 
+pushd ${BUILDMIPS64ELROOTFS}
+[ -d "bash-completion-build" ] || mkdir bash-completion-build
+cd bash-completion-build
+[ -f "${METADATAMIPS64ELROOTFS}/bash_completion_cross_config" ] || \
+  CC="${CC} ${BUILD64}" CXX="${CXX} ${BUILD64}" \
+  ${SRCMIPS64ELROOTFS}/bash-completion-${BASHCOMPLETION_VERSION}/configure || \
+    die "***config bash-completion error" && \
+      touch ${METADATAMIPS64ELROOTFS}/bash_completion_cross_config
+[ -f "${METADATAMIPS64ELROOTFS}/bash_completion_cross_build" ] || \
+  make -j${JOBS} || \
+    die "***build bash-completion error" && \
+      touch ${METADATAMIPS64ELROOTFS}/bash_completion_cross_build
+[ -f "${METADATAMIPS64ELROOTFS}/bash_completion_cross_install" ] || \
+  make DESTDIR=${PREFIXMIPS64ELROOTFS} install || \
+    die "***install bash-completion error" && \
+      touch ${METADATAMIPS64ELROOTFS}/bash_completion_cross_install
+popd
+
+[ -f ${METADATAMIPS64ELROOTFS}/add_param_to_bash_completion ] || \
+  echo ". /usr/local/share/bash-completion/bash_completion" >> ${PREFIXMIPS64ELROOTFS}/etc/bash_completion || \
+    die "***create /etc/bash_completion error"
+      touch ${METADATAMIPS64ELROOTFS}/add_param_to_bash_completion
+
 pushd ${SRCMIPS64ELROOTFS}
 cd bzip2-${BZIP2_VERSION}
 cp Makefile{,.orig}
@@ -4390,12 +4418,15 @@ export LC_ALL PATH PS1
 source .bashrc
 EOF
 
-cat > ${PREFIXMIPS64ELROOTFS}/root/.bashrc << EOF
-set +h
-umask 022
+[ -f ${METADATAMIPS64ELROOTFS}/cp_bashrc ] || \
+  cp ${PATCH}/bashrc ${PREFIXMIPS64ELROOTFS}/root/.bashrc || \
+    die "***cp bashrc error"
+      touch ${METADATAMIPS64ELROOTFS}/cp_bashrc
 
-export PYTHONHOME=/usr
-EOF
+[ -f ${METADATAMIPS64ELROOTFS}/add_param_to_bashrc ] || \
+  echo "export PYTHONHOME=/usr" >> ${PREFIXMIPS64ELROOTFS}/root/.bashrc || \
+    die "***add param to bashrc error"
+      touch ${METADATAMIPS64ELROOTFS}/add_param_to_bashrc
 
 [ -f "${METADATAMIPS64ELROOTFS}/create_clfs-release" ] || \
 `cat > ${PREFIXMIPS64ELROOTFS}/etc/clfs-release << EOF

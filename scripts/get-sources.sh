@@ -26,6 +26,12 @@ download "bash-${BASH_VERSION}.${BASH_SUFFIX}" \
   die "download bash error" && \
     touch bash_download
 
+[ -f bash_comletion_download ] || \
+download "bash-completion-${BASHCOMPLETION_VERSION}.${BASHCOMPLETION_SUFFIX}" \
+  "${BASHCOMPLETION_URL}/bash-completion-${BASHCOMPLETION_VERSION}.${BASHCOMPLETION_SUFFIX}" || \
+  die "download bash bash-completion error" && \
+    touch bash_comletion_download
+
 [ -f binutils_download ] || \
 download "binutils-${BINUTILS_VERSION}.${BINUTILS_SUFFIX}" \
   "${BINUTILS_URL}/binutils-${BINUTILS_VERSION}.${BINUTILS_SUFFIX}" || \

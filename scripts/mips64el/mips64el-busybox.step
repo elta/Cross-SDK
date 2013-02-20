@@ -21,6 +21,10 @@ pushd ${SRCBUSYBOX_64}
   tar xf ${TARBALL}/busybox-${BUSYBOX_VERSION}.${BUSYBOX_SUFFIX} || \
     die "busybox extract error" && \
       touch ${METADATAEXTRACT}/busybox-extract
+[ -f "${METADATAEXTRACT}/bash_completion_extract" ] || \
+  tar xf ${TARBALL}/bash-completion-${BASHCOMPLETION_VERSION}.${BASHCOMPLETION_SUFFIX} || \
+    die "extract bash-completion error" && \
+      touch ${METADATAEXTRACT}/bash_completion_extract
 popd
 
 # Begin for loop, build static/dynamic busybox.
@@ -46,10 +50,6 @@ fi
   patch -Np1 -i ${PATCH}/busybox-mips64el-${option}_defconfig.patch \
     || die "Patch failed" && \
       touch ${METADATABUSYBOX_64}/busybox-${option}-patch-busybox-mips64el-${option}_defconfig
-[ -f ${METADATABUSYBOX_64}/busybox-clean ] || \
-  make distclean || \
-    die "clean busybox error" && \
-      touch ${METADATABUSYBOX_64}/busybox-clean
 [ -f ${METADATABUSYBOX_64}/busybox-${option}-config ] || \
   make mips64el-${option}_defconfig || \
     die "busybox-${option}-config error" && \
@@ -66,9 +66,35 @@ fi
   cp -a _install/* ${PREFIXMIPS64ELBUSYBOX} || \
     die "copy busybox-${option} error" && \
       touch ${METADATABUSYBOX_64}/copy-busybox-${option}
+[ -f ${METADATABUSYBOX_64}/busybox-clean ] || \
+  make distclean || \
+    die "clean busybox error" && \
+      touch ${METADATABUSYBOX_64}/busybox-clean
 popd
 
 sudo cp -ar ${SRCBUSYBOX_64}/busybox-${BUSYBOX_VERSION}/examples/bootfloppy/etc ${PREFIXMIPS64ELBUSYBOX}/
+
+pushd ${BUILDBUSYBOX_64}
+[ -d "bash-completion-build" ] || mkdir bash-completion-build
+cd bash-completion-build
+[ -f "${METADATABUSYBOX_64}/bash_completion_cross_config" ] || \
+  ${SRCBUSYBOX_64}/bash-completion-${BASHCOMPLETION_VERSION}/configure || \
+    die "***config bash-completion error" && \
+      touch ${METADATABUSYBOX_64}/bash_completion_cross_config
+[ -f "${METADATABUSYBOX_64}/bash_completion_cross_build" ] || \
+  make -j${JOBS} || \
+    die "***build bash-completion error" && \
+      touch ${METADATABUSYBOX_64}/bash_completion_cross_build
+[ -f "${METADATABUSYBOX_64}/bash_completion_cross_install" ] || \
+  make DESTDIR=${PREFIXMIPS64ELBUSYBOX} install || \
+    die "***install bash-completion error" && \
+      touch ${METADATABUSYBOX_64}/bash_completion_cross_install
+popd
+
+[ -f ${METADATABUSYBOX_32}/add_param_to_bash_completion ] || \
+  echo ". /usr/local/share/bash-completion/bash_completion" >> ${PREFIXMIPS64ELBUSYBOX}/etc/bash_completion || \
+    die "***create /etc/bash_completion error"
+      touch ${METADATABUSYBOX_32}/add_param_to_bash_completion
 
 mkdir ${PREFIXMIPS64ELBUSYBOX}/dev
 mkdir ${PREFIXMIPS64ELBUSYBOX}/proc

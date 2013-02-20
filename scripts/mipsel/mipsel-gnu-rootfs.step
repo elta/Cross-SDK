@@ -264,6 +264,11 @@ cd ..
     die "***extract bash error" && \
       touch ${METADATAEXTRACT}/bash_extract
 
+[ -f "${METADATAEXTRACT}/bash_completion_extract" ] || \
+  tar xf ${TARBALL}/bash-completion-${BASHCOMPLETION_VERSION}.${BASHCOMPLETION_SUFFIX} || \
+    die "extract bash-completion error" && \
+      touch ${METADATAEXTRACT}/bash_completion_extract
+
 [ -f ${METADATAEXTRACT}/diffutils_extract ] || \
   tar xf ${TARBALL}/diffutils-${DIFFUTILS_VERSION}.${DIFFUTILS_SUFFIX} || \
     die "***extract diffutils error" && \
@@ -1041,7 +1046,7 @@ ac_cv_func_malloc_0_nonnull=yes
 ac_cv_func_realloc_0_nonnull=yes
 EOF
 [ -f ${METADATAMIPSELROOTFS}/flex_configure ] || \
-  CC=${CC} ${SRCMIPS64ELROOTFS}/flex-${FLEX_VERSION}/configure \
+  CC=${CC} ${SRCMIPSELROOTFS}/flex-${FLEX_VERSION}/configure \
   --build=${CROSS_HOST} --host=${CROSS_TARGET32} \
   --prefix=/usr --cache-file=config.cache || \
     die "***config flex error" && \
@@ -1326,13 +1331,27 @@ cd bash-${BASH_VERSION}
       touch ${METADATAMIPSELROOTFS}/bash_de_patch
 popd
 
-pushd ${SRCMIPSELROOTFS}
-cd bash-${BASH_VERSION}
-[ -f ${METADATAMIPSELROOTFS}/bash_de_patch ] || \
-  patch -RNp1 -i ${PATCH}/bash-4.2-branch_update-4.patch || \
-    die "***de-patch bash error" && \
-      touch ${METADATAMIPSELROOTFS}/bash_de_patch
+pushd ${BUILDMIPSELROOTFS}
+[ -d "bash-completion-build" ] || mkdir bash-completion-build
+cd bash-completion-build
+[ -f "${METADATAMIPSELROOTFS}/bash_completion_cross_config" ] || \
+  ${SRCMIPSELROOTFS}/bash-completion-${BASHCOMPLETION_VERSION}/configure || \
+    die "***config bash-completion error" && \
+      touch ${METADATAMIPSELROOTFS}/bash_completion_cross_config
+[ -f "${METADATAMIPSELROOTFS}/bash_completion_cross_build" ] || \
+  make -j${JOBS} || \
+    die "***build bash-completion error" && \
+      touch ${METADATAMIPSELROOTFS}/bash_completion_cross_build
+[ -f "${METADATAMIPSELROOTFS}/bash_completion_cross_install" ] || \
+  make DESTDIR=${PREFIXMIPSELROOTFS} install || \
+    die "***install bash-completion error" && \
+      touch ${METADATAMIPSELROOTFS}/bash_completion_cross_install
 popd
+
+[ -f ${METADATAMIPSELROOTFS}/add_param_to_bash_completion ] || \
+  echo ". /usr/local/share/bash-completion/bash_completion" >> ${PREFIXMIPSELROOTFS}/etc/bash_completion || \
+    die "***create /etc/bash_completion error"
+      touch ${METADATAMIPSELROOTFS}/add_param_to_bash_completion
 
 pushd ${SRCMIPSELROOTFS}
 cd bzip2-${BZIP2_VERSION}
@@ -2589,14 +2608,16 @@ EOF` || \
   die "***create bash_profile error"
     touch ${METADATAMIPSELROOTFS}/create_bash_profile
 
-[ -f ${METADATAMIPSELROOTFS}/create_bashrc ] || \
-`cat > ${PREFIXMIPSELROOTFS}/root/.bashrc << EOF
-set +h
-umask 022
-export PYTHONHOME=/usr
-EOF` || \
-  die "***create bashrc error"
-    touch ${METADATAMIPSELROOTFS}/create_bashrc
+[ -f ${METADATAMIPSELROOTFS}/cp_bashrc ] || \
+  cp ${PATCH}/bashrc ${PREFIXMIPSELROOTFS}/root/.bashrc || \
+    die "***cp bashrc error"
+      touch ${METADATAMIPSELROOTFS}/cp_bashrc
+
+[ -f ${METADATAMIPSELROOTFS}/add_param_to_bashrc ] || \
+  echo "export PYTHONHOME=/usr" >> ${PREFIXMIPSELROOTFS}/root/.bashrc || \
+    die "***cp bashrc error"
+      touch ${METADATAMIPSELROOTFS}/add_param_to_bashrc
+
 
 [ -f ${METADATAMIPSELROOTFS}/create_vernu ] || \
 `cat > ${PREFIXMIPSELROOTFS}/etc/clfs-release << EOF
