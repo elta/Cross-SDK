@@ -43,7 +43,7 @@ fi
     die "patch mips64el-multilib-defconfig error" && \
       touch ${METADATAEXTRACT}/linux_patch_mips64el_defconfig
 [ -f "${METADATAMIPS64ELKERNEL}/linux_mrpro" ] || \
-  make mrproper || die "clean linux error" || \
+  make mrproper || \
     die "clean linux error" && \
       touch ${METADATAMIPS64ELKERNEL}/linux_mrpro
 [ -f "${METADATAMIPS64ELKERNEL}/linux_config_mips64el_mul" ] || \
