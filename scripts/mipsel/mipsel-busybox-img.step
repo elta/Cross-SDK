@@ -1,6 +1,6 @@
 #! /bin/bash
 
-export PATH=$PATH:/usr/local/sbin
+export PATH=${PREFIXHOSTTOOLS}/sbin:$PATH
 
 [ -d ${PREFIXGNULINUX} ] || mkdir -p ${PREFIXGNULINUX}
 [ -d ${METADATAMIPSELBUSYBOXCREATEIMG} ] || mkdir -p ${METADATAMIPSELBUSYBOXCREATEIMG}
