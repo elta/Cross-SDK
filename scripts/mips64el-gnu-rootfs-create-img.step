@@ -1,0 +1,56 @@
+#! /bin/bash
+
+source source.env
+
+[ -d ${PREFIXGNULINUX} ] || mkdir -p ${PREFIXGNULINUX}
+[ -d ${METADATAMIPS64ELROOTFSCREATEIMG} ] || mkdir -p ${METADATAMIPS64ELROOTFSCREATEIMG}
+
+pushd ${PREFIXGNULINUX}
+[ -f ${METADATAMIPS64ELROOTFSCREATEIMG}/mips64el_rootfs_ddimg ] || \
+ dd if=/dev/zero of=mips64el-rootfs.img bs=1M count=10K || \
+    die "***dd mips64el rootfs.img error" && \
+      touch ${METADATAMIPS64ELROOTFSCREATEIMG}/mips64el_rootfs_ddimg
+[ -f ${METADATAMIPS64ELROOTFSCREATEIMG}/mips64el_rootfs_mkfsimg ] || \
+  echo y | mkfs.ext3 mips64el-rootfs.img || \
+    die "***mkfs mipsel rootfs.img error" && \
+      touch ${METADATAMIPS64ELROOTFSCREATEIMG}/mips64el_rootfs_mkfsimg
+[ -f ${METADATAMIPS64ELROOTFSCREATEIMG}/mips64el_rootfs_dirmnt ] || \
+  [ -d mnt_tmp ] || mkdir mnt_tmp || \
+    die "***mkdir mnt error" && \
+      touch ${METADATAMIPS64ELROOTFSCREATEIMG}/mips64el_rootfs_dirmnt
+[ -f ${METADATAMIPS64ELROOTFSCREATEIMG}/mips64el_rootfs_mnt ] || \
+  sudo mount -o loop mips64el-rootfs.img ./mnt_tmp || \
+    die "***mount mips64el rootfs.img error" && \
+      touch ${METADATAMIPS64ELROOTFSCREATEIMG}/mips64el_rootfs_mnt
+[ -f ${METADATAMIPS64ELROOTFSCREATEIMG}/mips64el_rootfs_copy ] || \
+  sudo cp -ar ${PREFIXMIPS64ELROOTFS}/* ./mnt_tmp/ || \
+    die "***copy to mipsel rootfs.img error" && \
+      touch ${METADATAMIPS64ELROOTFSCREATEIMG}/mips64el_rootfs_copy
+[ -f "${METADATAMIPS64ELROOTFSCREATEIMG}/change_all_own" ] || \
+  sudo chown -Rv 0:0 ./mnt_tmp/* || \
+    die "change_all_own" && \
+      touch ${METADATAMIPS64ELROOTFSCREATEIMG}/change_all_own
+[ -f "${METADATAMIPS64ELROOTFSCREATEIMG}/chmod_run.utmp" ] || \
+  sudo chmod -v 664 ${PREFIXMIPS64ELROOTFS}/{,var/}run/utmp \
+                    ${PREFIXMIPS64ELROOTFS}/var/log/lastlog || \
+    die "Change utmp/lastlog group error" && \
+      touch ${METADATAMIPS64ELROOTFSCREATEIMG}/chmod_run.utmp
+[ -f "${METADATAMIPS64ELROOTFSCREATEIMG}/chgrp_write" ] || \
+  sudo chgrp -v 4 ${PREFIXMIPS64ELROOTFS}/usr/bin/write || \
+    die "Change write group error" && \
+      touch ${METADATAMIPS64ELROOTFSCREATEIMG}/chgrp_write
+[ -f "${METADATAMIPS64ELROOTFSCREATEIMG}/chmod_write" ] || \
+  sudo chmod g+s ${PREFIXMIPS64ELROOTFS}/usr/bin/write || \
+    die "Change write mode error" && \
+      touch ${METADATAMIPS64ELROOTFSCREATEIMG}/chmod_write
+[ -f ${METADATAMIPS64ELROOTFSCREATEIMG}/mips64el_rootfs_umnt ] || \
+  sudo umount ./mnt_tmp/ || \
+    die "***copy to mips64el rootfs.img error" && \
+      touch ${METADATAMIPS64ELROOTFSCREATEIMG}/mips64el_rootfs_umnt
+[ -f ${METADATAMIPS64ELROOTFSCREATEIMG}/mips64el_rootfs_rmmnt ] || \
+  rm -rf  mnt_tmp || \
+    die "***remove mnt error" && \
+      touch ${METADATAMIPS64ELROOTFSCREATEIMG}/mips64el_rootfs_rmmnt
+popd
+
+touch ${METADATAMIPS64ELROOTFSCREATEIMG}/mips64el_rootfs_create_img_finished

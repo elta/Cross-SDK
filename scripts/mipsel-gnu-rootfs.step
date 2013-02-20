@@ -656,7 +656,7 @@ pushd ${BUILDMIPSELROOTFS}
 [ -d "gcc_cross_build" ] || mkdir gcc_cross_build
 cd gcc_cross_build
 [ -f ${METADATAMIPSELROOTFS}/gcc_cross_configure ] || \
-  LDFLAGS="-Wl,-rpath-link,${PREFIXMIPSELTOOLCHAIN}/${CROSS_TARGET32}/lib" \
+  LDFLAGS="-Wl,-rpath-link,${PREFIXMIPSELTOOLCHAIN}/${CROSS_TARGET32}/lib:${PREFIXMIPSELROOTFS}/lib" \
   ${SRCMIPSELROOTFS}/gcc-${GCC_VERSION}/configure \
   --prefix=/usr --libexecdir=/usr/lib \
   --build=${CROSS_HOST} --host=${CROSS_TARGET32} --target=${CROSS_TARGET32} \
@@ -818,7 +818,7 @@ pushd ${BUILDMIPSELROOTFS}
 [ -d e2fs_build ] || mkdir e2fs_build
 cd e2fs_build
 [ -f ${METADATAMIPSELROOTFS}/e2fs_configure ] || \
-  PKG_CONFIG=true LDFLAGS="-lblkid -luuid" \
+  PKG_CONFIG=true LDFLAGS="-lblkid -luuid -Wl,-rpath-link,${PREFIXMIPSELROOTFS}/lib" \
   ${SRCMIPSELROOTFS}/e2fsprogs-${E2FSPROGS_VERSION}/configure \
   --build=${CROSS_HOST} \
   --host=${CROSS_TARGET32} \
@@ -928,7 +928,7 @@ cd iana-etc-${IANA_VERSION}
     die "***install iana-etc error" && \
       touch ${METADATAMIPSELROOTFS}/iana_install
 [ -f "${METADATAMIPSELROOTFS}/iana-etc_cross_clean" ] || \
-  make dist || \
+  make clean || \
     die "***clean iana-etc error" && \
       touch ${METADATAMIPSELROOTFS}/iana-etc_cross_clean
 popd
@@ -1035,17 +1035,15 @@ cd libtool_build
       touch ${METADATAMIPSELROOTFS}/libtool_install
 popd
 
-pushd ${SRCMIPSELROOTFS}
-cd flex-${FLEX_VERSION}
-cp -v Makefile.in{,.orig}
-sed "s/-I@includedir@//g" Makefile.in.orig > Makefile.in
-
+pushd ${BUILDMIPSELROOTFS}
+[ -d "flex-build" ] || mkdir -p flex-build
+cd flex-build
 cat > config.cache << EOF
 ac_cv_func_malloc_0_nonnull=yes
 ac_cv_func_realloc_0_nonnull=yes
 EOF
 [ -f ${METADATAMIPSELROOTFS}/flex_configure ] || \
-  CC=${CC} ./configure \
+  CC=${CC} ${SRCMIPS64ELROOTFS}/flex-${FLEX_VERSION}/configure \
   --build=${CROSS_HOST} --host=${CROSS_TARGET32} \
   --prefix=/usr --cache-file=config.cache || \
     die "***config flex error" && \
@@ -1074,7 +1072,6 @@ EOF` || \
   die "***cat /usr/bin/lex flex error" && \
     touch ${METADATAMIPSELROOTFS}/flex_cat
 chmod -v 755 ${PREFIXMIPSELROOTFS}/usr/bin/lex
-cp -v Makefile.in{.orig,}
 popd
 
 pushd ${SRCMIPSELROOTFS}
@@ -1113,6 +1110,9 @@ cd perl-${PERL_VERSION}
   ./configure --prefix=/usr --target=mipsel-unknown-linux-gnu || \
      die "***config cross perl error" && \
        touch ${METADATAMIPSELROOTFS}/perl_cross_configure
+
+# FIXME Rebuild Makefile
+make cpan/Time-HiRes/pm_to_blib
 
 [ -f ${METADATAMIPSELROOTFS}/perl_cross_build ] || \
   make || \
@@ -1238,15 +1238,15 @@ sed -e 's/\${SYSROOT}/${PREFIXMIPSELROOTFS}/g' \
     die "***install cross python error" && \
       touch ${METADATAMIPSELROOTFS}/python_cross_install
 
-[ -f "${METADATAMIPSELROOTFS}/python_cross_clean" ] || \
-  make distclean || \
-    die "***clean python_cross error" && \
-      touch ${METADATAMIPSELROOTFS}/python_cross_clean
-
 [ -f ${METADATAMIPSELROOTFS}/python_cross_de_patch ] || \
   patch -Rp1 < tmp.patch || \
     die "***de-patch cross python error" && \
       touch ${METADATAMIPSELROOTFS}/python_cross_de_patch
+
+[ -f "${METADATAMIPSELROOTFS}/python_cross_clean" ] || \
+  make distclean || \
+    die "***clean python_cross error" && \
+      touch ${METADATAMIPSELROOTFS}/python_cross_clean
 popd
 
 pushd ${BUILDMIPSELROOTFS}
@@ -1669,10 +1669,6 @@ cd iputils-${IPUTILS_VERSION}
   install -v -m644 doc/*.8 ${PREFIXMIPSELROOTFS}/usr/share/man/man8 || \
     die "***install rdisc iputils error" && \
       touch ${METADATAMIPSELROOTFS}/iputilsdoc_install
-[ -f "${METADATAMIPSELROOTFS}/iputils_clean" ] || \
-  make distclean || \
-    die "clean iputils error" && \
-      touch ${METADATAMIPSELROOTFS}/iputils_clean
 [ -f ${METADATAMIPSELROOTFS}/iputils_de_patchfix ] || \
   patch -RNp1 -i ${PATCH}/iputils-s20121221-fixes-1.patch || \
     die "***de-patch fix iputils error" && \
@@ -1681,6 +1677,10 @@ cd iputils-${IPUTILS_VERSION}
   patch -RNp1 -i ${PATCH}/iputils-s20121221-doc-1.patch || \
     die "***de-patch doc iputils error" && \
       touch ${METADATAMIPSELROOTFS}/iputils_de_patchdoc
+[ -f "${METADATAMIPSELROOTFS}/iputils_clean" ] || \
+  make distclean || \
+    die "clean iputils error" && \
+      touch ${METADATAMIPSELROOTFS}/iputils_clean
 popd
 
 #pushd ${SRCMIPSELROOTFS}
@@ -2316,10 +2316,11 @@ pushd ${BUILDMIPSELROOTFS}
 cd udev_build
 [ -f ${METADATAMIPSELROOTFS}/udev_configure ] || \
   PKG_CONFIG=true \
-  LDFLAGS="-lblkid -luuid -lkmod -lrt" \
+  LDFLAGS="-lblkid -luuid -lkmod -lrt -Wl,-rpath-link,${PREFIXMIPSELROOTFS}/lib" \
   CC=${CC} \
   ${SRCMIPSELROOTFS}/udev-${UDEV_VERSION}/configure \
   --build=${CROSS_HOST} --host=${CROSS_TARGET32} \
+  --target=${CROSS_TARGET32} \
   --exec-prefix="" --sysconfdir=/etc \
   --libexecdir=/lib --libdir=/usr/lib -disable-gudev \
   --disable-manpages  \
@@ -2338,10 +2339,10 @@ popd
 
 pushd ${SRCMIPSELROOTFS}
 cd ${VIM_DIR}
-[ -f ${METADATAMIPSELROOTFS}/vim_patch ] || \
+[ -f ${METADATAEXTRACT}/vim_patch ] || \
   patch -Np1 -i ${PATCH}/vim-7.3-branch_update-4.patch || \
     die "*** patch vim error" && \
-      touch ${METADATAMIPSELROOTFS}/vim_patch
+      touch ${METADATAEXTRACT}/vim_patch
 cat >> src/feature.h << "EOF"
 #define SYS_VIMRC_FILE "/etc/vimrc"
 EOF
@@ -2380,13 +2381,6 @@ ln -sfnv ../vim/vim72/doc ${PREFIXMIPSELROOTFS}/usr/share/doc/vim-7.2
       touch ${METADATAMIPSELROOTFS}/vim_clean
 popd
 
-pushd ${SRCMIPS64ELROOTFS}/${VIM_DIR}
-[ -f "${METADATAMIPSELROOTFS}/vim_de_patch" ] || \
-  patch -RNp1 -i ${PATCH}/vim-7.3-branch_update-4.patch || \
-    die "*** de-patch vim error" && \
-      touch ${METADATAMIPSELROOTFS}/vim_de_patch
-popd
-
 pushd ${BUILDMIPSELROOTFS}
 [ -d "xz_build" ] || mkdir xz_build
 cd xz_build
@@ -2414,6 +2408,7 @@ popd
 pushd ${SRCMIPSELROOTFS}
 cd dhcpcd-${DHCPCD_VERSION}
 [ -f ${METADATAMIPSELROOTFS}/dhcpcd_configure ] || \
+  LDFLAGS="-Wl,-rpath-link,${PREFIXMIPSELROOTFS}/lib" \
   PREFIX="" ./configure \
   --target=${CROSS_TARGET32} --host=${CROSS_HOST} || \
     die "***config dhcpcd error" && \
@@ -2611,31 +2606,11 @@ PREFIXMIPSELROOTFS-Sysroot
 EOF` || \
   die "***create version number error" && \
     touch ${METADATAMIPSELROOTFS}/create_vernu
-############### Change Own Ship ########################
-[ -f ${METADATAMIPSELROOTFS}/change_own ] || \
-  sudo chown -Rv 0:0 ${PREFIXMIPSELROOTFS} || \
-    die "***Change own error" && \
-      touch ${METADATAMIPSELROOTFS}/change_own
 
 [ -f ${METADATAMIPSELROOTFS}/touch_file ] || \
-  sudo touch ${PREFIXMIPSELROOTFS}/var/run/utmp ${PREFIXMIPSELROOTFS}/var/log/{btmp,lastlog,wtmp} || \
+  touch ${PREFIXMIPSELROOTFS}/var/run/utmp ${PREFIXMIPSELROOTFS}/var/log/{btmp,lastlog,wtmp} || \
     die "***touch file error" && \
       touch ${METADATAMIPSELROOTFS}/touch_file
-
-[ -f ${METADATAMIPSELROOTFS}/change_utmp ] || \
-  sudo chmod -v 664 ${PREFIXMIPSELROOTFS}/var/run/utmp ${PREFIXMIPSELROOTFS}/var/log/lastlog || \
-    die "***Change utmp/lastlog group error" && \
-      touch ${METADATAMIPSELROOTFS}/change_utmp
-
-[ -f ${METADATAMIPSELROOTFS}/write_group ] || \
-  sudo chgrp -v 4 ${PREFIXMIPSELROOTFS}/usr/bin/write || \
-    die "***Change write group error" && \
-      touch ${METADATAMIPSELROOTFS}/write_group
-
-[ -f ${METADATAMIPSELROOTFS}/write_mode ] || \
-  sudo chmod g+s ${PREFIXMIPSELROOTFS}/usr/bin/write || \
-    die "Change write mode error" && \
-      touch ${METADATAMIPSELROOTFS}/write_mode
 
 [ -f ${METADATAMIPSELROOTFS}/create_null ] || \
   sudo mknod -m 0666 ${PREFIXMIPSELROOTFS}/dev/null c 1 3 || \
@@ -2653,46 +2628,8 @@ EOF` || \
       touch ${METADATAMIPSELROOTFS}/create_rtc0
 
 [ -f ${METADATAMIPSELROOTFS}/link_rtc ] || \
-  sudo ln -sv ${PREFIXMIPSELROOTFS}/dev/rtc0 ${PREFIXMIPSELROOTFS}/dev/rtc || \
+  ln -sv ${PREFIXMIPSELROOTFS}/dev/rtc0 ${PREFIXMIPSELROOTFS}/dev/rtc || \
     die "***Link rtc error" && \
       touch ${METADATAMIPSELROOTFS}/link_rtc
-
-pushd ${PREFIXGNULINUX}
-[ -f ${METADATAMIPSELROOTFS}/mipsel_sysroot_ddimg ] || \
- dd if=/dev/zero of=mipsel-rootfs.img bs=1M count=10000 || \
-    die "***dd mipsel sysroot.img error" && \
-      touch ${METADATAMIPSELROOTFS}/mipsel_sysroot_ddimg
-
-[ -f ${METADATAMIPSELROOTFS}/mipsel_sysroot_mkfsimg ] || \
-  echo y | mkfs.ext3 mipsel-rootfs.img || \
-    die "***mkfs mipsel sysroot.img error" && \
-      touch ${METADATAMIPSELROOTFS}/mipsel_sysroot_mkfsimg
-
-[ -f ${METADATAMIPSELROOTFS}/mipsel_sysroot_dirmnt ] || \
-  mkdir mnt_tmp || \
-    die "***mkdir mnt error" && \
-      touch ${METADATAMIPSELROOTFS}/mipsel_sysroot_dirmnt
-
-[ -f ${METADATAMIPSELROOTFS}/mipsel_sysroot_mnt ] || \
-  sudo mount -o loop mipsel-rootfs.img ./mnt_tmp || \
-    die "***mount mipsel sysroot.img error" && \
-      touch ${METADATAMIPSELROOTFS}/mipsel_sysroot_mnt
-
-[ -f ${METADATAMIPSELROOTFS}/mipsel_sysroot_copy ] || \
-  sudo cp -ar ${PREFIXMIPSELROOTFS}/* ./mnt_tmp/ || \
-    die "***copy to mipsel sysroot.img error" && \
-      touch ${METADATAMIPSELROOTFS}/mipsel_sysroot_copy
-
-[ -f ${METADATAMIPSELROOTFS}/mipsel_sysroot_umnt ] || \
-  sudo umount ./mnt_tmp/ || \
-    die "***copy to mipsel sysroot.img error" && \
-      touch ${METADATAMIPSELROOTFS}/mipsel_sysroot_umnt
-
-[ -f ${METADATAMIPSELROOTFS}/mipsel_sysroot_rmmnt ] || \
-  rm -rf  mnt_tmp || \
-    die "***remove mnt error" && \
-      touch ${METADATAMIPSELROOTFS}/mipsel_sysroot_rmmnt
-
-popd
 
 touch ${METADATAMIPSELROOTFS}/mipsel_rootfs_finished

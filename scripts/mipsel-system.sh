@@ -14,12 +14,17 @@ export MOD="gnu-rootfs"
     die "build mipsel tools error" && \
       touch ${METADATAMIPSELTOOLCHAIN}/mipsel_tools_finished
 
+[ -f "${METADATAMIPSELKERNEL}/linux_kernel_finished" ] || \
+  source mipsel-linux.step || \
+    die "build mipsel linux kernel and modules error" && \
+      touch ${METADATAMIPSELKERNEL}/linux_kernel_finished
+
 [ -f "${METADATAMIPSELROOTFS}/mipsel_rootfs_finished" ] || \
   source mipsel-gnu-rootfs.step || \
     die "build mipsel rootfs error" && \
       touch ${METADATAMIPSELROOTFS}/mipsel_rootfs_finished
 
-[ -f "${METADATAMIPSELKERNEL}/linux_kernel_finished" ] || \
-  source mipsel-linux.step || \
-    die "build mipsel linux kernel and modules error" && \
-      touch ${METADATAMIPSELKERNEL}/linux_kernel_finished
+[ -f "${METADATAMIPSELROOTFSCREATEIMG}/mipsel_rootfs_create_img_finished" ] || \
+  source mipsel-gnu-rootfs-create-img.step || \
+    die "create mipsel rootfs img error" && \
+      touch ${METADATAMIPSELROOTFSCREATEIMG}/mipsel_rootfs_create_img_finished

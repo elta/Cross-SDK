@@ -68,50 +68,34 @@ fi
     die "busybox-${option}-install error" && \
       touch ${METADATABUSYBOX_32}/busybox-${option}-install
 [ -f ${METADATABUSYBOX_32}/copy-busybox-${option} ] || \
-  cp -a _install ${PREFIXMIPSELBUSYBOX} || \
+  cp -a _install/* ${PREFIXMIPSELBUSYBOX} || \
     die "copy busybox-${option} error" && \
       touch ${METADATABUSYBOX_32}/copy-busybox-${option}
 popd
 
-# Make BusyBox Image
-pushd ${BUILDBUSYBOX_32}/busybox-$option
-dd if=/dev/zero of=${BUSYBOX_32_IMAGE} bs=4k count=512k
-echo y | mkfs.ext3 ${BUSYBOX_32_IMAGE}
-[ -d "${MOUNT_POINT}" ] || mkdir ${MOUNT_POINT}
-if [ ${HOSTOS} = "Darwin" ]; then
-#ext2fuse ${BUSYBOX_32_IMAGE} ${MOUNT_POINT} &
-die "There is something wrong with ext3 under Mac, so we complete busybox and stop here."
-else
-sudo mount -o loop ${BUSYBOX_32_IMAGE} ${MOUNT_POINT}
-fi
-
-# Build BusyBox File System
 cp -ar ${SRCBUSYBOX_32}/busybox-${BUSYBOX_VERSION}/examples/bootfloppy/etc ${PREFIXMIPSELBUSYBOX}/
-cp -ar ${PREFIXMIPSELBUSYBOX}/* ${MOUNT_POINT}
-mkdir ${MOUNT_POINT}/dev
-mkdir ${MOUNT_POINT}/proc
 
-sudo cp -a /dev/zero ${MOUNT_POINT}/dev/
-sudo cp -a /dev/console ${MOUNT_POINT}/dev/
-sudo cp -a /dev/null ${MOUNT_POINT}/dev/
-sudo cp -a /dev/tty ${MOUNT_POINT}/dev/
-sudo cp -a /dev/tty1 ${MOUNT_POINT}/dev/
-sudo cp -a /dev/tty2 ${MOUNT_POINT}/dev/
-sudo cp -a /dev/ttyS0 ${MOUNT_POINT}/dev/
+mkdir ${PREFIXMIPSELBUSYBOX}/dev
+mkdir ${PREFIXMIPSELBUSYBOX}/proc
+
+sudo cp -a /dev/zero ${PREFIXMIPSELBUSYBOX}/dev/
+sudo cp -a /dev/console ${PREFIXMIPSELBUSYBOX}/dev/
+sudo cp -a /dev/null ${PREFIXMIPSELBUSYBOX}/dev/
+sudo cp -a /dev/tty ${PREFIXMIPSELBUSYBOX}/dev/
+sudo cp -a /dev/tty1 ${PREFIXMIPSELBUSYBOX}/dev/
+sudo cp -a /dev/tty2 ${PREFIXMIPSELBUSYBOX}/dev/
+sudo cp -a /dev/ttyS0 ${PREFIXMIPSELBUSYBOX}/dev/
 
 # Copy Library to File System
 if [ -d ${PREFIXMIPSELROOTFS}/lib ]; then
-    cp -ar ${PREFIXMIPSELROOTFS}/lib ${MOUNT_POINT}/
+    cp -ar ${PREFIXMIPSELROOTFS}/lib ${PREFIXMIPSELBUSYBOX}/
 fi
 
-sudo echo "/bin/mount -o remount,rw /" >> ${MOUNT_POINT}/etc/init.d/rcS
-sudo umount ${MOUNT_POINT}
-
-popd
-
-[ -d ${PREFIXGNULINUX} ] || mkdir -p ${PREFIXGNULINUX}
-mv ${BUILDBUSYBOX_32}/busybox-$option/${BUSYBOX_32_IMAGE} ${PREFIXGNULINUX}
-# End for loop, build static/dynamic busybox.
-done
+[ -f ${METADATAEXTRACT}/busybox_write_rcS ] || \
+  echo "/bin/mount -o remount,rw /" >> ${PREFIXMIPSELBUSYBOX}/etc/init.d/rcS || \
+    die "busybox write rcS error" && \
+      touch ${METADATAEXTRACT}/busybox_write_rcS
 
 touch ${METADATABUSYBOX_32}/mipsel_busybox_finished
+
+done

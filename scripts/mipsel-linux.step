@@ -2,6 +2,10 @@
 
 source source.env
 
+if [ x${MOD} != "x" ]; then
+export METADATAMIPSELKERNEL=${METADATAMIPSELKERNEL}-${MOD}
+fi
+
 [ -d "${SRCMIPSELKERNEL}" ] || mkdir -p "${SRCMIPSELKERNEL}"
 [ -d "${METADATAMIPSELKERNEL}" ] || mkdir -p "${METADATAMIPSELKERNEL}"
 [ -d "${METADATAEXTRACT}" ] || mkdir -p "${METADATAEXTRACT}"
@@ -35,10 +39,10 @@ if [ ${HOSTOS} = "Darwin" ]; then
     die "***Patch linux mac2 config error" && \
       touch ${METADATAEXTRACT}/linux_mac2_patch
 fi
-[ -f ${METADATAMIPSELKERNEL}/linux_config_patch ] || \
+[ -f ${METADATAEXTRACT}/linux_config_patch ] || \
   patch -p1 < ${PATCH}/linux-mipsel-sysroot-defconfig.patch || \
     die "***Patch linux config error" && \
-      touch ${METADATAMIPSELKERNEL}/linux_config_patch
+      touch ${METADATAEXTRACT}/linux_config_patch
 [ -f ${METADATAMIPSELKERNEL}/linux_defconfig ] || \
   make ARCH=mips mipsel_sysroot_defconfig || \
     die "***Patch linux config error" && \

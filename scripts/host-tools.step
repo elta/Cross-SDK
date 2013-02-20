@@ -503,6 +503,9 @@ cd perl-${PERL_VERSION}
     die "***config perl error" && \
       touch ${METADATAHOSTTOOLS}/perl_configure
 
+# FIXME Rebuild Makefile
+make LD=${CC} cpan/Time-HiRes/pm_to_blib
+
 [ -f ${METADATAHOSTTOOLS}/perl_build ] || \
   make || \
     die "***make perl error" && \

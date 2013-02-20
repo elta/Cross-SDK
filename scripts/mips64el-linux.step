@@ -2,6 +2,10 @@
 
 source source.env
 
+if [ x${MOD} != "x" ]; then
+export METADATAMIPS64ELKERNEL=${METADATAMIPS64ELKERNEL}-${MOD}
+fi
+
 [ -d "${SRCMIPS64ELKERNEL}" ] || mkdir -p "${SRCMIPS64ELKERNEL}"
 [ -d "${METADATAMIPS64ELKERNEL}" ] || mkdir -p "${METADATAMIPS64ELKERNEL}"
 [ -d "${METADATAEXTRACT}" ] || mkdir -p "${METADATAEXTRACT}"
@@ -32,10 +36,10 @@ if [ ${HOSTOS} = "Darwin" ]; then
     die "***Patch linux mac2 config error" && \
       touch ${METADATAEXTRACT}/linux_mac2_patch
 fi
-[ -f "${METADATAMIPS64ELKERNEL}/linux_patch_mips64el_defconfig" ] || \
+[ -f "${METADATAEXTRACT}/linux_patch_mips64el_defconfig" ] || \
   patch -p1 < ${PATCH}/linux-mips64el-multilib-defconfig.patch || \
     die "patch mips64el-multilib-defconfig error" && \
-      touch ${METADATAMIPS64ELKERNEL}/linux_patch_mips64el_defconfig
+      touch ${METADATAEXTRACT}/linux_patch_mips64el_defconfig
 [ -f "${METADATAMIPS64ELKERNEL}/linux_mrpro" ] || \
   make mrproper || die "clean linux error" || \
     die "clean linux error" && \

@@ -14,9 +14,9 @@ export PATH=${PREFIXHOSTTOOLS}/bin:$PATH
 #################################################################
 pushd ${SRCUNIVERSAL}
 [ -f ${METADATAEXTRACT}/qemu_extract ] || \
-tar xf ${TARBALL}/qemu-${QEMU_VERSION}.${QEMU_SUFFIX} || \
-  die "extract qemu error" && \
-    touch ${METADATAEXTRACT}/qemu_extract
+  tar xf ${TARBALL}/qemu-${QEMU_VERSION}.${QEMU_SUFFIX} || \
+    die "extract qemu error" && \
+      touch ${METADATAEXTRACT}/qemu_extract
 popd
 
 #################################################################

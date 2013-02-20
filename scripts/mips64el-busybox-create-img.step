@@ -1,0 +1,41 @@
+#! /bin/bash
+
+source source.env
+
+[ -d ${PREFIXGNULINUX} ] || mkdir -p ${PREFIXGNULINUX}
+[ -d ${METADATAMIPS64ELBUSYBOXCREATEIMG} ] || mkdir -p ${METADATAMIPS64ELBUSYBOXCREATEIMG}
+
+pushd ${PREFIXGNULINUX}
+[ -f ${METADATAMIPS64ELBUSYBOXCREATEIMG}/mips64el_busybox_ddimg ] || \
+  dd if=/dev/zero of=${BUSYBOX_64_IMAGE} bs=4k count=512k || \
+    die "dd mips64el busybox img error" && \
+      touch ${METADATAMIPS64ELBUSYBOXCREATEIMG}/mips64el_busybox_ddimg
+[ -f ${METADATAMIPS64ELBUSYBOXCREATEIMG}/mips64el_busybox_mkfsimg ] || \
+  echo y | mkfs.ext3 ${BUSYBOX_64_IMAGE} || \
+    die "mkfs mips64el busybox img error" && \
+      touch ${METADATAMIPS64ELBUSYBOXCREATEIMG}/mips64el_busybox_mkfsimg
+
+[ -d "${MOUNT_POINT}" ] || mkdir ${MOUNT_POINT}
+if [ ${HOSTOS} = "Darwin" ]; then
+  die "There is something wrong with ext3 under Mac, so we complete busybox and stop here."
+else
+  sudo mount -o loop ${BUSYBOX_64_IMAGE} ${MOUNT_POINT}
+fi
+
+[ -f ${METADATAMIPS64ELBUSYBOXCREATEIMG}/mips64el_busybox_copy_files ] || \
+  sudo cp -ar ${PREFIXMIPS64ELBUSYBOX}/* ${MOUNT_POINT} || \
+    die "copy mips64el busybox files to img error" && \
+      touch ${METADATAMIPS64ELBUSYBOXCREATEIMG}/mips64el_busybox_copy_files
+[ -f ${METADATAMIPS64ELBUSYBOXCREATEIMG}/mips64el_busybox_umnt ] || \
+  sudo umount ${MOUNT_POINT} || \
+    die "***copy to mips64el sysroot.img error" && \
+      touch ${METADATAMIPS64ELBUSYBOXCREATEIMG}/mips64el_busybox_umnt
+
+[ -f ${METADATAMIPS64ELBUSYBOXCREATEIMG}/mips64el_busybox_rmmnt ] || \
+  rm -rf ${MOUNT_POINT} || \
+    die "***remove mount point error" && \
+      touch ${METADATAMIPS64ELBUSYBOXCREATEIMG}/mips64el_busybox_rmmnt
+
+popd
+
+touch ${METADATAMIPS64ELBUSYBOXCREATEIMG}/mips64el_busybox_create_img_finished

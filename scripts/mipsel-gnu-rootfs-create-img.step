@@ -1,0 +1,68 @@
+#! /bin/bash
+
+source source.env
+
+[ -d ${PREFIXGNULINUX} ] || mkdir -p ${PREFIXGNULINUX}
+[ -d ${METADATAMIPSELROOTFSCREATEIMG} ] || mkdir -p ${METADATAMIPSELROOTFSCREATEIMG}
+
+pushd ${PREFIXGNULINUX}
+[ -f ${METADATAMIPSELROOTFSCREATEIMG}/mipsel_sysroot_ddimg ] || \
+ dd if=/dev/zero of=mipsel-rootfs.img bs=1M count=10000 || \
+    die "***dd mipsel sysroot.img error" && \
+      touch ${METADATAMIPSELROOTFSCREATEIMG}/mipsel_sysroot_ddimg
+
+[ -f ${METADATAMIPSELROOTFSCREATEIMG}/mipsel_sysroot_mkfsimg ] || \
+  echo y | mkfs.ext3 mipsel-rootfs.img || \
+    die "***mkfs mipsel sysroot.img error" && \
+      touch ${METADATAMIPSELROOTFSCREATEIMG}/mipsel_sysroot_mkfsimg
+
+[ -f ${METADATAMIPSELROOTFSCREATEIMG}/mipsel_sysroot_dirmnt ] || \
+  mkdir mnt_tmp || \
+    die "***mkdir mnt error" && \
+      touch ${METADATAMIPSELROOTFSCREATEIMG}/mipsel_sysroot_dirmnt
+
+[ -f ${METADATAMIPSELROOTFSCREATEIMG}/mipsel_sysroot_mnt ] || \
+  sudo mount -o loop mipsel-rootfs.img ./mnt_tmp || \
+    die "***mount mipsel sysroot.img error" && \
+      touch ${METADATAMIPSELROOTFSCREATEIMG}/mipsel_sysroot_mnt
+
+[ -f ${METADATAMIPSELROOTFSCREATEIMG}/mipsel_sysroot_copy ] || \
+  sudo cp -ar ${PREFIXMIPSELROOTFS}/* ./mnt_tmp/ || \
+    die "***copy to mipsel sysroot.img error" && \
+      touch ${METADATAMIPSELROOTFSCREATEIMG}/mipsel_sysroot_copy
+
+############### Change Own Ship ########################
+[ -f ${METADATAMIPSELROOTFSCREATEIMG}/change_own ] || \
+  sudo chown -Rv 0:0 ./mnt_tmp/* || \
+    die "***Change own error" && \
+      touch ${METADATAMIPSELROOTFSCREATEIMG}/change_own
+
+[ -f ${METADATAMIPSELROOTFSCREATEIMG}/change_utmp ] || \
+  sudo chmod -v 664 ${PREFIXMIPSELROOTFS}/var/run/utmp ${PREFIXMIPSELROOTFS}/var/log/lastlog || \
+    die "***Change utmp/lastlog group error" && \
+      touch ${METADATAMIPSELROOTFSCREATEIMG}/change_utmp
+
+[ -f ${METADATAMIPSELROOTFSCREATEIMG}/write_group ] || \
+  sudo chgrp -v 4 ${PREFIXMIPSELROOTFS}/usr/bin/write || \
+    die "***Change write group error" && \
+      touch ${METADATAMIPSELROOTFSCREATEIMG}/write_group
+
+[ -f ${METADATAMIPSELROOTFSCREATEIMG}/write_mode ] || \
+  sudo chmod g+s ${PREFIXMIPSELROOTFS}/usr/bin/write || \
+    die "Change write mode error" && \
+      touch ${METADATAMIPSELROOTFSCREATEIMG}/write_mode
+############### End Change Own Ship ####################
+
+[ -f ${METADATAMIPSELROOTFSCREATEIMG}/mipsel_sysroot_umnt ] || \
+  sudo umount ./mnt_tmp/ || \
+    die "***copy to mipsel sysroot.img error" && \
+      touch ${METADATAMIPSELROOTFSCREATEIMG}/mipsel_sysroot_umnt
+
+[ -f ${METADATAMIPSELROOTFSCREATEIMG}/mipsel_sysroot_rmmnt ] || \
+  rm -rf  mnt_tmp || \
+    die "***remove mnt error" && \
+      touch ${METADATAMIPSELROOTFSCREATEIMG}/mipsel_sysroot_rmmnt
+
+popd
+
+touch ${METADATAMIPSELROOTFSCREATEIMG}/mipsel_rootfs_create_img_finished

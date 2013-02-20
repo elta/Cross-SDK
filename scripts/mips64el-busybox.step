@@ -12,6 +12,7 @@ export LDFLAGS="-Wl,-rpath-link,${PREFIXMIPS64ELROOTFS}/usr/lib64:${PREFIXMIPS64
 [ -d "${SRCBUSYBOX_64}" ] || mkdir -p "${SRCBUSYBOX_64}"
 [ -d "${BUILDBUSYBOX_64}" ] || mkdir -p "${BUILDBUSYBOX_64}"
 [ -d "${METADATABUSYBOX_64}" ] || mkdir -p "${METADATABUSYBOX_64}"
+[ -d "${PREFIXMIPS64ELBUSYBOX}" ] || mkdir -p "${PREFIXMIPS64ELBUSYBOX}"
 
 [ -f ${PREFIXMIPS64ELTOOLCHAIN}/bin/${CC} ] || die "No toolchain found, process error"
 
@@ -64,58 +65,38 @@ fi
     die "busybox-${option}-install error" && \
       touch ${METADATABUSYBOX_64}/busybox-${option}-install
 [ -f ${METADATABUSYBOX_64}/copy-busybox-${option} ] || \
-  cp -a _install ${PREFIXMIPS64ELBUSYBOX} || \
+  cp -a _install/* ${PREFIXMIPS64ELBUSYBOX} || \
     die "copy busybox-${option} error" && \
       touch ${METADATABUSYBOX_64}/copy-busybox-${option}
 popd
 
-# Make BusyBox Image
-pushd ${BUILDBUSYBOX_64}/busybox-$option
-dd if=/dev/zero of=${BUSYBOX_64_IMAGE} bs=4k count=512k
-echo y | mkfs.ext3 ${BUSYBOX_64_IMAGE}
-[ -d "${MOUNT_POINT}" ] || mkdir ${MOUNT_POINT}
-if [ ${HOSTOS} = "Darwin" ]; then
-#ext2fuse ${BUSYBOX_64_IMAGE} ${MOUNT_POINT} &
-die "There is something wrong with ext3 under Mac, so we complete busybox and stop here."
-else
-sudo mount -o loop ${BUSYBOX_64_IMAGE} ${MOUNT_POINT}
-fi
-
-# Build BusyBox File System
 sudo cp -ar ${SRCBUSYBOX_64}/busybox-${BUSYBOX_VERSION}/examples/bootfloppy/etc ${PREFIXMIPS64ELBUSYBOX}/
-cp -ar ${PREFIXMIPS64ELBUSYBOX}/* ${MOUNT_POINT}
-mkdir ${MOUNT_POINT}/dev
-mkdir ${MOUNT_POINT}/proc
 
-sudo cp -a /dev/zero ${MOUNT_POINT}/dev/
-sudo cp -a /dev/console ${MOUNT_POINT}/dev/
-sudo cp -a /dev/null ${MOUNT_POINT}/dev/
-sudo cp -a /dev/tty ${MOUNT_POINT}/dev/
-sudo cp -a /dev/tty1 ${MOUNT_POINT}/dev/
-sudo cp -a /dev/tty2 ${MOUNT_POINT}/dev/
-sudo cp -a /dev/ttyS0 ${MOUNT_POINT}/dev/
+mkdir ${PREFIXMIPS64ELBUSYBOX}/dev
+mkdir ${PREFIXMIPS64ELBUSYBOX}/proc
+
+sudo cp -a /dev/zero ${PREFIXMIPS64ELBUSYBOX}/dev/
+sudo cp -a /dev/console ${PREFIXMIPS64ELBUSYBOX}/dev/
+sudo cp -a /dev/null ${PREFIXMIPS64ELBUSYBOX}/dev/
+sudo cp -a /dev/tty ${PREFIXMIPS64ELBUSYBOX}/dev/
+sudo cp -a /dev/tty1 ${PREFIXMIPS64ELBUSYBOX}/dev/
+sudo cp -a /dev/tty2 ${PREFIXMIPS64ELBUSYBOX}/dev/
+sudo cp -a /dev/ttyS0 ${PREFIXMIPS64ELBUSYBOX}/dev/
 
 # Copy Library to File System
 if [ -d ${PREFIXMIPS64ELROOTFS}/lib ]; then
-    cp -ar ${PREFIXMIPS64ELROOTFS}/lib ${MOUNT_POINT}/
+    cp -ar ${PREFIXMIPS64ELROOTFS}/lib ${PREFIXMIPS64ELBUSYBOX}/
 fi
 
 if [ -d ${PREFIXMIPS64ELROOTFS}/lib32 ]; then
-    cp -ar ${PREFIXMIPS64ELROOTFS}/lib32 ${MOUNT_POINT}/
+    cp -ar ${PREFIXMIPS64ELROOTFS}/lib32 ${PREFIXMIPS64ELBUSYBOX}/
 fi
 
 if [ -d ${PREFIXMIPS64ELROOTFS}/lib64 ]; then
-    cp -ar ${PREFIXMIPS64ELROOTFS}/lib64 ${MOUNT_POINT}/
+    cp -ar ${PREFIXMIPS64ELROOTFS}/lib64 ${PREFIXMIPS64ELBUSYBOX}/
 fi
 
-sudo echo "/bin/mount -o remount,rw /" >> ${MOUNT_POINT}/etc/init.d/rcS
-sudo umount ${MOUNT_POINT}
-
-popd
-
-[ -d ${PREFIXGNULINUX} ] || mkdir -p ${PREFIXGNULINUX}
-mv ${BUILDBUSYBOX_64}/busybox-$option/${BUSYBOX_64_IMAGE} ${PREFIXGNULINUX}
-# End for loop, build static/dynamic busybox.
+sudo echo "/bin/mount -o remount,rw /" >> ${PREFIXMIPS64ELBUSYBOX}/etc/init.d/rcS
 done
 
 touch ${METADATABUSYBOX_64}/mips64el_busybox_finished
