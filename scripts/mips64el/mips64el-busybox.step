@@ -31,6 +31,10 @@ if [ ${HOSTOS} = "Darwin" ]; then
   patch -Np1 -i ${PATCH}/busybox-${BUSYBOX_VERSION}-macos.patch || \
     die "Patch for MacOS failed" && \
       touch ${METADATAEXTRACT}/busybox-1.20.2-macos.patch
+[ -f ${METADATAEXTRACT}/busybox-1.20.2-macos-2.patch ] || \
+  patch -Np1 -i ${PATCH}/busybox-${BUSYBOX_VERSION}-macos-2.patch || \
+    die "Patch 2nd for MacOS failed" && \
+      touch ${METADATAEXTRACT}/busybox-1.20.2-macos-2.patch
 fi
 [ -f ${METADATAEXTRACT}/busybox-${option}-patch-busybox-${BUSYBOX_VERSION} ] || \
   patch -Np1 -i ${PATCH}/busybox-${BUSYBOX_VERSION}.patch || \
