@@ -1,5 +1,7 @@
 #! /bin/bash
 
+export PATH=$PATH:/usr/local/sbin
+
 [ -d ${PREFIXGNULINUX} ] || mkdir -p ${PREFIXGNULINUX}
 [ -d ${METADATAMIPSELBUSYBOXCREATEIMG} ] || mkdir -p ${METADATAMIPSELBUSYBOXCREATEIMG}
 
