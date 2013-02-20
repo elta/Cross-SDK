@@ -23,10 +23,6 @@ pushd ${SRCBUSYBOX_32}
   tar xf ${TARBALL}/busybox-${BUSYBOX_VERSION}.${BUSYBOX_SUFFIX} || \
     die "busybox extract error" && \
       touch ${METADATAEXTRACT}/busybox-extract
-[ -f "${METADATAEXTRACT}/bash_completion_extract" ] || \
-  tar xf ${TARBALL}/bash-completion-${BASHCOMPLETION_VERSION}.${BASHCOMPLETION_SUFFIX} || \
-    die "extract bash-completion error" && \
-      touch ${METADATAEXTRACT}/bash_completion_extract
 popd
 
 # Begin for loop, build static/dynamic busybox.
@@ -75,28 +71,6 @@ fi
 popd
 
 cp -ar ${SRCBUSYBOX_32}/busybox-${BUSYBOX_VERSION}/examples/bootfloppy/etc ${PREFIXMIPSELBUSYBOX}/
-
-pushd ${BUILDBUSYBOX_32}
-[ -d "bash-completion-build" ] || mkdir bash-completion-build
-cd bash-completion-build
-[ -f "${METADATABUSYBOX_32}/bash_completion_cross_config" ] || \
-  ${SRCBUSYBOX_32}/bash-completion-${BASHCOMPLETION_VERSION}/configure || \
-    die "***config bash-completion error" && \
-      touch ${METADATABUSYBOX_32}/bash_completion_cross_config
-[ -f "${METADATABUSYBOX_32}/bash_completion_cross_build" ] || \
-  make -j${JOBS} || \
-    die "***build bash-completion error" && \
-      touch ${METADATABUSYBOX_32}/bash_completion_cross_build
-[ -f "${METADATABUSYBOX_32}/bash_completion_cross_install" ] || \
-  make DESTDIR=${PREFIXMIPSELBUSYBOX} install || \
-    die "***install bash-completion error" && \
-      touch ${METADATABUSYBOX_32}/bash_completion_cross_install
-popd
-
-[ -f ${METADATABUSYBOX_32}/add_param_to_bash_completion ] || \
-  echo ". /usr/local/share/bash-completion/bash_completion" >> ${PREFIXMIPSELBUSYBOX}/etc/bash_completion || \
-    die "***create /etc/bash_completion error"
-      touch ${METADATABUSYBOX_32}/add_param_to_bash_completion
 
 mkdir ${PREFIXMIPSELBUSYBOX}/dev
 mkdir ${PREFIXMIPSELBUSYBOX}/proc

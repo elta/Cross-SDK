@@ -15,7 +15,7 @@ pushd ${PREFIXGNULINUX}
 
 [ -d "${MOUNT_POINT}" ] || mkdir ${MOUNT_POINT}
 if [ ${HOSTOS} = "Darwin" ]; then
-  die "There is something wrong with ext3 under Mac, so we complete busybox and stop here."
+  ext2fuse ${BUSYBOX_64_IMAGE} ${MOUNT_POINT}&
 else
   sudo mount -o loop ${BUSYBOX_64_IMAGE} ${MOUNT_POINT}
 fi
