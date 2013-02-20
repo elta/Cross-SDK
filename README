@@ -9,6 +9,9 @@ maintain their part of the SDK.
 
 ===============================================================================
 Version History:
+0.6:
+- OS X 10.8.2 well tested minimal-system now!
+
 0.5:
 - Combine ${SRC} as possible as we can, saving a huge disk space.
 
