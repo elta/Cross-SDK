@@ -73,6 +73,7 @@ sudo cp -ar ${SRCBUSYBOX_64}/busybox-${BUSYBOX_VERSION}/examples/bootfloppy/etc 
 mkdir ${PREFIXMIPS64ELBUSYBOX}/dev
 mkdir ${PREFIXMIPS64ELBUSYBOX}/proc
 
+if [ ${HOSTOS} != "Darwin" ]; then
 sudo cp -a /dev/zero ${PREFIXMIPS64ELBUSYBOX}/dev/
 sudo cp -a /dev/console ${PREFIXMIPS64ELBUSYBOX}/dev/
 sudo cp -a /dev/null ${PREFIXMIPS64ELBUSYBOX}/dev/
@@ -80,6 +81,7 @@ sudo cp -a /dev/tty ${PREFIXMIPS64ELBUSYBOX}/dev/
 sudo cp -a /dev/tty1 ${PREFIXMIPS64ELBUSYBOX}/dev/
 sudo cp -a /dev/tty2 ${PREFIXMIPS64ELBUSYBOX}/dev/
 sudo cp -a /dev/ttyS0 ${PREFIXMIPS64ELBUSYBOX}/dev/
+fi
 
 # Copy Library to File System
 if [ -d ${PREFIXMIPS64ELROOTFS}/lib ]; then
