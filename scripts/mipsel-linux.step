@@ -3,7 +3,11 @@
 source source.env
 
 if [ x${MOD} != "x" ]; then
-export METADATAMIPSELKERNEL=${METADATAMIPSELKERNEL}-${MOD}
+  if [ ${MOD} = "gnu-rootfs" ]; then
+    export METADATAMIPSELKERNEL=${METADATAMIPSELROOTFSMOD}
+  elif [ ${MOD} = "busybox" ]; then
+    export METADATAMIPSELKERNEL=${METADATAMIPSELBUSYBOXMOD}
+  fi
 fi
 
 [ -d "${SRCMIPSELKERNEL}" ] || mkdir -p "${SRCMIPSELKERNEL}"

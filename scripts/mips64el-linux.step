@@ -3,7 +3,11 @@
 source source.env
 
 if [ x${MOD} != "x" ]; then
-export METADATAMIPS64ELKERNEL=${METADATAMIPS64ELKERNEL}-${MOD}
+  if [ ${MOD} = "gnu-rootfs" ]; then
+    export METADATAMIPSELKERNEL=${METADATAMIPSELROOTFSMOD}
+  elif [ ${MOD} = "busybox" ]; then
+    export METADATAMIPSELKERNEL=${METADATAMIPSELBUSYBOXMOD}
+  fi
 fi
 
 [ -d "${SRCMIPS64ELKERNEL}" ] || mkdir -p "${SRCMIPS64ELKERNEL}"
