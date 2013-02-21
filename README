@@ -47,7 +47,7 @@ You need run this in your terminal:
 brew install autoconf ext2fuse gnu-sed unrar autoconf213 fuse4x libelf p7zip \
              wget automake fuse4x-kext libffi pixman xz bash-completion gawk \
              libpng pkg-config zlib cmake gettext libtool qt coreutils glib \
-             quilt e2fsprogs gnu-getopt mercurial texinfo
+             quilt gnu-getopt mercurial texinfo
 
 (K)Ubuntu 12.10 AMD64 and (K)Ubuntu 12.04 AMD64 are well tested.
 You need run this in your terminal:
