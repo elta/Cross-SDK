@@ -10,7 +10,8 @@ pushd ${PREFIXGNULINUX}
   dd if=/dev/zero of=${BUSYBOX_64_IMAGE} bs=4k count=512k || \
     die "dd mips64el busybox img error" && \
       touch ${METADATAMIPS64ELBUSYBOXCREATEIMG}/mips64el_busybox_ddimg
-[ -f ${METADATAMIPS64ELBUSYBOXCREATEIMG}/mips64el_busybox_mkfsimg ] || \
+
+#[ -f ${METADATAMIPS64ELBUSYBOXCREATEIMG}/mips64el_busybox_mkfsimg ] || \
   echo y | mkfs.ext3 ${BUSYBOX_64_IMAGE} || \
     die "mkfs mips64el busybox img error" && \
       touch ${METADATAMIPS64ELBUSYBOXCREATEIMG}/mips64el_busybox_mkfsimg
