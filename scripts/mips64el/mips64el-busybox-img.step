@@ -24,12 +24,12 @@ fi
 
 if [ ${HOSTOS} = "Linux" ]; then
 [ -f ${METADATAMIPS64ELBUSYBOXCREATEIMG}/mips64el_busybox_copy_files ] || \
-  sudo cp -ar ${PREFIXMIPS64ELBUSYBOX}/* ${MOUNT_POINT} || \
+  sudo cp -ar ${PREFIXMIPS64ELBUSYBOX}/* ${MOUNT_POINT}/ || \
     die "copy mips64el busybox files to img error" && \
       touch ${METADATAMIPS64ELBUSYBOXCREATEIMG}/mips64el_busybox_copy_files
 elif [ ${HOSTOS} = "Darwin" ]; then
 [ -f ${METADATAMIPS64ELBUSYBOXCREATEIMG}/mips64el_busybox_copy_files ] || \
-  cp -a ${PREFIXMIPS64ELBUSYBOX}/* ${MOUNT_POINT} || \
+  cp -a ${PREFIXMIPS64ELBUSYBOX}/* ${MOUNT_POINT}/ || \
     die "copy mips64el busybox files to img error" && \
       touch ${METADATAMIPS64ELBUSYBOXCREATEIMG}/mips64el_busybox_copy_files
 fi
