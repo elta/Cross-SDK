@@ -36,7 +36,10 @@ elif [ ${HOSTOS} = "Darwin" ]; then
       touch ${METADATAMIPSELBUSYBOXCREATEIMG}/mipsel_busybox_copy_files
 fi
 
-sudo umount ${MOUNT_POINT}
+[ -f ${METADATAMIPSELBUSYBOXCREATEIMG}/mipsel_busybox_umnt ] || \
+  sudo umount ${MOUNT_POINT} || \
+    die "***copy to mipsel sysroot.img error" && \
+      touch ${METADATAMIPSELBUSYBOXCREATEIMG}/mipsel_busybox_umnt
 
 [ -f ${METADATAMIPSELBUSYBOXCREATEIMG}/mipsel_sysroot_rmmnt ] || \
   rm -rf ${MOUNT_POINT} || \

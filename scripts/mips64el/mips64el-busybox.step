@@ -98,7 +98,11 @@ if [ -d ${PREFIXMIPS64ELROOTFS}/lib64 ]; then
     cp -ar ${PREFIXMIPS64ELROOTFS}/lib64 ${PREFIXMIPS64ELBUSYBOX}/
 fi
 
-echo "/bin/mount -o remount,rw /" >> ${PREFIXMIPS64ELBUSYBOX}/etc/init.d/rcS
+[ -f ${METADATABUSYBOX_64}/busybox_write_rcS ] || \
+  echo "/bin/mount -o remount,rw /" >> ${PREFIXMIPS64ELBUSYBOX}/etc/init.d/rcS || \
+    die "busybox write rcS error" && \
+      touch ${METADATABUSYBOX_64}/busybox_write_rcS
+
 done
 
 touch ${METADATABUSYBOX_64}/mips64el_busybox_finished

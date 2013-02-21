@@ -9,7 +9,7 @@ pushd ${PREFIXGNULINUX}
     die "***dd mipsel sysroot.img error" && \
       touch ${METADATAMIPSELROOTFSCREATEIMG}/mipsel_sysroot_ddimg
 
-[ -f ${METADATAMIPSELROOTFSCREATEIMG}/mipsel_sysroot_mkfsimg ] || \
+#[ -f ${METADATAMIPSELROOTFSCREATEIMG}/mipsel_sysroot_mkfsimg ] || \
   echo y | mkfs.ext3 mipsel-rootfs.img || \
     die "***mkfs mipsel sysroot.img error" && \
       touch ${METADATAMIPSELROOTFSCREATEIMG}/mipsel_sysroot_mkfsimg

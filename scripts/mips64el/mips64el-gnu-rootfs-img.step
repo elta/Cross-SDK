@@ -8,7 +8,7 @@ pushd ${PREFIXGNULINUX}
  dd if=/dev/zero of=mips64el-rootfs.img bs=1M count=10K || \
     die "***dd mips64el rootfs.img error" && \
       touch ${METADATAMIPS64ELROOTFSCREATEIMG}/mips64el_rootfs_ddimg
-[ -f ${METADATAMIPS64ELROOTFSCREATEIMG}/mips64el_rootfs_mkfsimg ] || \
+#[ -f ${METADATAMIPS64ELROOTFSCREATEIMG}/mips64el_rootfs_mkfsimg ] || \
   echo y | mkfs.ext3 mips64el-rootfs.img || \
     die "***mkfs mips64el rootfs.img error" && \
       touch ${METADATAMIPS64ELROOTFSCREATEIMG}/mips64el_rootfs_mkfsimg

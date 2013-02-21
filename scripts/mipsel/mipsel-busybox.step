@@ -91,10 +91,10 @@ if [ -d ${PREFIXMIPSELROOTFS}/lib ]; then
     cp -ar ${PREFIXMIPSELROOTFS}/lib ${PREFIXMIPSELBUSYBOX}/
 fi
 
-[ -f ${METADATAEXTRACT}/busybox_write_rcS ] || \
+[ -f ${METADATABUSYBOX_32}/busybox_write_rcS ] || \
   echo "/bin/mount -o remount,rw /" >> ${PREFIXMIPSELBUSYBOX}/etc/init.d/rcS || \
     die "busybox write rcS error" && \
-      touch ${METADATAEXTRACT}/busybox_write_rcS
+      touch ${METADATABUSYBOX_32}/busybox_write_rcS
 
 touch ${METADATABUSYBOX_32}/mipsel_busybox_finished
 
