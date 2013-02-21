@@ -67,7 +67,11 @@ fi
       touch ${METADATABUSYBOX_32}/busybox-clean
 popd
 
-cp -ar ${SRCBUSYBOX_32}/busybox-${BUSYBOX_VERSION}/examples/bootfloppy/etc ${PREFIXMIPSELBUSYBOX}/
+if [ ${HOSTOS} = "Linux" ]; then
+sudo cp -ar ${SRCBUSYBOX_32}/busybox-${BUSYBOX_VERSION}/examples/bootfloppy/etc ${PREFIXMIPSELBUSYBOX}/
+elif [ ${HOSTOS} = "Darwin" ]; then
+cp -a ${SRCBUSYBOX_32}/busybox-${BUSYBOX_VERSION}/examples/bootfloppy/etc ${PREFIXMIPSELBUSYBOX}/
+fi
 
 mkdir ${PREFIXMIPSELBUSYBOX}/dev
 mkdir ${PREFIXMIPSELBUSYBOX}/proc

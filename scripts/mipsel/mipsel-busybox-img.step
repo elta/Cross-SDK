@@ -24,10 +24,17 @@ else
   sudo mount -o loop ${BUSYBOX_32_IMAGE} ${MOUNT_POINT}
 fi
 
+if [ ${HOSTOS} = "Linux" ]; then
 [ -f ${METADATAMIPSELBUSYBOXCREATEIMG}/mipsel_busybox_copy_files ] || \
   sudo cp -ar ${PREFIXMIPSELBUSYBOX}/* ${MOUNT_POINT} || \
     die "copy mipsel busybox files to img error" && \
       touch ${METADATAMIPSELBUSYBOXCREATEIMG}/mipsel_busybox_copy_files
+elif [ ${HOSTOS} = "Darwin" ]; then
+[ -f ${METADATAMIPSELBUSYBOXCREATEIMG}/mipsel_busybox_copy_files ] || \
+  cp -a ${PREFIXMIPSELBUSYBOX}/* ${MOUNT_POINT} || \
+    die "copy mipsel busybox files to img error" && \
+      touch ${METADATAMIPSELBUSYBOXCREATEIMG}/mipsel_busybox_copy_files
+fi
 
 sudo umount ${MOUNT_POINT}
 
