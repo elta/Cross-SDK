@@ -95,7 +95,6 @@ fi
   echo "/bin/mount -o remount,rw /" >> ${PREFIXMIPSELBUSYBOX}/etc/init.d/rcS || \
     die "busybox write rcS error" && \
       touch ${METADATABUSYBOX_32}/busybox_write_rcS
+done
 
 touch ${METADATABUSYBOX_32}/mipsel_busybox_finished
-
-done

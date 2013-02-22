@@ -102,7 +102,6 @@ fi
   echo "/bin/mount -o remount,rw /" >> ${PREFIXMIPS64ELBUSYBOX}/etc/init.d/rcS || \
     die "busybox write rcS error" && \
       touch ${METADATABUSYBOX_64}/busybox_write_rcS
-
 done
 
 touch ${METADATABUSYBOX_64}/mips64el_busybox_finished
