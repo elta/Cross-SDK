@@ -457,6 +457,7 @@ cd man-pages-${MANPAGES_VERSION}
       touch ${METADATAMIPS64ELROOTFS}/man_cross_build
 popd
 
+unset CFLAGS
 pushd ${BUILDMIPS64ELROOTFS}
 [ -d "gmp-32" ] || mkdir "gmp-32"
 cd gmp-32
@@ -545,6 +546,7 @@ cd gmp-64
     die "rename gmp64 headers" && \
       touch ${METADATAMIPS64ELROOTFS}/gmp_rename64_header
 popd
+export CFLAGS="-w"
 
 pushd ${BUILDMIPS64ELROOTFS}
 [ -d "mpfr-32" ] || mkdir mpfr-32

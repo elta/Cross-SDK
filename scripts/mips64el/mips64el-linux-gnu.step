@@ -89,6 +89,7 @@ cd linux-${LINUX_VERSION}
       touch ${METADATAMIPS64ELTOOLCHAIN}/linux_clean_install.cmd
 popd
 
+unset CFLAGS
 pushd ${BUILDMIPS64ELTOOLCHAIN}
 [ -d gmp-build ] || mkdir gmp-build
 cd gmp-build
@@ -106,6 +107,7 @@ cd gmp-build
     die "***install gmp error" && \
       touch ${METADATAMIPS64ELTOOLCHAIN}/gmp_install
 popd
+export CFLAGS="-w"
 
 pushd ${BUILDMIPS64ELTOOLCHAIN}
 [ -d mpfr-build ] || mkdir mpfr-build

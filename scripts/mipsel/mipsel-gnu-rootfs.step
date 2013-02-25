@@ -402,6 +402,7 @@ cd man-pages-${MANPAGES_VERSION}
       touch ${METADATAMIPSELROOTFS}/manpages_install
 popd
 
+unset CFLAGS
 pushd ${BUILDMIPSELROOTFS}
 [ -d "gmp_cross_build" ] || mkdir gmp_cross_build
 cd gmp_cross_build
@@ -425,6 +426,7 @@ cd gmp_cross_build
     die "***remove cross gmp *.la error" && \
       touch ${METADATAMIPSELROOTFS}/gmp_cross_rmla
 popd
+export CFLAGS="-w"
 
 pushd ${BUILDMIPSELROOTFS}
 [ -d "mpfr_cross_build" ] || mkdir mpfr_cross_build
