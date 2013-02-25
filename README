@@ -1,4 +1,7 @@
 This is a OpenSource Cross Platform SDK.
+The development project for Cross-SDK is https://github.com/J-Liu/Cross-SDK.
+The development repository is:
+     https://github.com/J-Liu/Cross-SDK.git
 
 Our aim is build a user friendly Cross SDK for a Real Time GNU/Linux system
 which using LLVM/Clang as default compiler, you are welcome to use and hack
@@ -81,9 +84,9 @@ to get a busybox root fs.
 Notice:
 It will take a lot of space in your disk, make sure you run them in a big
 partation:)
-Make sure you have run ./get_tarballs.sh first, if you got failed,
+Make sure you have run ./get-sources.sh first, if you got failed,
 just run it again.
-Run ./cleanup to free your disk space.
+Run ./cleanup.sh to free your disk space.
 
 ===============================================================================
 GNU root FS is partly come from CLFS, IDE-plugin is writen by Dongxue-Zhang.
