@@ -14,19 +14,28 @@ tar xf ${TARBALL}/llvm-${LLVM_VERSION}.${LLVM_SUFFIX} || \
   die "extract llvm error" && \
     touch ${METADATAEXTRACT}/llvm_extract
 
+pushd llvm-${LLVM_VERSION}/tools
 [ -f ${METADATAEXTRACT}/clang_extract ] || \
-cd llvm-${LLVM_VERSION}/tools && \
-tar xf ${TARBALL}/clang-${CLANG_VERSION}.${CLANG_SUFFIX} || \
-  die "extract clang error" && \
-    touch ${METADATAEXTRACT}/clang_extract
-mv clang-${CLANG_VERSION} clang
+  tar xf ${TARBALL}/clang-${CLANG_VERSION}.${CLANG_SUFFIX} || \
+    die "extract clang error" && \
+      touch ${METADATAEXTRACT}/clang_extract
+[ -f ${METADATAEXTRACT}/clang_move ] || \
+  mv clang-${CLANG_VERSION} clang || \
+    die "no clang exist! error" && \
+      touch ${METADATAEXTRACT}/clang_move
+popd
 
+pushd ${SRCUNIVERSAL}/llvm-${LLVM_VERSION}/projects
 [ -f ${METADATAEXTRACT}/compiler-rt_extract ] || \
-cd ${SRCUNIVERSAL}/llvm-${LLVM_VERSION}/projects && \
-tar xf ${TARBALL}/compiler-rt-${CRT_VERSION}.${CRT_SUFFIX} || \
-  die "extract compiler-rt error" && \
-    touch ${METADATAEXTRACT}/compiler-rt_extract
-mv compiler-rt-${CRT_VERSION} compiler-rt
+  tar xf ${TARBALL}/compiler-rt-${CRT_VERSION}.${CRT_SUFFIX} || \
+    die "extract compiler-rt error" && \
+      touch ${METADATAEXTRACT}/compiler-rt_extract
+[ -f ${METADATAEXTRACT}/compiler-rt_move ] || \
+  mv compiler-rt-${CRT_VERSION} compiler-rt || \
+    die "no compiler-rt exist! error" && \
+      touch ${METADATAEXTRACT}/compiler-rt_move
+popd
+
 popd
 
 #################################################################
