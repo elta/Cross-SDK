@@ -89,7 +89,8 @@ just run it again.
 Run ./cleanup.sh to free your disk space.
 
 ===============================================================================
-GNU root FS is partly come from CLFS, IDE-plugin is writen by Dongxue-Zhang.
+GNU root FS is partly come from CLFS, IDE-plugin is writen by Yu Tang at
+https://github.com/tangbongbong/qt-crossprojectmanager.
 
 ===============================================================================
 The last thing, Happy Hacking:)
