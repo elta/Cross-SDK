@@ -15,6 +15,20 @@ tar xf ${TARBALL}/qt-creator-${QTC_VERSION}.${QTC_SUFFIX} || \
     touch ${METADATAEXTRACT}/qtc_extract
 popd
 
+pushd ${SRCUNIVERSAL}
+cd qt-creator-${QTC_VERSION}
+[ -f ${METADATAUNIVERSAL}/qt_patch ] || \
+  patch -p1 < ${LIVE_SRC}/${CROSSPROJECTMANAGER}/qt.patch || \
+    die "patch qt-creator error" && \
+      touch ${METADATAUNIVERSAL}/qt_patch
+[ -d "src/plugins/crossprojectmanager" ] && \
+  rm -rf src/plugins/crossprojectmanager
+[ -f ${METADATAUNIVERSAL}/qt_copy ] || \
+  cp -r ${LIVE_SRC}/${CROSSPROJECTMANAGER}/crossprojectmanager src/plugins/ || \
+    die "copy crossprojectmanager error" && \
+      touch ${METADATAUNIVERSAL}/qt_copy
+popd
+
 #################################################################
 ### qt-creator build
 #################################################################

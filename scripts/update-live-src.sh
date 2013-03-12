@@ -3,6 +3,6 @@
 source common/source.env
 
 pushd ${LIVE_SRC}
-cd crossprojectmanager
+cd qt-crossprojectmanager
 git pull
 popd
