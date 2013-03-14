@@ -4500,6 +4500,11 @@ EOF
     die "***add param to bashrc error"
       touch ${METADATAMIPS64ELROOTFS}/add_param_to_bashrc
 
+[ -f ${METADATAMIPS64ELROOTFS}/add_param_to_rc ] || \
+  echo "/usr/local/sbin/vsftpd /etc/vsftpd.conf &" >> ${PREFIXMIPSELROOTFS}/etc/sysconfig/rc || \
+    die "***add vsftpd auto start error"
+      touch ${METADATAMIPS64ELROOTFS}/add_param_to_rc
+
 [ -f "${METADATAMIPS64ELROOTFS}/create_clfs-release" ] || \
 `cat > ${PREFIXMIPS64ELROOTFS}/etc/clfs-release << EOF
 PREFIXMIPS64ELROOTFS-Sysroot

@@ -2690,6 +2690,11 @@ EOF` || \
     die "***cp bashrc error"
       touch ${METADATAMIPSELROOTFS}/add_param_to_bashrc
 
+[ -f ${METADATAMIPSELROOTFS}/add_param_to_rc ] || \
+  echo "/usr/local/sbin/vsftpd /etc/vsftpd.conf &" >> ${PREFIXMIPSELROOTFS}/etc/sysconfig/rc || \
+    die "***add vsftpd auto start error"
+      touch ${METADATAMIPSELROOTFS}/add_param_to_rc
+
 
 [ -f ${METADATAMIPSELROOTFS}/create_vernu ] || \
 `cat > ${PREFIXMIPSELROOTFS}/etc/clfs-release << EOF
