@@ -376,6 +376,11 @@ pushd ${SRCMIPS64ELROOTFS}
     die "extract vim error" && \
       touch ${METADATAEXTRACT}/vim_extract
 
+[ -f ${METADATAEXTRACT}/vsftpd_extract ] || \
+  tar xf ${TARBALL}/vsftpd-${VSFTPD_VERSION}.${VSFTPD_SUFFIX} || \
+    die "***extract vsftpd error" && \
+      touch ${METADATAEXTRACT}/vsftpd_extract
+
 [ -f "${METADATAEXTRACT}/xz_extract" ] || \
   tar xf ${TARBALL}/xz-${XZ_VERSION}.${XZ_SUFFIX} || \
     die "extract xz error" && \
@@ -4170,6 +4175,70 @@ EOF` || \
   make distclean || \
     die "***clean vim error" && \
       touch ${METADATAMIPS64ELROOTFS}/vim_clean
+popd
+
+pushd ${SRCMIPS64ELROOTFS}
+cd vsftpd-${VSFTPD_VERSION}
+[ -f ${METADATAMIPS64ELROOTFS}/vsftpd_patch ] || \
+  patch -p1 < ${PATCH}/vsftpd-${VSFTPD_VERSION}.patch || \
+    die "patch vsftpd error" && \
+      touch ${METADATAMIPS64ELROOTFS}/vsftpd_patch
+[ -f ${METADATAMIPS64ELROOTFS}/vsftpd_build ] || \
+  make CC=${CC} || \
+    die "***build vsftpd error" && \
+      touch ${METADATAMIPS64ELROOTFS}/vsftpd_build
+[ -f ${METADATAMIPS64ELROOTFS}/vsftpd_install ] || \
+  make DESTDIR=${PREFIXMIPS64ELROOTFS} install || \
+    die "***install vsftpd error" && \
+      touch ${METADATAMIPS64ELROOTFS}/vsftpd_install
+[ -f ${METADATAMIPS64ELROOTFS}/vsftpd_clean ] || \
+  make clean || \
+    die "***clean vsftpd error" && \
+      touch ${METADATAMIPS64ELROOTFS}/vsftpd_clean
+[ -f ${METADATAMIPS64ELROOTFS}/vsftpd_de_patch ] || \
+  patch -Rp1 < ${PATCH}/vsftpd-${VSFTPD_VERSION}.patch || \
+    die "de-patch vsftpd error" && \
+      touch ${METADATAMIPS64ELROOTFS}/vsftpd_de_patch
+
+cat > ${PREFIXMIPS64ELROOTFS}/etc/vsftpd << "EOF"
+listen=YES
+listen_port=21
+ftp_username=root
+listen=YES
+listen_port=21
+ftp_username=root
+guest_username=root
+connect_from_port_20=YES
+local_enable=YES
+guest_enable=YES
+write_enable=YES
+local_root=/root
+chroot_list_enable=YES
+anon_world_readable_only=YES
+anon_upload_enable=YES
+anon_mkdir_write_enable=YES
+anon_other_write_enable=YES
+anonymous_enable=YES
+write_enable=YES
+anon_mkdir_write_enable=YES
+anon_upload_enable=YES
+userlist_enable=YES
+userlist_file=/etc/vsftpd.user_list
+#pam_service_name=vsftpd
+nopriv_user=root
+local_umask=022
+chroot_local_user=NO
+chroot_list_enable=YES
+chroot_list_file=/etc/vsftpd.chroot_list
+
+EOF
+
+cat > ${PREFIXMIPS64ELROOTFS}/etc/vsftpd.chroot_list << "EOF"
+root
+EOF
+
+touch ${PREFIXMIPS64ELROOTFS}/etc/vsftpd.user_list
+
 popd
 
 pushd ${BUILDMIPS64ELROOTFS}

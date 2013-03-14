@@ -1,0 +1,63 @@
+diff -uNpr vsftpd-3.0.2.orig/Makefile vsftpd-3.0.2/Makefile
+--- vsftpd-3.0.2.orig/Makefile	2012-09-16 15:27:35.000000000 +0800
++++ vsftpd-3.0.2/Makefile	2013-03-13 17:40:00.933021579 +0800
+@@ -29,21 +29,21 @@ vsftpd: $(OBJS)
+ 	$(CC) -o vsftpd $(OBJS) $(LINK) $(LDFLAGS) $(LIBS)
+ 
+ install:
+-	if [ -x /usr/local/sbin ]; then \
+-		$(INSTALL) -m 755 vsftpd /usr/local/sbin/vsftpd; \
++	if [ -x ${DESTDIR}/usr/local/sbin ]; then \
++		$(INSTALL) -m 755 vsftpd ${DESTDIR}/usr/local/sbin/vsftpd; \
+ 	else \
+-		$(INSTALL) -m 755 vsftpd /usr/sbin/vsftpd; fi
+-	if [ -x /usr/local/man ]; then \
+-		$(INSTALL) -m 644 vsftpd.8 /usr/local/man/man8/vsftpd.8; \
+-		$(INSTALL) -m 644 vsftpd.conf.5 /usr/local/man/man5/vsftpd.conf.5; \
+-	elif [ -x /usr/share/man ]; then \
+-		$(INSTALL) -m 644 vsftpd.8 /usr/share/man/man8/vsftpd.8; \
+-		$(INSTALL) -m 644 vsftpd.conf.5 /usr/share/man/man5/vsftpd.conf.5; \
++		$(INSTALL) -m 755 vsftpd ${DESTDIR}/usr/sbin/vsftpd; fi
++	if [ -x ${DESTDIR}/usr/local/man ]; then \
++		$(INSTALL) -m 644 vsftpd.8 ${DESTDIR}/usr/local/man/man8/vsftpd.8; \
++		$(INSTALL) -m 644 vsftpd.conf.5 ${DESTDIR}/usr/local/man/man5/vsftpd.conf.5; \
++	elif [ -x ${DESTDIR}/usr/share/man ]; then \
++		$(INSTALL) -m 644 vsftpd.8 ${DESTDIR}/usr/share/man/man8/vsftpd.8; \
++		$(INSTALL) -m 644 vsftpd.conf.5 ${DESTDIR}/usr/share/man/man5/vsftpd.conf.5; \
+ 	else \
+-		$(INSTALL) -m 644 vsftpd.8 /usr/man/man8/vsftpd.8; \
+-		$(INSTALL) -m 644 vsftpd.conf.5 /usr/man/man5/vsftpd.conf.5; fi
+-	if [ -x /etc/xinetd.d ]; then \
+-		$(INSTALL) -m 644 xinetd.d/vsftpd /etc/xinetd.d/vsftpd; fi
++		$(INSTALL) -m 644 vsftpd.8 ${DESTDIR}/usr/man/man8/vsftpd.8; \
++		$(INSTALL) -m 644 vsftpd.conf.5 ${DESTDIR}/usr/man/man5/vsftpd.conf.5; fi
++	if [ -x ${DESTDIR}/etc/xinetd.d ]; then \
++		$(INSTALL) -m 644 xinetd.d/vsftpd ${DESTDIR}/etc/xinetd.d/vsftpd; fi
+ 
+ clean:
+ 	rm -f *.o *.swp vsftpd
+diff -uNpr vsftpd-3.0.2.orig/secutil.c vsftpd-3.0.2/secutil.c
+--- vsftpd-3.0.2.orig/secutil.c	2012-03-28 11:08:28.000000000 +0800
++++ vsftpd-3.0.2/secutil.c	2013-03-13 22:10:39.677628166 +0800
+@@ -132,13 +132,13 @@ vsf_secutil_change_credentials(const str
+   /* Misconfiguration check: don't ever chroot() to a directory writable by
+    * the current user.
+    */
+-  if ((options & VSF_SECUTIL_OPTION_CHROOT) &&
+-      !(options & VSF_SECUTIL_OPTION_ALLOW_WRITEABLE_ROOT))
+-  {
+-    if (vsf_sysutil_write_access("/"))
+-    {
+-      die("vsftpd: refusing to run with writable root inside chroot()");
+-    }
+-  }
++  //if ((options & VSF_SECUTIL_OPTION_CHROOT) &&
++  //    !(options & VSF_SECUTIL_OPTION_ALLOW_WRITEABLE_ROOT))
++  //{
++  //  if (vsf_sysutil_write_access("/"))
++  //  {
++  //    die("vsftpd: refusing to run with writable root inside chroot()");
++  //  }
++  //}
+ }
+ 
