@@ -2466,6 +2466,7 @@ root
 EOF
 
 touch ${PREFIXMIPSELROOTFS}/etc/vsftpd.user_list
+mkdir -p /usr/share/empty
 
 popd
 
