@@ -98,10 +98,30 @@ if [ -d ${PREFIXMIPS64ELROOTFS}/lib64 ]; then
     cp -ar ${PREFIXMIPS64ELROOTFS}/lib64 ${PREFIXMIPS64ELBUSYBOX}/
 fi
 
+[ -f ${METADATABUSYBOX_64}/busybox_mkdir_ftp ] || \
+  mkdir ${PREFIXMIPS64ELBUSYBOX}/ftp || \
+    die "busybox create ftp directory error" && \
+      touch ${METADATABUSYBOX_64}/busybox_mkdir_ftp
+
+[ -f ${METADATABUSYBOX_64}/busybox_chmod_ftp ] || \
+  sudo chmod 777 ${PREFIXMIPS64ELBUSYBOX}/ftp || \
+    die "busybox chmod ftp directory error" && \
+      touch ${METADATABUSYBOX_64}/busybox_chmod_ftp
+
 [ -f ${METADATABUSYBOX_64}/busybox_write_rcS ] || \
   echo "/bin/mount -o remount,rw /" >> ${PREFIXMIPS64ELBUSYBOX}/etc/init.d/rcS || \
     die "busybox write rcS error" && \
       touch ${METADATABUSYBOX_64}/busybox_write_rcS
+
+[ -f ${METADATABUSYBOX_64}/busybox_write_netaddr_rcS ] || \
+  echo "/sbin/ifconfig eth0 10.0.0.64 up" >> ${PREFIXMIPS64ELBUSYBOX}/etc/init.d/rcS || \
+    die "busybox write net address rcS error" && \
+      touch ${METADATABUSYBOX_64}/busybox_write_netaddr_rcS
+
+[ -f ${METADATABUSYBOX_64}/busybox_write_startftp_rcS ] || \
+  echo "/usr/bin/tcpsvd 0.0.0.0 21 ftpd -w /ftp &" >> ${PREFIXMIPS64ELBUSYBOX}/etc/init.d/rcS || \
+    die "busybox write start ftp rcS error" && \
+      touch ${METADATABUSYBOX_64}/busybox_write_startftp_rcS
 done
 
 touch ${METADATABUSYBOX_64}/mips64el_busybox_finished

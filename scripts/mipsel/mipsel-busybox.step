@@ -91,10 +91,30 @@ if [ -d ${PREFIXMIPSELROOTFS}/lib ]; then
     cp -ar ${PREFIXMIPSELROOTFS}/lib ${PREFIXMIPSELBUSYBOX}/
 fi
 
+[ -f ${METADATABUSYBOX_32}/busybox_mkdir_ftp ] || \
+  mkdir ${PREFIXMIPSELBUSYBOX}/ftp || \
+    die "busybox create ftp directory  error" && \
+      touch ${METADATABUSYBOX_32}/busybox_mkdir_ftp
+
+[ -f ${METADATABUSYBOX_32}/busybox_chmod_ftp ] || \
+  chmod 777 ${PREFIXMIPSELBUSYBOX}/ftp || \
+    die "busybox chmod ftp directory  error" && \
+      touch ${METADATABUSYBOX_32}/busybox_chmod_ftp
+
 [ -f ${METADATABUSYBOX_32}/busybox_write_rcS ] || \
   echo "/bin/mount -o remount,rw /" >> ${PREFIXMIPSELBUSYBOX}/etc/init.d/rcS || \
     die "busybox write rcS error" && \
       touch ${METADATABUSYBOX_32}/busybox_write_rcS
+
+[ -f ${METADATABUSYBOX_32}/busybox_write_netaddr_rcS ] || \
+  echo "/sbin/ifconfig eth0 10.0.0.32 up" >> ${PREFIXMIPSELBUSYBOX}/etc/init.d/rcS || \
+    die "busybox write net address rcS error" && \
+      touch ${METADATABUSYBOX_32}/busybox_write_netaddr_rcS
+
+[ -f ${METADATABUSYBOX_32}/busybox_write_startftp_rcS ] || \
+  echo "/usr/bin/tcpsvd 0.0.0.0 21 ftpd -w /ftp &" >> ${PREFIXMIPSELBUSYBOX}/etc/init.d/rcS || \
+    die "busybox write start ftp rcS error" && \
+      touch ${METADATABUSYBOX_32}/busybox_write_startftp_rcS
 done
 
 touch ${METADATABUSYBOX_32}/mipsel_busybox_finished
