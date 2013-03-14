@@ -91,6 +91,11 @@ pushd ${SRCMIPSELROOTFS}
     die "***extract vim error" && \
       touch ${METADATAEXTRACT}/vim_extract
 
+[ -f ${METADATAEXTRACT}/vsftpd_extract ] || \
+  tar xf ${TARBALL}/vsftpd-${VSFTPD_VERSION}.${VSFTPD_SUFFIX} || \
+    die "***extract vsftpd error" && \
+      touch ${METADATAEXTRACT}/vsftpd_extract
+
 [ -f ${METADATAEXTRACT}/dhcpcd_extract ] || \
   tar xf  ${TARBALL}/dhcpcd-${DHCPCD_VERSION}.${DHCPCD_SUFFIX} || \
     die "***extract dhcpcd error" && \
@@ -2398,6 +2403,70 @@ ln -sfnv ../vim/vim72/doc ${PREFIXMIPSELROOTFS}/usr/share/doc/vim-7.2
   make distclean || \
     die "***clean vim error" && \
       touch ${METADATAMIPSELROOTFS}/vim_clean
+popd
+
+pushd ${SRCMIPSELROOTFS}
+cd vsftpd-${VSFTPD_VERSION}
+[ -f ${METADATAMIPSELROOTFS}/vsftpd_patch ] || \
+  patch -p1 < ${PATCH}/vsftpd-${VSFTPD_VERSION}.patch || \
+    die "patch vsftpd error" && \
+      touch ${METADATAMIPSELROOTFS}/vsftpd_patch
+[ -f ${METADATAMIPSELROOTFS}/vsftpd_build ] || \
+  make CC=${CC} || \
+    die "***build vsftpd error" && \
+      touch ${METADATAMIPSELROOTFS}/vsftpd_build
+[ -f ${METADATAMIPSELROOTFS}/vsftpd_install ] || \
+  make DESTDIR=${PREFIXMIPSELROOTFS} install || \
+    die "***install vsftpd error" && \
+      touch ${METADATAMIPSELROOTFS}/vsftpd_install
+[ -f ${METADATAMIPSELROOTFS}/vsftpd_clean ] || \
+  make clean || \
+    die "***clean vsftpd error" && \
+      touch ${METADATAMIPSELROOTFS}/vsftpd_clean
+[ -f ${METADATAMIPSELROOTFS}/vsftpd_de_patch ] || \
+  patch -Rp1 < ${PATCH}/vsftpd-${VSFTPD_VERSION}.patch || \
+    die "de-patch vsftpd error" && \
+      touch ${METADATAMIPSELROOTFS}/vsftpd_de_patch
+
+cat > ${PREFIXMIPSELROOTFS}/etc/vsftpd << "EOF"
+listen=YES
+listen_port=21
+ftp_username=root
+listen=YES
+listen_port=21
+ftp_username=root
+guest_username=root
+connect_from_port_20=YES
+local_enable=YES
+guest_enable=YES
+write_enable=YES
+local_root=/root
+chroot_list_enable=YES
+anon_world_readable_only=YES
+anon_upload_enable=YES
+anon_mkdir_write_enable=YES
+anon_other_write_enable=YES
+anonymous_enable=YES
+write_enable=YES
+anon_mkdir_write_enable=YES
+anon_upload_enable=YES
+userlist_enable=YES
+userlist_file=/etc/vsftpd.user_list
+#pam_service_name=vsftpd
+nopriv_user=root
+local_umask=022
+chroot_local_user=NO
+chroot_list_enable=YES
+chroot_list_file=/etc/vsftpd.chroot_list
+
+EOF
+
+cat > ${PREFIXMIPSELROOTFS}/etc/vsftpd.chroot_list << "EOF"
+root
+EOF
+
+touch ${PREFIXMIPSELROOTFS}/etc/vsftpd.user_list
+
 popd
 
 pushd ${BUILDMIPSELROOTFS}

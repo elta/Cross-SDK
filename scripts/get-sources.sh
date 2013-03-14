@@ -540,6 +540,13 @@ download "util-${UTIL_VERSION}.${UTIL_SUFFIX}" \
   die "download util-linux error" && \
 		echo -n "util-${UTIL_VERSION}.${UTIL_SUFFIX}" > util-linux_download
 
+[ -f vsftpd_download ] && \
+	[ "`cat vsftpd_download`" = "vsftpd-${VSFTPD_VERSION}.${VSFTPD_SUFFIX}" ] || \
+download "vsftpd-${VSFTPD_VERSION}.${VSFTPD_SUFFIX}" \
+  "${VSFTPD_URL}/vsftpd-${VSFTPD_VERSION}.${VSFTPD_SUFFIX}" || \
+  die "download vsftpd error" && \
+		echo -n "vsftpd-${VSFTPD_VERSION}.${VSFTPD_SUFFIX}" > vsftpd_download
+
 [ -f vim_download ] && \
 	[ "`cat vim_download`" = "vim-${VIM_VERSION}.${VIM_SUFFIX}" ] || \
 download "vim-${VIM_VERSION}.${VIM_SUFFIX}" \
