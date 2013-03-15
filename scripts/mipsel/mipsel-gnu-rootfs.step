@@ -1664,7 +1664,7 @@ cd iputils-${IPUTILS_VERSION}
     die "***patch doc iputils error" && \
       touch ${METADATAMIPSELROOTFS}/iputilsdoc_patch
 [ -f ${METADATAMIPSELROOTFS}/iputils_install ] || \
-  make USE_CAP=no \
+  make CC=${CC} USE_CAP=no \
   IPV4_TARGETS="tracepath ping clockdiff rdisc" \
   IPV6_TARGETS="tracepath6 traceroute6" || \
     die "***build iputils error" && \
