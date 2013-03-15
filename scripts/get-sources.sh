@@ -512,6 +512,13 @@ download "tar-${TAR_VERSION}.${TAR_SUFFIX}" \
   die "download tar error" && \
 		echo -n "tar-${TAR_VERSION}.${TAR_SUFFIX}" > tar_download
 
+[ -f telnet_download ] && \
+	[ "`cat telnet_download`" = "netkit-telnet-${TELNET_VERSION}.${TELNET_SUFFIX}" ] || \
+download "netkit-telnet-${TELNET_VERSION}.${TELNET_SUFFIX}" \
+  "${TELNET_URL}/netkit-telnet-${TELNET_VERSION}.${TELNET_SUFFIX}" || \
+  die "download telnet error" && \
+		echo -n "telnet-${TELNET_VERSION}.${TELNET_SUFFIX}" > telnet_download
+
 [ -f termcap_download ] && \
 	[ "`cat termcap_download`" = "termcap-${TERMCAP_VERSION}.${TERMCAP_SUFFIX}" ] || \
 download "termcap-${TERMCAP_VERSION}.${TERMCAP_SUFFIX}" \

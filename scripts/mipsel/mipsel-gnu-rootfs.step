@@ -96,6 +96,11 @@ pushd ${SRCMIPSELROOTFS}
     die "***extract vsftpd error" && \
       touch ${METADATAEXTRACT}/vsftpd_extract
 
+[ -f ${METADATAEXTRACT}/telnet_extract ] || \
+  tar xf ${TARBALL}/netkit-telnet-${TELNET_VERSION}.${TELNET_SUFFIX} || \
+    die "***extract netkit-telnet error" && \
+      touch ${METADATAEXTRACT}/telnet_extract
+
 [ -f ${METADATAEXTRACT}/dhcpcd_extract ] || \
   tar xf  ${TARBALL}/dhcpcd-${DHCPCD_VERSION}.${DHCPCD_SUFFIX} || \
     die "***extract dhcpcd error" && \
@@ -2468,6 +2473,39 @@ EOF
 touch ${PREFIXMIPSELROOTFS}/etc/vsftpd.user_list
 mkdir -p /usr/share/empty
 
+popd
+
+pushd ${SRCMIPSELROOTFS}
+cd netkit-telnet-${TELNET_VERSION}
+[ -f ${METADATAMIPSELROOTFS}/telnet_patch ] || \
+  patch -p1 < ${PATCH}/netkit-telnet-${TELNET_VERSION}.patch || \
+    die "patch netkit-telnet error" && \
+      touch ${METADATAMIPSELROOTFS}/telnet_patch
+[ -f ${METADATAMIPSELROOTFS}/telnet_configure ] || \
+  ./configure --prefix=${PREFIXMIPSELROOTFS} \
+  --with-c-compiler=${CC} --with-c++-compiler=${CXX} || \
+    die "***config netkit-telnet error" && \
+      touch ${METADATAMIPSELROOTFS}/telnet_configure
+[ -f ${METADATAMIPSELROOTFS}/telnet_build ] || \
+  make || \
+    die "***build netkit-telnet error" && \
+      touch ${METADATAMIPSELROOTFS}/telnet_build
+[ -f ${METADATAMIPSELROOTFS}/telnet_install ] || \
+  make install || \
+    die "***install netkit-telnet error" && \
+      touch ${METADATAMIPSELROOTFS}/telnet_install
+[ -f ${METADATAMIPSELROOTFS}/telnet_clean ] || \
+  make clean || \
+    die "***clean netkit-telnet error" && \
+      touch ${METADATAMIPSELROOTFS}/telnet_clean
+[ -f ${METADATAMIPSELROOTFS}/telnet_distclean ] || \
+  make distclean || \
+    die "***distclean netkit-telnet error" && \
+      touch ${METADATAMIPSELROOTFS}/telnet_distclean
+[ -f ${METADATAMIPSELROOTFS}/telnet_de_patch ] || \
+  patch -Rp1 < ${PATCH}/netkit-telnet-${TELNET_VERSION}.patch || \
+    die "de-patch netkit-telnet error" && \
+      touch ${METADATAMIPSELROOTFS}/telnet_de_patch
 popd
 
 pushd ${BUILDMIPSELROOTFS}
