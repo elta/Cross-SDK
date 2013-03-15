@@ -1,0 +1,130 @@
+diff -uNpr netkit-telnet-0.17.orig/configure netkit-telnet-0.17/configure
+--- netkit-telnet-0.17.orig/configure	2000-07-30 02:00:29.000000000 +0800
++++ netkit-telnet-0.17/configure	2013-03-15 11:04:16.070067826 +0800
+@@ -94,7 +94,6 @@ else
+     echo -n 'Checking if C compiler works... '
+     if (
+           $CC __conftest.c -o __conftest || exit 1
+-          ./__conftest || exit 1
+        ) >/dev/null 2>&1; then
+          echo 'yes'
+      else
+@@ -141,7 +140,6 @@ else
+     echo -n 'Checking if C++ compiler works... '
+     if (
+           $CXX __conftest.cc -o __conftest || exit 1
+-          ./__conftest || exit 1
+        ) >/dev/null 2>&1; then
+          echo 'yes'
+      else
+@@ -284,7 +282,6 @@ if (
+ else
+     if (
+           $CXX $CXXFLAGS -D__USE_BSD_SIGNAL __conftest.cc  -o __conftest || exit 1
+-          ./__conftest || exit 1
+        ) >/dev/null 2>&1; then
+         echo '-D__USE_BSD_SIGNAL'
+         CFLAGS="$CFLAGS -D__USE_BSD_SIGNAL"
+@@ -501,7 +498,6 @@ int main() {
+ EOF
+ if (
+       $CXX $CXXFLAGS  __conftest.cc $LIBBSD -o __conftest || exit 1
+-      ./__conftest || exit 1
+    ) >/dev/null 2>&1; then
+     echo 'ok'
+ else
+@@ -514,7 +510,6 @@ else
+     else
+         if (
+               $CXX $CXXFLAGS  __conftest.cc -ldb $LIBBSD -o __conftest || exit 1
+-              ./__conftest || exit 1
+            ) >/dev/null 2>&1; then
+             echo '-ldb'
+             LIBS="$LIBS -ldb"
+diff -uNpr netkit-telnet-0.17.orig/telnet/main.cc netkit-telnet-0.17/telnet/main.cc
+--- netkit-telnet-0.17.orig/telnet/main.cc	1999-08-01 13:06:37.000000000 +0800
++++ netkit-telnet-0.17/telnet/main.cc	2013-03-15 11:04:16.070067826 +0800
+@@ -46,6 +46,7 @@ char main_rcsid[] =
+ #include <sys/types.h>
+ #include <getopt.h>
+ #include <string.h>
++#include <cstdlib>
+ 
+ #include "ring.h"
+ #include "externs.h"
+diff -uNpr netkit-telnet-0.17.orig/telnet/Makefile netkit-telnet-0.17/telnet/Makefile
+--- netkit-telnet-0.17.orig/telnet/Makefile	1999-08-01 13:06:37.000000000 +0800
++++ netkit-telnet-0.17/telnet/Makefile	2013-03-15 11:04:26.234067401 +0800
+@@ -22,8 +22,8 @@ depend:
+ 	$(CXX) $(CXXFLAGS) -MM $(SRCS) >depend.mk
+ 
+ install: telnet
+-	install -s -m$(BINMODE) telnet $(INSTALLROOT)$(BINDIR)
+-	install -m$(MANMODE) telnet.1 $(INSTALLROOT)$(MANDIR)/man1
++	install -D -m$(BINMODE) telnet $(INSTALLROOT)$(BINDIR)/telnet
++	install -D -m$(MANMODE) telnet.1 $(INSTALLROOT)$(MANDIR)/man1/telnet.1
+ 
+ clean:
+ 	rm -f *.o telnet
+diff -uNpr netkit-telnet-0.17.orig/telnet/netlink.cc netkit-telnet-0.17/telnet/netlink.cc
+--- netkit-telnet-0.17.orig/telnet/netlink.cc	2000-07-23 12:16:25.000000000 +0800
++++ netkit-telnet-0.17/telnet/netlink.cc	2013-03-15 11:04:16.070067826 +0800
+@@ -11,6 +11,7 @@
+ #include "netlink.h"
+ #include "proto.h"
+ #include "ring.h"
++#include <string.h>
+ 
+ /* In Linux, this is an enum */
+ #if defined(__linux__) || defined(IPPROTO_IP)
+diff -uNpr netkit-telnet-0.17.orig/telnet/network.cc netkit-telnet-0.17/telnet/network.cc
+--- netkit-telnet-0.17.orig/telnet/network.cc	1996-08-13 16:09:58.000000000 +0800
++++ netkit-telnet-0.17/telnet/network.cc	2013-03-15 11:04:16.070067826 +0800
+@@ -42,6 +42,7 @@ char net_rcsid[] =
+ #include <sys/time.h>
+ #include <errno.h>
+ #include <arpa/telnet.h>
++#include <cstdlib>
+ 
+ #include "ring.h"
+ #include "defines.h"
+diff -uNpr netkit-telnet-0.17.orig/telnet/terminal.cc netkit-telnet-0.17/telnet/terminal.cc
+--- netkit-telnet-0.17.orig/telnet/terminal.cc	1999-12-13 03:48:05.000000000 +0800
++++ netkit-telnet-0.17/telnet/terminal.cc	2013-03-15 11:04:16.074067825 +0800
+@@ -45,6 +45,8 @@ char terminal_rcsid[] =
+ #include <signal.h>
+ #include <errno.h>
+ #include <stdio.h>
++#include <cstdlib>
++#include <string.h>
+ 
+ #include "ring.h"
+ #include "defines.h"
+diff -uNpr netkit-telnet-0.17.orig/telnet/utilities.cc netkit-telnet-0.17/telnet/utilities.cc
+--- netkit-telnet-0.17.orig/telnet/utilities.cc	1999-12-12 23:33:40.000000000 +0800
++++ netkit-telnet-0.17/telnet/utilities.cc	2013-03-15 11:04:16.074067825 +0800
+@@ -47,6 +47,8 @@ char util_rcsid[] =
+ #include <sys/socket.h>
+ #include <unistd.h>
+ #include <ctype.h>
++#include <string.h>
++#include <cstdlib>
+ 
+ #include "ring.h"
+ #include "defines.h"
+diff -uNpr netkit-telnet-0.17.orig/telnetd/Makefile netkit-telnet-0.17/telnetd/Makefile
+--- netkit-telnet-0.17.orig/telnetd/Makefile	1999-12-14 08:43:30.000000000 +0800
++++ netkit-telnet-0.17/telnetd/Makefile	2013-03-15 11:04:44.174066650 +0800
+@@ -27,9 +27,9 @@ $(OBJS): defs.h ext.h pathnames.h telnet
+ telnetd.o: ../version.h
+ 
+ install: telnetd
+-	install -s -m$(DAEMONMODE) telnetd $(INSTALLROOT)$(SBINDIR)/in.telnetd
+-	install -m$(MANMODE) issue.net.5 $(INSTALLROOT)$(MANDIR)/man5/
+-	install -m$(MANMODE) telnetd.8 $(INSTALLROOT)$(MANDIR)/man8/in.telnetd.8
++	install -D -m$(DAEMONMODE) telnetd $(INSTALLROOT)$(SBINDIR)/in.telnetd
++	install -D -m$(MANMODE) issue.net.5 $(INSTALLROOT)$(MANDIR)/man5/issue.net.5
++	install -D -m$(MANMODE) telnetd.8 $(INSTALLROOT)$(MANDIR)/man8/in.telnetd.8
+ 	ln -sf in.telnetd.8 $(INSTALLROOT)$(MANDIR)/man8/telnetd.8
+ 
+ clean:
