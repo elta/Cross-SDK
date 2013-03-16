@@ -2551,7 +2551,7 @@ pushd ${SRCMIPS64ELROOTFS}
 cd bzip2-${BZIP2_VERSION}
 cp Makefile{,.orig}
 sed -e "/^all:/s/ test//" Makefile.orig > Makefile
-sed -i -e 's:ln -s -f $(PREFIX)/bin/:ln -s :' Makefile
+sed -i -e 's:ln -s -f $(PREFIX)/bin/:ln -sfv :' Makefile
 [ -f "${METADATAMIPS64ELROOTFS}/bzip_build32_libz2_so" ] || \
   make -f Makefile-libbz2_so CC="${CC} ${BUILD32}" CXX="${CXX} ${BUILD32}" \
   AR="${AR}" RANLIB="${RANLIB}" || \
@@ -4184,7 +4184,7 @@ cd vsftpd-${VSFTPD_VERSION}
     die "patch vsftpd error" && \
       touch ${METADATAMIPS64ELROOTFS}/vsftpd_patch
 [ -f ${METADATAMIPS64ELROOTFS}/vsftpd_build ] || \
-  make CC=${CC} || \
+  make CC=${CC} LDFLAGS="-lcrypt -Wl,-rpath-link,${PREFIXMIPSELROOTFS}/lib" || \
     die "***build vsftpd error" && \
       touch ${METADATAMIPS64ELROOTFS}/vsftpd_build
 [ -f ${METADATAMIPS64ELROOTFS}/vsftpd_install ] || \
