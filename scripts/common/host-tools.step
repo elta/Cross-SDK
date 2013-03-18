@@ -415,7 +415,7 @@ pushd ${BUILDHOSTTOOLS}
 [ -d "shadow_build" ] || mkdir shadow_build
 cd shadow_build
 cat > config.cache << EOF
-shadow_cv_passwd_dir="${PREFIXMIPSELROOTFS}/bin"
+shadow_cv_passwd_dir="${PREFIXHOSTTOOLS}/bin"
 EOF
 cat >> config.cache << EOF
 ac_cv_func_lckpwdf=no
@@ -424,7 +424,7 @@ EOF
   ${SRCHOSTTOOLS}/shadow-${SHADOW_VERSION}/configure \
   --prefix=${PREFIXHOSTTOOLS} \
   --sbindir=${PREFIXHOSTTOOLS}/bin \
-  --sysconfdir=$PREFIXMIPSELROOTFS/etc \
+  --sysconfdir=${PREFIXHOSTTOOLS}/etc \
   --disable-shared --without-libpam \
   --without-audit --without-selinux \
   --program-prefix=${CROSS_TARGET32}- \
