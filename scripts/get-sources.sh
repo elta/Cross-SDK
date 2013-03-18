@@ -155,6 +155,13 @@ download "findutils-${FINDUTILS_VERSION}.${FINDUTILS_SUFFIX}" \
   die "download findutils error" && \
 		echo -n "findutils-${FINDUTILS_VERSION}.${FINDUTILS_SUFFIX}" > findutils_download
 
+[ -f file_download ] && \
+	[ "`cat file_download`" = "file-${FILE_VERSION}.${FILE_SUFFIX}" ] || \
+download "file-${FILE_VERSION}.${FILE_SUFFIX}"  \
+  "${FILE_URL}/file-${FILE_VERSION}.${FILE_SUFFIX}" || \
+	die "download file error" && \
+	echo -n "file-${FILE_VERSION}.${FILE_SUFFIX}" > file_download
+
 [ -f flex_download ] && \
 	[ "`cat flex_download`" = "flex-${FLEX_VERSION}.${FLEX_SUFFIX}" ] || \
 download "flex-${FLEX_VERSION}.${FLEX_SUFFIX}" \
@@ -517,8 +524,8 @@ download "tar-${TAR_VERSION}.${TAR_SUFFIX}" \
 download "netkit-telnet-${TELNET_VERSION}.${TELNET_SUFFIX}" \
   "${TELNET_URL}/netkit-telnet-${TELNET_VERSION}.${TELNET_SUFFIX}" || \
   die "download telnet error" && \
-		echo -n "telnet-${TELNET_VERSION}.${TELNET_SUFFIX}" > telnet_download
-
+		echo -n "netkit-telnet-${TELNET_VERSION}.${TELNET_SUFFIX}" > telnet_download
+  
 [ -f termcap_download ] && \
 	[ "`cat termcap_download`" = "termcap-${TERMCAP_VERSION}.${TERMCAP_SUFFIX}" ] || \
 download "termcap-${TERMCAP_VERSION}.${TERMCAP_SUFFIX}" \
