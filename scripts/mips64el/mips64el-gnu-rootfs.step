@@ -4396,6 +4396,8 @@ done
 
 EOF
 
+chmod +x ${PREFIXMIPS64ELROOTFS}/etc/sysconfig/telnetd
+
 popd
 
 pushd ${SRCMIPS64ELROOTFS}

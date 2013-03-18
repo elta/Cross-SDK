@@ -2520,6 +2520,8 @@ done
 
 EOF
 
+chmod +x ${PREFIXMIPSELROOTFS}/etc/sysconfig/telnetd
+
 popd
 
 pushd ${BUILDMIPSELROOTFS}
