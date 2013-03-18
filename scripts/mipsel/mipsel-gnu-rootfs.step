@@ -2506,6 +2506,20 @@ cd netkit-telnet-${TELNET_VERSION}
   patch -Rp1 < ${PATCH}/netkit-telnet-${TELNET_VERSION}.patch || \
     die "de-patch netkit-telnet error" && \
       touch ${METADATAMIPSELROOTFS}/telnet_de_patch
+
+cat > ${PREFIXMIPSELROOTFS}/etc/sysconfig/telnetd << EOF
+#! /bin/bash
+
+while [ "1" = "1" ]; do
+  if test $( pgrep -f /sbin/in.telnetd | wc -l ) -eq 0; then
+    /sbin/in.telnetd -debug&
+  else
+    sleep 3
+  fi
+done
+
+EOF
+
 popd
 
 pushd ${BUILDMIPSELROOTFS}
@@ -2729,7 +2743,9 @@ EOF` || \
       touch ${METADATAMIPSELROOTFS}/add_param_to_bashrc
 
 [ -f ${METADATAMIPSELROOTFS}/add_param_to_rc ] || \
-  echo "/usr/local/sbin/vsftpd /etc/vsftpd.conf &" >> ${PREFIXMIPSELROOTFS}/etc/sysconfig/rc || \
+  echo -e "mount /proc /proc -t proc \n\
+  /etc/sysconfig/telnetd &\n\
+  /usr/local/sbin/vsftpd /etc/vsftpd.conf &" >> ${PREFIXMIPSELROOTFS}/etc/sysconfig/rc || \
     die "***add vsftpd auto start error"
       touch ${METADATAMIPSELROOTFS}/add_param_to_rc
 

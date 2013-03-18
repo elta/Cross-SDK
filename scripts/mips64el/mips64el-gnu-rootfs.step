@@ -381,6 +381,12 @@ pushd ${SRCMIPS64ELROOTFS}
     die "***extract vsftpd error" && \
       touch ${METADATAEXTRACT}/vsftpd_extract
 
+[ -f ${METADATAEXTRACT}/telnet_extract ] || \
+  tar xf ${TARBALL}/netkit-telnet-${TELNET_VERSION}.${TELNET_SUFFIX} || \
+    die "***extract netkit-telnet error" && \
+      touch ${METADATAEXTRACT}/telnet_extract
+
+
 [ -f "${METADATAEXTRACT}/xz_extract" ] || \
   tar xf ${TARBALL}/xz-${XZ_VERSION}.${XZ_SUFFIX} || \
     die "extract xz error" && \
@@ -4345,6 +4351,53 @@ cd dhcpcd-${DHCPCD_VERSION}
 popd
 
 pushd ${SRCMIPS64ELROOTFS}
+cd netkit-telnet-${TELNET_VERSION}
+[ -f ${METADATAMIPS64ELROOTFS}/telnet_patch ] || \
+  patch -p1 < ${PATCH}/netkit-telnet-${TELNET_VERSION}.patch || \
+    die "patch netkit-telnet error" && \
+      touch ${METADATAMIPS64ELROOTFS}/telnet_patch
+[ -f ${METADATAMIPS64ELROOTFS}/telnet_configure ] || \
+  ./configure --prefix=${PREFIXMIPS64ELROOTFS} \
+  --with-c-compiler=${CC} --with-c++-compiler=${CXX} || \
+    die "***config netkit-telnet error" && \
+      touch ${METADATAMIPS64ELROOTFS}/telnet_configure
+[ -f ${METADATAMIPS64ELROOTFS}/telnet_build ] || \
+  make || \
+    die "***build netkit-telnet error" && \
+      touch ${METADATAMIPS64ELROOTFS}/telnet_build
+[ -f ${METADATAMIPS64ELROOTFS}/telnet_install ] || \
+  make install || \
+    die "***install netkit-telnet error" && \
+      touch ${METADATAMIPS64ELROOTFS}/telnet_install
+[ -f ${METADATAMIPS64ELROOTFS}/telnet_clean ] || \
+  make clean || \
+    die "***clean netkit-telnet error" && \
+      touch ${METADATAMIPS64ELROOTFS}/telnet_clean
+[ -f ${METADATAMIPS64ELROOTFS}/telnet_distclean ] || \
+  make distclean || \
+    die "***distclean netkit-telnet error" && \
+      touch ${METADATAMIPS64ELROOTFS}/telnet_distclean
+[ -f ${METADATAMIPS64ELROOTFS}/telnet_de_patch ] || \
+  patch -Rp1 < ${PATCH}/netkit-telnet-${TELNET_VERSION}.patch || \
+    die "de-patch netkit-telnet error" && \
+      touch ${METADATAMIPS64ELROOTFS}/telnet_de_patch
+
+cat > ${PREFIXMIPS64ELROOTFS}/etc/sysconfig/telnetd << EOF
+#! /bin/bash
+
+while [ "1" = "1" ]; do
+  if test $( pgrep -f /sbin/in.telnetd | wc -l ) -eq 0; then
+    /sbin/in.telnetd -debug&
+  else
+    sleep 3
+  fi
+done
+
+EOF
+
+popd
+
+pushd ${SRCMIPS64ELROOTFS}
 cd bootscripts-cross-lfs-${BOOTSCRIPTS_VERSION}
 [ -f "${METADATAMIPS64ELROOTFS}/bootscript_install_boot" ] || \
   make CC="${CC} ${BUILD64}" DESTDIR=${PREFIXMIPS64ELROOTFS} install-bootscripts || \
@@ -4501,7 +4554,9 @@ EOF
       touch ${METADATAMIPS64ELROOTFS}/add_param_to_bashrc
 
 [ -f ${METADATAMIPS64ELROOTFS}/add_param_to_rc ] || \
-  echo "/usr/local/sbin/vsftpd /etc/vsftpd.conf &" >> ${PREFIXMIPSELROOTFS}/etc/sysconfig/rc || \
+  echo -e "mount /proc /proc -t proc \n\
+  /etc/sysconfig/telnetd &\n\
+  /usr/local/sbin/vsftpd /etc/vsftpd.conf &" >> ${PREFIXMIPS64ELROOTFS}/etc/sysconfig/rc || \
     die "***add vsftpd auto start error"
       touch ${METADATAMIPS64ELROOTFS}/add_param_to_rc
 
