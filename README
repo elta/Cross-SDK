@@ -84,7 +84,7 @@ to get a busybox root fs.
 If you were to use qemu with network:
 sudo tunctl -t qemutap
 sudo ifconfig qemutap 10.0.0.1
-sudo qemu-system-mipsel -kernel vmlinux-o32 -hda mipsel-rootfs.img -append "root=/dev/hda" -nographic  -net nic -net tap,ifname=tapqemu,script=no,downscript=no -M malta
+sudo qemu-system-mipsel -kernel vmlinux-32 -hda mipsel-rootfs.img -append "root=/dev/hda" -nographic  -net nic -net tap,ifname=tapqemu,script=no,downscript=no -M malta
 
 Notice:
 It will take a lot of space in your disk, make sure you run them in a big
