@@ -3366,6 +3366,46 @@ cp ${PREFIXMIPS64ELROOTFS}/etc/login.defs.orig login.defs
 popd
 
 pushd ${BUILDMIPS64ELROOTFS}
+[ -d "gdbserver-o32" ] || mkdir gdbserver-o32
+cd gdbserver-o32
+[ -f "${METADATAMIPS64ELROOTFS}/gdbserver_config_o32" ] || \
+  CC="${CC} ${BUILD32}" CXX="${CXX} ${BUILD32}" \
+  ${SRCMIPS64ELROOTFS}/gdb/gdbserver/gdb-${GDB_VERSION}/configure \
+  --prefix=${PREFIXMIPS64ELROOTFS} --program-suffix=-o32 \
+  --build=${CROSS_HOST} --host=${CROSS_TARGET64} --target=${CROSS_TARGET64} || \
+    die "config gdbserver_o32 error" && \
+      touch ${METADATAMIPS64ELROOTFS}/gdbserver_config_o32
+[ -f "${METADATAMIPS64ELROOTFS}/gdb_cross_build_o32" ] || \
+  make -j${JOBS} || \
+    die "***build gdbserver_o32 error" && \
+      touch ${METADATAMIPS64ELROOTFS}/gdb_cross_build_o32
+[ -f "${METADATAMIPS64ELROOTFS}/gdbserver_install_o32" ] || \
+  make install || \
+    die "***install gdbserver_o32 error" && \
+      touch ${METADATAMIPS64ELROOTFS}/gdbserver_install_o32
+popd
+
+pushd ${BUILDMIPS64ELROOTFS}
+[ -d "gdbserver-n32" ] || mkdir gdbserver-n32
+cd gdbserver-n32
+[ -f "${METADATAMIPS64ELROOTFS}/gdbserver_config_n32" ] || \
+  CC="${CC} ${BUILDN32}" CXX="${CXX} ${BUILDN32}" \
+  ${SRCMIPS64ELROOTFS}/gdb/gdbserver/gdb-${GDB_VERSION}/configure \
+  --prefix=${PREFIXMIPS64ELROOTFS} --program-suffix=-n32 \
+  --build=${CROSS_HOST} --host=${CROSS_TARGET64} --target=${CROSS_TARGET64} || \
+    die "config gdbserver_n32 error" && \
+      touch ${METADATAMIPS64ELROOTFS}/gdbserver_config_n32
+[ -f "${METADATAMIPS64ELROOTFS}/gdb_cross_build_n32" ] || \
+  make -j${JOBS} || \
+    die "***build gdbserver_n32 error" && \
+      touch ${METADATAMIPS64ELROOTFS}/gdb_cross_build_n32
+[ -f "${METADATAMIPS64ELROOTFS}/gdbserver_install_n32" ] || \
+  make install || \
+    die "***install gdbserver_n32 error" && \
+      touch ${METADATAMIPS64ELROOTFS}/gdbserver_install_n32
+popd
+
+pushd ${BUILDMIPS64ELROOTFS}
 [ -d "gdb-cross-buildusr" ] || mkdir gdb-cross-buildusr
 cd gdb-cross-buildusr
 [ -f "${METADATAMIPS64ELROOTFS}/gdb_cross_configusr" ] || \
