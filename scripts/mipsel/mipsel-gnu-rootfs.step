@@ -2511,7 +2511,7 @@ cat > ${PREFIXMIPSELROOTFS}/etc/sysconfig/telnetd << EOF
 #! /bin/bash
 
 while [ "1" = "1" ]; do
-  if test $( pgrep -f /sbin/in.telnetd | wc -l ) -eq 0; then
+  if test \$( pgrep -f /sbin/in.telnetd | wc -l ) -eq 0; then
     /sbin/in.telnetd -debug&
   else
     sleep 3
