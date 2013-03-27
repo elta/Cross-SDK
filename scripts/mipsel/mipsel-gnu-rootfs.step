@@ -2433,7 +2433,7 @@ cd vsftpd-${VSFTPD_VERSION}
     die "de-patch vsftpd error" && \
       touch ${METADATAMIPSELROOTFS}/vsftpd_de_patch
 
-cat > ${PREFIXMIPSELROOTFS}/etc/vsftpd << "EOF"
+cat > ${PREFIXMIPSELROOTFS}/etc/vsftpd.conf << "EOF"
 listen=YES
 listen_port=21
 ftp_username=root

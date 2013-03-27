@@ -4246,7 +4246,7 @@ cd vsftpd-${VSFTPD_VERSION}
     die "de-patch vsftpd error" && \
       touch ${METADATAMIPS64ELROOTFS}/vsftpd_de_patch
 
-cat > ${PREFIXMIPS64ELROOTFS}/etc/vsftpd << "EOF"
+cat > ${PREFIXMIPS64ELROOTFS}/etc/vsftpd.conf << "EOF"
 listen=YES
 listen_port=21
 ftp_username=root
