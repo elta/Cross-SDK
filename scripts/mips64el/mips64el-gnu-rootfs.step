@@ -3370,7 +3370,7 @@ pushd ${BUILDMIPS64ELROOTFS}
 cd gdbserver-o32
 [ -f "${METADATAMIPS64ELROOTFS}/gdbserver_config_o32" ] || \
   CC="${CC} ${BUILD32}" CXX="${CXX} ${BUILD32}" \
-  ${SRCMIPS64ELROOTFS}/gdb/gdbserver/gdb-${GDB_VERSION}/configure \
+  ${SRCMIPS64ELROOTFS}/gdb-${GDB_VERSION}/gdb/gdbserver/configure \
   --prefix=${PREFIXMIPS64ELROOTFS} --program-suffix=-o32 \
   --build=${CROSS_HOST} --host=${CROSS_TARGET64} --target=${CROSS_TARGET64} || \
     die "config gdbserver_o32 error" && \
@@ -3390,7 +3390,7 @@ pushd ${BUILDMIPS64ELROOTFS}
 cd gdbserver-n32
 [ -f "${METADATAMIPS64ELROOTFS}/gdbserver_config_n32" ] || \
   CC="${CC} ${BUILDN32}" CXX="${CXX} ${BUILDN32}" \
-  ${SRCMIPS64ELROOTFS}/gdb/gdbserver/gdb-${GDB_VERSION}/configure \
+  ${SRCMIPS64ELROOTFS}/gdb-${GDB_VERSION}/gdb/gdbserver/configure \
   --prefix=${PREFIXMIPS64ELROOTFS} --program-suffix=-n32 \
   --build=${CROSS_HOST} --host=${CROSS_TARGET64} --target=${CROSS_TARGET64} || \
     die "config gdbserver_n32 error" && \
