@@ -12,6 +12,14 @@ maintain their part of the SDK.
 
 ===============================================================================
 Version History:
+0.8:
+- Add OpenOCD.
+
+0.7:
+- Remove busybox support, minimal-system and command-line-tools.
+- Add SSH support.
+- New IDE plugin support(still in develop).
+
 0.6:
 - OS X 10.8.2 well tested minimal-system now!
 
