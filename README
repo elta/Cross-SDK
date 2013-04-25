@@ -1,7 +1,7 @@
 This is a OpenSource Cross Platform SDK.
-The development project for Cross-SDK is https://github.com/J-Liu/Cross-SDK.
+The development project for Cross-SDK is https://github.com/elta/Cross-SDK.
 The development repository is:
-     https://github.com/J-Liu/Cross-SDK.git
+     https://github.com/elta/Cross-SDK.git
 
 Our aim is build a user friendly Cross SDK for a Real Time GNU/Linux system
 which using LLVM/Clang as default compiler, you are welcome to use and hack
