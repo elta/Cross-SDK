@@ -91,16 +91,6 @@ pushd ${SRCMIPSELROOTFS}
     die "***extract vim error" && \
       touch ${METADATAEXTRACT}/vim_extract
 
-[ -f ${METADATAEXTRACT}/vsftpd_extract ] || \
-  tar xf ${TARBALL}/vsftpd-${VSFTPD_VERSION}.${VSFTPD_SUFFIX} || \
-    die "***extract vsftpd error" && \
-      touch ${METADATAEXTRACT}/vsftpd_extract
-
-[ -f ${METADATAEXTRACT}/telnet_extract ] || \
-  tar xf ${TARBALL}/netkit-telnet-${TELNET_VERSION}.${TELNET_SUFFIX} || \
-    die "***extract netkit-telnet error" && \
-      touch ${METADATAEXTRACT}/telnet_extract
-
 [ -f ${METADATAEXTRACT}/dhcpcd_extract ] || \
   tar xf  ${TARBALL}/dhcpcd-${DHCPCD_VERSION}.${DHCPCD_SUFFIX} || \
     die "***extract dhcpcd error" && \
@@ -184,10 +174,11 @@ cd ..
     die "***extract groff error" && \
       touch ${METADATAEXTRACT}/groff_extract
 
-[ -f ${METADATAEXTRACT}/shadow_extract ] || \
+[ -f ${METADATAMIPSELROOTFS}/shadow_extract ] || \
+  rm -rf shadow-${SHADOW_VERSION} && \
   tar xf ${TARBALL}/shadow-${SHADOW_VERSION}.${SHADOW_SUFFIX} || \
     die "***extract shadow error" && \
-      touch ${METADATAEXTRACT}/shadow_extract
+      touch ${METADATAMIPSELROOTFS}/shadow_extract
 
 [ -f ${METADATAEXTRACT}/ncurses_extract ] || \
   tar xf ${TARBALL}/ncurses-${NCURSES_VERSION}.${NCURSES_SUFFIX} || \
@@ -393,6 +384,17 @@ cd ..
   tar xf ${TARBALL}/gdb-${GDB_VERSION}.${GDB_SUFFIX} || \
     die "***extractjgdb error" && \
       touch ${METADATAEXTRACT}/gdb_extract
+
+[ -f ${METADATAMIPSELROOTFS}/openssl_extract ] || \
+  rm -rf openssl-${OPENSSL_VERSION} && \
+  tar xf ${TARBALL}/openssl-${OPENSSL_VERSION}.${OPENSSL_SUFFIX} || \
+    die "***extract openssl error" && \
+      touch ${METADATAMIPSELROOTFS}/openssl_extract
+
+[ -f ${METADATAEXTRACT}/openssh_extract ] || \
+  tar xf ${TARBALL}/openssh-${OPENSSH_VERSION}.${OPENSSH_SUFFIX} || \
+    die "***extract openssh error" && \
+      touch ${METADATAEXTRACT}/openssh_extract
 
 popd
 
@@ -1908,54 +1910,52 @@ EOF
       touch ${METADATAMIPSELROOTFS}/psmisc_link
 popd
 
-pushd ${BUILDMIPSELROOTFS}
-[ -d shadow_cross_build ] || mkdir shadow_cross_build
-cd shadow_cross_build
-cat > config.cache << EOF
+pushd ${SRCMIPSELROOTFS}
+cd shadow-${SHADOW_VERSION}
+[ -f "${METADATAMIPSELROOTFS}/shadow_cross_create_config.cache" ] || \
+  `cat > config.cache << EOF
 ac_cv_func_setpgrp_void=yes
-EOF
-[ -f ${METADATAMIPSELROOTFS}/shadow_cross_configure ] || \
-  ${SRCMIPSELROOTFS}/shadow-${SHADOW_VERSION}/configure \
-  --build=${CROSS_HOST} --host=${CROSS_TARGET32} \
+EOF` || \
+    die "create shadow config.cache" && \
+      touch ${METADATAMIPSELROOTFS}/shadow_cross_create_config.cache
+[ -f "${METADATAMIPSELROOTFS}/shadow_cross_configusr" ] || \
+  ./configure \
+  --build=${CROSS_HOST} --host=${CROSS_TARGET64} \
   --sysconfdir=/etc --without-libpam \
   --without-audit --without-selinux \
   --cache-file=config.cache || \
     die "***config shadow error" && \
-      touch ${METADATAMIPSELROOTFS}/shadow_cross_configure
+      touch ${METADATAMIPSELROOTFS}/shadow_cross_configusr
 cp src/Makefile{,.orig}
 sed 's/groups$(EXEEXT) //' src/Makefile.orig > src/Makefile
-for mkf in $(find man -name Makefile)
-do
-  cp ${mkf}{,.orig}
-  sed -e '/groups.1.xml/d' -e 's/groups.1 //' ${mkf}.orig > ${mkf}
-done
-[ -f ${METADATAMIPSELROOTFS}/shadow_cross_build ] || \
+for mkf in $(find man -name Makefile); do
+  cp ${mkf}{,.orig};
+  sed -e '/groups.1.xml/d' -e 's/groups.1 //' ${mkf}.orig > ${mkf};
+done;
+
+[ -f "${METADATAMIPSELROOTFS}/shadow_cross_buildusr" ] || \
   make -j${JOBS} || \
     die "***build shadow error" && \
-      touch ${METADATAMIPSELROOTFS}/shadow_cross_build
-[ -f ${METADATAMIPSELROOTFS}/shadow_cross_install ] || \
+      touch ${METADATAMIPSELROOTFS}/shadow_cross_buildusr
+[ -f "${METADATAMIPSELROOTFS}/shadow_cross_installusr" ] || \
   make DESTDIR=${PREFIXMIPSELROOTFS} install || \
     die "***install shadow error" && \
-      touch ${METADATAMIPSELROOTFS}/shadow_cross_install
-[ -f ${METADATAMIPSELROOTFS}/shadow_cross_cp ] || \
-  cp ${PREFIXMIPSELROOTFS}/etc/login.defs login.defs.orig || \
-    die "***copy shadow error" && \
-      touch ${METADATAMIPSELROOTFS}/shadow_cross_cp
-[ -f ${METADATAMIPSELROOTFS}/shadow_cross_sed ] || \
-  sed -e's@#MD5_CRYPT_ENAB.no@MD5_CRYPT_ENAB yes@' \
-  -e 's@/var/spool/mail@/var/mail@' \
-  login.defs.orig > ${PREFIXMIPSELROOTFS}/etc/login.defs || \
-    die "***sed shadow error" && \
-      touch ${METADATAMIPSELROOTFS}/shadow_cross_sed
-[ -f ${METADATAMIPSELROOTFS}/shadow_cross_mv ] || \
-  mv -v ${PREFIXMIPSELROOTFS}/usr/bin/passwd ${PREFIXMIPSELROOTFS}/bin || \
-    die "***move shadow error" && \
-      touch ${METADATAMIPSELROOTFS}/shadow_cross_mv
+      touch ${METADATAMIPSELROOTFS}/shadow_cross_installusr
+
+cp ${PREFIXMIPSELROOTFS}/etc/login.defs login.defs.orig
+sed -e's@#MD5_CRYPT_ENAB.no@MD5_CRYPT_ENAB yes@' \
+    -e 's@/var/spool/mail@/var/mail@' \
+    login.defs.orig > ${PREFIXMIPSELROOTFS}/etc/login.defs
+mv -v ${PREFIXMIPSELROOTFS}/usr/bin/passwd ${PREFIXMIPSELROOTFS}/bin
+[ -f "${METADATAMIPSELROOTFS}/shadow_cross_clean" ] || \
+  make distclean || \
+    die "***install shadow error" && \
+      touch ${METADATAMIPSELROOTFS}/shadow_cross_clean
 cp src/Makefile{.orig,}
-for mkf in $(find man -name Makefile)
-do
-  cp ${mkf}{.orig,}
-done
+for mkf in $(find man -name Makefile); do
+  cp ${mkf}{.orig,};
+done;
+cp ${PREFIXMIPSELROOTFS}/etc/login.defs.orig login.defs
 popd
 
 # Use make, not make -j${JOBS}
@@ -2410,120 +2410,6 @@ ln -sfnv ../vim/vim72/doc ${PREFIXMIPSELROOTFS}/usr/share/doc/vim-7.2
       touch ${METADATAMIPSELROOTFS}/vim_clean
 popd
 
-pushd ${SRCMIPSELROOTFS}
-cd vsftpd-${VSFTPD_VERSION}
-[ -f ${METADATAMIPSELROOTFS}/vsftpd_patch ] || \
-  patch -p1 < ${PATCH}/vsftpd-${VSFTPD_VERSION}.patch || \
-    die "patch vsftpd error" && \
-      touch ${METADATAMIPSELROOTFS}/vsftpd_patch
-[ -f ${METADATAMIPSELROOTFS}/vsftpd_build ] || \
-  make CC=${CC} LDFLAGS="-lcrypt -Wl,-rpath-link,${PREFIXMIPSELROOTFS}/lib" || \
-    die "***build vsftpd error" && \
-      touch ${METADATAMIPSELROOTFS}/vsftpd_build
-[ -f ${METADATAMIPSELROOTFS}/vsftpd_install ] || \
-  make DESTDIR=${PREFIXMIPSELROOTFS} install || \
-    die "***install vsftpd error" && \
-      touch ${METADATAMIPSELROOTFS}/vsftpd_install
-[ -f ${METADATAMIPSELROOTFS}/vsftpd_clean ] || \
-  make clean || \
-    die "***clean vsftpd error" && \
-      touch ${METADATAMIPSELROOTFS}/vsftpd_clean
-[ -f ${METADATAMIPSELROOTFS}/vsftpd_de_patch ] || \
-  patch -Rp1 < ${PATCH}/vsftpd-${VSFTPD_VERSION}.patch || \
-    die "de-patch vsftpd error" && \
-      touch ${METADATAMIPSELROOTFS}/vsftpd_de_patch
-
-cat > ${PREFIXMIPSELROOTFS}/etc/vsftpd.conf << "EOF"
-listen=YES
-listen_port=21
-ftp_username=root
-listen=YES
-listen_port=21
-ftp_username=root
-guest_username=root
-connect_from_port_20=YES
-local_enable=YES
-guest_enable=YES
-write_enable=YES
-local_root=/root
-chroot_list_enable=YES
-anon_world_readable_only=YES
-anon_upload_enable=YES
-anon_mkdir_write_enable=YES
-anon_other_write_enable=YES
-anonymous_enable=YES
-write_enable=YES
-anon_mkdir_write_enable=YES
-anon_upload_enable=YES
-userlist_enable=YES
-userlist_file=/etc/vsftpd.user_list
-#pam_service_name=vsftpd
-nopriv_user=root
-local_umask=022
-chroot_local_user=NO
-chroot_list_enable=YES
-chroot_list_file=/etc/vsftpd.chroot_list
-
-EOF
-
-cat > ${PREFIXMIPSELROOTFS}/etc/vsftpd.chroot_list << "EOF"
-root
-EOF
-
-touch ${PREFIXMIPSELROOTFS}/etc/vsftpd.user_list
-mkdir -p /usr/share/empty
-
-popd
-
-pushd ${SRCMIPSELROOTFS}
-cd netkit-telnet-${TELNET_VERSION}
-[ -f ${METADATAMIPSELROOTFS}/telnet_patch ] || \
-  patch -p1 < ${PATCH}/netkit-telnet-${TELNET_VERSION}.patch || \
-    die "patch netkit-telnet error" && \
-      touch ${METADATAMIPSELROOTFS}/telnet_patch
-[ -f ${METADATAMIPSELROOTFS}/telnet_configure ] || \
-  ./configure --prefix=${PREFIXMIPSELROOTFS} \
-  --with-c-compiler=${CC} --with-c++-compiler=${CXX} || \
-    die "***config netkit-telnet error" && \
-      touch ${METADATAMIPSELROOTFS}/telnet_configure
-[ -f ${METADATAMIPSELROOTFS}/telnet_build ] || \
-  make || \
-    die "***build netkit-telnet error" && \
-      touch ${METADATAMIPSELROOTFS}/telnet_build
-[ -f ${METADATAMIPSELROOTFS}/telnet_install ] || \
-  make install || \
-    die "***install netkit-telnet error" && \
-      touch ${METADATAMIPSELROOTFS}/telnet_install
-[ -f ${METADATAMIPSELROOTFS}/telnet_clean ] || \
-  make clean || \
-    die "***clean netkit-telnet error" && \
-      touch ${METADATAMIPSELROOTFS}/telnet_clean
-[ -f ${METADATAMIPSELROOTFS}/telnet_distclean ] || \
-  make distclean || \
-    die "***distclean netkit-telnet error" && \
-      touch ${METADATAMIPSELROOTFS}/telnet_distclean
-[ -f ${METADATAMIPSELROOTFS}/telnet_de_patch ] || \
-  patch -Rp1 < ${PATCH}/netkit-telnet-${TELNET_VERSION}.patch || \
-    die "de-patch netkit-telnet error" && \
-      touch ${METADATAMIPSELROOTFS}/telnet_de_patch
-
-cat > ${PREFIXMIPSELROOTFS}/etc/sysconfig/telnetd << EOF
-#! /bin/bash
-
-while [ "1" = "1" ]; do
-  if test \$( pgrep -f /sbin/in.telnetd | wc -l ) -eq 0; then
-    /sbin/in.telnetd -debug&
-  else
-    sleep 3
-  fi
-done
-
-EOF
-
-chmod +x ${PREFIXMIPSELROOTFS}/etc/sysconfig/telnetd
-
-popd
-
 pushd ${BUILDMIPSELROOTFS}
 [ -d "xz_build" ] || mkdir xz_build
 cd xz_build
@@ -2574,6 +2460,37 @@ cd dhcpcd-${DHCPCD_VERSION}
 popd
 
 pushd ${SRCMIPSELROOTFS}
+cd openssl-${OPENSSL_VERSION}
+[ -f ${METADATAMIPSELROOTFS}/openssl_patch32 ] || \
+  patch -Np1 -i ${PATCH}/openssl-1-0-1c-32bit.patch || \
+    die "***patch cross openssl 32bit error" && \
+      touch ${METADATAMIPSELROOTFS}/openssl_patch32
+[ -f ${METADATAMIPSELROOTFS}/openssl_configure ] || \
+  ./Configure ${CROSS_TARGET32} enable-des enable-aes enable-3des \
+  enable-flowfish \
+  --prefix=/usr || \
+    die "***config cross openssl error" && \
+      touch ${METADATAMIPSELROOTFS}/openssl_configure
+[ -f ${METADATAMIPSELROOTFS}/openssl_build ] || \
+  make CC=${CC} RANLIB=${RANLIB} LDFLAGS="-ldl"\
+  CROSS_COMPILE=${CROSS_TARGET32}- || \
+    die "***build cross openssl error" && \
+      touch ${METADATAMIPSELROOTFS}/openssl_build
+[ -f ${METADATAMIPSELROOTFS}/openssl_install ] || \
+  make INSTALL_PREFIX=${PREFIXMIPSELROOTFS} install || \
+    die "***install cross openssl error" && \
+      touch ${METADATAMIPSELROOTFS}/openssl_install
+[ -f ${METADATAMIPSELROOTFS}/openssl_clean ] || \
+  make clean || \
+    die "***clean cross openssl error" && \
+      touch ${METADATAMIPSELROOTFS}/openssl_clean
+[ -f ${METADATAMIPSELROOTFS}/openssl_patch32 ] || \
+  patch -RNp1 -i ${PATCH}/openssl-1-0-1c-32bit.patch || \
+    die "***depatch cross openssl 32bit error" && \
+      touch ${METADATAMIPSELROOTFS}/openssl_patch32
+popd
+
+pushd ${SRCMIPSELROOTFS}
 cd bootscripts-cross-lfs-${BOOTSCRIPTS_VERSION}
 [ -f ${METADATAMIPSELROOTFS}/bootscript_build ] || \
    make DESTDIR=${PREFIXMIPSELROOTFS} install-bootscripts || \
@@ -2592,6 +2509,60 @@ cd bootscripts-cross-lfs-${BOOTSCRIPTS_VERSION}
     die "clean network error" && \
       touch ${METADATAMIPSELROOTFS}/bootscript_clean
 popd
+
+pushd ${BUILDMIPSELROOTFS}
+[ -d "openssh_build" ] || mkdir openssh_build
+cd openssh_build
+[ -f ${METADATAMIPSELROOTFS}/openssh_configure ] || \
+  ${SRCMIPSELROOTFS}/openssh-${OPENSSH_VERSION}/configure \
+  --build=${CROSS_HOST} \
+  --host=${CROSS_TARGET32} --enable-strip --enable-FEATURE=des \
+  --prefix=/usr \
+  LDFLAGS="-L${PREFIXMIPSELROOTFS}/usr/lib -march=mips32r2" \
+  CFLAGS="-I${PREFIXMIPSELROOTFS}/usr/include" || \
+    die "***config cross openssh error" && \
+      touch ${METADATAMIPSELROOTFS}/openssh_configure
+[ -f ${METADATAMIPSELROOTFS}/openssh_sed_makefile ] || \
+  sed -i "s/STRIP_OPT=-s/STRIP_OPT=-s --strip-program=mipsel-unknown-linux-gnu-strip/" Makefile || \
+    die "***sed cross openssh make file error" && \
+      touch ${METADATAMIPSELROOTFS}/openssh_sed_makefile
+[ -f ${METADATAMIPSELROOTFS}/openssh_build ] || \
+  make CC=${CC} LD=${CC} CFLAGS+="-march=mips32r2" || \
+    die "***build cross openssh error" && \
+      touch ${METADATAMIPSELROOTFS}/openssh_build
+[ -f ${METADATAMIPSELROOTFS}/openssh_install ] || \
+  make DESTDIR=${PREFIXMIPSELROOTFS} install || \
+    die "***install cross openssh error" && \
+      touch ${METADATAMIPSELROOTFS}/openssh_install
+popd
+
+[ -f ${METADATAMIPSELROOTFS}/add_ssh_privilege_param ] || \
+  sed -i 's/sandbox/no/' ${PREFIXMIPSELROOTFS}/usr/etc/sshd_config || \
+    die "add ssh privilege error" && \
+      touch ${METADATAMIPSELROOTFS}/add_ssh_privilege_param
+
+[ -f ${METADATAMIPSELROOTFS}/add_ssh_key ] || \
+`cat > ${PREFIXMIPSELROOTFS}/etc/sysconfig/ssh << "EOF"
+if [ ! -f /usr/etc/ssh_host_key ]; then
+  /usr/bin/ssh-keygen -t rsa1 -f /usr/etc/ssh_host_key -N ""
+  /usr/bin/ssh-keygen -t rsa -f /usr/etc/ssh_host_rsa_key -N ""
+  /usr/bin/ssh-keygen -t dsa -f /usr/etc/ssh_host_dsa_key -N ""
+  /usr/bin/ssh-keygen -t ecdsa -f /usr/etc/ssh_host_ecdsa_key -N ""
+fi
+/usr/sbin/sshd
+EOF` || \
+  die "add ssh key error" && \
+    touch ${METADATAMIPSELROOTFS}/add_ssh_key
+
+[ -f ${METADATAMIPSELROOTFS}/chmod_add_ssh_key ] || \
+  chmod +x ${PREFIXMIPSELROOTFS}/etc/sysconfig/ssh || \
+    die "chmod ssh key error" && \
+      touch ${METADATAMIPSELROOTFS}/chmod_add_ssh_key
+
+[ -f ${METADATAMIPSELROOTFS}/add_ssh_to_rc ] || \
+  echo -e "/etc/sysconfig/ssh " >> ${PREFIXMIPSELROOTFS}/etc/rc.d/init.d/rc || \
+    die "***add ssh auto start error" && \
+      touch ${METADATAMIPSELROOTFS}/add_ssh_to_rc
 
 #########################################################################
 #
@@ -2743,14 +2714,6 @@ EOF` || \
   echo "export PYTHONHOME=/usr" >> ${PREFIXMIPSELROOTFS}/root/.bashrc || \
     die "***cp bashrc error"
       touch ${METADATAMIPSELROOTFS}/add_param_to_bashrc
-
-[ -f ${METADATAMIPSELROOTFS}/add_param_to_rc ] || \
-  echo -e "mount /proc /proc -t proc \n\
-  /etc/sysconfig/telnetd &\n\
-  /usr/local/sbin/vsftpd /etc/vsftpd.conf &" >> ${PREFIXMIPSELROOTFS}/etc/sysconfig/rc || \
-    die "***add vsftpd auto start error"
-      touch ${METADATAMIPSELROOTFS}/add_param_to_rc
-
 
 [ -f ${METADATAMIPSELROOTFS}/create_vernu ] || \
 `cat > ${PREFIXMIPSELROOTFS}/etc/clfs-release << EOF

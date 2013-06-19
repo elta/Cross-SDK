@@ -322,7 +322,7 @@ cd gcc-build
   --target=${CROSS_TARGET32} \
   --with-sysroot=${PREFIXMIPSELROOTFS} \
   --with-local-prefix=${PREFIXMIPSELROOTFS}/usr \
-  --disable-nls --enable-shared --enable-languages=c,c++ --enable-__cxa_atexit \
+  --disable-nls --enable-shared --enable-languages=c,c++,fortran --enable-__cxa_atexit \
   --enable-c99 --enable-long-long --enable-threads=posix \
   --enable-cloog-backend=isl --enable-poison-system-directories \
   --with-build-sysroot=${PREFIXMIPSELROOTFS} \

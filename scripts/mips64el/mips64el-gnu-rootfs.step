@@ -161,10 +161,11 @@ pushd ${SRCMIPS64ELROOTFS}
     die "extract file error" && \
       touch ${METADATAEXTRACT}/file_extract
 
-[ -f "${METADATAEXTRACT}/shadow_extract" ] || \
+[ -f ${METADATAMIPS64ELROOTFS}/shadow_extract ] || \
+  rm -rf shadow-${SHADOW_VERSION} && \
   tar xf ${TARBALL}/shadow-${SHADOW_VERSION}.${SHADOW_SUFFIX} || \
-    die "extract shadow error" && \
-      touch ${METADATAEXTRACT}/shadow_extract
+    die "***extract shadow error" && \
+      touch ${METADATAMIPS64ELROOTFS}/shadow_extract
 
 [ -f "${METADATAEXTRACT}/ncurses_extract" ] || \
   tar xf ${TARBALL}/ncurses-${NCURSES_VERSION}.${NCURSES_SUFFIX} || \
@@ -376,17 +377,6 @@ pushd ${SRCMIPS64ELROOTFS}
     die "extract vim error" && \
       touch ${METADATAEXTRACT}/vim_extract
 
-[ -f ${METADATAEXTRACT}/vsftpd_extract ] || \
-  tar xf ${TARBALL}/vsftpd-${VSFTPD_VERSION}.${VSFTPD_SUFFIX} || \
-    die "***extract vsftpd error" && \
-      touch ${METADATAEXTRACT}/vsftpd_extract
-
-[ -f ${METADATAEXTRACT}/telnet_extract ] || \
-  tar xf ${TARBALL}/netkit-telnet-${TELNET_VERSION}.${TELNET_SUFFIX} || \
-    die "***extract netkit-telnet error" && \
-      touch ${METADATAEXTRACT}/telnet_extract
-
-
 [ -f "${METADATAEXTRACT}/xz_extract" ] || \
   tar xf ${TARBALL}/xz-${XZ_VERSION}.${XZ_SUFFIX} || \
     die "extract xz error" && \
@@ -449,6 +439,18 @@ cd ..
   rm -rf perl_cross || \
     die "***clean cross perl error" && \
       touch ${METADATAEXTRACT}/perl_cross_clean
+
+[ -f ${METADATAMIPS64ELROOTFS}/openssl_extract ] || \
+  rm -rf openssl-${OPENSSL_VERSION} && \
+  tar xf ${TARBALL}/openssl-${OPENSSL_VERSION}.${OPENSSL_SUFFIX} || \
+    die "***extract openssl error" && \
+      touch ${METADATAMIPS64ELROOTFS}/openssl_extract
+
+[ -f ${METADATAEXTRACT}/openssh_extract ] || \
+  tar xf ${TARBALL}/openssh-${OPENSSH_VERSION}.${OPENSSH_SUFFIX} || \
+    die "***extract openssh error" && \
+      touch ${METADATAEXTRACT}/openssh_extract
+
 popd
 
 ########################### Begin Cross Compile File System ####################
@@ -2530,6 +2532,14 @@ EOF` || \
       touch ${METADATAMIPS64ELROOTFS}/bash_cross_link_install
 popd
 
+pushd ${SRCMIPS64ELROOTFS}/bash-${BASH_VERSION}
+[ -f "${METADATAMIPS64ELROOTFS}/bash_de_patch" ] || \
+  patch -RNp1 -i ${PATCH}/bash-4.2-branch_update-4.patch || \
+    die "patch bash error" && \
+      touch ${METADATAMIPS64ELROOTFS}/bash_de_patch
+popd
+
+
 pushd ${BUILDMIPS64ELROOTFS}
 [ -d "bash-completion-build" ] || mkdir bash-completion-build
 cd bash-completion-build
@@ -4223,71 +4233,6 @@ EOF` || \
       touch ${METADATAMIPS64ELROOTFS}/vim_clean
 popd
 
-pushd ${SRCMIPS64ELROOTFS}
-cd vsftpd-${VSFTPD_VERSION}
-[ -f ${METADATAMIPS64ELROOTFS}/vsftpd_patch ] || \
-  patch -p1 < ${PATCH}/vsftpd-${VSFTPD_VERSION}.patch || \
-    die "patch vsftpd error" && \
-      touch ${METADATAMIPS64ELROOTFS}/vsftpd_patch
-[ -f ${METADATAMIPS64ELROOTFS}/vsftpd_build ] || \
-  make CC=${CC} LDFLAGS="-lcrypt -Wl,-rpath-link,${PREFIXMIPSELROOTFS}/lib" || \
-    die "***build vsftpd error" && \
-      touch ${METADATAMIPS64ELROOTFS}/vsftpd_build
-[ -f ${METADATAMIPS64ELROOTFS}/vsftpd_install ] || \
-  make DESTDIR=${PREFIXMIPS64ELROOTFS} install || \
-    die "***install vsftpd error" && \
-      touch ${METADATAMIPS64ELROOTFS}/vsftpd_install
-[ -f ${METADATAMIPS64ELROOTFS}/vsftpd_clean ] || \
-  make clean || \
-    die "***clean vsftpd error" && \
-      touch ${METADATAMIPS64ELROOTFS}/vsftpd_clean
-[ -f ${METADATAMIPS64ELROOTFS}/vsftpd_de_patch ] || \
-  patch -Rp1 < ${PATCH}/vsftpd-${VSFTPD_VERSION}.patch || \
-    die "de-patch vsftpd error" && \
-      touch ${METADATAMIPS64ELROOTFS}/vsftpd_de_patch
-
-cat > ${PREFIXMIPS64ELROOTFS}/etc/vsftpd.conf << "EOF"
-listen=YES
-listen_port=21
-ftp_username=root
-listen=YES
-listen_port=21
-ftp_username=root
-guest_username=root
-connect_from_port_20=YES
-local_enable=YES
-guest_enable=YES
-write_enable=YES
-local_root=/root
-chroot_list_enable=YES
-anon_world_readable_only=YES
-anon_upload_enable=YES
-anon_mkdir_write_enable=YES
-anon_other_write_enable=YES
-anonymous_enable=YES
-write_enable=YES
-anon_mkdir_write_enable=YES
-anon_upload_enable=YES
-userlist_enable=YES
-userlist_file=/etc/vsftpd.user_list
-#pam_service_name=vsftpd
-nopriv_user=root
-local_umask=022
-chroot_local_user=NO
-chroot_list_enable=YES
-chroot_list_file=/etc/vsftpd.chroot_list
-
-EOF
-
-cat > ${PREFIXMIPS64ELROOTFS}/etc/vsftpd.chroot_list << "EOF"
-root
-EOF
-
-touch ${PREFIXMIPS64ELROOTFS}/etc/vsftpd.user_list
-mkdir -p /usr/share/empty
-
-popd
-
 pushd ${BUILDMIPS64ELROOTFS}
 [ -d xz-32 ] || mkdir xz-32
 cd xz-32
@@ -4390,71 +4335,193 @@ cd dhcpcd-${DHCPCD_VERSION}
       touch ${METADATAMIPS64ELROOTFS}/dhcpcd_cross_clean
 popd
 
+#######################
+
 pushd ${SRCMIPS64ELROOTFS}
-cd netkit-telnet-${TELNET_VERSION}
-[ -f ${METADATAMIPS64ELROOTFS}/telnet_patch ] || \
-  patch -p1 < ${PATCH}/netkit-telnet-${TELNET_VERSION}.patch || \
-    die "patch netkit-telnet error" && \
-      touch ${METADATAMIPS64ELROOTFS}/telnet_patch
-[ -f ${METADATAMIPS64ELROOTFS}/telnet_configure ] || \
-  CFLAGS="-mabi=64" CXXFLAGS="-mabi=64" \
-  ./configure --prefix=${PREFIXMIPS64ELROOTFS} \
-  --with-c-compiler=${CC} --with-c++-compiler=${CXX} || \
-    die "***config netkit-telnet error" && \
-      touch ${METADATAMIPS64ELROOTFS}/telnet_configure
-[ -f ${METADATAMIPS64ELROOTFS}/telnet_build ] || \
-  make LDFLAGS="-mabi=64" || \
-    die "***build netkit-telnet error" && \
-      touch ${METADATAMIPS64ELROOTFS}/telnet_build
-[ -f ${METADATAMIPS64ELROOTFS}/telnet_install ] || \
-  make LDFLAGS="-mabi=64" install || \
-    die "***install netkit-telnet error" && \
-      touch ${METADATAMIPS64ELROOTFS}/telnet_install
-[ -f ${METADATAMIPS64ELROOTFS}/telnet_clean ] || \
+cd openssl-${OPENSSL_VERSION}
+[ -f ${METADATAMIPS64ELROOTFS}/openssl_o32_patch ] || \
+  patch -Np1 -i ${PATCH}/openssl-1-0-1c-o32.patch || \
+    die "***patch cross openssl o32 error" && \
+      touch ${METADATAMIPS64ELROOTFS}/openssl_o32_patch
+[ -f ${METADATAMIPS64ELROOTFS}/openssl_o32_configure ] || \
+  CC="${CC} ${BUILD32}" ABI=o32 LIBDIR=lib \
+  LDFLAGS="-Wl,-rpath-link,${PREFIXMIPS64ELROOTFS}/usr/lib:${PREFIXMIPS64ELROOTFS}/lib ${BUILD32}" \
+  ./Configure ${CROSS_TARGET64} \
+  --prefix=/usr || \
+    die "***config cross openssl o32 error" && \
+      touch ${METADATAMIPS64ELROOTFS}/openssl_o32_configure
+[ -f ${METADATAMIPS64ELROOTFS}/openssl_o32_build ] || \
+  make CC="${CC} ${BUILD32}" RANLIB=${RANLIB} \
+  CROSS_COMPILE=${CROSS_TARGET64}- LIBDIR=lib \
+  LDFLAGS+="-ldl -mabi=32" || \
+    die "***build cross openssl o32 error" && \
+      touch ${METADATAMIPS64ELROOTFS}/openssl_o32_build
+[ -f ${METADATAMIPS64ELROOTFS}/openssl_o32_install ] || \
+  make INSTALL_PREFIX=${PREFIXMIPS64ELROOTFS} LIBDIR=lib install || \
+    die "***install cross openssl o32 error" && \
+      touch ${METADATAMIPS64ELROOTFS}/openssl_o32_install
+[ -f ${METADATAMIPS64ELROOTFS}/openssl_o32_clean ] || \
   make clean || \
-    die "***clean netkit-telnet error" && \
-      touch ${METADATAMIPS64ELROOTFS}/telnet_clean
-[ -f ${METADATAMIPS64ELROOTFS}/telnet_distclean ] || \
-  make distclean || \
-    die "***distclean netkit-telnet error" && \
-      touch ${METADATAMIPS64ELROOTFS}/telnet_distclean
-[ -f ${METADATAMIPS64ELROOTFS}/telnet_de_patch ] || \
-  patch -Rp1 < ${PATCH}/netkit-telnet-${TELNET_VERSION}.patch || \
-    die "de-patch netkit-telnet error" && \
-      touch ${METADATAMIPS64ELROOTFS}/telnet_de_patch
+    die "***clean cross o32 openssl error" && \
+      touch ${METADATAMIPS64ELROOTFS}/openssl_o32_clean
+[ -f ${METADATAMIPS64ELROOTFS}/openssl_deo32_patch ] || \
+  patch -RNp1 -i ${PATCH}/openssl-1-0-1c-o32.patch || \
+    die "***depatch cross openssl o32 error" && \
+      touch ${METADATAMIPS64ELROOTFS}/openssl_deo32_patch
+popd
 
-cat > ${PREFIXMIPS64ELROOTFS}/etc/sysconfig/telnetd << EOF
-#! /bin/bash
+pushd ${SRCMIPS64ELROOTFS}
+[ -f ${METADATAMIPS64ELROOTFS}/openssl_n32_rm ] || \
+  rm -rf openssl-${OPENSSL_VERSION} || \
+    die "***remove openssl n32 error" && \
+      touch ${METADATAMIPS64ELROOTFS}/openssl_n32_rm
+[ -f ${METADATAEXTRACT}/openssl_n32_extract ] || \
+  tar xf ${TARBALL}/openssl-${OPENSSL_VERSION}.${OPENSSL_SUFFIX} || \
+    die "***extract openssl n32 error" && \
+      touch ${METADATAEXTRACT}/openssl_n32_extract
+cd openssl-${OPENSSL_VERSION}
+[ -f ${METADATAMIPS64ELROOTFS}/openssl_n32_patch ] || \
+  patch -Np1 -i ${PATCH}/openssl-1-0-1c-n32.patch || \
+    die "***patch cross openssl n32 error" && \
+      touch ${METADATAMIPS64ELROOTFS}/openssl_n32_patch
+[ -f ${METADATAMIPS64ELROOTFS}/openssl_n32_configure ] || \
+  CC="${CC} ${BUILDN32}" ABI=n32 LIBDIR=lib32 \
+  LDFLAGS="-Wl,-rpath-link,${PREFIXMIPS64ELROOTFS}/usr/lib32:${PREFIXMIPS64ELROOTFS}/lib32 ${BUILDN32}" \
+  ./Configure ${CROSS_TARGET64} \
+  --prefix=/usr || \
+    die "***config cross openssl n32 error" && \
+      touch ${METADATAMIPS64ELROOTFS}/openssl_n32_configure
+[ -f ${METADATAMIPS64ELROOTFS}/openssl_n32_build ] || \
+  make CC="${CC} ${BUILDN32}" RANLIB=${RANLIB} LIBDIR=lib32 \
+  CROSS_COMPILE=${CROSS_TARGET64}- \
+  LDFLAGS+="-ldl -mabi=n32" || \
+    die "***build cross openssl n32 error" && \
+      touch ${METADATAMIPS64ELROOTFS}/openssl_n32_build
+[ -f ${METADATAMIPS64ELROOTFS}/openssl_n32_install ] || \
+  make INSTALL_PREFIX=${PREFIXMIPS64ELROOTFS}  LIBDIR=lib32 install || \
+    die "***install cross openssl n32 error" && \
+      touch ${METADATAMIPS64ELROOTFS}/openssl_n32_install
+[ -f ${METADATAMIPS64ELROOTFS}/openssl_n32_clean ] || \
+  make clean || \
+    die "***clean cross n32 openssl error" && \
+      touch ${METADATAMIPS64ELROOTFS}/openssl_n32_clean
+[ -f ${METADATAMIPS64ELROOTFS}/openssl_den32_patch ] || \
+  patch -RNp1 -i ${PATCH}/openssl-1-0-1c-n32.patch || \
+    die "***depatch cross openssl n32 error" && \
+      touch ${METADATAMIPS64ELROOTFS}/openssl_den32_patch
+popd
 
-while [ "1" = "1" ]; do
-  if test \$( pgrep -f /sbin/in.telnetd | wc -l ) -eq 0; then
-    /sbin/in.telnetd -debug&
-  else
-    sleep 3
-  fi
-done
-
-EOF
-
-chmod +x ${PREFIXMIPS64ELROOTFS}/etc/sysconfig/telnetd
-
+pushd ${SRCMIPS64ELROOTFS}
+[ -f ${METADATAMIPS64ELROOTFS}/openssl_64_rm ] || \
+  rm -rf openssl-${OPENSSL_VERSION} || \
+    die "***remove openssl 64 error" && \
+      touch ${METADATAMIPS64ELROOTFS}/openssl_64_rm
+[ -f ${METADATAEXTRACT}/openssl_64_extract ] || \
+  tar xf ${TARBALL}/openssl-${OPENSSL_VERSION}.${OPENSSL_SUFFIX} || \
+    die "***extract openssl 64 error" && \
+      touch ${METADATAEXTRACT}/openssl_64_extract
+cd openssl-${OPENSSL_VERSION}
+[ -f ${METADATAMIPS64ELROOTFS}/openssl_64_patch ] || \
+  patch -Np1 -i ${PATCH}/openssl-1-0-1c-64bit.patch || \
+    die "***patch cross openssl 64 error" && \
+      touch ${METADATAMIPS64ELROOTFS}/openssl_64_patch
+cd openssl-${OPENSSL_VERSION}
+[ -f ${METADATAMIPS64ELROOTFS}/openssl_64_configure ] || \
+  CC="${CC} ${BUILD64}" ABI=64 LIBDIR=lib64 \
+  LDFLAGS="-Wl,-rpath-link,${PREFIXMIPS64ELROOTFS}/usr/lib64:${PREFIXMIPS64ELROOTFS}/lib64 ${BUILD64}" \
+  ./Configure ${CROSS_TARGET64} \
+  --prefix=/usr || \
+    die "***config cross openssl 64 error" && \
+      touch ${METADATAMIPS64ELROOTFS}/openssl_64_configure
+[ -f ${METADATAMIPS64ELROOTFS}/openssl_64_build ] || \
+  make CC="${CC} ${BUILD64}" RANLIB=${RANLIB} LIBDIR=lib64 \
+  CROSS_COMPILE=${CROSS_TARGET64}- \
+  LDFLAGS+="-ldl -mabi=64" || \
+    die "***build cross openssl 64 error" && \
+      touch ${METADATAMIPS64ELROOTFS}/openssl_64_build
+[ -f ${METADATAMIPS64ELROOTFS}/openssl_64_install ] || \
+  make INSTALL_PREFIX=${PREFIXMIPS64ELROOTFS} LIBDIR=lib64 install || \
+    die "***install cross openssl 64 error" && \
+      touch ${METADATAMIPS64ELROOTFS}/openssl_64_install
+[ -f ${METADATAMIPS64ELROOTFS}/openssl_64_clean ] || \
+  make clean || \
+    die "***clean cross 64 openssl error" && \
+      touch ${METADATAMIPS64ELROOTFS}/openssl_64_clean
+[ -f ${METADATAMIPS64ELROOTFS}/openssl_de64_patch ] || \
+  patch -RNp1 -i ${PATCH}/openssl-1-0-1c-64bit.patch || \
+    die "***depatch cross openssl 64 error" && \
+      touch ${METADATAMIPS64ELROOTFS}/openssl_de64_patch
 popd
 
 pushd ${SRCMIPS64ELROOTFS}
 cd bootscripts-cross-lfs-${BOOTSCRIPTS_VERSION}
-[ -f "${METADATAMIPS64ELROOTFS}/bootscript_install_boot" ] || \
+[ -f ${METADATAMIPS64ELROOTFS}/bootscript_install_boot ] || \
   make CC="${CC} ${BUILD64}" DESTDIR=${PREFIXMIPS64ELROOTFS} install-bootscripts || \
     die "install bootscripts error" && \
       touch ${METADATAMIPS64ELROOTFS}/bootscript_install_boot
-[ -f "${METADATAMIPS64ELROOTFS}/bootscript_install_network" ] || \
+[ -f ${METADATAMIPS64ELROOTFS}/bootscript_install_network ] || \
   make DESTDIR=${PREFIXMIPS64ELROOTFS} install-network || \
     die "install network error" && \
       touch ${METADATAMIPS64ELROOTFS}/bootscript_install_network
-[ -f "${METADATAMIPS64ELROOTFS}/bootscript_clean" ] || \
+[ -f ${METADATAMIPS64ELROOTFS}/bootscript_clean ] || \
   make dist || \
     die "clean network error" && \
       touch ${METADATAMIPS64ELROOTFS}/bootscript_clean
 popd
+
+pushd ${BUILDMIPS64ELROOTFS}
+[ -d "openssh_build" ] || mkdir openssh_build
+cd openssh_build
+[ -f ${METADATAMIPS64ELROOTFS}/openssh_configure ] || \
+  CFLAGS="-I${PREFIXMIPS64ELROOTFS}/usr/include ${BUILD64} -march=mips3" \
+  LDFLAGS="-Wl,-rpath-link,${PREFIXMIPS64ELROOTFS}/usr/lib64:${PREFIXMIPS64ELROOTFS}/lib64 ${BUILD64} -march=mips3" \
+  ${SRCMIPS64ELROOTFS}/openssh-${OPENSSH_VERSION}/configure \
+  --build=${CROSS_HOST} --target=${CROSS_TARGET64} \
+  --host=${CROSS_TARGET64} --enable-strip \
+  --prefix=/usr || \
+    die "***config cross openssh error" && \
+      touch ${METADATAMIPS64ELROOTFS}/openssh_configure
+[ -f ${METADATAMIPS64ELROOTFS}/openssh_sed_makefile ] || \
+  sed -i "s/STRIP_OPT=-s/STRIP_OPT=-s --strip-program=mips64el-unknown-linux-gnu-strip/" Makefile || \
+    die "***sed cross openssh make file error" && \
+      touch ${METADATAMIPS64ELROOTFS}/openssh_sed_makefile
+[ -f ${METADATAMIPS64ELROOTFS}/openssh_build ] || \
+  make CC=${CC} LD=${CC} CFLAGS+="${BUILD64} -march=mips3" || \
+    die "***build cross openssh error" && \
+      touch ${METADATAMIPS64ELROOTFS}/openssh_build
+[ -f ${METADATAMIPS64ELROOTFS}/openssh_install ] || \
+  make DESTDIR=${PREFIXMIPS64ELROOTFS} install || \
+    die "***install cross openssh error" && \
+      touch ${METADATAMIPS64ELROOTFS}/openssh_install
+popd
+
+[ -f ${METADATAMIPS64ELROOTFS}/add_ssh_privilege_param ] || \
+  sed -i 's/sandbox/no/' ${PREFIXMIPS64ELROOTFS}/usr/etc/sshd_config || \
+    die "add ssh privilege error" && \
+      touch ${METADATAMIPS64ELROOTFS}/add_ssh_privilege_param
+
+[ -f ${METADATAMIPS64ELROOTFS}/add_ssh_key ] || \
+`cat > ${PREFIXMIPS64ELROOTFS}/etc/sysconfig/ssh << "EOF"
+if [ ! -f /usr/etc/ssh_host_key ]; then
+  /usr/bin/ssh-keygen -t rsa1 -f /usr/etc/ssh_host_key -N ""
+  /usr/bin/ssh-keygen -t rsa -f /usr/etc/ssh_host_rsa_key -N ""
+  /usr/bin/ssh-keygen -t dsa -f /usr/etc/ssh_host_dsa_key -N ""
+  /usr/bin/ssh-keygen -t ecdsa -f /usr/etc/ssh_host_ecdsa_key -N ""
+fi
+/usr/sbin/sshd
+EOF` || \
+  die "add ssh key error" && \
+    touch ${METADATAMIPS64ELROOTFS}/add_ssh_key
+
+[ -f ${METADATAMIPS64ELROOTFS}/chmod_add_ssh_key ] || \
+  chmod +x ${PREFIXMIPS64ELROOTFS}/etc/sysconfig/ssh || \
+    die "chmod ssh key error" && \
+      touch ${METADATAMIPS64ELROOTFS}/chmod_add_ssh_key
+
+[ -f ${METADATAMIPS64ELROOTFS}/add_ssh_to_rc ] || \
+  echo -e "/etc/sysconfig/ssh " >> ${PREFIXMIPS64ELROOTFS}/etc/rc.d/init.d/rc || \
+    die "***add ssh auto start error"
+      touch ${METADATAMIPS64ELROOTFS}/add_ssh_to_rc
 
 #########################################################################
 #
@@ -4555,8 +4622,6 @@ EOF` || \
       touch ${METADATAMIPS64ELROOTFS}/create_ipv4
 popd
 
-echo 2
-
 [ -f "${METADATAMIPS64ELROOTFS}/create_fstab" ] || \
   `cat > ${PREFIXMIPS64ELROOTFS}/etc/fstab << "EOF"
 # Begin /etc/fstab
@@ -4595,13 +4660,6 @@ EOF
   echo "export PYTHONHOME=/usr" >> ${PREFIXMIPS64ELROOTFS}/root/.bashrc || \
     die "***add param to bashrc error"
       touch ${METADATAMIPS64ELROOTFS}/add_param_to_bashrc
-
-[ -f ${METADATAMIPS64ELROOTFS}/add_param_to_rc ] || \
-  echo -e "mount /proc /proc -t proc \n\
-  /etc/sysconfig/telnetd &\n\
-  /usr/local/sbin/vsftpd /etc/vsftpd.conf &" >> ${PREFIXMIPS64ELROOTFS}/etc/sysconfig/rc || \
-    die "***add vsftpd auto start error"
-      touch ${METADATAMIPS64ELROOTFS}/add_param_to_rc
 
 [ -f "${METADATAMIPS64ELROOTFS}/create_clfs-release" ] || \
 `cat > ${PREFIXMIPS64ELROOTFS}/etc/clfs-release << EOF
