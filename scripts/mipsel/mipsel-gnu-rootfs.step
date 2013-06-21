@@ -474,7 +474,7 @@ cd mpc_cross_build
   --host=${CROSS_TARGET32} \
   --with-gmp-lib=${PREFIXMIPSELROOTFS}/usr/lib \
   --with-mpfr-lib=${PREFIXMIPSELROOTFS}/usr/lib || \
-    die "***config cross mpc error"
+    die "***config cross mpc error" && \
       touch ${METADATAMIPSELROOTFS}/mpc_cross_configure
 [ -f ${METADATAMIPSELROOTFS}/mpc_cross_build ] || \
   make -j${JOBS} || \
@@ -1109,7 +1109,7 @@ sed '/^TARGETS/s@arpd@@g' misc/Makefile.orig > misc/Makefile
   make DESTDIR=${PREFIXMIPSELROOTFS}  \
        DOCDIR=/usr/share/doc/iproute2 \
        MANDIR=/usr/share/man install || \
-         die "***install iproute2 error"
+         die "***install iproute2 error" && \
              touch ${METADATAMIPSELROOTFS}/iproute2_build2
 [ -f "${METADATAMIPSELROOTFS}/iproute2_cross_clean" ] || \
   make distclean || \
@@ -1364,7 +1364,7 @@ popd
 
 [ -f ${METADATAMIPSELROOTFS}/add_param_to_bash_completion ] || \
   echo ". /usr/local/share/bash-completion/bash_completion" >> ${PREFIXMIPSELROOTFS}/etc/bash_completion || \
-    die "***create /etc/bash_completion error"
+    die "***create /etc/bash_completion error" && \
       touch ${METADATAMIPSELROOTFS}/add_param_to_bash_completion
 
 pushd ${SRCMIPSELROOTFS}
@@ -2233,7 +2233,7 @@ cd tar-${TAR_VERSION}
 cp gnu/stdio.in.h{,.orig}
 [ -f ${METADATAMIPSELROOTFS}/tar_patch ] || \
   sed -i '/gets is a security hole/d' gnu/stdio.in.h || \
-    die "***patch tar error"
+    die "***patch tar error" && \
       touch ${METADATAMIPSELROOTFS}/tar_patch
 popd
 
@@ -2702,17 +2702,17 @@ export LC_ALL PATH PS1
 
 source .bashrc
 EOF` || \
-  die "***create bash_profile error"
+  die "***create bash_profile error" && \
     touch ${METADATAMIPSELROOTFS}/create_bash_profile
 
 [ -f ${METADATAMIPSELROOTFS}/cp_bashrc ] || \
   cp ${PATCH}/bashrc ${PREFIXMIPSELROOTFS}/root/.bashrc || \
-    die "***cp bashrc error"
+    die "***cp bashrc error" && \
       touch ${METADATAMIPSELROOTFS}/cp_bashrc
 
 [ -f ${METADATAMIPSELROOTFS}/add_param_to_bashrc ] || \
   echo "export PYTHONHOME=/usr" >> ${PREFIXMIPSELROOTFS}/root/.bashrc || \
-    die "***cp bashrc error"
+    die "***cp bashrc error" && \
       touch ${METADATAMIPSELROOTFS}/add_param_to_bashrc
 
 [ -f ${METADATAMIPSELROOTFS}/create_vernu ] || \

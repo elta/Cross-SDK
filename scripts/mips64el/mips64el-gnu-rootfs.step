@@ -1730,7 +1730,7 @@ EOF
       touch ${METADATAMIPS64ELROOTFS}/coreutils_cross_config
 [ -f "${METADATAMIPS64ELROOTFS}/coreutils_make-prime-list" ] || \
   make CC=gcc src/make-prime-list || \
-    die "make host make-prime-list error"
+    die "make host make-prime-list error" && \
       touch ${METADATAMIPS64ELROOTFS}/coreutils_make-prime-list
 [ -f "${METADATAMIPS64ELROOTFS}/coreutils_cross_build" ] || \
   make EXTRA_MANS='' -j${JOBS} || \
@@ -2560,7 +2560,7 @@ popd
 
 [ -f ${METADATAMIPS64ELROOTFS}/add_param_to_bash_completion ] || \
   echo ". /usr/local/share/bash-completion/bash_completion" >> ${PREFIXMIPS64ELROOTFS}/etc/bash_completion || \
-    die "***create /etc/bash_completion error"
+    die "***create /etc/bash_completion error" && \
       touch ${METADATAMIPS64ELROOTFS}/add_param_to_bash_completion
 
 pushd ${SRCMIPS64ELROOTFS}
@@ -4520,7 +4520,7 @@ EOF` || \
 
 [ -f ${METADATAMIPS64ELROOTFS}/add_ssh_to_rc ] || \
   echo -e "/etc/sysconfig/ssh " >> ${PREFIXMIPS64ELROOTFS}/etc/rc.d/init.d/rc || \
-    die "***add ssh auto start error"
+    die "***add ssh auto start error" && \
       touch ${METADATAMIPS64ELROOTFS}/add_ssh_to_rc
 
 #########################################################################
@@ -4653,12 +4653,12 @@ EOF
 
 [ -f ${METADATAMIPS64ELROOTFS}/cp_bashrc ] || \
   cp ${PATCH}/bashrc ${PREFIXMIPS64ELROOTFS}/root/.bashrc || \
-    die "***cp bashrc error"
+    die "***cp bashrc error" && \
       touch ${METADATAMIPS64ELROOTFS}/cp_bashrc
 
 [ -f ${METADATAMIPS64ELROOTFS}/add_param_to_bashrc ] || \
   echo "export PYTHONHOME=/usr" >> ${PREFIXMIPS64ELROOTFS}/root/.bashrc || \
-    die "***add param to bashrc error"
+    die "***add param to bashrc error" && \
       touch ${METADATAMIPS64ELROOTFS}/add_param_to_bashrc
 
 [ -f "${METADATAMIPS64ELROOTFS}/create_clfs-release" ] || \
