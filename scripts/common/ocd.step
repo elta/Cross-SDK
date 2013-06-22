@@ -1,0 +1,39 @@
+#! /bin/bash
+
+export PATH=${PREFIXHOSTTOOLS}/bin:$PATH
+
+[ -d "${SRCUNIVERSAL}" ] ||  mkdir -p "${SRCUNIVERSAL}"
+[ -d "${BUILDUNIVERSAL}" ] ||  mkdir -p "${BUILDUNIVERSAL}"
+[ -d "${METADATAUNIVERSAL}" ] || mkdir -p "${METADATAUNIVERSAL}"
+[ -d "${METADATAEXTRACT}" ] || mkdir -p "${METADATAEXTRACT}"
+
+#################################################################
+### universal extract
+#################################################################
+pushd ${SRCUNIVERSAL}
+[ -f ${METADATAEXTRACT}/ocd_extract ] || \
+  tar xf ${TARBALL}/openocd-${OCD_VERSION}.${OCD_SUFFIX} || \
+    die "extract openocd error" && \
+      touch ${METADATAEXTRACT}/ocd_extract
+popd
+
+#################################################################
+### openocd build
+#################################################################
+pushd ${BUILDUNIVERSAL}
+[ -d "openocd-build" ] || mkdir openocd-build
+cd openocd-build
+[ -f "${METADATAUNIVERSAL}/ocd_configure" ] || \
+  ../../../src/openocd-${OCD_VERSION}/configure \
+  --prefix=${PREFIXOCD} || \
+    die "***config openocd error" &&
+      touch ${METADATAUNIVERSAL}/ocd_configure
+[ -f "${METADATAUNIVERSAL}/ocd_build" ] || \
+  make -j${JOBS} || die "***build openocd error" && \
+    touch ${METADATAUNIVERSAL}/ocd_build
+[ -f "${METADATAUNIVERSAL}/ocd_install" ] || \
+  make install || die "***install openocd error" && \
+    touch ${METADATAUNIVERSAL}/ocd_install
+popd
+
+touch ${METADATAUNIVERSAL}/tool_ocd_finished

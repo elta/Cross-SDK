@@ -22,6 +22,11 @@ source common/source.env
     die "build mips qemu error" && \
       touch ${METADATAUNIVERSAL}/mips_qemu_finished
 
+[ -f "${METADATAUNIVERSAL}/ocd_finished" ] || \
+  source common/ocd.step || \
+    die "build openocd error" && \
+      touch ${METADATAUNIVERSAL}/ocd_finished
+
 [ -f "${METADATAUNIVERSAL}/qtc_finished" ] || \
   source common/qtc.step || \
     die "build qt creator error" && \
