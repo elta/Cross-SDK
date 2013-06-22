@@ -5,8 +5,7 @@ source common/source.env
 [ -d "${METADATADOWN}" ] || mkdir -p "${METADATADOWN}"
 
 pushd ${METADATADOWN}
-
-echo -n "autoconf-${AUTOCONF_VERSION}.${AUTOCONF_SUFFIX}" > autoconf_download 
+echo -n "autoconf-${AUTOCONF_VERSION}.${AUTOCONF_SUFFIX}" > autoconf_download
 echo -n "automake-${AUTOMAKE_VERSION}.${AUTOMAKE_SUFFIX}" > automake_download
 echo -n "bash-${BASH_VERSION}.${BASH_SUFFIX}" > bash_download
 echo -n "bash-completion-${BASHCOMPLETION_VERSION}.${BASHCOMPLETION_SUFFIX}" > bash_completion_download
@@ -89,4 +88,3 @@ echo -n "qt-creator-${QTC_VERSION}.${QTC_SUFFIX}" > qt-creator_download
 echo -n "qemu-${QEMU_VERSION}.${QEMU_SUFFIX}" > qemu_download
 echo -n "openocd-${QEMU_VERSION}.${QEMU_SUFFIX}" > ocd_download
 popd
-
