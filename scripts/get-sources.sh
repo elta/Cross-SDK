@@ -595,6 +595,13 @@ download "qemu-${QEMU_VERSION}.${QEMU_SUFFIX}" \
   "${QEMU_URL}/qemu-${QEMU_VERSION}.${QEMU_SUFFIX}" || \
   die "download qemu error" && \
 		echo -n "qemu-${QEMU_VERSION}.${QEMU_SUFFIX}" > qemu_download
+
+[ -f ocd_download ] && \
+  [ "`cat ocd_download`" = "openocd-${OCD_VERSION}.${OCD_SUFFIX}" ] || \
+download "openocd-${OCD_VERSION}.${OCD_SUFFIX}" \
+  "${OCD_URL}/openocd-${OCD_VERSION}.${OCD_SUFFIX}" || \
+  die "download openocd error" && \
+    echo -n "openocd-${OCD_VERSION}.${OCD_SUFFIX}" > ocd_download
 popd
 
 pushd ${LIVE_SRC}

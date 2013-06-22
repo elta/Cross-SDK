@@ -87,5 +87,6 @@ echo -n "xz-${XZ_VERSION}.${XZ_SUFFIX}" > xz_download
 echo -n "zlib-${ZLIB_VERSION}.${ZLIB_SUFFIX}" > zlib_download
 echo -n "qt-creator-${QTC_VERSION}.${QTC_SUFFIX}" > qt-creator_download
 echo -n "qemu-${QEMU_VERSION}.${QEMU_SUFFIX}" > qemu_download
+echo -n "openocd-${QEMU_VERSION}.${QEMU_SUFFIX}" > ocd_download
 popd
 
