@@ -1,5 +1,4 @@
 #! /bin/bash
-source common/source.env
 
 export PATH=${PREFIXHOSTTOOLS}/bin:$PATH
 
