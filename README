@@ -14,6 +14,8 @@ maintain their part of the SDK.
 Version History:
 0.8:
 - Add OpenOCD.
+- KUbuntu 13.04 well tested all of the scripts.
+- KUbuntu 12.10 AMD64 no longger tested.
 
 0.7:
 - Remove busybox support, minimal-system and command-line-tools.
@@ -21,19 +23,19 @@ Version History:
 - New IDE plugin support(still in develop).
 
 0.6:
-- OS X 10.8.2 well tested minimal-system now!
+- OS X Mountain Lion well tested minimal-system now!
 
 0.5:
 - Combine ${SRC} as possible as we can, saving a huge disk space.
 
 0.4:
 - Slipt scripts.
-- OS X 10.8.2 well tested command-line-tools and development-kit, KUbuntu 12.10
-  AMD64 well tested all of the scripts.
+- OS X Mountain Lion well tested command-line-tools and development-kit,
+  KUbuntu 12.10 AMD64 well tested all of the scripts.
 
 0.3:
-- OS X 10.8.2 partly support, toolchain and linux kernel can be compiled, rootfs
-  and busybox can not.
+- OS X Mountain Lion partly support, toolchain and linux kernel can be compiled,
+  rootfs and busybox can not.
 - Remove RTEMS, baremetal support.
 - KUbuntu 12.04 AMD64 no longger tested.
 
@@ -52,17 +54,17 @@ TODO:
 
 ===============================================================================
 Prerequisites:
-OS X 10.8.2 is partly suppoted, we are using Homebrew, and we need a
+OS X Mountain Lion is partly suppoted, we are using Homebrew, and we need a
 Case-sensitive, Journaled FS or working DMG.
 You need run this in your terminal:
 brew install autoconf ext2fuse gnu-sed unrar autoconf213 fuse4x libelf p7zip \
              wget automake fuse4x-kext libffi pixman xz bash-completion gawk \
              libpng pkg-config zlib cmake gettext libtool qt coreutils glib \
-             quilt gnu-getopt mercurial texinfo
+             quilt gnu-getopt mercurial texinfo gtk+
 
 (K)Ubuntu 12.10 AMD64 and (K)Ubuntu 12.04 AMD64 are well tested.
 You need run this in your terminal:
-sudo apt-get install libncurses5-dev libsdl1.2-dev libqt4-dev g++ flex bison \
+sudo apt-get install libncurses5-dev libgtk2.0-dev libqt4-dev g++ flex bison \
                      cmake automake gawk libtool gettext gperf dejagnu \
                      guile-2.0 autogen texinfo patch xz-utils
 
@@ -78,16 +80,8 @@ run
 to get a SDK.
 
 run
-./mipsel-command-line-tools.sh
-to get command line toolchain.
-
-run
 ./mipsel-system.sh
 to get gnu root fs.
-
-run
-./mipsel-minimal-system.sh
-to get a busybox root fs.
 
 If you were to use qemu with network:
 sudo tunctl -t qemutap
