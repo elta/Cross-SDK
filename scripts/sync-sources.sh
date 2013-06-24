@@ -12,7 +12,6 @@ echo -n "bash-completion-${BASHCOMPLETION_VERSION}.${BASHCOMPLETION_SUFFIX}" > b
 echo -n "binutils-${BINUTILS_VERSION}.${BINUTILS_SUFFIX}" > binutils_download
 echo -n "bison-${BISON_VERSION}.${BISON_SUFFIX}" > bison_download
 echo -n "bootscripts-cross-lfs-${BOOTSCRIPTS_VERSION}.${BOOTSCRIPTS_SUFFIX}" > bootscripts_download
-echo -n "busybox-${BUSYBOX_VERSION}.${BUSYBOX_SUFFIX}" > busybox_download
 echo -n "bzip2-${BZIP2_VERSION}.${BZIP2_SUFFIX}" > bzip2_download
 echo -n "cloog-${CLOOG_VERSION}.${CLOOG_SUFFIX}" > cloog_download
 echo -n "coreutils-${COREUTILS_VERSION}.${COREUTILS_SUFFIX}" > coreutils_download

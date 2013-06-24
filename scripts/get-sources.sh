@@ -57,13 +57,6 @@ download "bootscripts-cross-lfs-${BOOTSCRIPTS_VERSION}.${BOOTSCRIPTS_SUFFIX}" \
   die "download bootscripts error" && \
     echo -n "bootscripts-cross-lfs-${BOOTSCRIPTS_VERSION}.${BOOTSCRIPTS_SUFFIX}" > bootscripts_download
 
-[ -f busybox_download ] && \
-  [ "`cat busybox_download`" = "busybox-${BUSYBOX_VERSION}.${BUSYBOX_SUFFIX}" ] || \
-download "busybox-${BUSYBOX_VERSION}.${BUSYBOX_SUFFIX}" \
-  "${BUSYBOX_URL}/busybox-${BUSYBOX_VERSION}.${BUSYBOX_SUFFIX}" || \
-  die "download busybox error" && \
-    echo -n "busybox-${BUSYBOX_VERSION}.${BUSYBOX_SUFFIX}" > busybox_download
-
 [ -f bzip2_download ] && \
   [ "`cat bzip2_download`" = "bzip2-${BZIP2_VERSION}.${BZIP2_SUFFIX}" ] || \
 download "bzip2-${BZIP2_VERSION}.${BZIP2_SUFFIX}" \
