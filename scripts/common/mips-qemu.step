@@ -26,7 +26,7 @@ cd qemu-build
 [ -f "${METADATAUNIVERSAL}/qemu_configure" ] || \
   ${SRCUNIVERSAL}/qemu-${QEMU_VERSION}/configure \
   --prefix=${PREFIXQEMU} --target-list=${QEMU_TARGET} \
-  --enable-debug-tcg --enable-gtk || \
+  --enable-debug-tcg || \
     die "***config qemu error" &&
       touch ${METADATAUNIVERSAL}/qemu_configure
 [ -f "${METADATAUNIVERSAL}/qemu_build" ] || \
