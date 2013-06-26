@@ -3984,7 +3984,7 @@ cd texinfo-cross-buildusr
 cd ${PREFIXMIPS64ELROOTFS}/usr/share/info
 rm dir
 for f in *; do
-  install-info ${f} dir 2 > /dev/null;
+  install-info ${f} dir 2> /dev/null;
 done;
 popd
 
