@@ -5,7 +5,7 @@
 
 pushd ${PREFIXGNULINUX}
 [ -f ${METADATAMIPSELROOTFSCREATEIMG}/mipsel_sysroot_ddimg ] || \
- dd if=/dev/zero of=mipsel-rootfs.img bs=1M count=10000 || \
+ dd if=/dev/zero of=mipsel-rootfs.img bs=1M count=2k || \
     die "***dd mipsel sysroot.img error" && \
       touch ${METADATAMIPSELROOTFSCREATEIMG}/mipsel_sysroot_ddimg
 
