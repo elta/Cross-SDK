@@ -57,10 +57,10 @@ Prerequisites:
 OS X Mountain Lion is partly suppoted, we are using Homebrew, and we need a
 Case-sensitive, Journaled FS or working DMG.
 You need run this in your terminal:
-brew install autoconf ext2fuse gnu-sed unrar autoconf213 fuse4x libelf p7zip \
-             wget automake fuse4x-kext libffi pixman xz bash-completion gawk \
-             libpng pkg-config zlib cmake gettext libtool qt coreutils glib \
-             quilt gnu-getopt mercurial texinfo gtk+
+brew install autoconf autoconf213 automake bash-completion cmake coreutils \
+             ext2fuse fuse4x fuse4x-kext gawk gettext glib gnu-getopt gnu-sed \
+             libelf libffi libpng libtool p7zip pixman pkg-config qt texinfo \
+             unrar wget xz zlib
 
 (K)Ubuntu 12.10 AMD64 and (K)Ubuntu 12.04 AMD64 are well tested.
 You need run this in your terminal:
