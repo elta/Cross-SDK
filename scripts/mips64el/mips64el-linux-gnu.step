@@ -434,7 +434,7 @@ cd gcc-build-stage2
   --build=${CROSS_HOST} --host=${CROSS_HOST} --target=${CROSS_TARGET64} \
   --with-sysroot=${PREFIXMIPS64ELROOTFS} \
   --with-local-prefix=${PREFIXMIPS64ELROOTFS}/usr \
-  --disable-nls --enable-shared --enable-languages=c,c++,fortran --enable-__cxa_atexit \
+  --disable-nls --enable-shared --enable-languages=c,c++ --enable-__cxa_atexit \
   --enable-c99 --enable-long-long --enable-threads=posix \
   --enable-cloog-backend=isl --enable-poison-system-directories \
   --with-build-sysroot=${PREFIXMIPS64ELROOTFS} \
