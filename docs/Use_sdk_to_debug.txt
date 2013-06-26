@@ -1,0 +1,53 @@
+
+[BUILD]
+  This project contains mips32/64 toolchain and rootfs. You can get them by run
+the script mipsel-system.sh/mips64el-system.sh.
+
+  The toolchain mipsel-unknown-linux-gnu-gcc is for mips32.
+  The toolchain mipsel-unknown-linux-gnu-gcc is for mips64, and it can compile
+target 32/n32/64 by add param -mabi={32,n32,64}
+
+[RUN QEMU]
+  For qemu contact host network, net-bridge was needed. It can be created by
+command:
+  sudo tunctl -t tap0 -u $(whoami)
+  sudo ifconfig tap0 10.0.0.1
+
+  mips32/64 rootfs default ipaddress is 10.0.0.32/64. You can use them by qemu.
+The qemu run command:
+  sdk/qemu/bin/qemu-system-mipsel -kernel sdk/gnu-linux/vmlinux-32 \
+    -hda sdk/gnu-linux/mipsel-rootfs.img -append "root=/dev/hda" \
+    -M malta -net nic -net tap,ifname=tap0,script=no,downscript=no \
+    -nographic
+  sdk/qemu/bin/qemu-system-mips64el -kernel sdk/gnu-linux/vmlinux-64 \
+    -hda sdk/gnu-linux/mips64el-rootfs.img -append "root=/dev/hda" \
+    -M malta -net nic -net tap,ifname=tap0,script=no,downscript=no \
+    -nographic
+
+  After qemu started, if this is the first time you use the rootfs, you need to
+set a password for the user. The command is:
+  passwd
+
+[DEBUG ELF]
+  For elf file debug, you can compile code with mips toolchain with '-g' option
+and copy the output file to rootfs by command(qemu started with the rootfs):
+  Then you can copy your mips-elf file to rootfs by command:
+  scp -c 3des SOURCEFILE root@10.0.0.32:~/
+
+  Then start gdbserver in qemu:
+  gdbserver localhost:[port] debugfile # port is debug port for gdb.
+
+  And gdb at host should be run command:
+  mipsel-unknown-linux-gnu-gdb debugfile
+  target remote 10.0.0.32:[port]
+
+  Then start debug as local debug.
+
+[DEBUG kernel]
+  For kernel debug, qemu should start with option '-s -S', then it will start
+and stop at first instruction of linux kernel, then you can debug the kernel
+with gdb by command:
+  mipsel-unknown-linux-gnu-gdb vmlinux
+  target remote localhost:1234
+
+  Then start debug as local debug.
