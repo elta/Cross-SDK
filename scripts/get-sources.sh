@@ -332,10 +332,10 @@ download "llvm-${LLVM_VERSION}.${LLVM_SUFFIX}" \
 
 [ -f clang_download ] && \
   [ "`cat clang_download`" = "clang-${CLANG_VERSION}.${CLANG_SUFFIX}" ] || \
-download "clang-${CLANG_VERSION}.${CLANG_SUFFIX}" \
-  "${CLANG_URL}/clang-${CLANG_VERSION}.${CLANG_SUFFIX}" || \
+download "cfe-${CLANG_VERSION}.${CLANG_SUFFIX}" \
+  "${CLANG_URL}/cfe-${CLANG_VERSION}.${CLANG_SUFFIX}" || \
   die "download clang error" && \
-    echo -n "clang-${CLANG_VERSION}.${CLANG_SUFFIX}" > clang_download
+    echo -n "cfe-${CLANG_VERSION}.${CLANG_SUFFIX}" > clang_download
 
 [ -f crt_download ] && \
   [ "`cat crt_download`" = "compiler-rt-${CRT_VERSION}.${CRT_SUFFIX}" ] || \

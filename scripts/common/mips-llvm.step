@@ -16,11 +16,11 @@ tar xf ${TARBALL}/llvm-${LLVM_VERSION}.${LLVM_SUFFIX} || \
 
 pushd llvm-${LLVM_VERSION}/tools
 [ -f ${METADATAEXTRACT}/clang_extract ] || \
-  tar xf ${TARBALL}/clang-${CLANG_VERSION}.${CLANG_SUFFIX} || \
+  tar xf ${TARBALL}/cfe-${CLANG_VERSION}.${CLANG_SUFFIX} || \
     die "extract clang error" && \
       touch ${METADATAEXTRACT}/clang_extract
 [ -f ${METADATAEXTRACT}/clang_move ] || \
-  mv clang-${CLANG_VERSION} clang || \
+  mv cfe-${CLANG_VERSION} clang || \
     die "no clang exist! error" && \
       touch ${METADATAEXTRACT}/clang_move
 popd

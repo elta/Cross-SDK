@@ -50,7 +50,7 @@ echo -n "libtool-${LIBTOOL_VERSION}.${LIBTOOL_SUFFIX}" > libtool_download
 echo -n "libiconv-${LIBICONV_VERSION}.${LIBICONV_SUFFIX}" >  libiconv_download
 echo -n "linux-${LINUX_VERSION}.${LINUX_SUFFIX}" >  linux_download
 echo -n "llvm-${LLVM_VERSION}.${LLVM_SUFFIX}" > llvm_download
-echo -n "clang-${CLANG_VERSION}.${CLANG_SUFFIX}" > clang_download
+echo -n "cfe-${CLANG_VERSION}.${CLANG_SUFFIX}" > clang_download
 echo -n "compiler-rt-${CRT_VERSION}.${CRT_SUFFIX}" > crt_download
 echo -n "m4-${M4_VERSION}.${M4_SUFFIX}" > m4_download
 echo -n "make-${MAKE_VERSION}.${MAKE_SUFFIX}" > make_download
