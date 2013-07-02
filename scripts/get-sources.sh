@@ -331,7 +331,7 @@ download "llvm-${LLVM_VERSION}.${LLVM_SUFFIX}" \
     echo -n "llvm-${LLVM_VERSION}.${LLVM_SUFFIX}" > llvm_download
 
 [ -f clang_download ] && \
-  [ "`cat clang_download`" = "clang-${CLANG_VERSION}.${CLANG_SUFFIX}" ] || \
+  [ "`cat clang_download`" = "cfe-${CLANG_VERSION}.${CLANG_SUFFIX}" ] || \
 download "cfe-${CLANG_VERSION}.${CLANG_SUFFIX}" \
   "${CLANG_URL}/cfe-${CLANG_VERSION}.${CLANG_SUFFIX}" || \
   die "download clang error" && \
