@@ -1,0 +1,86 @@
+diff -uNpr openssl-1.0.1c/Configure aa/Configure
+--- openssl-1.0.1c/Configure	2012-03-15 06:20:40.000000000 +0800
++++ aa/Configure	2013-04-02 13:05:20.569832805 +0800
+@@ -1,4 +1,5 @@
+-:
++
++
+ eval 'exec perl -S $0 ${1+"$@"}'
+     if $running_under_some_shell;
+ ##
+@@ -261,6 +262,7 @@ my %table=(
+ # './Configure irix-cc -o32' manually.
+ "irix-mips3-gcc","gcc:-mabi=n32 -O3 -DTERMIOS -DB_ENDIAN -DBN_DIV3W::-D_SGI_MP_SOURCE:::MD2_CHAR RC4_INDEX RC4_CHAR RC4_CHUNK_LL DES_UNROLL DES_RISC2 DES_PTR BF_PTR SIXTY_FOUR_BIT:${mips64_asm}:n32:dlfcn:irix-shared::-mabi=n32:.so.\$(SHLIB_MAJOR).\$(SHLIB_MINOR):::32",
+ "irix-mips3-cc", "cc:-n32 -mips3 -O2 -use_readonly_const -G0 -rdata_shared -DTERMIOS -DB_ENDIAN -DBN_DIV3W::-D_SGI_MP_SOURCE:::DES_PTR RC4_CHAR RC4_CHUNK_LL DES_RISC2 DES_UNROLL BF_PTR SIXTY_FOUR_BIT:${mips64_asm}:n32:dlfcn:irix-shared::-n32:.so.\$(SHLIB_MAJOR).\$(SHLIB_MINOR):::32",
++"mips64el-unknown-linux-gnu", "gcc:-mabi=n32 -march=mips3 -O2 -use_readonly_const -DTERMIOS -DB_ENDIAN -DBN_DIV3W::-D_SGI_MP_SOURCE:::DES_PTR RC4_CHAR RC4_CHUNK_LL DES_RISC2 DES_UNROLL BF_PTR SIXTY_FOUR_BIT:${mips64_asm}:n32:dlfcn:irix-shared::-n32:.so.\$(SHLIB_MAJOR).\$(SHLIB_MINOR):::32",
+ # N64 ABI builds.
+ "irix64-mips4-gcc","gcc:-mabi=64 -mips4 -O3 -DTERMIOS -DB_ENDIAN -DBN_DIV3W::-D_SGI_MP_SOURCE:::RC4_CHAR RC4_CHUNK DES_RISC2 DES_UNROLL SIXTY_FOUR_BIT_LONG:${mips64_asm}:64:dlfcn:irix-shared::-mabi=64:.so.\$(SHLIB_MAJOR).\$(SHLIB_MINOR):::64",
+ "irix64-mips4-cc", "cc:-64 -mips4 -O2 -use_readonly_const -G0 -rdata_shared -DTERMIOS -DB_ENDIAN -DBN_DIV3W::-D_SGI_MP_SOURCE:::RC4_CHAR RC4_CHUNK DES_RISC2 DES_UNROLL SIXTY_FOUR_BIT_LONG:${mips64_asm}:64:dlfcn:irix-shared::-64:.so.\$(SHLIB_MAJOR).\$(SHLIB_MINOR):::64",
+diff -uNpr openssl-1.0.1c/crypto/aes/asm/aes-mips.pl aa/crypto/aes/asm/aes-mips.pl
+--- openssl-1.0.1c/crypto/aes/asm/aes-mips.pl	2011-11-15 04:55:23.000000000 +0800
++++ aa/crypto/aes/asm/aes-mips.pl	2013-04-02 13:03:45.285827249 +0800
+@@ -1036,9 +1036,9 @@ _mips_AES_set_encrypt_key:
+ 	nop
+ .end	_mips_AES_set_encrypt_key
+ 
+-.globl	AES_set_encrypt_key
+-.ent	AES_set_encrypt_key
+-AES_set_encrypt_key:
++.globl	mips_AES_set_encrypt_key
++.ent	mips_AES_set_encrypt_key
++mips_AES_set_encrypt_key:
+ 	.frame	$sp,$FRAMESIZE,$ra
+ 	.mask	$SAVED_REGS_MASK,-$SZREG
+ 	.set	noreorder
+@@ -1083,7 +1083,7 @@ ___
+ $code.=<<___;
+ 	jr	$ra
+ 	$PTR_ADD $sp,$FRAMESIZE
+-.end	AES_set_encrypt_key
++.end	mips_AES_set_encrypt_key
+ ___
+ 
+ my ($head,$tail)=($inp,$bits);
+@@ -1091,9 +1091,9 @@ my ($tp1,$tp2,$tp4,$tp8,$tp9,$tpb,$tpd,$
+ my ($m,$x80808080,$x7f7f7f7f,$x1b1b1b1b)=($at,$t0,$t1,$t2);
+ $code.=<<___;
+ .align	5
+-.globl	AES_set_decrypt_key
+-.ent	AES_set_decrypt_key
+-AES_set_decrypt_key:
++.globl	mips_AES_set_decrypt_key
++.ent	mips_AES_set_decrypt_key
++mips_AES_set_decrypt_key:
+ 	.frame	$sp,$FRAMESIZE,$ra
+ 	.mask	$SAVED_REGS_MASK,-$SZREG
+ 	.set	noreorder
+@@ -1115,7 +1115,7 @@ $code.=<<___ if ($flavour =~ /nubi/i);	#
+ ___
+ $code.=<<___ if ($flavour !~ /o32/i);	# non-o32 PIC-ification
+ 	.cplocal	$Tbl
+-	.cpsetup	$pf,$zero,AES_set_decrypt_key
++	.cpsetup	$pf,$zero,mips_AES_set_decrypt_key
+ ___
+ $code.=<<___;
+ 	.set	reorder
+@@ -1226,7 +1226,7 @@ ___
+ $code.=<<___;
+ 	jr	$ra
+ 	$PTR_ADD $sp,$FRAMESIZE
+-.end	AES_set_decrypt_key
++.end	mips_AES_set_decrypt_key
+ ___
+ }}}
+ 
+diff -uNpr openssl-1.0.1c/crypto/aes/Makefile aa/crypto/aes/Makefile
+--- openssl-1.0.1c/crypto/aes/Makefile	2011-11-15 04:42:21.000000000 +0800
++++ aa/crypto/aes/Makefile	2013-04-02 13:03:45.285827249 +0800
+@@ -25,7 +25,7 @@ APPS=
+ LIB=$(TOP)/libcrypto.a
+ LIBSRC=aes_core.c aes_misc.c aes_ecb.c aes_cbc.c aes_cfb.c aes_ofb.c \
+        aes_ctr.c aes_ige.c aes_wrap.c
+-LIBOBJ=aes_misc.o aes_ecb.o aes_cfb.o aes_ofb.o aes_ctr.o aes_ige.o aes_wrap.o \
++LIBOBJ=aes_core.o aes_misc.o aes_ecb.o aes_cfb.o aes_ofb.o aes_ctr.o aes_ige.o aes_wrap.o \
+        $(AES_ENC)
+ 
+ SRC= $(LIBSRC)

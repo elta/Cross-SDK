@@ -2465,6 +2465,10 @@ cd openssl-${OPENSSL_VERSION}
   patch -Np1 -i ${PATCH}/openssl-1-0-1c-32bit.patch || \
     die "***patch cross openssl 32bit error" && \
       touch ${METADATAMIPSELROOTFS}/openssl_patch32
+[ -f ${METADATAMIPSELROOTFS}/openssl_crypto_patch32 ] || \
+  patch -Np1 -i ${PATCH}/openssl-1-0-1c-crypto.patch || \
+    die "***patch cross openssl 32bit crypto error" && \
+      touch ${METADATAMIPSELROOTFS}/openssl_crypto_patch32
 [ -f ${METADATAMIPSELROOTFS}/openssl_configure ] || \
   ./Configure ${CROSS_TARGET32} enable-des enable-aes enable-3des \
   enable-flowfish \

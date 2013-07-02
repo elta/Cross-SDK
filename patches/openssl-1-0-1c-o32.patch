@@ -1,0 +1,96 @@
+From 46c7c7a27a50d0a020d66821419254b7bae04d76 Mon Sep 17 00:00:00 2001
+From: gaofeng <gaofeng@gaofeng-OptiPlex-790.(none)>
+Date: Tue, 2 Apr 2013 10:56:20 +0800
+Subject: [PATCH] aaaaaaaaaaaaa
+
+---
+ Configure                  |    1 +
+ crypto/aes/Makefile        |    2 +-
+ crypto/aes/asm/aes-mips.pl |   18 +++++++++---------
+ 3 files changed, 11 insertions(+), 10 deletions(-)
+
+diff --git a/Configure b/Configure
+index cbbf4de..3372fb5 100755
+--- a/Configure
++++ b/Configure
+@@ -256,6 +256,7 @@ my %table=(
+ # -mips2 flag is added by ./config when appropriate.
+ "irix-gcc","gcc:-O3 -DTERMIOS -DB_ENDIAN::(unknown):::BN_LLONG MD2_CHAR RC4_INDEX RC4_CHAR RC4_CHUNK DES_UNROLL DES_RISC2 DES_PTR BF_PTR:${mips32_asm}:o32:dlfcn:irix-shared:::.so.\$(SHLIB_MAJOR).\$(SHLIB_MINOR)",
+ "irix-cc", "cc:-O2 -use_readonly_const -DTERMIOS -DB_ENDIAN::(unknown):::BN_LLONG RC4_CHAR RC4_CHUNK DES_PTR DES_RISC2 DES_UNROLL BF_PTR:${mips32_asm}:o32:dlfcn:irix-shared:::.so.\$(SHLIB_MAJOR).\$(SHLIB_MINOR)",
++"mips64el-unknown-linux-gnu", "gcc:-mabi=32 -march=mips32r2 -O2 -fPIC -use_readonly_const -DTERMIOS -DB_ENDIAN::(unknown):::BN_LLONG RC4_CHAR RC4_CHUNK DES_PTR DES_RISC2 DES_UNROLL BF_PTR:${mips32_asm}:o32:dlfcn:irix-shared:::.so.\$(SHLIB_MAJOR).\$(SHLIB_MINOR)",
+ #### IRIX 6.x configs
+ # Only N32 and N64 ABIs are supported. If you need O32 ABI build, invoke
+ # './Configure irix-cc -o32' manually.
+diff --git a/crypto/aes/Makefile b/crypto/aes/Makefile
+index 45ede0a..ee6d636 100644
+--- a/crypto/aes/Makefile
++++ b/crypto/aes/Makefile
+@@ -25,7 +25,7 @@ APPS=
+ LIB=$(TOP)/libcrypto.a
+ LIBSRC=aes_core.c aes_misc.c aes_ecb.c aes_cbc.c aes_cfb.c aes_ofb.c \
+        aes_ctr.c aes_ige.c aes_wrap.c
+-LIBOBJ=aes_misc.o aes_ecb.o aes_cfb.o aes_ofb.o aes_ctr.o aes_ige.o aes_wrap.o \
++LIBOBJ=aes_core.o aes_misc.o aes_ecb.o aes_cfb.o aes_ofb.o aes_ctr.o aes_ige.o aes_wrap.o \
+        $(AES_ENC)
+ 
+ SRC= $(LIBSRC)
+diff --git a/crypto/aes/asm/aes-mips.pl b/crypto/aes/asm/aes-mips.pl
+index 2ce6def..3102c23 100644
+--- a/crypto/aes/asm/aes-mips.pl
++++ b/crypto/aes/asm/aes-mips.pl
+@@ -1036,9 +1036,9 @@ _mips_AES_set_encrypt_key:
+ 	nop
+ .end	_mips_AES_set_encrypt_key
+ 
+-.globl	AES_set_encrypt_key
+-.ent	AES_set_encrypt_key
+-AES_set_encrypt_key:
++.globl	mips_AES_set_encrypt_key
++.ent	mips_AES_set_encrypt_key
++mips_AES_set_encrypt_key:
+ 	.frame	$sp,$FRAMESIZE,$ra
+ 	.mask	$SAVED_REGS_MASK,-$SZREG
+ 	.set	noreorder
+@@ -1083,7 +1083,7 @@ ___
+ $code.=<<___;
+ 	jr	$ra
+ 	$PTR_ADD $sp,$FRAMESIZE
+-.end	AES_set_encrypt_key
++.end	mips_AES_set_encrypt_key
+ ___
+ 
+ my ($head,$tail)=($inp,$bits);
+@@ -1091,9 +1091,9 @@ my ($tp1,$tp2,$tp4,$tp8,$tp9,$tpb,$tpd,$tpe)=($a4,$a5,$a6,$a7,$s0,$s1,$s2,$s3);
+ my ($m,$x80808080,$x7f7f7f7f,$x1b1b1b1b)=($at,$t0,$t1,$t2);
+ $code.=<<___;
+ .align	5
+-.globl	AES_set_decrypt_key
+-.ent	AES_set_decrypt_key
+-AES_set_decrypt_key:
++.globl	mips_AES_set_decrypt_key
++.ent	mips_AES_set_decrypt_key
++mips_AES_set_decrypt_key:
+ 	.frame	$sp,$FRAMESIZE,$ra
+ 	.mask	$SAVED_REGS_MASK,-$SZREG
+ 	.set	noreorder
+@@ -1115,7 +1115,7 @@ $code.=<<___ if ($flavour =~ /nubi/i);	# optimize non-nubi prologue
+ ___
+ $code.=<<___ if ($flavour !~ /o32/i);	# non-o32 PIC-ification
+ 	.cplocal	$Tbl
+-	.cpsetup	$pf,$zero,AES_set_decrypt_key
++	.cpsetup	$pf,$zero,mips_AES_set_decrypt_key
+ ___
+ $code.=<<___;
+ 	.set	reorder
+@@ -1226,7 +1226,7 @@ ___
+ $code.=<<___;
+ 	jr	$ra
+ 	$PTR_ADD $sp,$FRAMESIZE
+-.end	AES_set_decrypt_key
++.end	mips_AES_set_decrypt_key
+ ___
+ }}}
+ 
+-- 
+1.7.10.4
+

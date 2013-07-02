@@ -4343,6 +4343,10 @@ cd openssl-${OPENSSL_VERSION}
   patch -Np1 -i ${PATCH}/openssl-1-0-1c-o32.patch || \
     die "***patch cross openssl o32 error" && \
       touch ${METADATAMIPS64ELROOTFS}/openssl_o32_patch
+[ -f ${METADATAMIPS64ELROOTFS}/openssl_o32_crypto_patch ] || \
+  patch -Np1 -i ${PATCH}/openssl-1-0-1c-crypto.patch || \
+    die "***patch cross openssl o32 crypto error" && \
+      touch ${METADATAMIPS64ELROOTFS}/openssl_o32_crypto_patch
 [ -f ${METADATAMIPS64ELROOTFS}/openssl_o32_configure ] || \
   CC="${CC} ${BUILD32}" ABI=o32 LIBDIR=lib \
   LDFLAGS="-Wl,-rpath-link,${PREFIXMIPS64ELROOTFS}/usr/lib:${PREFIXMIPS64ELROOTFS}/lib ${BUILD32}" \
@@ -4384,6 +4388,10 @@ cd openssl-${OPENSSL_VERSION}
   patch -Np1 -i ${PATCH}/openssl-1-0-1c-n32.patch || \
     die "***patch cross openssl n32 error" && \
       touch ${METADATAMIPS64ELROOTFS}/openssl_n32_patch
+[ -f ${METADATAMIPS64ELROOTFS}/openssl_n32_crypto_patch ] || \
+  patch -Np1 -i ${PATCH}/openssl-1-0-1c-crypto.patch || \
+    die "***patch cross openssl n32 crypto error" && \
+      touch ${METADATAMIPS64ELROOTFS}/openssl_n32_crypto_patch
 [ -f ${METADATAMIPS64ELROOTFS}/openssl_n32_configure ] || \
   CC="${CC} ${BUILDN32}" ABI=n32 LIBDIR=lib32 \
   LDFLAGS="-Wl,-rpath-link,${PREFIXMIPS64ELROOTFS}/usr/lib32:${PREFIXMIPS64ELROOTFS}/lib32 ${BUILDN32}" \
@@ -4424,7 +4432,11 @@ cd openssl-${OPENSSL_VERSION}
 [ -f ${METADATAMIPS64ELROOTFS}/openssl_64_patch ] || \
   patch -Np1 -i ${PATCH}/openssl-1-0-1c-64bit.patch || \
     die "***patch cross openssl 64 error" && \
-      touch ${METADATAMIPS64ELROOTFS}/openssl_64_patch
+      touch ${METADATAMIPS64ELROOTFS}/openssl_64_crypto_patch
+[ -f ${METADATAMIPS64ELROOTFS}/openssl_64_patch ] || \
+  patch -Np1 -i ${PATCH}/openssl-1-0-1c-crypto.patch || \
+    die "***patch cross openssl 64 crypto error" && \
+      touch ${METADATAMIPS64ELROOTFS}/openssl_64_crypto_patch
 cd openssl-${OPENSSL_VERSION}
 [ -f ${METADATAMIPS64ELROOTFS}/openssl_64_configure ] || \
   CC="${CC} ${BUILD64}" ABI=64 LIBDIR=lib64 \
