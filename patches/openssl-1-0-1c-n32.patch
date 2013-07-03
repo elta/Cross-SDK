@@ -16,62 +16,6 @@ diff -uNpr openssl-1.0.1c/Configure aa/Configure
  # N64 ABI builds.
  "irix64-mips4-gcc","gcc:-mabi=64 -mips4 -O3 -DTERMIOS -DB_ENDIAN -DBN_DIV3W::-D_SGI_MP_SOURCE:::RC4_CHAR RC4_CHUNK DES_RISC2 DES_UNROLL SIXTY_FOUR_BIT_LONG:${mips64_asm}:64:dlfcn:irix-shared::-mabi=64:.so.\$(SHLIB_MAJOR).\$(SHLIB_MINOR):::64",
  "irix64-mips4-cc", "cc:-64 -mips4 -O2 -use_readonly_const -G0 -rdata_shared -DTERMIOS -DB_ENDIAN -DBN_DIV3W::-D_SGI_MP_SOURCE:::RC4_CHAR RC4_CHUNK DES_RISC2 DES_UNROLL SIXTY_FOUR_BIT_LONG:${mips64_asm}:64:dlfcn:irix-shared::-64:.so.\$(SHLIB_MAJOR).\$(SHLIB_MINOR):::64",
-diff -uNpr openssl-1.0.1c/crypto/aes/asm/aes-mips.pl aa/crypto/aes/asm/aes-mips.pl
---- openssl-1.0.1c/crypto/aes/asm/aes-mips.pl	2011-11-15 04:55:23.000000000 +0800
-+++ aa/crypto/aes/asm/aes-mips.pl	2013-04-02 13:03:45.285827249 +0800
-@@ -1036,9 +1036,9 @@ _mips_AES_set_encrypt_key:
- 	nop
- .end	_mips_AES_set_encrypt_key
- 
--.globl	AES_set_encrypt_key
--.ent	AES_set_encrypt_key
--AES_set_encrypt_key:
-+.globl	mips_AES_set_encrypt_key
-+.ent	mips_AES_set_encrypt_key
-+mips_AES_set_encrypt_key:
- 	.frame	$sp,$FRAMESIZE,$ra
- 	.mask	$SAVED_REGS_MASK,-$SZREG
- 	.set	noreorder
-@@ -1083,7 +1083,7 @@ ___
- $code.=<<___;
- 	jr	$ra
- 	$PTR_ADD $sp,$FRAMESIZE
--.end	AES_set_encrypt_key
-+.end	mips_AES_set_encrypt_key
- ___
- 
- my ($head,$tail)=($inp,$bits);
-@@ -1091,9 +1091,9 @@ my ($tp1,$tp2,$tp4,$tp8,$tp9,$tpb,$tpd,$
- my ($m,$x80808080,$x7f7f7f7f,$x1b1b1b1b)=($at,$t0,$t1,$t2);
- $code.=<<___;
- .align	5
--.globl	AES_set_decrypt_key
--.ent	AES_set_decrypt_key
--AES_set_decrypt_key:
-+.globl	mips_AES_set_decrypt_key
-+.ent	mips_AES_set_decrypt_key
-+mips_AES_set_decrypt_key:
- 	.frame	$sp,$FRAMESIZE,$ra
- 	.mask	$SAVED_REGS_MASK,-$SZREG
- 	.set	noreorder
-@@ -1115,7 +1115,7 @@ $code.=<<___ if ($flavour =~ /nubi/i);	#
- ___
- $code.=<<___ if ($flavour !~ /o32/i);	# non-o32 PIC-ification
- 	.cplocal	$Tbl
--	.cpsetup	$pf,$zero,AES_set_decrypt_key
-+	.cpsetup	$pf,$zero,mips_AES_set_decrypt_key
- ___
- $code.=<<___;
- 	.set	reorder
-@@ -1226,7 +1226,7 @@ ___
- $code.=<<___;
- 	jr	$ra
- 	$PTR_ADD $sp,$FRAMESIZE
--.end	AES_set_decrypt_key
-+.end	mips_AES_set_decrypt_key
- ___
- }}}
- 
 diff -uNpr openssl-1.0.1c/crypto/aes/Makefile aa/crypto/aes/Makefile
 --- openssl-1.0.1c/crypto/aes/Makefile	2011-11-15 04:42:21.000000000 +0800
 +++ aa/crypto/aes/Makefile	2013-04-02 13:03:45.285827249 +0800
