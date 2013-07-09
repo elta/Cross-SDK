@@ -18,6 +18,7 @@ maintain their part of the SDK.
 Version History:
 0.9:
 - Build QT-Creator Plugin instead of the whole QT-Creator.
+- Merge QT-Creator Plugin plugin into main tree.
 
 0.8:
 - Add OpenOCD.
