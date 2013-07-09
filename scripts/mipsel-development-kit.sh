@@ -29,5 +29,5 @@ source common/source.env
 
 [ -f "${METADATAUNIVERSAL}/qtc_finished" ] || \
   source common/qtc.step || \
-    die "build qt creator error" && \
+    die "build qt creator plugin error" && \
       touch ${METADATAUNIVERSAL}/qtc_finished
