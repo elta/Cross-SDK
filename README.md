@@ -16,6 +16,9 @@ maintain their part of the SDK.
 
 ===============================================================================
 Version History:
+0.9:
+- Build QT-Creator Plugin instead of the whole QT-Creator.
+
 0.8:
 - Add OpenOCD.
 - KUbuntu 13.04 well tested all of the scripts.
