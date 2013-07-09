@@ -30,6 +30,5 @@ compile_commands.json
 src/
 build/
 metadata/
-live-src/
 tarballs/
 sdk/
