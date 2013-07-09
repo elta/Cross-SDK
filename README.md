@@ -4,15 +4,9 @@ Cross-SDK
 
 This is a OpenSource Cross Platform SDK.
 
-The development project for Cross-SDK is https://github.com/elta/Cross-SDK.
-The development repository is https://github.com/elta/Cross-SDK.git
-
 Our aim is build a user friendly Cross SDK for a Real Time GNU/Linux system
 which using LLVM/Clang as default compiler, you are welcome to use and hack
 this project, we can make it better together.
-
-I'll try my best to fix all the toolchain bugs, and keep the other members
-maintain their part of the SDK.
 
 ===============================================================================
 Version History:
@@ -56,9 +50,9 @@ Version History:
 
 ===============================================================================
 TODO:
-- Switch to LLVMLinux
-- Make Clang to be the default compiler
-- IDE Debugger, Static Analyzer, U-Boot & Linux config support
+- Improve Real Time performance.
+- IDE plugin such as Static Analyzer and Linux config support.
+- Make Clang to be the default compiler.
 
 ===============================================================================
 Prerequisites:
@@ -104,8 +98,7 @@ just run it again.
 Run ./cleanup.sh to free your disk space.
 
 ===============================================================================
-GNU root FS is partly come from CLFS, IDE-plugin is writen by Yu Tang at
-https://github.com/tangbongbong/qt-crossprojectmanager.
+GNU root FS is partly come from CLFS.
 
 ===============================================================================
 The last thing, Happy Hacking:)
