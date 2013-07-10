@@ -5,12 +5,12 @@
 
 pushd ${PREFIXGNULINUX}
 [ -f ${METADATAMIPSELROOTFSCREATEIMG}/mipsel_sysroot_ddimg ] || \
- dd if=/dev/zero of=mipsel-rootfs.img bs=1M count=2k || \
+ dd if=/dev/zero of=${NAMEMIPSELROOTFS}.img bs=1M count=2k || \
     die "***dd mipsel rootfs.img error" && \
       touch ${METADATAMIPSELROOTFSCREATEIMG}/mipsel_sysroot_ddimg
 
 #[ -f ${METADATAMIPSELROOTFSCREATEIMG}/mipsel_sysroot_mkfsimg ] || \
-  echo y | mkfs.ext3 mipsel-rootfs.img || \
+  echo y | mkfs.ext3 ${NAMEMIPSELROOTFS}.img || \
     die "***mkfs mipsel sysroot.img error" && \
       touch ${METADATAMIPSELROOTFSCREATEIMG}/mipsel_sysroot_mkfsimg
 
@@ -20,7 +20,7 @@ pushd ${PREFIXGNULINUX}
       touch ${METADATAMIPSELROOTFSCREATEIMG}/mipsel_sysroot_dirmnt
 
 [ -f ${METADATAMIPSELROOTFSCREATEIMG}/mipsel_sysroot_mnt ] || \
-  sudo mount -o loop mipsel-rootfs.img ./mnt_tmp || \
+  sudo mount -o loop ${NAMEMIPSELROOTFS}.img ./mnt_tmp || \
     die "***mount mipsel sysroot.img error" && \
       touch ${METADATAMIPSELROOTFSCREATEIMG}/mipsel_sysroot_mnt
 

@@ -69,7 +69,7 @@ else
   echo "no mods installed"
 fi
 [ -f ${METADATAMIPSELKERNEL}/linux_cross_cpvmlinux ] || \
-  cp vmlinux ${PREFIXGNULINUX}/vmlinux-32 || \
+  cp vmlinux ${PREFIXGNULINUX}/${NAMEMIPSELKERNEL} || \
     die "cp vmlinux error" && \
       touch ${METADATAMIPSELKERNEL}/linux_cross_cpvmlinux
 [ -f ${METADATAMIPSELKERNEL}/linux_cross_cpsystemmap ] || \

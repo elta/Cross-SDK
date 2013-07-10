@@ -5,11 +5,11 @@
 
 pushd ${PREFIXGNULINUX}
 [ -f ${METADATAMIPS64ELROOTFSCREATEIMG}/mips64el_rootfs_ddimg ] || \
- dd if=/dev/zero of=mips64el-rootfs.img bs=1M count=2K || \
+ dd if=/dev/zero of=${NAMEMIPS64ELROOTFS}.img bs=1M count=2K || \
     die "***dd mips64el rootfs.img error" && \
       touch ${METADATAMIPS64ELROOTFSCREATEIMG}/mips64el_rootfs_ddimg
 #[ -f ${METADATAMIPS64ELROOTFSCREATEIMG}/mips64el_rootfs_mkfsimg ] || \
-  echo y | mkfs.ext3 mips64el-rootfs.img || \
+  echo y | mkfs.ext3 ${NAMEMIPS64ELROOTFS}.img || \
     die "***mkfs mips64el rootfs.img error" && \
       touch ${METADATAMIPS64ELROOTFSCREATEIMG}/mips64el_rootfs_mkfsimg
 [ -f ${METADATAMIPS64ELROOTFSCREATEIMG}/mips64el_rootfs_dirmnt ] || \
@@ -17,7 +17,7 @@ pushd ${PREFIXGNULINUX}
     die "***mkdir mnt error" && \
       touch ${METADATAMIPS64ELROOTFSCREATEIMG}/mips64el_rootfs_dirmnt
 [ -f ${METADATAMIPS64ELROOTFSCREATEIMG}/mips64el_rootfs_mnt ] || \
-  sudo mount -o loop mips64el-rootfs.img ./mnt_tmp || \
+  sudo mount -o loop ${NAMEMIPS64ELROOTFS}.img ./mnt_tmp || \
     die "***mount mips64el rootfs.img error" && \
       touch ${METADATAMIPS64ELROOTFSCREATEIMG}/mips64el_rootfs_mnt
 [ -f ${METADATAMIPS64ELROOTFSCREATEIMG}/mips64el_rootfs_copy ] || \

@@ -71,11 +71,11 @@ else
   echo "no mods installed"
 fi
 [ -f "${METADATAMIPS64ELKERNEL}/linux_cp_vmlinux" ] || \
-  cp vmlinux ${PREFIXGNULINUX}/vmlinux-64 || \
+  cp vmlinux ${PREFIXGNULINUX}/${NAMEMIPS64ELKERNEL} || \
     die "cp vmlinux error" && \
       touch ${METADATAMIPS64ELKERNEL}/linux_cp_vmlinux
 [ -f "${METADATAMIPS64ELKERNEL}/linux_cp_vmlinux.32" ] || \
-  cp vmlinux.32 ${PREFIXGNULINUX}/vmlinux-n32 || \
+  cp vmlinux.32 ${PREFIXGNULINUX}/${NAMEMIPSN32ELKERNEL} || \
     die "cp vmlinux.32 error" && \
       touch ${METADATAMIPS64ELKERNEL}/linux_cp_vmlinux.32
 [ -f "${METADATAMIPS64ELKERNEL}/linux_cp_system.map" ] || \
