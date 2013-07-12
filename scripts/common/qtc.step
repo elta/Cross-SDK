@@ -15,20 +15,6 @@ tar xf ${TARBALL}/qt-creator-${QTC_VERSION}.${QTC_SUFFIX} || \
     touch ${METADATAEXTRACT}/qtc_extract
 popd
 
-pushd ${SRCUNIVERSAL}
-cd qt-creator-${QTC_VERSION}
-[ -f ${METADATAUNIVERSAL}/qt_patch ] || \
-  patch -p1 < ${LIVE_SRC}/${CROSSPROJECTMANAGER}/qt.patch || \
-    die "patch qt-creator error" && \
-      touch ${METADATAUNIVERSAL}/qt_patch
-[ -d "src/plugins/crossprojectmanager" ] && \
-  rm -rf src/plugins/crossprojectmanager
-[ -f ${METADATAUNIVERSAL}/qt_copy ] || \
-  cp -r ${LIVE_SRC}/${CROSSPROJECTMANAGER}/crossprojectmanager src/plugins/ || \
-    die "copy crossprojectmanager error" && \
-      touch ${METADATAUNIVERSAL}/qt_copy
-popd
-
 #################################################################
 ### qt-creator build
 #################################################################
@@ -37,7 +23,7 @@ pushd ${BUILDUNIVERSAL}
 cd qt-creator-build
 [ -f "${METADATAUNIVERSAL}/qt-creator_configure" ] || \
   qmake PREFIX=${PREFIXQTC} \
-   ${SRCUNIVERSAL}/qt-creator-${QTC_VERSION} || \
+  ${SRCUNIVERSAL}/qt-creator-${QTC_VERSION} || \
     die "***config qt-creator error" &&
       touch ${METADATAUNIVERSAL}/qt-creator_configure
 [ -f "${METADATAUNIVERSAL}/qt-creator_build" ] || \
@@ -56,3 +42,20 @@ else
       touch ${METADATAUNIVERSAL}/qt-creator_install
 fi
 popd
+
+pushd ${QTCP_SRC}
+[ -f "${METADATAUNIVERSAL}/qt-creator-plugin-qmake" ] || \
+  QTC_SOURCE=${SRCUNIVERSAL}/qt-creator-${QTC_VERSION} \
+  QTC_BUILD=${PREFIXQTC}  PROVIDER=${NAMEQTPROVIDER} qmake || \
+    die "***qmake qt-creator plugin error" && \
+      touch ${METADATAUNIVERSAL}/qt-creator-plugin-qmake
+[ -f "${METADATAUNIVERSAL}/qt-creator-plugin-build" ] || \
+  make -j${JOBS} || \
+    die "***build qt-creator plugin error" && \
+      touch ${METADATAUNIVERSAL}/qt-creator-plugin-build
+[ -f "${METADATAUNIVERSAL}/qt-creator-plugin-clean" ] || \
+  make clean || \
+    die "***clean qt-creator plugin error" && \
+      touch ${METADATAUNIVERSAL}/qt-creator-plugin-clean
+popd
+
