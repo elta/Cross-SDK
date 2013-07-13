@@ -11,7 +11,7 @@ this project, we can make it better together.
 ===============================================================================
 Version History:
 0.9:
-- Build QT-Creator Plugin instead of the whole QT-Creator.
+- Build QT-Creator Plugin with QT-Creator.
 - Merge QT-Creator Plugin plugin into main tree.
 
 0.8:
