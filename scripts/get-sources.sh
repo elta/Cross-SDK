@@ -3,7 +3,6 @@
 source common/source.env
 
 [ -d "${TARBALL}" ] || mkdir -p "${TARBALL}"
-[ -d "${LIVE_SRC}" ] || mkdir -p "${LIVE_SRC}"
 [ -d "${METADATADOWN}" ] || mkdir -p "${METADATADOWN}"
 
 pushd ${METADATADOWN}
