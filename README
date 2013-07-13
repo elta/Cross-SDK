@@ -64,11 +64,11 @@ brew install autoconf autoconf213 automake bash-completion cmake coreutils \
              libelf libffi libpng libtool p7zip pixman pkg-config qt texinfo \
              unrar wget xz zlib
 
-(K)Ubuntu 12.10 AMD64 and (K)Ubuntu 12.04 AMD64 are well tested.
+(K)Ubuntu 13.04 AMD64 are well tested.
 You need run this in your terminal:
-sudo apt-get install libncurses5-dev libgtk2.0-dev libqt4-dev g++ flex bison \
-                     cmake automake gawk libtool gettext gperf dejagnu \
-                     guile-2.0 autogen texinfo patch xz-utils
+sudo apt-get install autogen automake bison cmake dejagnu flex g++ gawk \
+                     gettext gperf guile-2.0 libgtk2.0-dev libncurses5-dev \
+                     libqt4-dev libtool libvte-dev patch texinfo xz-utils
 
 You are welcome to test it on other platforms.
 
