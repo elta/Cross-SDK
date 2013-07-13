@@ -575,6 +575,13 @@ download "zlib-${ZLIB_VERSION}.${ZLIB_SUFFIX}" \
   die "download zlib error" && \
     echo -n "zlib-${ZLIB_VERSION}.${ZLIB_SUFFIX}" > zlib_download
 
+[ -f qt-creator_download ] && \
+   [ "`cat qt-creator_download`" = "qt-creator-${QTC_VERSION}.${QTC_SUFFIX}" ]
+download "qt-creator-${QTC_VERSION}.${QTC_SUFFIX}" \
+  "${QTC_URL}/qt-creator-${QTC_VERSION}.${QTC_SUFFIX}" || \
+  die "download qt-creator error" && \
+    echo -n "qt-creator-${QTC_VERSION}.${QTC_SUFFIX}" > qt-creator_download
+
 [ -f qemu_download ] && \
   [ "`cat qemu_download`" = "qemu-${QEMU_VERSION}.${QEMU_SUFFIX}" ] || \
 download "qemu-${QEMU_VERSION}.${QEMU_SUFFIX}" \
@@ -588,11 +595,4 @@ download "openocd-${OCD_VERSION}.${OCD_SUFFIX}" \
   "${OCD_URL}/openocd-${OCD_VERSION}.${OCD_SUFFIX}" || \
   die "download openocd error" && \
     echo -n "openocd-${OCD_VERSION}.${OCD_SUFFIX}" > ocd_download
-popd
-
-pushd ${LIVE_SRC}
-[ -f ${METADATADOWN}/crossprojectmanager_git ] || \
-  git clone ${CROSSPROJECTMANAGER_GITURL} || \
-  die "download IDE plugin error" && \
-    touch ${METADATADOWN}/crossprojectmanager_git
 popd
