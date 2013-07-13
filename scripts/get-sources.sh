@@ -575,7 +575,7 @@ download "zlib-${ZLIB_VERSION}.${ZLIB_SUFFIX}" \
     echo -n "zlib-${ZLIB_VERSION}.${ZLIB_SUFFIX}" > zlib_download
 
 [ -f qt-creator_download ] && \
-   [ "`cat qt-creator_download`" = "qt-creator-${QTC_VERSION}.${QTC_SUFFIX}" ]
+   [ "`cat qt-creator_download`" = "qt-creator-${QTC_VERSION}.${QTC_SUFFIX}" ] || \
 download "qt-creator-${QTC_VERSION}.${QTC_SUFFIX}" \
   "${QTC_URL}/qt-creator-${QTC_VERSION}.${QTC_SUFFIX}" || \
   die "download qt-creator error" && \
